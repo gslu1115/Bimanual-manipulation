@@ -53,7 +53,7 @@
         ├── .vscode/                      编辑器调试配置
         └── outputs/                      本地运行生成物；Git 忽略，不提交
 
-早期 starter/ 原型已删除。source_review/ 当前没有文件，不属于运行依赖。
+早期 starter/ 原型已删除；当前仓库没有 source_review/ 目录。
 
 ## 代码调用关系
 
