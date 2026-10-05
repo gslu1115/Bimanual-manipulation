@@ -1,0 +1,60 @@
+[package]
+title = "Dual Panda Sorting Workstation"
+version = "0.1.0"
+description = "Minimal Isaac Sim 6.1 experience for the sorting station"
+
+[dependencies]
+"omni.isaac.ml_archive" = { order = -100 }
+"isaacsim.simulation_app" = {}
+"isaacsim.core.experimental.prims" = {}
+"isaacsim.core.rendering_manager" = {}
+"isaacsim.core.simulation_manager" = {}
+"isaacsim.core.utils" = {}
+"isaacsim.storage.native" = {}
+"isaacsim.robot_motion.motion_generation" = {}
+"omni.kit.loop-isaac" = {}
+"omni.physics.physx" = {}
+"omni.physics.stageupdate" = {}
+"omni.physx.tensors" = {}
+"omni.replicator.core" = {}
+"omni.hydra.rtx" = {}
+"omni.kit.viewport.window" = {}
+"omni.kit.manipulator.camera" = {}
+"omni.kit.window.stage" = {}
+"omni.kit.window.toolbar" = {}
+"omni.kit.window.property" = {}
+"omni.kit.property.bundle" = {}
+"omni.rtx.settings.core" = {}
+
+[settings]
+app.name = "Dual Panda Sorting"
+app.version = "6.1.0"
+app.window.title = "Dual Panda Sorting Workstation"
+app.settings.persistent = false
+app.settings.fabricDefaultStageFrameHistoryCount = 3
+app.fastShutdown = true
+app.file.ignoreUnsavedStage = true
+app.useFabricSceneDelegate = true
+app.vulkan = true
+app.asyncRendering = false
+app.asyncRenderingLowLatency = false
+app.runLoops.main.manualModeEnabled = true
+app.runLoops.main.rateLimitEnabled = false
+app.player.useFixedTimeStepping = false
+app.renderer.skipWhileMinimized = false
+app.renderer.sleepMsOnFocus = 0
+app.renderer.sleepMsOutOfFocus = 0
+renderer.multiGpu.enabled = false
+renderer.asyncInit = true
+renderer.gpuEnumeration.glInterop.enabled = false
+rtx.spg.enabled = true
+rtx.hydra.supportMultiTickRate = true
+rtx-transient.dlssg.enabled = false
+omni.replicator.asyncRendering = false
+exts."omni.kit.renderer.core".present.enabled = false
+exts."omni.usd".locking.onClose = false
+persistent.app.stage.upAxis = "Z"
+persistent.simulation.defaultMetersPerUnit = 1.0
+persistent.physics.resetOnStop = true
+persistent.omni.replicator.captureOnPlay = true
+persistent.renderer.startupMessageDisplayed = true

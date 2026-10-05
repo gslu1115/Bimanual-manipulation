@@ -1,0 +1,21 @@
+{
+  "schema_version": 2,
+  "seed": 6,
+  "physics": {"dt": 0.008333333333333333, "gravity": 9.81, "static_friction": 0.65, "dynamic_friction": 0.5, "restitution": 0.02},
+  "table": {"size": [1.4, 0.65, 0.06], "center_xy": [0.0, 0.05], "top_z": 0.76},
+  "robots": [
+    {"name": "panda_left", "base_xyz": [-0.36, 0.25, 0.82], "yaw_deg": -90},
+    {"name": "panda_right", "base_xyz": [0.36, 0.25, 0.82], "yaw_deg": -90}
+  ],
+  "robot_home": [0.0, -0.6, 0.0, -2.4, 0.0, 1.8, 0.7853981634, 0.04, 0.04],
+  "boxes": {"count": 9, "size": [0.1, 0.055, 0.045], "mass_kg": 0.08},
+  "upstream": {"center_xy": [0.0, -0.045], "release_size_xy": [0.4, 0.20], "tray_size_xy": [0.68, 0.38], "release_clearance": 0.16, "layer_gap": 0.13, "horizontal_speed": 0.06},
+  "settle": {"timeout_s": 15.0, "min_s": 2.0, "hold_s": 0.6, "linear_speed": 0.015, "angular_speed": 0.15},
+  "conveyor": {"center_xy": [0.4, -0.40], "size": [2.0, 0.24, 0.06], "top_z": 0.76, "slots_xy": [[-0.2, -0.40], [0.0, -0.40], [0.2, -0.40]], "slot_size_xy": [0.15, 0.095], "speed": 0.16, "index_distance": 0.70, "clearance_x": 0.38, "timeout_s": 12.0},
+  "verification": {"xy_tolerance": 0.018, "z_tolerance": 0.008, "tilt_deg": 8.0, "yaw_deg": 8.0, "linear_speed": 0.015, "angular_speed": 0.15, "hold_s": 0.5},
+  "single_pick_place": {"arm": "panda_left", "box_xy": [-0.20, -0.06], "box_yaw_deg": 20.0, "slot_index": 0, "lift_height": 0.18, "move_speed": 0.10, "joint_speed": 0.6, "grip_position": 0.018, "grip_max_force": 30.0, "verify_timeout_s": 5.0},
+  "cameras": [
+    {"name": "overhead", "position": [0.0, -0.12, 2.50], "look_at": [0.0, -0.12, 0.76], "up": [0, 1, 0], "resolution": [640, 480], "focal_length_mm": 24.0, "horizontal_aperture_mm": 36.0},
+    {"name": "oblique", "position": [1.40, -1.90, 1.95], "look_at": [0.0, -0.04, 0.87], "up": [0, 0, 1], "resolution": [640, 480], "focal_length_mm": 24.0, "horizontal_aperture_mm": 36.0}
+  ]
+}
