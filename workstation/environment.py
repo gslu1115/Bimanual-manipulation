@@ -20,7 +20,7 @@ from task_logic import BoxState, IndexingConveyor, TaskLoop, norm, release_state
 
 
 class SortingEnvironment:
-    def __init__(self, app, config, output, robot_usd=None, sensors=True, conveyor_test=False, single_pnp=False):
+    def __init__(self, app, config, output, robot_usd=None, sensors=True, conveyor_test=False, single_pnp=False, dual_handover=False):
         self.app, self.c, self.output = app, config, Path(output)
         self.output.mkdir(parents=True, exist_ok=True)
         self.seed = config['seed']
@@ -62,6 +62,11 @@ class SortingEnvironment:
             self.initial_states = [BoxState('box_00', p['box_xy'] + [config['table']['top_z'] +
                                       config['boxes']['size'][2]/2 + .004],
                                       [math.cos(yaw/2), 0, 0, math.sin(yaw/2)], [0, 0, 0], [0, 0, 0])]
+        if dual_handover:
+            p = config['dual_handover']
+            self.initial_states = [BoxState('box_00', p['box_xy'] + [config['table']['top_z'] +
+                                      config['boxes']['size'][2]/2 + .004],
+                                      [0, 1, 0, 0], [0, 0, 0], [0, 0, 0])]
         if conveyor_test:
             # Isolated conveyor fixture, explicitly not a robot PnP demonstration.
             self.initial_states = [BoxState(f'box_{i:02d}', xy + [config['conveyor']['top_z'] + config['boxes']['size'][2]/2+.004],
@@ -244,6 +249,15 @@ class SortingEnvironment:
         self.timeline.set_auto_update(False)
         self.timeline.play()
         self.app.update()
+        # A single app update need not have dispatched physics-ready yet.
+        views = list(self.arms.values()) + [self.boxes]
+        if not all(v.is_physics_tensor_entity_valid() for v in views):
+            SimulationManager.initialize_physics()
+            for _ in range(20):
+                if all(v.is_physics_tensor_entity_valid() for v in views): break
+                self.app.update()
+        if not all(v.is_physics_tensor_entity_valid() for v in views):
+            raise RuntimeError('Physics initialization did not produce valid robot and carton tensor views')
         for name, arm in self.arms.items():
             dofs = arm.get_dof_positions().numpy()
             if dofs.shape[1] != 9:

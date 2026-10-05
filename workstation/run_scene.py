@@ -24,16 +24,23 @@ def main():
     parser.add_argument('--validate-only', action='store_true')
     parser.add_argument('--conveyor-test', action='store_true', help='Three preloaded boxes: isolated physical conveyor test, no PnP claim')
     parser.add_argument('--single-pnp', action='store_true', help='One upright carton, physical gripper and Lula IK; ground-truth baseline')
+    parser.add_argument('--dual-handover', action='store_true', help='Fixed inverted carton: physical dual-arm handover and upright placement')
+    parser.add_argument('--record-video', action='store_true', help='Record dual-handover RGB cameras to MP4')
     args = parser.parse_args()
+    if args.record_video and (args.no_sensors or not args.dual_handover):
+        parser.error('--record-video requires --dual-handover and enabled sensors')
     c = json.loads(args.config.read_text(encoding='utf-8'))
     if args.seed is not None: c['seed'] = args.seed
-    if args.single_pnp and args.conveyor_test: parser.error('Select only one task mode')
+    if sum([args.single_pnp, args.conveyor_test, args.dual_handover]) > 1: parser.error('Select only one task mode')
+    if args.dual_handover:
+        if 'dual_handover' not in c: parser.error('Configuration needs dual_handover parameters')
+        c['boxes']['count'] = 1
     if args.single_pnp:
         if 'single_pick_place' not in c: parser.error('Configuration needs single_pick_place parameters')
         c['boxes']['count'] = 1
     elif args.conveyor_test:
         c['boxes']['count'] = 3
-    c['run_mode'] = 'single_pick_place' if args.single_pnp else 'conveyor_fixture' if args.conveyor_test else 'clutter_release'
+    c['run_mode'] = 'dual_handover' if args.dual_handover else 'single_pick_place' if args.single_pnp else 'conveyor_fixture' if args.conveyor_test else 'clutter_release'
     validate(c)
     if args.headless and args.keep_open: parser.error('--keep-open requires a GUI')
     if args.validate_only:
@@ -41,7 +48,7 @@ def main():
         return
     from isaacsim import SimulationApp
     faulthandler.enable()
-    faulthandler.dump_traceback_later(600 if args.single_pnp else 120, repeat=True)
+    faulthandler.dump_traceback_later(600 if (args.single_pnp or args.dual_handover) else 120, repeat=True)
     isaac_root = Path(os.environ.get('ISAAC_PATH', 'D:/isaacsim'))
     extra = ['--ext-folder', str(isaac_root/'extscache'), '--ext-folder', str(isaac_root/'extsDeprecated')]
     app = SimulationApp({'headless': args.headless, 'width': 960, 'height': 600,
@@ -52,7 +59,8 @@ def main():
     failure = None
     try:
         from environment import SortingEnvironment
-        env = SortingEnvironment(app, c, args.output.resolve(), args.robot_usd, not args.no_sensors, args.conveyor_test, args.single_pnp)
+        env = SortingEnvironment(app, c, args.output.resolve(), args.robot_usd, not args.no_sensors, args.conveyor_test, args.single_pnp, args.dual_handover)
+        env.record_video = args.record_video
         env.start()
         if args.conveyor_test:
             for _ in range(round(c['conveyor']['timeout_s']/c['physics']['dt'])+240):
@@ -71,6 +79,10 @@ def main():
             from single_pick_place import SinglePickPlace
             result = SinglePickPlace(env).run()
             if not result['success']: raise RuntimeError('Single-box pick and place failed; see task_report.json')
+        if args.dual_handover:
+            from dual_handover import DualHandover
+            result = DualHandover(env).run()
+            if not result['success']: raise RuntimeError('Dual handover failed; see task_report.json')
         env._write_json('run_report.json', env.report())
         env._write_json('run_status.json', {'status': 'passed', 'mode': c['run_mode']})
         (args.output/'failure.txt').unlink(missing_ok=True)

@@ -141,6 +141,32 @@ def validate(c):
         # The tray rims are 12 mm thick and centered on the nominal boundary.
         if any(abs(xy[j]-u['center_xy'][j])+extents[j] >= u['tray_size_xy'][j]/2-.006 for j in range(2)):
             raise ValueError('Single-box footprint must lie strictly inside the tray rims')
+    if 'dual_handover' in c:
+        h = c['dual_handover']
+        names = [r['name'] for r in c['robots']]
+        if h['giver'] not in names or h['receiver'] not in names or h['giver'] == h['receiver']:
+            raise ValueError('Handover needs two distinct configured arms')
+        if type(h['slot_index']) is not int or not 0 <= h['slot_index'] < 3:
+            raise ValueError('Invalid handover slot')
+        if len(h['box_xy']) != 2 or len(h['handover_center']) != 3:
+            raise ValueError('Invalid handover positions')
+        if any(type(v) not in (int, float) or not math.isfinite(v)
+               for v in h['box_xy']+h['handover_center']):
+            raise ValueError('Handover positions must be finite numbers')
+        for k in ('lift_height', 'approach_distance', 'move_speed', 'angular_speed', 'joint_speed',
+                  'grip_max_force', 'slip_position_m', 'slip_angle_deg', 'verify_timeout_s'):
+            if type(h[k]) not in (int, float) or not math.isfinite(h[k]) or h[k] <= 0:
+                raise ValueError('Handover speeds, tolerances, force and duration must be positive')
+        if not 0 <= h['grip_position'] < b['size'][1]/2 < .04:
+            raise ValueError('Handover finger target must grip the carton within Panda limits')
+        if not -b['size'][0]/2+.01 < h['giver_offset_x'] < 0 < h['receiver_offset_x'] < b['size'][0]/2-.01:
+            raise ValueError('Handover grips must lie on opposite longitudinal halves')
+        if h['handover_center'][2] < c['table']['top_z']+.20:
+            raise ValueError('Insufficient handover clearance above the table')
+        if h['verify_timeout_s'] < c['verification']['hold_s']:
+            raise ValueError('Handover timeout must cover verification dwell')
+        if any(abs(h['box_xy'][j]-u['center_xy'][j])+b['size'][j]/2 >= u['tray_size_xy'][j]/2-.006 for j in range(2)):
+            raise ValueError('Inverted carton must start inside the tray')
     return c
 
 
