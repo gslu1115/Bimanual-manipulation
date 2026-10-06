@@ -4,7 +4,8 @@
 
 - [单盒抓放使用说明](workstation/单盒抓放使用说明.md)
 - [双臂翻面使用说明](workstation/双臂翻面使用说明.md)
-- [项目交接与下一阶段架构](项目路线与当前状态交接.md)
+- [感知—决策—执行闭环与真机迁移路线](感知决策执行闭环与真机迁移路线.md)
+- [项目交接与当前状态](项目路线与当前状态交接.md)
 - [启动与接口说明](workstation/README.md)
 - [本机实测记录](workstation/VALIDATION.md)
 - [配置参数](workstation/config.json)
