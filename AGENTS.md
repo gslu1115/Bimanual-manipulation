@@ -11,21 +11,21 @@
 - 直立纸盒：左臂直接抓取、调整水平朝向、放入目标格。历史固定案例成功，原始单盒运行输出已按用户要求清理，摘要见 `workstation/VALIDATION.md`。
 - 倒置纸盒：左臂提起并转到交接姿态，右臂夹持，左臂松开撤离，右臂独立提起约 4 cm 验证交接，再翻正归位。固定案例已有 `success=true`、`handover_verified=true` 的本地报告与录像，见 `workstation/outputs/handover_verified_video_20261006/`。同配置另有一次成功，不是随机初态成功率。
 
-两条控制链都读取仿真真值，使用 Lula IK、关节位置驱动和物理指爪接触；没有通过绑定或改写纸盒位姿伪造抓放。三相机采集之上已有策略输入白名单接口；两条固定动作控制链仍读取仿真真值，尚未消费图像或该接口。新接口代码尚未经过 Isaac Sim 运行验证。
+两条控制链都读取仿真真值，使用 Lula IK、关节位置驱动和物理指爪接触；没有通过绑定或改写纸盒位姿伪造抓放。三相机采集之上已有策略输入白名单接口；两条固定动作控制链仍读取仿真真值，尚未消费图像或该接口。新接口已通过一次最小 Isaac Sim 接口检查，仍未接视觉控制器；证据见 `workstation/docs/policy_input/`。
 
 ## 正式三相机环境（2026-10-06）
 
 - `scene_camera` 高位中央斜视，位置 `[0,-0.41,1.76] m`，look-at `[0,-0.11,0.80] m`；左右腕挂在实际物理 `panda_hand` 子节点，自动随动，无 Python 每帧写世界位姿。三路均为 640×480，旧 overhead/oblique 保留为 debug，默认不采样。
 - 最终配置已实测三路 RGB-D、实例标签、逐帧 K/动态外参、左右独立运动和低频无图像保存。原固定左臂完整抓放回归通过：抬升 0.179967 m、XY 误差 2.733 mm、轴向 yaw 0.0091°、稳定 0.5 s、两臂回 home；控制器未修改。未复测三相机下的双臂交接或五路视频。
 - 用户确认真实工位只有 `scene_camera`、`left_wrist_camera`、`right_wrist_camera` 三个可用机位。旧 overhead/oblique 只能调试，不能进入策略或部署输入训练集；重新观察只能读取这三路或安全移动现有腕相机。
-- 已新增 `observation_packet.py` 与 `sim_sensor_adapter.py`，`environment.observe_policy_inputs(refresh=False)` 返回固定三路 `ObservationPacket`。它只含 RGB-D、有效深度、K、仿真时间/渲染序号及渲染物理 tick 同期锁存的两臂 7 关节和各 2 指关节；scene 位姿取名义配置，两腕由 Lula `panda_hand` FK×配置 mount 计算。逐路状态为 `OK / MISSING / STALE / INVALID`，一台相机采集错误不抹掉其他可用帧。策略路径调用 `observe_cameras(include_privileged=False)`，不读取实例分割或渲染器相机变换，且不转发渲染器动态外参；默认 `observe_cameras()` 仍是含特权字段的诊断接口。新路径未做 Isaac Sim 运行验证，独立 `PrivilegedRecord` 仍未实现。
+- 已新增 `observation_packet.py` 与 `sim_sensor_adapter.py`，`environment.observe_policy_inputs(refresh=False)` 返回固定三路 `ObservationPacket`。它只含 RGB-D、有效深度、K、仿真时间/渲染序号及渲染物理 tick 同期锁存的两臂 7 关节和各 2 指关节；scene 位姿取名义配置，两腕由 Lula `panda_hand` FK×配置 mount 计算。逐路状态为 `OK / MISSING / STALE / INVALID`，一台相机采集错误不抹掉其他可用帧。策略路径调用 `observe_cameras(include_privileged=False)`，不读取实例分割或渲染器相机变换，且不转发渲染器动态外参；默认 `observe_cameras()` 仍是含特权字段的诊断接口。新路径已通过 home、左臂小幅运动、双臂小幅运动与三类异常状态的一次最小接口检查；FK 相机外参与渲染器诊断外参的最大位置差为 0.007305 mm、旋转差为 0.0008091°。独立 `PrivilegedRecord` 仍未实现，该检查未执行抓放或泛化评估。
 - 详见 `workstation/三相机视觉系统说明.md`、`workstation/VALIDATION.md`；精选最终截图和报告位于 `workstation/docs/three_camera/`。下放时 scene 有手掌遮挡，同帧腕部目标可见，撤臂后 scene 完整可见。
 
 ## 当前推进方向
 
 用户要求最终仿真策略服务于真机，**运行时不得依赖现实不可得的仿真真值**；当前也暂不进行批量可行域评估。近期工作按 `感知决策执行闭环与真机迁移路线.md`：
 
-1. 先在 Isaac Sim 中核对已写入的 `ObservationPacket / SimSensorAdapter`，再定义 `SceneEstimate / GraspCandidate / SkillRequest / MotionPlan / SkillResult`。当前包只有三路 RGB-D、标定及关节/指关节位置，没有力觉或接触反馈；盒体真值须留在标签、调试和离线评价通道。
+1. `ObservationPacket / SimSensorAdapter` 已通过一次最小 Isaac 接口检查，下一步定义 `SceneEstimate / GraspCandidate / SkillRequest / MotionPlan / SkillResult`，并建立独立真值记录与访问边界。当前包只有三路 RGB-D、标定及关节/指关节位置，没有力觉或接触反馈；盒体真值须留在标签、调试和离线评价通道。
 2. 先做受控单盒的实时视觉位姿与方向估计，再把直立抓放从 `observe_ground_truth()` 迁移到估计状态和传感器监测。低置信度时暂停或重新观察，禁止回退到真值。
 3. 迁移双臂翻面交接：用夹持时测得的盒—夹爪关系、实测关节正运动学和视觉更新跟踪持盒状态；接收、滑移与落位判据不能使用盒体真值。随后实现侧放单臂扶正。
 4. 建立规则任务执行器、完整避碰和失败恢复，再扩到多盒；实机适配还需现场标定、驱动与安全边界。
@@ -37,7 +37,7 @@
 ## 尚未完成与已知限制
 
 - 侧放单臂扶正、多盒自动任务执行器、通用抓姿和避碰规划、失败自动恢复尚未实现。
-- `ObservationPacket / SimSensorAdapter` 已写入代码但未做 Isaac 运行验证；RGB-D 位姿估计未闭环，双臂成功案例仅一个固定倒置初态、固定参数、无周围障碍。帧新鲜度目前按仿真时间计算，不计渲染真实耗时；尚无逐 annotator 来源帧 ID 独立证明 RGB、深度、K 严格同帧；真机还需实测标定、RGB/深度配准及硬件时间同步。
+- `ObservationPacket / SimSensorAdapter` 已通过一次最小接口检查，仍未接视觉控制器；RGB-D 位姿估计未闭环，双臂成功案例仅一个固定倒置初态、固定参数、无周围障碍。帧新鲜度目前按仿真时间计算，不计渲染真实耗时；尚无逐 annotator 来源帧 ID 独立证明 RGB、深度、K 严格同帧；真机还需实测标定、RGB/深度配准及硬件时间同步。
 - 未测随机位置/朝向成功率，未完成实机运行或学习策略。
 - 曾有一次单盒重启在控制前因 Isaac physics tensor entity 未初始化而失败；随后固定基线再运行成功。原因尚未定位，遇到同类错误需记录启动阶段与仿真生命周期。
 - 目前胶带方向按 180° 对称轴评价；若要求唯一前向，需方向标记与有向 yaw 判据。
@@ -58,7 +58,7 @@
         ├── camera_config.py / camera_geometry.py / camera_system.py
         ├── observation_packet.py / sim_sensor_adapter.py  三机位输入合同与仿真白名单适配
         ├── validate_cameras.py / test_camera_system.py
-        ├── 三相机视觉系统说明.md / docs/three_camera/
+        ├── 三相机视觉系统说明.md / docs/three_camera/ / docs/policy_input/
         ├── task_logic.py             配置、落位、沉降和输送逻辑
         ├── single_pick_place.py      直立单盒单臂控制
         ├── dual_handover.py          倒置单盒双臂交接控制

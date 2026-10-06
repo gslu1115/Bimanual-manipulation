@@ -4,6 +4,7 @@
 
 - [正式三相机视觉系统说明](workstation/三相机视觉系统说明.md)
 - [最终三相机截图与实测报告](workstation/docs/three_camera/README.md)
+- [三相机策略输入最小接口检查](workstation/docs/policy_input/README.md)
 - [单盒抓放使用说明](workstation/单盒抓放使用说明.md)
 - [双臂翻面使用说明](workstation/双臂翻面使用说明.md)
 - [感知—决策—执行闭环与真机迁移路线](感知决策执行闭环与真机迁移路线.md)
@@ -18,4 +19,4 @@
 powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -SinglePickPlace
 ```
 
-双臂倒置翻面使用 `-DualHandover`，或双击 `workstation/启动双臂翻面.cmd`。不加任务模式时生成九盒乱序场景并观察，机械臂保持 home。现有单盒技能依赖仿真真值；侧放扶正、RGB-D 控制、九盒自动整理与训练尚未实现。三相机可观测输入接口已写入代码，但尚未在 Isaac Sim 运行核对；下一步核对接口并实现实时视觉状态估计，再将两条单盒技能迁移到感知闭环。仿真真值只用于标签、调试和离线验收。
+双臂倒置翻面使用 `-DualHandover`，或双击 `workstation/启动双臂翻面.cmd`。不加任务模式时生成九盒乱序场景并观察，机械臂保持 home。现有单盒技能依赖仿真真值；侧放扶正、RGB-D 控制、九盒自动整理与训练尚未实现。三相机可观测输入接口已通过一次最小 Isaac Sim 接口检查；下一步实现实时视觉状态估计，再将两条单盒技能迁移到感知闭环。逐 annotator 同源帧证明、真实采集到控制延迟及真机标定仍未完成，该接口检查未执行抓放或泛化评估。仿真真值只用于标签、调试和离线验收。

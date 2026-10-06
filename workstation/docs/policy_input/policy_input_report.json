@@ -1,0 +1,171 @@
+{
+  "success": true,
+  "scope": "policy_input_interface_only",
+  "frames": {
+    "home": {
+      "scene_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.482534153247273e-16,
+        "rotation_error_deg": 0.0,
+        "sample_time_s": 0.06666666666666667,
+        "sequence_id": 14
+      },
+      "left_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.815072755591495e-07,
+        "rotation_error_deg": 1.1768457563181822e-05,
+        "sample_time_s": 0.06666666666666667,
+        "sequence_id": 14
+      },
+      "right_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.86406682901544e-07,
+        "rotation_error_deg": 1.1643920115677386e-05,
+        "sample_time_s": 0.06666666666666667,
+        "sequence_id": 14
+      }
+    },
+    "left_moved": {
+      "scene_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.482534153247273e-16,
+        "rotation_error_deg": 0.0,
+        "sample_time_s": 0.5666666666666671,
+        "sequence_id": 41
+      },
+      "left_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.3238294167842598e-07,
+        "rotation_error_deg": 4.085643664573967e-05,
+        "sample_time_s": 0.5666666666666671,
+        "sequence_id": 41
+      },
+      "right_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 7.304963443184681e-06,
+        "rotation_error_deg": 0.0008091026854673319,
+        "sample_time_s": 0.5666666666666671,
+        "sequence_id": 41
+      }
+    },
+    "both_moved": {
+      "scene_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.482534153247273e-16,
+        "rotation_error_deg": 0.0,
+        "sample_time_s": 1.0666666666666653,
+        "sequence_id": 68
+      },
+      "left_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.267348093734461e-07,
+        "rotation_error_deg": 5.0307484655121785e-05,
+        "sample_time_s": 1.0666666666666653,
+        "sequence_id": 68
+      },
+      "right_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 0.9995572916666666,
+        "translation_error_m": 3.044919123944322e-07,
+        "rotation_error_deg": 4.665386698822374e-05,
+        "sample_time_s": 1.0666666666666653,
+        "sequence_id": 68
+      }
+    }
+  },
+  "stale": {
+    "scene_camera": "STALE",
+    "left_wrist_camera": "STALE",
+    "right_wrist_camera": "STALE"
+  },
+  "missing": {
+    "scene_camera": "OK",
+    "left_wrist_camera": "OK",
+    "right_wrist_camera": "MISSING"
+  },
+  "single_error": {
+    "scene_camera": "OK",
+    "left_wrist_camera": "INVALID",
+    "right_wrist_camera": "OK"
+  }
+}
