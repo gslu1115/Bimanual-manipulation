@@ -30,6 +30,7 @@ class SortingEnvironment:
         self.conveyor = IndexingConveyor(config)
         self.task = TaskLoop()
         self.sensors = {}
+        self._policy_sensor_adapter = None
         self.materials = {}
         self.timeline = omni.timeline.get_timeline_interface()
         omni.usd.get_context().new_stage()
@@ -216,9 +217,27 @@ class SortingEnvironment:
         # Preserve the legacy annotator mapping used by the existing recorder.
         self.sensors = self.camera_system.sensors
 
-    def observe_cameras(self, refresh=False):
-        """Formal three-camera data; observations never feed joint control."""
-        return self.camera_system.observe(refresh=refresh)
+    def observe_cameras(self, refresh=False, tolerate_errors=False, include_privileged=True):
+        """Raw diagnostic camera data, including simulator-only labels and poses."""
+        return self.camera_system.observe(refresh=refresh, tolerate_errors=tolerate_errors,
+                                          include_privileged=include_privileged)
+
+    def observe_robot_joint_positions(self):
+        """Read measured arm and finger DOFs; caller must bind these to a physics tick."""
+        positions = {}
+        for name, arm in self.arms.items():
+            q = np.asarray(arm.get_dof_positions().numpy()[0], dtype=float).copy()
+            if q.shape != (9,) or not np.isfinite(q).all():
+                raise RuntimeError(f'Invalid measured 9-DOF state for {name}')
+            positions[name] = q
+        return positions
+
+    def observe_policy_inputs(self, refresh=False):
+        """Return a three-camera packet with simulator-only fields excluded."""
+        if self._policy_sensor_adapter is None:
+            from sim_sensor_adapter import SimSensorAdapter
+            self._policy_sensor_adapter = SimSensorAdapter(self)
+        return self._policy_sensor_adapter.read(refresh=refresh)
 
     def start(self):
         SimulationManager.set_physics_dt(self.c['physics']['dt'])

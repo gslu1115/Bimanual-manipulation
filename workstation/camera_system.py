@@ -12,7 +12,7 @@ from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics
 from isaacsim.core.rendering_manager import RenderingManager
 
 from camera_config import FORMAL_CAMERAS, ANNOTATIONS, camera_settings
-from camera_geometry import calibration_from_params
+from camera_geometry import calibration_from_params, intrinsics_from_params
 
 
 class CameraSystem:
@@ -23,6 +23,7 @@ class CameraSystem:
         self.last_metadata = {}
         self.render_frame_index = 0
         self.rendered_tick, self.rendered_time = 0, 0.
+        self.rendered_joint_positions = None
         self.metrics = dict(render_calls=0, render_wall_s=0., data_reads=0, data_read_wall_s=0.,
                             saved_frames=0, save_wall_s=0., gpu_memory=[])
         self._gpu_sample('before_render_products')
@@ -113,56 +114,77 @@ class CameraSystem:
         return '/World/Cameras/'+name, None, None
 
     def render(self):
+        # Auto physics stepping is disabled. Sample measured joints at the physics
+        # state that will be rendered, then keep them with this image tick.
+        sampled_tick, sampled_time = self.env.ticks, self.env.time
+        sampled_joints = self.env.observe_robot_joint_positions()
         started = time.perf_counter()
         RenderingManager.render()
         self.env.app.update()
         self.metrics['render_wall_s'] += time.perf_counter()-started
         self.metrics['render_calls'] += 1
         self.render_frame_index += 1
-        self.rendered_tick, self.rendered_time = self.env.ticks, self.env.time
+        self.rendered_tick, self.rendered_time = sampled_tick, sampled_time
+        self.rendered_joint_positions = sampled_joints
 
-    def observe(self, formal_only=True, refresh=False):
+    def observe(self, formal_only=True, refresh=False, tolerate_errors=False, include_privileged=True):
         if not self.sensors:
-            return dict(cameras={})
+            return dict(cameras={}, camera_errors={})
         if refresh:
             for _ in range(self.settings['warmup_render_frames']): self.render()
         started = time.perf_counter()
-        frames = {}
+        frames, errors = {}, {}
         for name, sensor in self.sensors.items():
             if formal_only and name not in FORMAL_CAMERAS: continue
-            cfg = self.cameras[name]['config']
-            w, h = cfg['resolution']
-            anns = sensor['annotators']
-            params = anns['camera_params'].get_data()
-            if not isinstance(params, dict) or 'cameraViewTransform' not in params:
-                raise RuntimeError(f'Camera {name} produced no rendered camera parameters')
-            if list(np.asarray(params['renderProductResolution']).astype(int)) != [w, h]:
-                raise RuntimeError(f'Camera {name} render-product resolution mismatch')
-            metadata = calibration_from_params(params, [w, h])
-            metadata.update(self.cameras[name]['descriptor'], simulation_time_s=self.rendered_time,
-                            physics_frame_index=self.rendered_tick, render_frame_index=self.render_frame_index)
-            frame = dict(rgb=None, depth=None, instance_segmentation=None, instance_info={},
-                         intrinsics=metadata['K'], extrinsics=metadata, camera_params=params)
-            for label, key in (('rgb', 'rgb'), ('distance_to_image_plane', 'depth'),
-                               ('instance_segmentation', 'instance_segmentation')):
-                if label not in anns: continue
-                data = anns[label].get_data()
-                if isinstance(data, dict):
-                    frame['instance_info'] = data.get('info', {})
-                    data = data.get('data')
-                if data is None or np.asarray(data).shape[:2] != (h, w):
-                    raise RuntimeError(f'Camera {name} has invalid {label} dimensions')
-                frame[key] = np.asarray(data).copy()
-                if key == 'rgb':
-                    if frame[key].ndim != 3 or frame[key].shape[2] not in (3, 4):
-                        raise RuntimeError(f'Camera {name} has invalid RGB channels')
-                    frame[key] = frame[key][..., :3]
-            self.last_metadata[name] = metadata
-            frames[name] = frame
+            try:
+                cfg = self.cameras[name]['config']
+                w, h = cfg['resolution']
+                anns = sensor['annotators']
+                params = anns['camera_params'].get_data()
+                if not isinstance(params, dict):
+                    raise RuntimeError(f'Camera {name} produced no rendered camera parameters')
+                if list(np.asarray(params['renderProductResolution']).astype(int)) != [w, h]:
+                    raise RuntimeError(f'Camera {name} render-product resolution mismatch')
+                if include_privileged:
+                    metadata = calibration_from_params(params, [w, h])
+                    metadata.update(self.cameras[name]['descriptor'], simulation_time_s=self.rendered_time,
+                                    physics_frame_index=self.rendered_tick, render_frame_index=self.render_frame_index)
+                    k = metadata['K']
+                else:
+                    metadata = None
+                    k = intrinsics_from_params(params, [w, h]).tolist()
+                frame = dict(rgb=None, depth=None, intrinsics=k)
+                if include_privileged:
+                    frame.update(instance_segmentation=None, instance_info={},
+                                 extrinsics=metadata, camera_params=params)
+                labels = [('rgb', 'rgb'), ('distance_to_image_plane', 'depth')]
+                if include_privileged:
+                    labels.append(('instance_segmentation', 'instance_segmentation'))
+                for label, key in labels:
+                    if label not in anns: continue
+                    data = anns[label].get_data()
+                    if isinstance(data, dict):
+                        if include_privileged:
+                            frame['instance_info'] = data.get('info', {})
+                        data = data.get('data')
+                    if data is None or np.asarray(data).shape[:2] != (h, w):
+                        raise RuntimeError(f'Camera {name} has invalid {label} dimensions')
+                    frame[key] = np.asarray(data).copy()
+                    if key == 'rgb':
+                        if frame[key].ndim != 3 or frame[key].shape[2] not in (3, 4):
+                            raise RuntimeError(f'Camera {name} has invalid RGB channels')
+                        frame[key] = frame[key][..., :3]
+                if include_privileged:
+                    self.last_metadata[name] = metadata
+                frames[name] = frame
+            except Exception as exc:
+                if not tolerate_errors:
+                    raise
+                errors[name] = str(exc)
         self.metrics['data_read_wall_s'] += time.perf_counter()-started
         self.metrics['data_reads'] += 1
-        return dict(cameras=frames, simulation_time_s=self.rendered_time, physics_frame_index=self.rendered_tick,
-                    render_frame_index=self.render_frame_index)
+        return dict(cameras=frames, camera_errors=errors, simulation_time_s=self.rendered_time,
+                    physics_frame_index=self.rendered_tick, render_frame_index=self.render_frame_index)
 
     def capture(self, prefix='settled', refresh=True):
         observations = self.observe(formal_only=False, refresh=refresh)

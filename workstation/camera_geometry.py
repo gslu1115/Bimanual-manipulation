@@ -32,6 +32,21 @@ def look_at_quaternion(position, target, up):
     return quaternion_from_matrix(np.column_stack([right, np.cross(right, forward), -forward]))
 
 
+def intrinsics_from_params(params, resolution):
+    """Derive pinhole K from lens calibration fields, without reading camera pose."""
+    w, h = resolution
+    focal = float(params['cameraFocalLength'])
+    aperture = np.asarray(params['cameraAperture'], dtype=float)
+    if (not np.isfinite(focal) or focal <= 0 or aperture.shape != (2,)
+            or not np.isfinite(aperture).all() or not (aperture > 0).all()):
+        raise RuntimeError('Invalid rendered camera lens parameters')
+    offset = np.asarray(params.get('cameraApertureOffset', [0., 0.]), dtype=float)
+    if offset.shape != (2,) or not np.isfinite(offset).all():
+        raise RuntimeError('Invalid rendered camera aperture offset')
+    return np.array([[focal/aperture[0]*w, 0., w/2-offset[0]/aperture[0]*w],
+                     [0., focal/aperture[1]*h, h/2+offset[1]/aperture[1]*h], [0., 0., 1.]])
+
+
 def calibration_from_params(params, resolution):
     # Replicator's view transform is WORLD->USD CAMERA in USD row-vector order.
     # Invert then transpose; USD camera looks along -Z, OpenCV along +Z.
@@ -41,13 +56,7 @@ def calibration_from_params(params, resolution):
         raise RuntimeError('Camera view transform is not finite')
     world_from_cv = world_from_usd @ USD_FROM_OPENCV
     w, h = resolution
-    focal = float(params['cameraFocalLength'])
-    aperture = np.asarray(params['cameraAperture'], dtype=float)
-    if focal <= 0 or aperture.shape != (2,) or not (aperture > 0).all():
-        raise RuntimeError('Invalid rendered camera lens parameters')
-    offset = np.asarray(params.get('cameraApertureOffset', [0., 0.]), dtype=float)
-    k = np.array([[focal/aperture[0]*w, 0., w/2-offset[0]/aperture[0]*w],
-                  [0., focal/aperture[1]*h, h/2+offset[1]/aperture[1]*h], [0., 0., 1.]])
+    k = intrinsics_from_params(params, resolution)
     return dict(K=k.tolist(), resolution_wh=[w, h],
                 T_world_from_camera_usd=world_from_usd.tolist(),
                 T_world_from_camera_opencv=world_from_cv.tolist(),

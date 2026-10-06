@@ -130,9 +130,9 @@ workstation/outputs/
 
 三台正式相机输出真实渲染 RGB 和 `distance_to_image_plane` 深度，采用无畸变针孔模型，尚未模拟真实 RGB-D 噪声、透明物体失效等误差。深度可能含 `inf`，应使用 `isfinite` 筛选。反投影为 `p_camera = depth * inv(K) @ [u,v,1]`，再乘 `T_world_from_camera_opencv`。相机轴为 +X 右、+Y 下、+Z 前；物体四元数为 wxyz，角速度单位 rad/s。
 
-`environment.observe_cameras(refresh=True)` 提供三路统一采集接口，包含 RGB-D、K、渲染帧外参和时间。此调试接口的实例标签不是现实相机输入，后续 `ObservationPacket` 必须筛除；当前尚未实现完整传感器适配器或视觉闭环。`environment.py` 提供场景、观测及关节命令接口；`task_logic.py` 提供落位评价、输送和任务状态机；`single_pick_place.py` 提供真值与 IK 单盒控制基线。默认九盒模式继续保留未来三步算法接口：先评估直接抓放候选，没有候选时考虑解锁，执行后复核并重新观察。
+`environment.observe_cameras(refresh=True)` 是原始采集/调试接口，仍含实例标签、原始 `camera_params` 和渲染器动态外参。新增 `environment.observe_policy_inputs(refresh=False)` 返回三路 `ObservationPacket`：RGB-D、有效深度、K、仿真时间/渲染序号，以及与渲染物理 tick 配对的双臂 7 关节和各 2 指关节；scene 外参取配置，腕外参由 Lula `panda_hand` FK×配置 mount 得到。策略路径在采集阶段跳过实例分割和渲染器相机变换；逐路状态为 `OK / MISSING / STALE / INVALID`。新接口尚未在 Isaac Sim 运行验证，也未接入现有真值抓放控制器。
 
-当前尚未接入 RGB-D 物体位姿估计、乱序抓取候选评估、通用避碰规划、侧放扶正或学习训练。已有 RGB-D 输出不代表机器人正在通过图像感知。固定单盒和固定双臂交接只验证相应物理执行链路，不能作为视觉系统、多盒任务或泛化效果的结论。最终可迁移策略必须只使用 RGB-D、标定、实测机器人与夹爪状态等真机可得观测；`observe_ground_truth()` 与渲染器真实实例标签只能进入标签、调试和离线验收通道。
+新包的帧新鲜度只按仿真时间计算；当前没有 RGB、深度、K 各 annotator 的独立来源帧序号。真机适配需补实测标定、硬件时间同步，并将 RGB/深度配准到与 K 一致的像素网格。当前尚未接入 RGB-D 物体位姿估计、乱序抓取候选评估、通用避碰规划、侧放扶正或学习训练。已有 RGB-D 输出不代表机器人正在通过图像感知。固定单盒和固定双臂交接只验证相应物理执行链路，不能作为视觉系统、多盒任务或泛化效果的结论。最终可迁移策略必须只使用 RGB-D、标定、实测机器人与夹爪状态等真机可得观测；`observe_ground_truth()` 与渲染器真实实例标签只能进入标签、调试和离线验收通道。
 
 ## 代码与参数入口
 
@@ -141,7 +141,8 @@ workstation/outputs/
 | `config.json` | 盒子、目标、相机、物理、容差和单盒控制参数 |
 | `launch.ps1` | 启动模式、时间戳输出目录和 Isaac Sim Python 入口 |
 | `run_scene.py` | 仿真启动、模式选择、任务执行、输出及 GUI 生命周期 |
-| `environment.py` | USD 构建、物理步进、机器人接口、传感器与快照 |
+| `environment.py` | USD 构建、物理步进、机器人接口、传感器与快照；`observe_policy_inputs()` 白名单入口 |
+| `observation_packet.py`、`sim_sensor_adapter.py` | 三机位输入合同与仿真适配器，代码尚未运行验证 |
 | `single_pick_place.py` | 直立单盒 IK、关节驱动、抓放阶段及物理结果监测 |
 | `dual_handover.py`、`handover_math.py` | 倒置单盒双臂翻面、物理交接和几何辅助 |
 | `task_logic.py` | 参数校验、随机释放、落位/单盒成功判据、输送状态机 |
