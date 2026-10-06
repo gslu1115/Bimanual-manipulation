@@ -1,0 +1,26 @@
+{
+  "render_calls": 1924,
+  "render_wall_s": 362.6512772013084,
+  "data_reads": 17,
+  "data_read_wall_s": 0.15747760009253398,
+  "saved_frames": 17,
+  "save_wall_s": 1.5975757001433522,
+  "gpu_memory": [
+    {
+      "label": "before_render_products",
+      "used_mib": [
+        3125
+      ]
+    },
+    {
+      "label": "after_first_capture",
+      "used_mib": [
+        4374
+      ]
+    }
+  ],
+  "render_mean_wall_s": 0.18848818981356985,
+  "data_read_mean_wall_s": 0.009263388240737292,
+  "save_mean_wall_s": 0.09397504118490307,
+  "active_render_products": 3
+}

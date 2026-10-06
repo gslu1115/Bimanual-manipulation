@@ -19,6 +19,8 @@ def main():
     parser.add_argument('--headless', action='store_true')
     parser.add_argument('--keep-open', action='store_true')
     parser.add_argument('--no-sensors', action='store_true')
+    parser.add_argument('--no-save-images', action='store_true', help='Keep camera observations and frame calibration; skip image/array files')
+    parser.add_argument('--camera-recording', action='store_true', help='Save camera frames at the configured capture interval')
     parser.add_argument('--full-app', action='store_true', help='Use the standard full Python experience instead of sorting.kit')
     parser.add_argument('--robot-usd', help='Override the official Franka USD reference with a local USD/URL')
     parser.add_argument('--validate-only', action='store_true')
@@ -30,6 +32,11 @@ def main():
     if args.record_video and (args.no_sensors or not args.dual_handover):
         parser.error('--record-video requires --dual-handover and enabled sensors')
     c = json.loads(args.config.read_text(encoding='utf-8'))
+    if args.no_save_images: c.setdefault('camera_system', {})['save_images'] = False
+    if args.camera_recording: c.setdefault('camera_system', {})['recording_enabled'] = True
+    from camera_config import camera_settings
+    if (args.camera_recording or args.record_video) and (args.no_sensors or not camera_settings(c)['enabled']):
+        parser.error('Camera/video recording requires enabled sensors')
     if args.seed is not None: c['seed'] = args.seed
     if sum([args.single_pnp, args.conveyor_test, args.dual_handover]) > 1: parser.error('Select only one task mode')
     if args.dual_handover:
@@ -59,7 +66,8 @@ def main():
     failure = None
     try:
         from environment import SortingEnvironment
-        env = SortingEnvironment(app, c, args.output.resolve(), args.robot_usd, not args.no_sensors, args.conveyor_test, args.single_pnp, args.dual_handover)
+        env = SortingEnvironment(app, c, args.output.resolve(), args.robot_usd, not args.no_sensors, args.conveyor_test, args.single_pnp, args.dual_handover,
+                                 debug_sensor_names=('overhead', 'oblique') if args.record_video else ())
         env.record_video = args.record_video
         env.start()
         if args.conveyor_test:

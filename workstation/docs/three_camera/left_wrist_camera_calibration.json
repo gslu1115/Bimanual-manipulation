@@ -1,0 +1,146 @@
+{
+  "K": [
+    [
+      355.55555555555554,
+      0.0,
+      320.0
+    ],
+    [
+      0.0,
+      355.55555555555554,
+      240.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "resolution_wh": [
+    640,
+    480
+  ],
+  "T_world_from_camera_usd": [
+    [
+      -0.9999999999967589,
+      1.961005260664766e-06,
+      -1.6237035308137718e-06,
+      -0.35999927730992975
+    ],
+    [
+      -2.5285278400872103e-06,
+      -0.8394837812982335,
+      0.5433847448455152,
+      -0.055377110737898166
+    ],
+    [
+      -2.974924365584406e-07,
+      0.5433847448478598,
+      0.8394837813004715,
+      1.3208095381304055
+    ],
+    [
+      -0.0,
+      -0.0,
+      -0.0,
+      1.0
+    ]
+  ],
+  "T_world_from_camera_opencv": [
+    [
+      -0.9999999999967589,
+      -1.961005260664766e-06,
+      1.6237035308137718e-06,
+      -0.35999927730992975
+    ],
+    [
+      -2.5285278400872103e-06,
+      0.8394837812982335,
+      -0.5433847448455152,
+      -0.055377110737898166
+    ],
+    [
+      -2.974924365584406e-07,
+      -0.5433847448478598,
+      -0.8394837813004715,
+      1.3208095381304055
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_camera_opencv_from_world": [
+    [
+      -0.9999999999967591,
+      -2.5285278401727856e-06,
+      -2.974924365478011e-07,
+      -0.3599990244004816
+    ],
+    [
+      -1.961005260587147e-06,
+      0.8394837812982339,
+      -0.5433847448478599,
+      0.7641952342287552
+    ],
+    [
+      1.6237035307762042e-06,
+      -0.5433847448455155,
+      -0.8394837813004714,
+      1.078707692790945
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "world_translation_m": [
+    -0.35999927730992975,
+    -0.055377110737898166,
+    1.3208095381304055
+  ],
+  "world_orientation_wxyz_usd": [
+    1.1703296365049553e-06,
+    5.008165721604111e-07,
+    -0.28329862221605184,
+    -0.9590317464238948
+  ],
+  "camera_axes": "USD: +X right, +Y up, -Z forward; OpenCV: +X right, +Y down, +Z forward",
+  "matrix_convention": "column vectors; translation in metres",
+  "depth": "distance_to_image_plane; metres; optical +Z; inf means background",
+  "distortion": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "pose_source": "rendered_camera_params",
+  "prim_path": "/World/Robots/panda_left/panda_hand/left_wrist_camera_mount/left_wrist_camera",
+  "parent_prim_path": "/World/Robots/panda_left/panda_hand/left_wrist_camera_mount",
+  "mount_prim_path": "/World/Robots/panda_left/panda_hand/left_wrist_camera_mount",
+  "hand_prim_path": "/World/Robots/panda_left/panda_hand",
+  "role": "formal",
+  "sampling_enabled": true,
+  "focal_length_mm": 20.0,
+  "horizontal_aperture_mm": 36.0,
+  "horizontal_fov_deg": 83.97442499163331,
+  "mount_translation_m": [
+    -0.065,
+    0.0,
+    0.025
+  ],
+  "mount_orientation_wxyz": [
+    0.200970385691,
+    -0.677946092308,
+    -0.677946092308,
+    0.200970385691
+  ],
+  "simulation_time_s": 2.5999999999999934,
+  "physics_frame_index": 312,
+  "render_frame_index": 90
+}

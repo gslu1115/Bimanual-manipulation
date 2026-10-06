@@ -1,0 +1,113 @@
+{
+  "success": true,
+  "mode": "single_pick_place",
+  "observation_source": "simulator_ground_truth",
+  "controller": "Lula IK + physical position drives",
+  "arm": "panda_left",
+  "slot_index": 0,
+  "object": "box_00",
+  "box_attachment": false,
+  "box_pose_teleport": false,
+  "initial_model_tcp_error_m": 1.9843724719625548e-07,
+  "targets_have_render_geometry": false,
+  "lift_check": {
+    "height_gain_m": 0.1799665093421936,
+    "box_tcp_distance_m": 0.00046274650843324455,
+    "finger_positions": [
+      0.02734401449561119,
+      0.027613384649157524
+    ]
+  },
+  "slot_errors": {
+    "xy_m": 0.0027334770450402517,
+    "z_m": 3.099441525655777e-08,
+    "tilt_deg": 5.663293681020318e-06,
+    "axis_yaw_deg": 0.009134418333914686,
+    "linear_speed": 0.0016016926436064206,
+    "angular_speed": 2.897328572897935e-05
+  },
+  "stable_duration_s": 0.5000000000000007,
+  "both_arms_home": true,
+  "events": [
+    {
+      "phase": "PREGRASP",
+      "time_s": 13.599999999999868
+    },
+    {
+      "phase": "APPROACH",
+      "time_s": 18.49999999999959,
+      "tcp_error_m": 0.0006091986295082403
+    },
+    {
+      "phase": "CLOSE",
+      "time_s": 24.433333333332588
+    },
+    {
+      "phase": "LIFT",
+      "time_s": 25.733333333332514,
+      "tcp_error_m": 0.0036607052992128604
+    },
+    {
+      "phase": "TRANSFER",
+      "time_s": 31.399999999998858,
+      "tcp_error_m": 0.005085800601484897
+    },
+    {
+      "phase": "LOWER",
+      "time_s": 38.166666666665144,
+      "tcp_error_m": 0.004997832948310762
+    },
+    {
+      "phase": "OPEN",
+      "time_s": 45.09999999999808
+    },
+    {
+      "phase": "RETREAT",
+      "time_s": 46.39999999999801,
+      "tcp_error_m": 0.0029199753803702344
+    },
+    {
+      "phase": "HOME",
+      "time_s": 51.59999999999771
+    },
+    {
+      "phase": "VERIFY",
+      "time_s": 57.899999999997355
+    },
+    {
+      "phase": "DONE",
+      "time_s": 58.39999999999733
+    }
+  ],
+  "last_phase": "DONE",
+  "max_lift_m": 0.18040740489959717,
+  "simulation_time_s": 58.39999999999733,
+  "final_box": {
+    "name": "box_00",
+    "position": [
+      -0.2004171758890152,
+      -0.39729854464530945,
+      0.7824999690055847
+    ],
+    "orientation_wxyz": [
+      1.0,
+      4.9055788764462704e-08,
+      -6.6401542042626716e-09,
+      7.971283775987104e-05
+    ],
+    "linear_velocity": [
+      -7.026325476999773e-08,
+      -6.203165412443923e-07,
+      0.001601692521944642
+    ],
+    "angular_velocity": [
+      -2.8593958631972782e-05,
+      4.3593463487923145e-06,
+      -1.6831265838845866e-06
+    ]
+  },
+  "final_finger_positions": [
+    0.03999994322657585,
+    0.03999994322657585
+  ]
+}

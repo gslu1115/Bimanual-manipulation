@@ -12,15 +12,15 @@ import omni.timeline
 from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics, UsdShade, UsdLux, PhysxSchema
 from isaacsim.core.experimental.prims import Articulation, RigidPrim
 from isaacsim.core.simulation_manager import SimulationManager
-from isaacsim.core.rendering_manager import RenderingManager
 from isaacsim.core.utils.viewports import set_camera_view
 from isaacsim.storage.native import get_assets_root_path
 
 from task_logic import BoxState, IndexingConveyor, TaskLoop, norm, release_states, slot_errors
+from camera_system import CameraSystem
 
 
 class SortingEnvironment:
-    def __init__(self, app, config, output, robot_usd=None, sensors=True, conveyor_test=False, single_pnp=False, dual_handover=False):
+    def __init__(self, app, config, output, robot_usd=None, sensors=True, conveyor_test=False, single_pnp=False, dual_handover=False, debug_sensor_names=()):
         self.app, self.c, self.output = app, config, Path(output)
         self.output.mkdir(parents=True, exist_ok=True)
         self.seed = config['seed']
@@ -76,7 +76,7 @@ class SortingEnvironment:
         for state in self.initial_states:
             self._box(state)
         self.boxes = RigidPrim(self.box_paths)
-        self._cameras(sensors)
+        self._cameras(sensors, debug_sensor_names)
         set_camera_view(eye=[1.75, -2.35, 2.1], target=[0.1, -0.02, .80])
         self.stage.GetRootLayer().Export(str(self.output / 'initial.usda'))
         self._write_json('config_used.json', config)
@@ -211,36 +211,14 @@ class SortingEnvironment:
         add_labels(xf.GetPrim(), labels=['carton'])
         xf.GetPrim().SetCustomDataByKey('box_id', state.name)
 
-    def _cameras(self, enabled):
-        if enabled:
-            import omni.replicator.core as rep
-        for cfg in self.c['cameras']:
-            path = '/World/Cameras/'+cfg['name']
-            cam = UsdGeom.Camera.Define(self.stage, path)
-            matrix = Gf.Matrix4d().SetLookAt(Gf.Vec3d(*cfg['position']), Gf.Vec3d(*cfg['look_at']), Gf.Vec3d(*cfg['up'])).GetInverse()
-            cam.AddTransformOp().Set(matrix)
-            cam.CreateFocalLengthAttr(cfg['focal_length_mm'])
-            cam.CreateHorizontalApertureAttr(cfg['horizontal_aperture_mm'])
-            w, h = cfg['resolution']
-            cam.CreateVerticalApertureAttr(cfg['horizontal_aperture_mm']*h/w)
-            cam.CreateClippingRangeAttr(Gf.Vec2f(.01, 10))
-            if enabled:
-                product = rep.create.render_product(path, tuple(cfg['resolution']))
-                annotators = {}
-                for label in ('rgb', 'distance_to_image_plane', 'instance_segmentation', 'camera_params'):
-                    ann = rep.AnnotatorRegistry.get_annotator(label)
-                    ann.attach([product])
-                    annotators[label] = ann
-                self.sensors[cfg['name']] = {'product': product, 'annotators': annotators}
-            f = cfg['focal_length_mm']/cfg['horizontal_aperture_mm']*w
-            # USD row-vector transform -> column-vector OpenCV world transform.
-            world_from_usd = np.asarray(matrix).T
-            world_from_cv = world_from_usd @ np.diag([1., -1., -1., 1.])
-            self._write_json(cfg['name']+'_calibration.json', {
-                'resolution_wh': [w, h], 'K': [[f, 0, w/2], [0, f, h/2], [0, 0, 1]],
-                'T_world_from_camera_opencv': world_from_cv.tolist(),
-                'depth': 'distance_to_image_plane; metres; optical +Z; inf means background',
-                'camera_axes': 'OpenCV: right +X, down +Y, forward +Z', 'distortion': [0, 0, 0, 0, 0]})
+    def _cameras(self, enabled, debug_sensor_names=()):
+        self.camera_system = CameraSystem(self, enabled, debug_sensor_names)
+        # Preserve the legacy annotator mapping used by the existing recorder.
+        self.sensors = self.camera_system.sensors
+
+    def observe_cameras(self, refresh=False):
+        """Formal three-camera data; observations never feed joint control."""
+        return self.camera_system.observe(refresh=refresh)
 
     def start(self):
         SimulationManager.set_physics_dt(self.c['physics']['dt'])
@@ -280,9 +258,9 @@ class SortingEnvironment:
         SimulationManager.step()
         self.time += dt
         self.ticks += 1
-        if render and self.ticks % 4 == 0:
-            RenderingManager.render()
-            self.app.update()
+        if render and self.ticks % self.camera_system.settings['render_interval_steps'] == 0:
+            self.camera_system.render()
+            self.camera_system.record_if_due()
         elif self.ticks % 120 == 0:
             self.app.update()
 
@@ -328,39 +306,7 @@ class SortingEnvironment:
         snapshot.GetRootLayer().Export(str(self.output/filename))
 
     def capture(self, prefix='settled'):
-        if not self.sensors: return {}
-        from PIL import Image
-        # Render several sensor frames at an unchanged physics state.
-        for _ in range(12):
-            RenderingManager.render()
-            self.app.update()
-        stats = {}
-        for name, sensor in self.sensors.items():
-            anns = sensor['annotators']
-            rgb = anns['rgb'].get_data()
-            depth = anns['distance_to_image_plane'].get_data()
-            if rgb is None or np.asarray(rgb).size == 0 or depth is None or np.asarray(depth).size == 0:
-                raise RuntimeError(f'Camera {name} produced no RGB-D data')
-            rgb, depth = np.asarray(rgb), np.asarray(depth)
-            cfg = next(c for c in self.c['cameras'] if c['name'] == name)
-            w, h = cfg['resolution']
-            if rgb.shape[:2] != (h, w) or depth.shape[:2] != (h, w):
-                raise RuntimeError(f'Invalid sensor dimensions: {rgb.shape}, {depth.shape}')
-            Image.fromarray(rgb[..., :3]).save(self.output/f'{prefix}_{name}_rgb.png')
-            np.save(self.output/f'{prefix}_{name}_depth_m.npy', depth)
-            seg = anns['instance_segmentation'].get_data()
-            if isinstance(seg, dict):
-                np.save(self.output/f'{prefix}_{name}_instances.npy', seg['data'])
-                self._write_json(f'{prefix}_{name}_instances.json', seg['info'])
-            valid = np.isfinite(depth) & (depth > 0)
-            preview = np.where(valid, np.clip((3.0-depth)/2.5, 0, 1)*255, 0).astype(np.uint8)
-            Image.fromarray(preview).save(self.output/f'{prefix}_{name}_depth_preview.png')
-            if not valid.any(): raise RuntimeError(f'Camera {name} has no finite depth')
-            stats[name] = {'rgb_shape': list(rgb.shape), 'depth_shape': list(depth.shape),
-                           'finite_depth_fraction': float(valid.mean()),
-                           'min_depth_m': float(depth[valid].min()), 'max_depth_m': float(depth[valid].max())}
-        self._write_json(f'{prefix}_sensor_report.json', stats)
-        return stats
+        return self.camera_system.capture(prefix)
 
     def command_joints(self, arm_name, joint_targets):
         """Physical joint-drive command for an external controller; no pose teleport."""
@@ -385,6 +331,7 @@ class SortingEnvironment:
                              'completed_batches': self.conveyor.completed_batches, 'delivered': sorted(self.conveyor.delivered),
                              'events': self.conveyor.events},
                 'evaluation_source': 'simulator_ground_truth',
+                'camera_performance': self.camera_system.performance(),
                 'planner': getattr(self, 'planner_name', 'not_connected'), 'phase': self.task.phase,
                 'slot_errors': {b.name: [slot_errors(b, xy, self.c) for xy in self.c['conveyor']['slots_xy']] for b in boxes}}
 
@@ -397,3 +344,4 @@ class SortingEnvironment:
     def close(self):
         self.belt_api.GetSurfaceVelocityAttr().Set(Gf.Vec3f(0))
         self.timeline.stop()
+        self.camera_system.close()

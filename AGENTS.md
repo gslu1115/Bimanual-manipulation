@@ -6,12 +6,19 @@
 
 项目在 Isaac Sim 6.1 中搭建固定双 Franka Panda 工位，目标是将乱序纸盒识别、姿态调整并定向归位。当前代码位于 `workstation/`；这是仿真与控制项目，尚非 Isaac Lab 训练项目或实机控制程序。
 
-当前有九盒乱序释放与沉降、双路 RGB-D 记录、三盒输送带机构测试，以及两条固定单盒物理技能：
+当前有九盒乱序释放与沉降、正式三路 RGB-D 记录、三盒输送带机构测试，以及两条固定单盒物理技能：
 
 - 直立纸盒：左臂直接抓取、调整水平朝向、放入目标格。历史固定案例成功，原始单盒运行输出已按用户要求清理，摘要见 `workstation/VALIDATION.md`。
 - 倒置纸盒：左臂提起并转到交接姿态，右臂夹持，左臂松开撤离，右臂独立提起约 4 cm 验证交接，再翻正归位。固定案例已有 `success=true`、`handover_verified=true` 的本地报告与录像，见 `workstation/outputs/handover_verified_video_20261006/`。同配置另有一次成功，不是随机初态成功率。
 
 两条控制链都读取仿真真值，使用 Lula IK、关节位置驱动和物理指爪接触；没有通过绑定或改写纸盒位姿伪造抓放。相机目前用于采集，尚未接入控制。
+
+## 正式三相机环境（2026-10-06）
+
+- `scene_camera` 高位中央斜视，位置 `[0,-0.41,1.76] m`，look-at `[0,-0.11,0.80] m`；左右腕挂在实际物理 `panda_hand` 子节点，自动随动，无 Python 每帧写世界位姿。三路均为 640×480，旧 overhead/oblique 保留为 debug，默认不采样。
+- 最终配置已实测三路 RGB-D、实例标签、逐帧 K/动态外参、左右独立运动和低频无图像保存。原固定左臂完整抓放回归通过：抬升 0.179967 m、XY 误差 2.733 mm、轴向 yaw 0.0091°、稳定 0.5 s、两臂回 home；控制器未修改。未复测三相机下的双臂交接或五路视频。
+- `observe_cameras()` 是仿真采集/调试接口，包含实例标签；尚未建立路线中的完整 `ObservationPacket` 与独立 `PrivilegedRecord`。未来适配器必须过滤仿真特权字段，不能将调试字典整体作为策略输入。
+- 详见 `workstation/三相机视觉系统说明.md`、`workstation/VALIDATION.md`；精选最终截图和报告位于 `workstation/docs/three_camera/`。下放时 scene 有手掌遮挡，同帧腕部目标可见，撤臂后 scene 完整可见。
 
 ## 当前推进方向
 
@@ -47,6 +54,9 @@
         ├── launch.ps1 / 启动单盒抓放.cmd / 启动双臂翻面.cmd
         ├── run_scene.py              模式选择、SimulationApp 生命周期
         ├── environment.py            场景、机器人、物理、相机和真值观测
+        ├── camera_config.py / camera_geometry.py / camera_system.py
+        ├── validate_cameras.py / test_camera_system.py
+        ├── 三相机视觉系统说明.md / docs/three_camera/
         ├── task_logic.py             配置、落位、沉降和输送逻辑
         ├── single_pick_place.py      直立单盒单臂控制
         ├── dual_handover.py          倒置单盒双臂交接控制
@@ -65,9 +75,11 @@
     powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -DualHandover -Headless -RecordVideo
     powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1
     powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -ConveyorTest -Headless
+    powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -CameraCheck -Headless
+    powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -CameraCheck -SinglePickPlace -Headless
     python .\workstation\run_scene.py --validate-only
 
-仿真默认使用 `D:\isaacsim\python.bat`；安装位置不同可传 `-IsaacRoot`。不要用普通 Anaconda Python 启动 Isaac Sim。任务模式互斥；每次运行建立独立输出目录。
+仿真默认使用 `D:\isaacsim\python.bat`；默认目录不存在时回退到本次三相机实测的 `D:\Issaccc`；其他安装位置可传 `-IsaacRoot`。`-NoSaveImages` 保留内存观测和标定，跳过大型图像/数组保存。不要用普通 Anaconda Python 启动 Isaac Sim。任务模式互斥；每次运行建立独立输出目录。
 
 ## 协作约定
 

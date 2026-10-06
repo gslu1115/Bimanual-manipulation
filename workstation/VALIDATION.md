@@ -2,6 +2,83 @@
 
 本记录区分固定案例物理成功、尚未实现的系统能力和后续计划。原始报告位于本机 `outputs/`，该目录不提交 Git。
 
+## 2026-10-06：最终正式三相机环境与原单盒回归
+
+在收到追加要求时，先检查当前工作树、三张真实九盒 RGB、左右腕各六阶段图像及已有物理报告；保留相机 manager、接口、schema、层级、命名和控制器。使用公开成熟系统的布局/尺度作为参考，独立试拍，确认改进后才更新生产配置。参考链接、所有前后外参及六张对照图见 [三相机视觉系统说明](三相机视觉系统说明.md#成熟布局依据与本轮前后对照)。
+
+| 参数 | 追加要求到达时的方案 | 最终方案 |
+|---|---|---|
+| Scene 世界位置 | `[0,-1.02,1.85] m` | `[0,-0.41,1.76] m` |
+| 高于桌面 / 纵向偏移 | `1.09 / 0.91 m` | `1.00 / 0.30 m` |
+| Scene 旋转 wxyz | `[0.9279403,0.3727289,0,0]` | `[0.9885545,0.1508642,0,0]`，由 look-at `[0,-0.11,0.80]` 推导 |
+| 焦距 / 水平 FOV | `40 mm / 48.4555°` | `36 mm / 53.1301°` |
+| Scene K | `fx=fy=711.1111` | `fx=fy=640`；`cx=320,cy=240` |
+| 两腕及分辨率 | 已验证的约 6.96 cm 安装、局部目标 `[0,0,0.125] m`、640×480 | 未修改 |
+
+旧 40°～55° 不再作为目标或测试约束。最终向下约 72.65° 是映射到本工位后由位置和目标点产生的角度。
+
+### Camera visual validation
+
+保持 seed 6，九盒沉降后实际状态逐项完全一致，才对比视角：
+
+| 项目 | 原方案 | 第一次参考试拍 40 mm | 最终参考试拍 36 mm |
+|---|---|---|---|
+| 可见盒子实例数 | 9 | 9 | 9 |
+| 九盒总实例像素 | 12919 | 22761 | 18453（比原方案 +42.8%） |
+| 目标区最前缘角点 v | 438.06 | 492.53，越出画面 | 467.28，在 480 高度内 |
+| 三个逻辑目标区角点全部在图像内 | 是 | 否 | 是 |
+| 实图检查 | 完整托盘、顶面和较多侧面；较多机器人背景 | 盒子更大、背景减少，目标区前缘需放宽 | 完整托盘、共同工作区、目标区，顶面和部分侧面可见；无明显倒置 |
+
+两次参考预览均实际输出三台相机 RGB、Depth、Instance、K 和动态 world pose；不是只创建 Camera prim。原图来自 `outputs/three_camera_smoke_03/`；新图来自 `outputs/camera_reference_preview_02/`；对照副本、配置及标定集中于 `outputs/camera_before_after_20261006/`。第一次试拍保留于 `camera_reference_preview_01/`。逻辑格框原本不可渲染，目标可见性还用实际渲染标定投影其区域角点检查。
+
+两腕本轮未调外参：已有实际 HOME/PREGRASP/APPROACH/CLOSE/LIFT/LOWER 图像证明目标与夹指保持可见，没有为复制参考数值重新安装。
+
+### Camera sensor validation（最终配置）
+
+独立目录为 `outputs/three_camera_reference_single_regression_01/`。`camera_validation.json` 中 `success: true`；三台正式相机的 RGB、光轴深度、实例标签、K 和动态外参均通过检查。RGB 为 `480×640×3`，深度与实例为 `480×640`；scene 的 `fx=fy=640`，两腕的 `fx=fy=355.5556`，主点均为 `(320,240)`。
+
+运行完成后逐项读取该目录全部 42 张 RGB 及对应深度、实例数组和逐帧标定，再检查图像非空、数据尺寸、有限正深度、实例整数类型、K 及外参逆矩阵关系，全部通过；结果保留为 `final_artifact_qa.json`。图像中没有目标实例可以是正常视野结果，例如左臂下放时闲置右腕不一定看得到左侧落位纸盒。
+
+左臂独立运动时左腕光心移动 `0.075836 m`，右腕仅漂移 `0.000141 m`；右臂独立运动时右腕光心移动 `0.108121 m`，左腕未移动；scene 两次均未移动。所有检查帧中渲染外参与实际物理 hand×mount 的最大矩阵元素误差为 `4.1462e-5`。自动 hierarchy 随动 **YES**，Python 每帧 `set_world_pose` **NO**。
+
+### Single-pick-place physical validation（最终配置）
+
+同一独立目录中，进程退出码 0，`run_status.json` 为 `passed`、`full_physical_pick_place: true`，`task_report.json` 为 `success: true`。沿用原默认左臂单盒位置 `[-0.20,-0.06] m`、yaw 20°、slot 0；没有修改原控制器、PhysX、IK、路径、速度或成功判据。
+
+| 项目 | 最终实测 |
+|---|---|
+| 完整状态机 | PREGRASP → APPROACH → CLOSE → LIFT → TRANSFER → LOWER → OPEN → RETREAT → HOME → VERIFY → DONE |
+| 抬升检查 | `0.1799665 m`；盒子到 TCP 距离 `0.0004627 m`；两指位置 `0.027344/0.027613 m` |
+| 最终落位 | XY `0.002733477 m`；轴向 yaw `0.0091344°`；顶面朝上 |
+| 松爪 / 撤臂 / 稳定 | 两指最终均 `0.03999994 m`；两臂回 home；稳定保持 `0.5 s` |
+| 物理真实性 | `box_attachment: false`、`box_pose_teleport: false`；控制输入仍为仿真真值 |
+| 时间 | 总仿真时间 `58.4 s`，其中前置相机检查 `13.6 s`、原抓放控制 `44.8 s`；进程墙钟约 `443.27 s`，含启动、检查、渲染和保存 |
+| 图像证据 | `check_PREGRASP_*`、`check_APPROACH_*`、`check_CLOSE_*`、`check_LIFT_*`、`check_LOWER_*`、`check_HOME_*`，以及原流程的 `lifted/released/final_*` |
+
+逐张查看最终 scene 下放与撤臂图：`check_LOWER_scene_camera_rgb.png` 中活动腕部/手掌遮住目标的大部分区域，这是较高俯视角的实际取舍；同帧 `check_LOWER_left_wrist_camera_rgb.png` 中纸盒与夹指清晰可见，`final_scene_camera_rgb.png` 中撤臂后的落位纸盒完整可见。新视角提高九盒场景的目标像素与工作区占比，但不保证每个动作阶段的 scene 目标无遮挡。仅验证该固定案例，不构成多初态成功率。
+
+### 性能对照与限制
+
+相同 640×480、FXAA、120 Hz 物理配置、seed 6 九盒；每 4 个物理步渲染，以下是短段实测，不是统计基准：
+
+| 项目 | 原双相机 | 最终三相机预览 |
+|---|---|---|
+| 120 个物理步墙钟速度 | 28.11 steps/s | 20.78 steps/s，约降低 26% |
+| render + app.update 平均耗时 | 135.2 ms | 187.8 ms |
+| 一组 camera 数据读取 | 5.8 ms | 7.9 ms |
+| 一组完整图像/数组/元数据保存 | 81.2 ms | 118.6 ms |
+| GPU 整体已用显存：创建 product 前 → 首次采集后 | 3620 → 4648 MiB | 3357 → 4615 MiB |
+
+证据为 `two_camera_comparison_01/comparison_performance.json` 和 `camera_reference_preview_02/preview_report.json`。桌面其他进程占用随时间变化，因此不能把绝对 GPU 已用量直接当成进程显存；相对创建前的增加分别约 1028/1258 MiB。保存耗时是完整保存段，含编码、数组/JSON 写入，不含前置 12 次渲染刷新；平均渲染耗时含 app.update。默认 recording 关闭，仅按阶段保存；P1 可用低频、NoSaveImages 或关闭采样，不降低 PhysX 质量。
+
+旧视角九盒 smoke test 的低频无图片模式实测为约 47.48 steps/s（每 12 步渲染、每 24 步采集）。最终配置单盒回归的同模式实测 `54.09 steps/s`：48 个物理步、4 次渲染、2 次周期采集、没有生成 PNG/NPY；内存观测与标定保留。单盒正常每 4 步渲染的短段为 `20.80 steps/s`。两项都保持原 120 Hz 物理时间步，墙钟速度不等于模拟时间步频率。
+
+最终完整回归的 1924 次 render + app.update 平均 `188.49 ms`，17 组数据读取平均 `9.26 ms`；17 组保存平均 `93.98 ms`，其中含 3 组无图像元数据保存，不能与上表全量保存段直接比较。GPU 整体已用显存为创建 product 前 `3125 MiB`、首次采集后 `4374 MiB`，相对增加 `1249 MiB`；实际活动 render product 为 3。详见该目录 `camera_performance.json`。
+
+仍有真实堆叠造成的物体互遮和上述 scene 下放时的机械臂遮挡；没有证明所有 seed、姿态和整个可达空间都可见。腕图有部分手掌/夹指自遮挡，尚未模拟 D405 噪声、相机外壳质量与碰撞。驱动 560.94 仍有 DLSS-RR 需要 R580 的回退提示；本次保持 FXAA 设置，不修改驱动。旧 debug 视频启用五个 render product 的性能未复测。
+
+仓库精选证据见 [docs/three_camera](docs/three_camera/README.md)，包括最终三路 RGB、对应标定、下放遮挡/局部观察、最终落位、物理报告及 SHA-256 来源清单；完整数组和中间试拍仅在本机输出目录保留。三相机实现完成后已通过 19 项逻辑/几何测试、四种模式配置校验、Python 编译及 PowerShell 语法检查；本次上传整理未重新运行 Isaac Sim 或新增测试。两个原控制器和非相机配置保持不变。
+
 ## 2026-10-06：固定倒置单盒双臂翻面与交接
 
 `outputs/handover_verified_video_20261006/task_report.json` 记录 `success=true`、`handover_verified=true`、`last_phase=DONE`。该次使用固定位置、固定倒置姿态、无邻盒障碍的单个纸盒；控制读取仿真真值，用 Lula IK、物理关节位置驱动和两夹爪真实接触。报告明确 `box_attachment=false`、`box_pose_teleport=false`。同配置的 `handover_trial_05` 也成功；两次同配置成功不能推出一般化成功率。

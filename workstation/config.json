@@ -165,7 +165,9 @@
         480
       ],
       "focal_length_mm": 24.0,
-      "horizontal_aperture_mm": 36.0
+      "horizontal_aperture_mm": 36.0,
+      "role": "debug",
+      "enabled": false
     },
     {
       "name": "oblique",
@@ -189,7 +191,114 @@
         480
       ],
       "focal_length_mm": 24.0,
-      "horizontal_aperture_mm": 36.0
+      "horizontal_aperture_mm": 36.0,
+      "role": "debug",
+      "enabled": false
+    },
+    {
+      "name": "scene_camera",
+      "role": "formal",
+      "type": "fixed",
+      "enabled": true,
+      "position": [
+        0.0,
+        -0.41,
+        1.76
+      ],
+      "look_at": [
+        0.0,
+        -0.11,
+        0.80
+      ],
+      "up": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "resolution": [
+        640,
+        480
+      ],
+      "focal_length_mm": 36.0,
+      "horizontal_aperture_mm": 36.0,
+      "clipping_range_m": [
+        0.02,
+        6.0
+      ],
+      "annotations": [
+        "rgb",
+        "distance_to_image_plane",
+        "instance_segmentation",
+        "camera_params"
+      ]
+    },
+    {
+      "name": "left_wrist_camera",
+      "role": "formal",
+      "type": "wrist",
+      "enabled": true,
+      "robot": "panda_left",
+      "mount_translation": [
+        -0.065,
+        0.0,
+        0.025
+      ],
+      "mount_orientation_wxyz": [
+        0.200970385691,
+        -0.677946092308,
+        -0.677946092308,
+        0.200970385691
+      ],
+      "resolution": [
+        640,
+        480
+      ],
+      "focal_length_mm": 20.0,
+      "horizontal_aperture_mm": 36.0,
+      "clipping_range_m": [
+        0.008,
+        2.0
+      ],
+      "annotations": [
+        "rgb",
+        "distance_to_image_plane",
+        "instance_segmentation",
+        "camera_params"
+      ]
+    },
+    {
+      "name": "right_wrist_camera",
+      "role": "formal",
+      "type": "wrist",
+      "enabled": true,
+      "robot": "panda_right",
+      "mount_translation": [
+        0.065,
+        0.0,
+        0.025
+      ],
+      "mount_orientation_wxyz": [
+        0.200970385691,
+        0.677946092308,
+        0.677946092308,
+        0.200970385691
+      ],
+      "resolution": [
+        640,
+        480
+      ],
+      "focal_length_mm": 20.0,
+      "horizontal_aperture_mm": 36.0,
+      "clipping_range_m": [
+        0.008,
+        2.0
+      ],
+      "annotations": [
+        "rgb",
+        "distance_to_image_plane",
+        "instance_segmentation",
+        "camera_params"
+      ]
     }
   ],
   "dual_handover": {
@@ -217,5 +326,13 @@
     "slip_position_m": 0.025,
     "slip_angle_deg": 18.0,
     "verify_timeout_s": 5.0
+  },
+  "camera_system": {
+    "enabled": true,
+    "save_images": true,
+    "recording_enabled": false,
+    "render_interval_steps": 4,
+    "capture_interval_steps": 12,
+    "warmup_render_frames": 12
   }
 }

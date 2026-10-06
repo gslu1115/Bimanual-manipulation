@@ -1,43 +1,55 @@
 # 双 Panda 乱序纸盒整理工作站
 
-本目录是《题目六_场景与算法当前思路讨论稿》的 Isaac Sim 仿真环境，实际项目目录为 `C:\Users\asus\Desktop\sim`。面向本机 Isaac Sim 6.1，使用 `SimulationManager`、experimental `Articulation/RigidPrim`、Lula IK 和 PhysX；当前不是 Isaac Lab 训练环境。
+本目录是《题目六_场景与算法当前思路讨论稿》的 Isaac Sim 仿真环境，代码位于当前仓库的 `workstation/`。面向本机 Isaac Sim 6.1，使用 `SimulationManager`、experimental `Articulation/RigidPrim`、Lula IK 和 PhysX；当前不是 Isaac Lab 训练环境。
 
 目前有四个独立运行模式：默认九盒乱序场景、直立单盒抓放、倒置单盒双臂翻面交接、输送带机构验证。直立单盒使用 `-SinglePickPlace`；固定倒置单盒使用 `-DualHandover`。详见 `单盒抓放使用说明.md` 与 `双臂翻面使用说明.md`。
 
 ## 启动
 
+正式观测为 `scene_camera / left_wrist_camera / right_wrist_camera` 三路 RGB-D，旧 overhead/oblique 保留为 debug，默认不采样。具体参数、层级与坐标约定见 [三相机视觉系统说明](三相机视觉系统说明.md)；仓库可下载的精选证据见 [docs/three_camera](docs/three_camera/README.md)。
+
+从项目根目录 PowerShell 运行相机检查；本次实测安装位为 `D:\Issaccc`，其他机器按实际路径设置 `-IsaacRoot`：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -IsaacRoot D:\Issaccc -CameraCheck -Headless
+powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -IsaacRoot D:\Issaccc -CameraCheck -SinglePickPlace -Headless
+powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -IsaacRoot D:\Issaccc -SinglePickPlace -Headless -NoSaveImages
+```
+
+`camera_system` 配置提供总启用、保存图像、周期记录及 render/capture interval 开关；默认每 4 个物理步渲染、每 12 步采集、周期记录关闭。低频实测使用每 12 步渲染、每 24 步采集，保持原 120 Hz PhysX。
+
 也可以在 `workstation` 目录直接双击 `启动单盒抓放.cmd`，打开 GUI 并自动执行一次单盒抓放。
 
-在 PowerShell 中执行，命令可从任意目录运行：
+以下相对路径命令从项目根目录 PowerShell 运行：
 
 ```powershell
 # 单盒抓放：打开 GUI，自动执行一次，完成后保留窗口供查看。
-powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -SinglePickPlace
+powershell -ExecutionPolicy Bypass -File ".\workstation\launch.ps1" -SinglePickPlace
 
 # 单盒抓放：无窗口运行，保存结果后退出。
-powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -SinglePickPlace -Headless
+powershell -ExecutionPolicy Bypass -File ".\workstation\launch.ps1" -SinglePickPlace -Headless
 
 # 固定倒置单盒：双臂翻面与物理交接。
-powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -DualHandover
+powershell -ExecutionPolicy Bypass -File ".\workstation\launch.ps1" -DualHandover
 # 默认九盒乱序场景：物理释放、沉降、保存观测，机械臂保持 home。
-powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1"
+powershell -ExecutionPolicy Bypass -File ".\workstation\launch.ps1"
 
 # 换一批九盒释放条件并无窗口运行。
-powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -Seed 12 -Headless
+powershell -ExecutionPolicy Bypass -File ".\workstation\launch.ps1" -Seed 12 -Headless
 
 # 输送带机构验证：三个盒子预装在目标处，仅测试摩擦输送。
-powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -ConveyorTest -Headless
+powershell -ExecutionPolicy Bypass -File ".\workstation\launch.ps1" -ConveyorTest -Headless
 ```
 
-`-SinglePickPlace`、`-DualHandover` 与 `-ConveyorTest` 互斥。启动器默认调用 `D:\isaacsim\python.bat`；其他安装位置通过 `-IsaacRoot` 指定。不要使用 Anaconda Python 启动物理仿真。已有 Isaac Sim 窗口时，先关闭不需要的实例，避免重复占用显存与内存。
+`-SinglePickPlace`、`-DualHandover` 与 `-ConveyorTest` 互斥。启动器默认调用 `D:\isaacsim\python.bat`；默认目录不存在时回退到 `D:\Issaccc`，其他安装位置通过 `-IsaacRoot` 指定。不要使用 Anaconda Python 启动物理仿真。已有 Isaac Sim 窗口时，先关闭不需要的实例，避免重复占用显存与内存。
 
 默认加载 `sorting.kit` 精简扩展配置。需要完整编辑器扩展时，可直接运行 `run_scene.py --full-app`。首次运行需要加载、缓存官方 Franka USD 资产及其依赖；有完整本地资产时可用 `-RobotUsd 'D:\assets\franka.usda'`，同时保留资产引用的几何、材质与配置。脚本不会自动适配其他机器人。
 
-离线配置及纯逻辑校验可使用普通 Python：
+离线配置校验可使用普通 Python；完整几何/逻辑测试还需要 NumPy（Isaac Sim 自带 Python 已有，不创建 SimulationApp）：
 
 ```powershell
-python "C:\Users\asus\Desktop\sim\workstation\run_scene.py" --validate-only
-python -m unittest discover -s "C:\Users\asus\Desktop\sim\workstation" -p "test_*.py" -v
+python ".\workstation\run_scene.py" --validate-only
+python -m unittest discover -s ".\workstation" -p "test_*.py" -v
 ```
 
 ## 格子如何处理
@@ -83,7 +95,7 @@ python -m unittest discover -s "C:\Users\asus\Desktop\sim\workstation" -p "test_
 通过启动器运行后，所有文件保存在：
 
 ```text
-C:\Users\asus\Desktop\sim\workstation\outputs\
+workstation/outputs/
   single_pnp_seed_006_YYYYMMDD_HHMMSS\   单盒抓放
   seed_006_YYYYMMDD_HHMMSS\              默认乱序场景
   conveyor_seed_006_YYYYMMDD_HHMMSS\     输送带验证
@@ -110,15 +122,15 @@ C:\Users\asus\Desktop\sim\workstation\outputs\
 | `run_report.json` | 实际关节位置、物体状态、落位误差和输送事件 |
 | `run_status.json` | 本次运行 `passed/failed`；异常时另有 `failure.txt` |
 
-图像文件中 `*` 包括相机名 `overhead` 或 `oblique`，例如 `final_overhead_rgb.png`。失败可能发生在某阶段之前，因此不是每次都有四组图像；启用 `--no-sensors` 时不保存传感器图像。如果控制器还未构造完成就出错，可能只有 `failure.txt` 与 `run_status.json`，没有 `task_report.json` 或控制轨迹。
+图像文件中 `*` 默认为三台正式相机名，例如 `final_left_wrist_camera_rgb.png`；旧 debug 相机仅在显式启用或双臂旧视频录制时采样。`--record-video` 仍使用 overhead/oblique，可能同时启用五个 render product，该模式性能未复测。`--no-save-images` 不写 PNG/NPY，但保留内存观测和逐帧标定。失败可能发生在某阶段之前，因此不是每次都有四组图像；启用 `--no-sensors` 时不保存传感器图像。如果控制器还未构造完成就出错，可能只有 `failure.txt` 与 `run_status.json`，没有 `task_report.json` 或控制轨迹。
 
 **在 GUI 中看最终位置，打开该次目录的 `final.usda`；看抓放动作，运行 `launch.ps1 -SinglePickPlace`。** 单独打开 USD 不会自动运行 Python 控制器，点 Play 也不会重新执行抓放。USD 是状态快照，不是动作录像或控制器 checkpoint，并仍引用官方机器人资产。
 
 ## 观测和后续算法
 
-两台相机输出真实渲染 RGB 和 `distance_to_image_plane` 深度，采用无畸变针孔模型，尚未模拟真实 RGB-D 噪声、透明物体失效等误差。深度可能含 `inf`，应使用 `isfinite` 筛选。反投影为 `p_camera = depth * inv(K) @ [u,v,1]`，再乘 `T_world_from_camera_opencv`。相机轴为 +X 右、+Y 下、+Z 前；物体四元数为 wxyz，角速度单位 rad/s。
+三台正式相机输出真实渲染 RGB 和 `distance_to_image_plane` 深度，采用无畸变针孔模型，尚未模拟真实 RGB-D 噪声、透明物体失效等误差。深度可能含 `inf`，应使用 `isfinite` 筛选。反投影为 `p_camera = depth * inv(K) @ [u,v,1]`，再乘 `T_world_from_camera_opencv`。相机轴为 +X 右、+Y 下、+Z 前；物体四元数为 wxyz，角速度单位 rad/s。
 
-`environment.py` 提供场景、观测及关节命令接口；`task_logic.py` 提供落位评价、输送和任务状态机；`single_pick_place.py` 提供真值与 IK 单盒控制基线。默认九盒模式继续保留未来三步算法接口：先评估直接抓放候选，没有候选时考虑解锁，执行后复核并重新观察。
+`environment.observe_cameras(refresh=True)` 提供三路统一采集接口，包含 RGB-D、K、渲染帧外参和时间。此调试接口的实例标签不是现实相机输入，后续 `ObservationPacket` 必须筛除；当前尚未实现完整传感器适配器或视觉闭环。`environment.py` 提供场景、观测及关节命令接口；`task_logic.py` 提供落位评价、输送和任务状态机；`single_pick_place.py` 提供真值与 IK 单盒控制基线。默认九盒模式继续保留未来三步算法接口：先评估直接抓放候选，没有候选时考虑解锁，执行后复核并重新观察。
 
 当前尚未接入 RGB-D 物体位姿估计、乱序抓取候选评估、通用避碰规划、侧放扶正或学习训练。已有 RGB-D 输出不代表机器人正在通过图像感知。固定单盒和固定双臂交接只验证相应物理执行链路，不能作为视觉系统、多盒任务或泛化效果的结论。最终可迁移策略必须只使用 RGB-D、标定、实测机器人与夹爪状态等真机可得观测；`observe_ground_truth()` 与渲染器真实实例标签只能进入标签、调试和离线验收通道。
 

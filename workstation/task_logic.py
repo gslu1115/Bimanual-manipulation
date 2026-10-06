@@ -107,9 +107,8 @@ def validate(c):
     p = c['physics']
     if not 0 <= p['dynamic_friction'] <= p['static_friction'] or not 0 <= p['restitution'] <= 1:
         raise ValueError('Invalid contact material')
-    for cam in c['cameras']:
-        if len(cam['resolution']) != 2 or any(type(v) is not int or v < 16 for v in cam['resolution']):
-            raise ValueError('Invalid camera resolution [width, height]')
+    from camera_config import validate_cameras
+    validate_cameras(c)
     if 'single_pick_place' in c:
         s = c['single_pick_place']
         if not isinstance(s, dict):
