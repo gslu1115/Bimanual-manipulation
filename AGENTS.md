@@ -17,7 +17,8 @@
 
 - `scene_camera` 高位中央斜视，位置 `[0,-0.41,1.76] m`，look-at `[0,-0.11,0.80] m`；左右腕挂在实际物理 `panda_hand` 子节点，自动随动，无 Python 每帧写世界位姿。三路均为 640×480，旧 overhead/oblique 保留为 debug，默认不采样。
 - 最终配置已实测三路 RGB-D、实例标签、逐帧 K/动态外参、左右独立运动和低频无图像保存。原固定左臂完整抓放回归通过：抬升 0.179967 m、XY 误差 2.733 mm、轴向 yaw 0.0091°、稳定 0.5 s、两臂回 home；控制器未修改。未复测三相机下的双臂交接或五路视频。
-- `observe_cameras()` 是仿真采集/调试接口，包含实例标签；尚未建立路线中的完整 `ObservationPacket` 与独立 `PrivilegedRecord`。未来适配器必须过滤仿真特权字段，不能将调试字典整体作为策略输入。
+- 用户确认真实工位只有 `scene_camera`、`left_wrist_camera`、`right_wrist_camera` 三个可用机位。旧 overhead/oblique 只能调试，不能进入策略或部署输入训练集；重新观察只能读取这三路或安全移动现有腕相机。
+- `observe_cameras()` 是仿真采集/调试接口，包含实例标签和渲染器动态世界外参，尚未建立路线中的完整 `ObservationPacket` 与独立 `PrivilegedRecord`。适配器必须白名单过滤，并把图像曝光时刻的实测关节/夹爪状态绑定到帧；腕外参由同时间 FK×手眼标定求得，渲染外参只用于离线核查。
 - 详见 `workstation/三相机视觉系统说明.md`、`workstation/VALIDATION.md`；精选最终截图和报告位于 `workstation/docs/three_camera/`。下放时 scene 有手掌遮挡，同帧腕部目标可见，撤臂后 scene 完整可见。
 
 ## 当前推进方向
@@ -79,7 +80,7 @@
     powershell -ExecutionPolicy Bypass -File .\workstation\launch.ps1 -CameraCheck -SinglePickPlace -Headless
     python .\workstation\run_scene.py --validate-only
 
-仿真默认使用 `D:\isaacsim\python.bat`；默认目录不存在时回退到本次三相机实测的 `D:\Issaccc`；其他安装位置可传 `-IsaacRoot`。`-NoSaveImages` 保留内存观测和标定，跳过大型图像/数组保存。不要用普通 Anaconda Python 启动 Isaac Sim。任务模式互斥；每次运行建立独立输出目录。
+仿真默认使用 `D:\isaacsim\python.bat`；默认目录不存在时回退到本次三相机仿真运行使用的 `D:\Issaccc`；其他安装位置可传 `-IsaacRoot`。`-NoSaveImages` 保留内存观测和标定，跳过大型图像/数组保存。不要用普通 Anaconda Python 启动 Isaac Sim。任务模式互斥；每次运行建立独立输出目录。
 
 ## 协作约定
 
