@@ -2,7 +2,7 @@
 
 本目录是《题目六_场景与算法当前思路讨论稿》的 Isaac Sim 仿真环境，实际项目目录为 `C:\Users\asus\Desktop\sim`。面向本机 Isaac Sim 6.1，使用 `SimulationManager`、experimental `Articulation/RigidPrim`、Lula IK 和 PhysX；当前不是 Isaac Lab 训练环境。
 
-目前有三个独立运行模式：默认的九盒乱序场景、单盒抓放基线、输送带机构验证。**需要看机械臂抓放时，使用 `-SinglePickPlace`。** 单盒操作的逐步说明见 `单盒抓放使用说明.md`。
+目前有四个独立运行模式：默认九盒乱序场景、直立单盒抓放、倒置单盒双臂翻面交接、输送带机构验证。直立单盒使用 `-SinglePickPlace`；固定倒置单盒使用 `-DualHandover`。详见 `单盒抓放使用说明.md` 与 `双臂翻面使用说明.md`。
 
 ## 启动
 
@@ -17,6 +17,8 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\
 # 单盒抓放：无窗口运行，保存结果后退出。
 powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -SinglePickPlace -Headless
 
+# 固定倒置单盒：双臂翻面与物理交接。
+powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -DualHandover
 # 默认九盒乱序场景：物理释放、沉降、保存观测，机械臂保持 home。
 powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1"
 
@@ -27,7 +29,7 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\
 powershell -ExecutionPolicy Bypass -File "C:\Users\asus\Desktop\sim\workstation\launch.ps1" -ConveyorTest -Headless
 ```
 
-`-SinglePickPlace` 与 `-ConveyorTest` 不可同时使用。启动器默认调用 `D:\isaacsim\python.bat`；其他安装位置通过 `-IsaacRoot` 指定。不要使用 Anaconda Python 启动物理仿真。已有 Isaac Sim 窗口时，先关闭不需要的实例，避免重复占用显存与内存。
+`-SinglePickPlace`、`-DualHandover` 与 `-ConveyorTest` 互斥。启动器默认调用 `D:\isaacsim\python.bat`；其他安装位置通过 `-IsaacRoot` 指定。不要使用 Anaconda Python 启动物理仿真。已有 Isaac Sim 窗口时，先关闭不需要的实例，避免重复占用显存与内存。
 
 默认加载 `sorting.kit` 精简扩展配置。需要完整编辑器扩展时，可直接运行 `run_scene.py --full-app`。首次运行需要加载、缓存官方 Franka USD 资产及其依赖；有完整本地资产时可用 `-RobotUsd 'D:\assets\franka.usda'`，同时保留资产引用的几何、材质与配置。脚本不会自动适配其他机器人。
 
@@ -118,7 +120,7 @@ C:\Users\asus\Desktop\sim\workstation\outputs\
 
 `environment.py` 提供场景、观测及关节命令接口；`task_logic.py` 提供落位评价、输送和任务状态机；`single_pick_place.py` 提供真值与 IK 单盒控制基线。默认九盒模式继续保留未来三步算法接口：先评估直接抓放候选，没有候选时考虑解锁，执行后复核并重新观察。
 
-当前尚未接入 RGB-D 物体位姿估计、乱序抓取候选评估、通用避碰规划、双臂解锁或学习训练。已有 RGB-D 输出不代表机器人正在通过图像感知。单盒基线验证的是物理执行链路，不能作为视觉系统、双臂算法或端到端训练效果的结论。
+当前尚未接入 RGB-D 物体位姿估计、乱序抓取候选评估、通用避碰规划、侧放扶正或学习训练。已有 RGB-D 输出不代表机器人正在通过图像感知。固定单盒和固定双臂交接只验证相应物理执行链路，不能作为视觉系统、多盒任务或泛化效果的结论。
 
 ## 代码与参数入口
 
@@ -128,7 +130,8 @@ C:\Users\asus\Desktop\sim\workstation\outputs\
 | `launch.ps1` | 启动模式、时间戳输出目录和 Isaac Sim Python 入口 |
 | `run_scene.py` | 仿真启动、模式选择、任务执行、输出及 GUI 生命周期 |
 | `environment.py` | USD 构建、物理步进、机器人接口、传感器与快照 |
-| `single_pick_place.py` | 单盒 IK、关节驱动、抓放阶段及物理结果监测 |
+| `single_pick_place.py` | 直立单盒 IK、关节驱动、抓放阶段及物理结果监测 |
+| `dual_handover.py`、`handover_math.py` | 倒置单盒双臂翻面、物理交接和几何辅助 |
 | `task_logic.py` | 参数校验、随机释放、落位/单盒成功判据、输送状态机 |
 | `test_task_logic.py` | 纯逻辑测试，不能代替 Isaac Sim 物理验证 |
 
