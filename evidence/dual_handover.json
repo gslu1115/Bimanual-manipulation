@@ -1,0 +1,202 @@
+{
+  "success": true,
+  "mode": "dual_handover",
+  "observation_source": "simulator_ground_truth",
+  "box_attachment": false,
+  "box_pose_teleport": false,
+  "controller": "Lula IK + physical position drives",
+  "direction_semantics": "top +Z up; tape axis modulo 180 degrees",
+  "initial_box": {
+    "name": "box_00",
+    "position": [
+      -0.20000000298023224,
+      -0.06000010296702385,
+      0.7824998497962952
+    ],
+    "orientation_wxyz": [
+      3.867767759402341e-07,
+      1.0,
+      -9.554513269449671e-08,
+      1.1701980895395536e-07
+    ],
+    "linear_velocity": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "angular_velocity": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "giver_model_error_m": 9.977030622103326e-08,
+  "receiver_model_error_m": 1.1744858585838668e-07,
+  "receiver_approach_candidates": {
+    "valid": 6,
+    "rejected": []
+  },
+  "handover_proof": {
+    "giver_fingers": [
+      0.039999958127737045,
+      0.03999994695186615
+    ],
+    "receiver_fingers": [
+      0.02727830782532692,
+      0.027557002380490303
+    ],
+    "proof_lift_m": 0.04035139083862305,
+    "giver_tcp_distance_m": 0.17407908107868067
+  },
+  "slot_errors": {
+    "xy_m": 0.0005221415030203731,
+    "z_m": 3.099441525655777e-08,
+    "tilt_deg": 4.9783130603797145e-06,
+    "axis_yaw_deg": 0.17813895297347276,
+    "linear_speed": 0.0016016521388582902,
+    "angular_speed": 2.885457825136239e-05
+  },
+  "stable_duration_s": 0.5000000000000007,
+  "both_arms_home": true,
+  "recording": {
+    "file": "handover.mp4",
+    "frames": 1200,
+    "fps": 10.0
+  },
+  "events": [
+    {
+      "phase": "GIVER_PREGRASP",
+      "time_s": 2.5999999999999934
+    },
+    {
+      "phase": "GIVER_APPROACH",
+      "time_s": 9.46666666666677,
+      "tcp_error_m": 0.0006572852990429127,
+      "tcp_angle_error_deg": 0.17370975051671814
+    },
+    {
+      "phase": "GIVER_CLOSE",
+      "time_s": 19.45833333333287
+    },
+    {
+      "phase": "GIVER_LIFT",
+      "time_s": 20.85833333333279,
+      "tcp_error_m": 0.0034686026044420774,
+      "tcp_angle_error_deg": 0.7422983804984951
+    },
+    {
+      "phase": "GIVER_TRANSFER",
+      "time_s": 28.39999999999903,
+      "tcp_error_m": 0.005067379784842162,
+      "tcp_angle_error_deg": 1.2869612993049717
+    },
+    {
+      "phase": "GIVER_TURN",
+      "time_s": 34.57499999999868,
+      "tcp_error_m": 0.009841974480808084,
+      "tcp_angle_error_deg": 2.2344181794539346
+    },
+    {
+      "phase": "RECEIVER_PREGRASP",
+      "time_s": 43.25833333333152
+    },
+    {
+      "phase": "RECEIVER_APPROACH",
+      "time_s": 49.58333333333116,
+      "tcp_error_m": 0.0013672783209962669,
+      "tcp_angle_error_deg": 0.22456026169910323
+    },
+    {
+      "phase": "RECEIVER_CLOSE",
+      "time_s": 58.449999999997324
+    },
+    {
+      "phase": "GIVER_RELEASE",
+      "time_s": 59.849999999997245
+    },
+    {
+      "phase": "GIVER_RETREAT",
+      "time_s": 61.249999999997165,
+      "tcp_error_m": 0.0011517810318710203,
+      "tcp_angle_error_deg": 0.10250621098607136
+    },
+    {
+      "phase": "RECEIVER_PROOF",
+      "time_s": 67.58333333333319,
+      "tcp_error_m": 0.003705173675832024,
+      "tcp_angle_error_deg": 1.3266768006610319
+    },
+    {
+      "phase": "GIVER_HOME",
+      "time_s": 70.6500000000023
+    },
+    {
+      "phase": "RECEIVER_UPRIGHT",
+      "time_s": 76.93333333334063,
+      "tcp_error_m": 0.002701584193152483,
+      "tcp_angle_error_deg": 0.8231860594273477
+    },
+    {
+      "phase": "RECEIVER_TRANSFER",
+      "time_s": 85.86666666668107,
+      "tcp_error_m": 0.003385780219253013,
+      "tcp_angle_error_deg": 0.9954164291647773
+    },
+    {
+      "phase": "RECEIVER_LOWER",
+      "time_s": 95.26666666668855,
+      "tcp_error_m": 0.0018253206831531938,
+      "tcp_angle_error_deg": 0.48026120236239334
+    },
+    {
+      "phase": "RECEIVER_RELEASE",
+      "time_s": 105.10000000002971
+    },
+    {
+      "phase": "RECEIVER_RETREAT",
+      "time_s": 106.50000000003082,
+      "tcp_error_m": 0.0029768181686547863,
+      "tcp_angle_error_deg": 0.19202622730891364
+    },
+    {
+      "phase": "RECEIVER_HOME",
+      "time_s": 114.06666666670351
+    },
+    {
+      "phase": "VERIFY",
+      "time_s": 122.1333333333766
+    },
+    {
+      "phase": "DONE",
+      "time_s": 122.633333333377
+    }
+  ],
+  "last_phase": "DONE",
+  "max_lift_m": 0.44319456815719604,
+  "handover_verified": true,
+  "simulation_time_s": 122.633333333377,
+  "final_box": {
+    "name": "box_00",
+    "position": [
+      0.19951167702674866,
+      -0.3998151421546936,
+      0.7824999690055847
+    ],
+    "orientation_wxyz": [
+      0.0015545550268143415,
+      9.589014027255871e-09,
+      4.230724215403825e-08,
+      0.9999988079071045
+    ],
+    "linear_velocity": [
+      6.750745740191633e-08,
+      6.40387781913887e-07,
+      0.0016016520094126463
+    ],
+    "angular_velocity": [
+      2.8439797461032867e-05,
+      -4.553575308818836e-06,
+      -1.7405626522304374e-06
+    ]
+  }
+}

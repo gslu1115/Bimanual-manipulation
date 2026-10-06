@@ -107,7 +107,7 @@ def validate(c):
     p = c['physics']
     if not 0 <= p['dynamic_friction'] <= p['static_friction'] or not 0 <= p['restitution'] <= 1:
         raise ValueError('Invalid contact material')
-    from camera_config import validate_cameras
+    from workstation.observations.camera_config import validate_cameras
     validate_cameras(c)
     if 'single_pick_place' in c:
         s = c['single_pick_place']

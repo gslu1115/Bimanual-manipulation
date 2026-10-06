@@ -1,12 +1,12 @@
-# Isaac Sim run artifacts
-workstation/outputs/
+# Local simulation results and caches
+outputs/
+# Preserve this historical recording locally, outside version control
+evidence/dual_handover.mp4
 *.log
-
-# Python bytecode and caches
 **/__pycache__/
 *.py[cod]
 
-# Local secrets and environment files
+# Local environment and secrets
 .env
 .env.*
 !.env.example
