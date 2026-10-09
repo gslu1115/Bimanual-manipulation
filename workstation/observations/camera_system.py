@@ -24,6 +24,7 @@ class CameraSystem:
         self.render_frame_index = 0
         self.rendered_tick, self.rendered_time = 0, 0.
         self.rendered_joint_positions = None
+        self.rendered_robot_states = None
         self.metrics = dict(render_calls=0, render_wall_s=0., data_reads=0, data_read_wall_s=0.,
                             saved_frames=0, save_wall_s=0., gpu_memory=[])
         self._gpu_sample('before_render_products')
@@ -114,7 +115,7 @@ class CameraSystem:
         # Auto physics stepping is disabled. Sample measured joints at the physics
         # state that will be rendered, then keep them with this image tick.
         sampled_tick, sampled_time = self.env.ticks, self.env.time
-        sampled_joints = self.env.observe_robot_joint_positions()
+        sampled_states = self.env.observe_robot_states()
         started = time.perf_counter()
         RenderingManager.render()
         self.env.app.update()
@@ -122,7 +123,13 @@ class CameraSystem:
         self.metrics['render_calls'] += 1
         self.render_frame_index += 1
         self.rendered_tick, self.rendered_time = sampled_tick, sampled_time
-        self.rendered_joint_positions = sampled_joints
+        self.rendered_robot_states = sampled_states
+        # Compatibility diagnostic snapshot in each articulation's native DOF order.
+        from workstation.observations.observation_packet import PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
+        names = PANDA_ARM_JOINT_NAMES + PANDA_FINGER_JOINT_NAMES
+        self.rendered_joint_positions = {
+            name: state.qpos[[names.index(joint) for joint in self.env.arms[name].dof_names]]
+            for name, state in sampled_states.items()}
 
     def observe(self, refresh=False, tolerate_errors=False, include_privileged=True):
         if not self.sensors:

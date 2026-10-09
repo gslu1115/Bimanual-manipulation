@@ -1,6 +1,13 @@
 {
   "schema_version": 2,
   "seed": 6,
+  "policy_observation": {
+    "camera_names": ["cam_high", "cam_left_wrist", "cam_right_wrist"],
+    "state_schema": "panda_positions_and_width_v1",
+    "sync_tolerance_s": 0.02,
+    "max_frame_age_s": 0.15,
+    "include_depth": false
+  },
   "physics": {
     "dt": 0.008333333333333333,
     "gravity": 9.81,

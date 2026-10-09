@@ -109,6 +109,8 @@ def validate(c):
         raise ValueError('Invalid contact material')
     from workstation.observations.camera_config import validate_cameras
     validate_cameras(c)
+    from workstation.observations.policy_observation import policy_settings
+    policy_settings(c)
     if 'single_pick_place' in c:
         s = c['single_pick_place']
         if not isinstance(s, dict):

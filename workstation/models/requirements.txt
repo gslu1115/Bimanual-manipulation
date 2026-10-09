@@ -1,0 +1,10 @@
+# Isolated Python 3.12 only. Install torch/vision first from the official cu124 index.
+torch==2.6.0
+torchvision==0.21.0
+numpy==2.2.6
+ultralytics==8.3.253
+opencv-python==4.12.0.88
+pyzmq==27.2.0
+msgpack==1.2.3
+msgpack-numpy==0.4.8
+clip @ git+https://github.com/ultralytics/CLIP.git@7ffa84b3bfa40c42ecc1c77147a855e69cb2dd40

@@ -2,7 +2,8 @@
 import unittest
 from types import SimpleNamespace
 import numpy as np
-from workstation.observations.observation_packet import FORMAL_CAMERA_NAMES, ROBOT_NAMES, ObservationPacket
+from workstation.observations.observation_packet import (FORMAL_CAMERA_NAMES, ROBOT_NAMES, ObservationPacket,
+    PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES)
 from workstation.observations.sim_sensor_adapter import SimSensorAdapter
 
 
@@ -29,9 +30,14 @@ class PacketTests(unittest.TestCase):
         def observe(**kwargs):
             self.calls.append(kwargs)
             return self.raw
+        joint_map = PandaJointMap(PANDA_ARM_JOINT_NAMES + PANDA_FINGER_JOINT_NAMES)
         self.env = SimpleNamespace(time=1.05, observe_cameras=observe,
             observe_robot_joint_positions=lambda: self.new,
+            observe_robot_states=lambda: {name: joint_map.extract(q, np.ones(9), self.env.time)
+                                         for name, q in self.new.items()},
             camera_system=SimpleNamespace(rendered_joint_positions=self.old,
+                rendered_robot_states={name: joint_map.extract(q, np.zeros(9), 1.)
+                                       for name, q in self.old.items()},
                 rendered_tick=120, rendered_time=1.))
         self.adapter = SimSensorAdapter.__new__(SimSensorAdapter)
         self.adapter.env = self.env
@@ -41,6 +47,7 @@ class PacketTests(unittest.TestCase):
         self.adapter._T_hand_from_camera_cv = {name:np.eye(4) for name in FORMAL_CAMERA_NAMES[1:]}
         solver = SimpleNamespace(compute_forward_kinematics=lambda frame,q:(np.array([q[0],0.,0.]),np.eye(3)))
         self.adapter._solvers = {name:solver for name in ROBOT_NAMES}
+        self.adapter._fk_joint_indices = {name:list(range(7)) for name in ROBOT_NAMES}
 
     def test_whitelist_and_old_joint_snapshot(self):
         packet = self.adapter.read()
@@ -52,6 +59,9 @@ class PacketTests(unittest.TestCase):
         self.assertAlmostEqual(left.robot_state_at_frame["panda_left"].joint_positions_rad[0],.1)
         self.assertAlmostEqual(packet.latest_robot_state["panda_left"].joint_positions_rad[0],.7)
         self.assertFalse(left.rgb.flags.writeable)
+        self.assertAlmostEqual(packet.robot_state["panda_left"].joint_positions_rad[0], .1)
+        self.assertAlmostEqual(packet.timestamp, 1.)
+        np.testing.assert_array_equal(packet.robot_state["panda_left"].qvel, np.zeros(9))
 
     def test_single_failure_is_isolated(self):
         self.raw["camera_errors"]["left_wrist_camera"]="acquisition error"
@@ -91,6 +101,30 @@ class PacketTests(unittest.TestCase):
             ObservationPacket(cameras=packet.cameras,
                 camera_status={name:"STALE" for name in FORMAL_CAMERA_NAMES},
                 latest_robot_state=packet.latest_robot_state,assembled_time_s=packet.assembled_time_s)
+
+    def test_tcp_from_matching_encoders_without_usd_truth(self):
+        packet = self.adapter.read()
+        tcp = packet.robot_state['panda_left'].tcp_pose_world
+        np.testing.assert_allclose(tcp, [.1, 0., 0., 1., 0., 0., 0.])
+        self.assertAlmostEqual(packet.latest_robot_state['panda_left'].tcp_pose_world[0], .7)
+
+    def test_lula_joint_order_is_resolved_by_name(self):
+        received = []
+        def fk(frame, q):
+            received.append(q.copy())
+            return np.zeros(3), np.eye(3)
+        self.adapter._solvers['panda_left'] = SimpleNamespace(compute_forward_kinematics=fk)
+        self.adapter._fk_joint_indices['panda_left'] = list(reversed(range(7)))
+        self.adapter.read()
+        np.testing.assert_array_equal(received[0], self.new['panda_left'][:7][::-1])
+        np.testing.assert_array_equal(received[-1], self.old['panda_left'][:7][::-1])
+
+    def test_misaligned_encoder_snapshot_invalidates_cameras(self):
+        from dataclasses import replace
+        states = self.env.camera_system.rendered_robot_states
+        states['panda_left'] = replace(states['panda_left'], sample_time_s=.9)
+        packet = self.adapter.read()
+        self.assertEqual(set(packet.camera_status.values()), {'INVALID'})
 
 
 if __name__=="__main__": unittest.main()

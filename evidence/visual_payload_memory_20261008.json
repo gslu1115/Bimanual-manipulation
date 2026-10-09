@@ -1,0 +1,2365 @@
+{
+  "schema": "visual_continuation_development_v1",
+  "date": "2026-10-08",
+  "logic_checks": {
+    "isolated": {
+      "log": "outputs\\visual_continuation_20261008\\logic_276_verified.txt",
+      "count": 276,
+      "passed": true,
+      "command": "unittest.defaultTestLoader.discover(\"tests\")",
+      "scope": "logic only, not physical acceptance"
+    },
+    "sdk": {
+      "log": "outputs\\visual_continuation_20261008\\sdk_logic_276_verified.txt",
+      "count": 276,
+      "passed": true,
+      "command": "unittest.defaultTestLoader.discover(\"tests\")",
+      "scope": "logic only, not physical acceptance"
+    }
+  },
+  "initial_git_status": "outputs/visual_continuation_20261008/initial_git_status.txt",
+  "preservation": {
+    "initial_files": 77,
+    "missing": [],
+    "changed": [
+      "AGENTS.md",
+      "README.md",
+      "launch.ps1",
+      "workstation/app.py",
+      "workstation/diagnostics/vision_check.py",
+      "workstation/diagnostics/visual_run.py",
+      "workstation/observations/camera_geometry.py",
+      "workstation/perception/held_surface.py",
+      "workstation/perception/rgbd_cartons.py",
+      "workstation/perception/scene_estimate.py",
+      "workstation/planning/collision.py",
+      "workstation/planning/selection.py",
+      "workstation/simulation/environment.py",
+      "workstation/simulation/robot_driver.py",
+      "workstation/simulation/visual_fixtures.py",
+      "workstation/skills/reobserve.py",
+      "workstation/skills/visual_pick_place.py",
+      "tests/test_camera_system.py",
+      "tests/test_held_surface.py",
+      "tests/test_path_preflight.py",
+      "tests/test_robot_driver.py",
+      "tests/test_scene_estimate.py",
+      "tests/test_vision_overlay.py",
+      "tests/test_visual_monitor.py",
+      "tests/test_visual_planning.py",
+      "项目路线与当前状态交接.md"
+    ],
+    "protected_files": 21,
+    "protected_changed": [
+      "workstation/observations/camera_geometry.py"
+    ],
+    "intentional_calibration_fix": {
+      "source": "workstation/observations/camera_geometry.py",
+      "backup": "outputs/visual_continuation_20261008/camera_geometry_before_pixel_centre_fix.py",
+      "change": "Replicator raster corner -> integer pixel centre cx/cy -0.5; existing API and three-camera architecture retained",
+      "measured_evidence": "outputs/visual_continuation_20261008/pixel_centre_offset_audit.json"
+    }
+  },
+  "resources": {
+    "gpu": "RTX 4060 Laptop 8188 MiB",
+    "driver": "560.94",
+    "ram_total_gib": 31.7967,
+    "isaac": "6.1.0-rc.26",
+    "isaac_python": "3.12.13",
+    "isaac_numpy": "2.3.1",
+    "model_python": "3.12.13",
+    "model_numpy": "2.2.6",
+    "torch": "2.6.0+cu124",
+    "ultralytics": "8.3.253",
+    "cuda_available": true,
+    "inference_isolated": true,
+    "core_dependencies_modified": false
+  },
+  "model": {
+    "family": "project fine-tuned YOLO11n-seg",
+    "weights": "outputs/carton_seg_motion_training_20261007/fit/weights/best.pt",
+    "sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+    "confidence": 0.4,
+    "historical_selection": "evidence/model_progress_20261008.json",
+    "zero_shot_yoloe_accepted": false,
+    "grasp_source": "geometric templates; user selected; no GraspGen inference result"
+  },
+  "historical": {
+    "earlier_fixed_visual_repeats": "2/2; before unknown-space constraints; not current acceptance",
+    "evidence": "outputs/model_integration_20261007/fixed_repeat_results_20261008.json"
+  },
+  "current": {
+    "completed_trial_records": 15,
+    "complete_success_records": 3,
+    "first_recorded_trial": 43,
+    "count_is_success_rate": false,
+    "ledger_includes_separately_reported_frozen_repeats": true,
+    "pending": [],
+    "trials": [
+      {
+        "run": "outputs\\visual_space_pnp_20261008_43",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8050014839373969,
+          "height_gain_m": -2.1897665658521248e-07,
+          "top_coverage": 0.5327964477195429,
+          "top_spans_m": [
+            0.05377468347317006,
+            0.05499853414005165
+          ],
+          "side_points": 11143,
+          "surface_inlier_ratio": 0.9966525548882544,
+          "plane_residual_m": 0.00042815998994669385,
+          "surface_tilt_deg": 0.36838263506398045,
+          "top_model_error_m": 2.1897665658521248e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 96882,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 16.449999999999708,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.23375,
+            -0.07374999999999998,
+            0.81125
+          ],
+          "last_unknown_sample_m": [
+            -0.23248018097930512,
+            -0.07252816611314009,
+            0.8100374876078555
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                171.80263268395555,
+                214.87529076527568
+              ],
+              "camera_z_m": 1.007379606898334,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.9158681631088257
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                309.59726224491806,
+                34.06321161106348
+              ],
+              "camera_z_m": 0.09679007515528634,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.04545557498931885
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                751.315865951692,
+                104.6323351157512
+              ],
+              "camera_z_m": 0.4878466025038143,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 300,
+            "oldest_reused_age_s": 3.849999999999783,
+            "criterion": "previous valid optical ray; current robot/currently supported payload 3x3 shadow; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 0,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 16.449999999999708,
+            "mask_refs": [
+              "left_wrist_camera/222/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_43\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_43\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_43\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_44",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8050071276138291,
+          "height_gain_m": -1.6578868489158793e-07,
+          "top_coverage": 0.5333563773215267,
+          "top_spans_m": [
+            0.053784824206602175,
+            0.055001833144088186
+          ],
+          "side_points": 11395,
+          "surface_inlier_ratio": 0.9525032092426188,
+          "plane_residual_m": 0.00039956514478559785,
+          "surface_tilt_deg": 0.331851776923231,
+          "top_model_error_m": 1.6578868489158793e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 96861,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 16.449999999999708,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.23875,
+            -0.07124999999999998,
+            0.81125
+          ],
+          "last_unknown_sample_m": [
+            -0.23748282912717947,
+            -0.07002682548194744,
+            0.8100082371173847
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                168.74022624974887,
+                213.3841058809062
+              ],
+              "camera_z_m": 1.0081536132654358,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.91010582447052
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                324.2622601823725,
+                27.050972974357776
+              ],
+              "camera_z_m": 0.09891150512764267,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.0447545051574707
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                753.7189706466864,
+                106.5256199615005
+              ],
+              "camera_z_m": 0.4892430660887713,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 332,
+            "oldest_reused_age_s": 3.849999999999783,
+            "criterion": "previous valid optical ray; current robot/currently supported payload 3x3 shadow; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 0,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 16.449999999999708,
+            "mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1",
+              "scene_camera/222/component_2"
+            ],
+            "support_mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_44\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_44\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_44\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_45",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049962233020337,
+          "height_gain_m": -1.4617945442996216e-07,
+          "top_coverage": 0.5328523782190492,
+          "top_spans_m": [
+            0.053738978110651044,
+            0.054996257392655845
+          ],
+          "side_points": 11347,
+          "surface_inlier_ratio": 0.9511568123393316,
+          "plane_residual_m": 0.00042451639406524484,
+          "surface_tilt_deg": 0.36561564894302795,
+          "top_model_error_m": 1.4617945442996216e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 96927,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 16.449999999999708,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.22625,
+            -0.07374999999999998,
+            0.80875
+          ],
+          "last_unknown_sample_m": [
+            -0.22500000000000003,
+            -0.07250000000000002,
+            0.8099999999999999
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                176.56114792298456,
+                214.86639526276846
+              ],
+              "camera_z_m": 1.0074237893166602,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.9130914211273193
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                299.4851385784638,
+                48.14178581740962
+              ],
+              "camera_z_m": 0.09293310240508337,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.046926021575927734
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                745.8232246957447,
+                104.64743605849428
+              ],
+              "camera_z_m": 0.4878933896652856,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 3221,
+            "oldest_reused_age_s": 3.849999999999783,
+            "criterion": "previous valid optical ray; current robot/currently supported payload 3x3 shadow; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 0,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 16.449999999999708,
+            "mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1",
+              "scene_camera/222/component_2"
+            ],
+            "support_mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_45\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_45\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_45\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_46",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049904269298591,
+          "height_gain_m": -4.1189382016249e-08,
+          "top_coverage": 0.5348086530256303,
+          "top_spans_m": [
+            0.05388043570538745,
+            0.05499903957153205
+          ],
+          "side_points": 11359,
+          "surface_inlier_ratio": 0.9553001277139208,
+          "plane_residual_m": 0.0004067268603135575,
+          "surface_tilt_deg": 0.34147230159324526,
+          "top_model_error_m": 4.1189382016249e-08,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 96913,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 16.449999999999708,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.26125,
+            -0.05125000000000002,
+            0.80875
+          ],
+          "last_unknown_sample_m": [
+            -0.2599807076956162,
+            -0.0515670851925228,
+            0.8099962957090326
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                155.35636942278714,
+                202.4041378142783
+              ],
+              "camera_z_m": 1.013671090008737,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.8864196538925171
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                407.18032968640904,
+                3.3027467612218526
+              ],
+              "camera_z_m": 0.10716961639293845,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.04250591993331909
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                760.924522167785,
+                120.20950656137573
+              ],
+              "camera_z_m": 0.49937835610763476,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 4814,
+            "oldest_reused_age_s": 13.249999999999716,
+            "criterion": "previous valid optical ray; current robot/currently supported payload 3x3 shadow; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 2,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 16.449999999999708,
+            "mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1",
+              "scene_camera/222/component_2"
+            ],
+            "support_mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_46\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_46\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_46\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_47",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.17997170853177968,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049988214699719,
+          "height_gain_m": -2.8411633601344022e-08,
+          "top_coverage": 0.532144922870358,
+          "top_spans_m": [
+            0.05362539010031747,
+            0.05499825073295833
+          ],
+          "side_points": 11431,
+          "surface_inlier_ratio": 0.95,
+          "plane_residual_m": 0.0004111316354874386,
+          "surface_tilt_deg": 0.3483954119649822,
+          "top_model_error_m": 2.8411633601344022e-08,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 96873,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 22.416666666666035,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.21875,
+            -0.10625000000000001,
+            0.93625
+          ],
+          "last_unknown_sample_m": [
+            -0.21752966426313441,
+            -0.10493109924744892,
+            0.936395083860255
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                160.7751292483625,
+                206.2843948364868
+              ],
+              "camera_z_m": 0.8771088265445641,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.745400071144104
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                218.2568843539061,
+                173.6611548063456
+              ],
+              "camera_z_m": 0.13936702349697266,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.0736926794052124
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                882.9823049771051,
+                100.14098858936437
+              ],
+              "camera_z_m": 0.36441992189291506,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 71455,
+            "oldest_reused_age_s": 13.249999999999716,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground or measured farther background; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 16134,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": null,
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_47\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_47\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_47\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_48",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.18065806253009686,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8050013632158659,
+          "height_gain_m": -1.0470330291667551e-07,
+          "top_coverage": 0.5326099506051379,
+          "top_spans_m": [
+            0.05377268527302379,
+            0.05499735831821024
+          ],
+          "side_points": 11132,
+          "surface_inlier_ratio": 0.9966900455272548,
+          "plane_residual_m": 0.00043243693425956155,
+          "surface_tilt_deg": 0.37263040857911905,
+          "top_model_error_m": 1.0470330291667551e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 114225,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 28.999999999998995,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.16375,
+            -0.42625,
+            0.87625
+          ],
+          "last_unknown_sample_m": [
+            -0.1625015569950373,
+            -0.42499363828524767,
+            0.8755858815092674
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                195.64259876976973,
+                451.4730457975828
+              ],
+              "camera_z_m": 0.8396833410342893,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.7706805467605591
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                248.400625374305,
+                392.98465639553285
+              ],
+              "camera_z_m": 0.15301363460636533,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.0811389684677124
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                1094.5185107035231,
+                -418.78994796509414
+              ],
+              "camera_z_m": 0.23970895464126493,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 9,
+            "reused_sample_evaluations": 268717,
+            "oldest_reused_age_s": 19.216666666666043,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground or measured farther background; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 16243,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 28.999999999998995,
+            "mask_refs": [
+              "scene_camera/414/component_1",
+              "left_wrist_camera/414/component_1"
+            ],
+            "support_mask_refs": [
+              "scene_camera/414/component_1",
+              "left_wrist_camera/414/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_48\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_48\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_48\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_49",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.18072183624171356,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049965054302128,
+          "height_gain_m": -9.37941286860422e-08,
+          "top_coverage": 0.5326912041868802,
+          "top_spans_m": [
+            0.053740269512988374,
+            0.05499913252526198
+          ],
+          "side_points": 11391,
+          "surface_inlier_ratio": 0.9510309278350515,
+          "plane_residual_m": 0.0004184454517936868,
+          "surface_tilt_deg": 0.3588692758411926,
+          "top_model_error_m": 9.37941286860422e-08,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 114237,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 29.183333333332317,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.16375,
+            -0.42625,
+            0.87625
+          ],
+          "last_unknown_sample_m": [
+            -0.16250157104474436,
+            -0.4249935667469918,
+            0.8755909019858874
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                195.64188436935825,
+                451.47305669544414
+              ],
+              "camera_z_m": 0.8396785704279481,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.7699886560440063
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                248.79542946818984,
+                392.9862086393445
+              ],
+              "camera_z_m": 0.15300964058063496,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.08062422275543213
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                1094.5319772598364,
+                -418.79719517214835
+              ],
+              "camera_z_m": 0.23970479602682354,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 275097,
+            "oldest_reused_age_s": 19.216666666666043,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground or measured farther background; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 16209,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 29.183333333332317,
+            "mask_refs": [
+              "scene_camera/417/component_1",
+              "left_wrist_camera/417/component_1"
+            ],
+            "support_mask_refs": [
+              "scene_camera/417/component_1",
+              "left_wrist_camera/417/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_49\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_49\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_49\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_50",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049999489100241,
+          "height_gain_m": -1.6632222477053205e-07,
+          "top_coverage": 0.5323938809624533,
+          "top_spans_m": [
+            0.0537618007771645,
+            0.054995512002942226
+          ],
+          "side_points": 11125,
+          "surface_inlier_ratio": 0.9967391036841976,
+          "plane_residual_m": 0.00043819838423461043,
+          "surface_tilt_deg": 0.3821746840462122,
+          "top_model_error_m": 1.6632222477053205e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 97135,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 16.449999999999708,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.26125,
+            -0.05125000000000002,
+            0.76125
+          ],
+          "last_unknown_sample_m": [
+            -0.2598993314328514,
+            -0.05154308269797492,
+            0.7625
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                162.4333269134612,
+                212.54015543236505
+              ],
+              "camera_z_m": 1.0590125126377363,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 1.0129625797271729
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                381.92157780100206,
+                130.0110047677508
+              ],
+              "camera_z_m": 0.14700669555946694,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.0830429196357727
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                728.342001427834,
+                111.8312799142359
+              ],
+              "camera_z_m": 0.5391053799710868,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 10396,
+            "oldest_reused_age_s": 13.449999999999715,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground or measured farther background; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 1954,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 16.449999999999708,
+            "mask_refs": [
+              "left_wrist_camera/222/component_1",
+              "scene_camera/222/component_1",
+              "scene_camera/222/component_2"
+            ],
+            "support_mask_refs": [
+              "left_wrist_camera/222/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_50\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_50\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_50\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_51",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049963783562384,
+          "height_gain_m": -1.5034682732117943e-07,
+          "top_coverage": 0.5325852091495041,
+          "top_spans_m": [
+            0.05373148910642833,
+            0.05500002043763996
+          ],
+          "side_points": 11340,
+          "surface_inlier_ratio": 0.9539052496798975,
+          "plane_residual_m": 0.0004336343326862345,
+          "surface_tilt_deg": 0.37556458846233126,
+          "top_model_error_m": 1.5034682743220174e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 97099,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 16.449999999999708,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.21875,
+            -0.09875,
+            0.76125
+          ],
+          "last_unknown_sample_m": [
+            -0.22072625032466256,
+            -0.09802725152001843,
+            0.7624802165352219
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                184.33988615411317,
+                239.35515917602
+              ],
+              "camera_z_m": 1.045166330422438,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 1.0464882850646973
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                237.3380547519367,
+                165.4617489820824
+              ],
+              "camera_z_m": 0.1350474081967263,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.07637596130371094
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                721.506796868264,
+                78.58424241331775
+              ],
+              "camera_z_m": 0.5136250254487419,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 4468,
+            "oldest_reused_age_s": 13.249999999999716,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground or measured farther background; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 787,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 16.449999999999708,
+            "mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1",
+              "scene_camera/222/component_2"
+            ],
+            "support_mask_refs": [
+              "scene_camera/222/component_1",
+              "left_wrist_camera/222/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_51\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_51\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_51\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_52",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.18074872014757992,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.804995944732513,
+          "height_gain_m": -1.491129149044923e-07,
+          "top_coverage": 0.533216353897077,
+          "top_spans_m": [
+            0.053762957035738065,
+            0.05499907476869448
+          ],
+          "side_points": 11195,
+          "surface_inlier_ratio": 0.9966196698339336,
+          "plane_residual_m": 0.00040992504098173976,
+          "surface_tilt_deg": 0.3501038401976632,
+          "top_model_error_m": 1.491129149044923e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": null,
+        "released_collision_estimate": null,
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 114462,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 29.183333333332317,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.18375,
+            -0.38125,
+            0.76375
+          ],
+          "last_unknown_sample_m": [
+            -0.18250314882525528,
+            -0.3799870446286801,
+            0.7636070887192296
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                197.82986509058895,
+                418.5368970399359
+              ],
+              "camera_z_m": 0.9599891981308989,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.7823740243911743
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                336.8088271370482,
+                391.0187085458313
+              ],
+              "camera_z_m": 0.2586513726938714,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.07885611057281494
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                858.2611711182916,
+                -224.86924099846104
+              ],
+              "camera_z_m": 0.35802604178241065,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 637653,
+            "oldest_reused_age_s": 19.183333333332712,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground or measured farther background; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 24158,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 29.183333333332317,
+            "mask_refs": [
+              "scene_camera/417/component_1",
+              "left_wrist_camera/417/component_1"
+            ],
+            "support_mask_refs": [
+              "scene_camera/417/component_1",
+              "left_wrist_camera/417/component_1"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_52\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_52\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_52\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_53",
+        "success": false,
+        "failure_reason": "TARGET_BODY_COLLISION",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "OPEN",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.18869254911627797,
+        "held_on_exit": true,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049934932145333,
+          "height_gain_m": -1.023700767488478e-07,
+          "top_coverage": 0.5340754812049426,
+          "top_spans_m": [
+            0.05384603760089376,
+            0.05499694335917554
+          ],
+          "side_points": 11433,
+          "surface_inlier_ratio": 0.9512195121951219,
+          "plane_residual_m": 0.00041500303778283036,
+          "surface_tilt_deg": 0.35791103920059775,
+          "top_model_error_m": 1.023700767488478e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": {
+          "expected_lowest_corner_m": 0.7676091000442681,
+          "observed_supported_body": true,
+          "drop_bound_m": 0.010609100044268068,
+          "source": "current supported visual body and image-time FK; known fixed support"
+        },
+        "released_collision_estimate": null,
+        "failure_workspace": null,
+        "config_used": "outputs\\visual_space_pnp_20261008_53\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_53\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_53\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_54",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "OPEN",
+          "RETREAT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.1886820552077909,
+        "held_on_exit": false,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049983333425209,
+          "height_gain_m": -1.380737165712631e-07,
+          "top_coverage": 0.5345298486189358,
+          "top_spans_m": [
+            0.05394633624456943,
+            0.054999564202670236
+          ],
+          "side_points": 11352,
+          "surface_inlier_ratio": 0.9525641025641025,
+          "plane_residual_m": 0.0004196933344802839,
+          "surface_tilt_deg": 0.3560227514645795,
+          "top_model_error_m": 1.380737165712631e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": {
+          "expected_lowest_corner_m": 0.7676219794813842,
+          "observed_supported_body": true,
+          "drop_bound_m": 0.01062197948138421,
+          "source": "current supported visual body and image-time FK; known fixed support"
+        },
+        "released_collision_estimate": {
+          "position_m": [
+            -0.20008593828273247,
+            -0.397296850150948,
+            0.7824995461159512
+          ],
+          "axis_yaw_rad": 0.004207246400947448,
+          "uncertainty_m": 0.003,
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "visible_signed_face",
+              "sign": 1.0,
+              "points": 9256
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.054881125274334974
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/549/component_1",
+            "left_wrist_camera/549/component_1"
+          ],
+          "top_bottom_semantics": "UNKNOWN",
+          "post_release_drop_bound_m": 0.01062197948138421,
+          "observed_downward_shift_m": 0.007809648580840656,
+          "source": "current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis"
+        },
+        "failure_workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 105084,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 37.416666666665186,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.20125,
+            -0.40125,
+            0.81625
+          ],
+          "last_unknown_sample_m": [
+            -0.20001792610056943,
+            -0.39992660978476424,
+            0.8173355764713003
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                177.69972045009536,
+                432.01801209133674
+              ],
+              "camera_z_m": 0.9027589586613822,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.7052738070487976
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                313.6951655928383,
+                122.67095496531705
+              ],
+              "camera_z_m": 0.07882986218892732,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.05821198225021362
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                978.4728942736147,
+                -295.65891112604146
+              ],
+              "camera_z_m": 0.3021641985316243,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 8,
+            "reused_sample_evaluations": 622155,
+            "oldest_reused_age_s": 19.183333333332712,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground, farther background or measured fixed surface just behind query in optical band; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 0,
+            "anchor_reused_sample_evaluations": 24585,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": null,
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        },
+        "config_used": "outputs\\visual_space_pnp_20261008_54\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_54\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_54\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_55",
+        "success": true,
+        "failure_reason": null,
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "OPEN",
+          "RETREAT",
+          "HOME",
+          "VERIFY",
+          "DONE"
+        ],
+        "max_visual_lift_m": 0.1886771849713993,
+        "held_on_exit": false,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049958775848849,
+          "height_gain_m": -9.876470907776991e-08,
+          "top_coverage": 0.5328781443176186,
+          "top_spans_m": [
+            0.05376303571067195,
+            0.05499923727566469
+          ],
+          "side_points": 11357,
+          "surface_inlier_ratio": 0.9526248399487837,
+          "plane_residual_m": 0.000418911781310692,
+          "surface_tilt_deg": 0.35974303307151145,
+          "top_model_error_m": 9.876470907776991e-08,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": {
+          "expected_lowest_corner_m": 0.7676193899496319,
+          "observed_supported_body": true,
+          "drop_bound_m": 0.010619389949631849,
+          "source": "current supported visual body and image-time FK; known fixed support"
+        },
+        "released_collision_estimate": {
+          "position_m": [
+            -0.2004092043906493,
+            -0.39722364507629476,
+            0.7824995935861792
+          ],
+          "axis_yaw_rad": 0.0024377841361024476,
+          "uncertainty_m": 0.003,
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "visible_signed_face",
+              "sign": 1.0,
+              "points": 9590
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.05486106265556495
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/549/component_1",
+            "left_wrist_camera/549/component_1"
+          ],
+          "top_bottom_semantics": "UNKNOWN",
+          "post_release_drop_bound_m": 0.010619389949631849,
+          "observed_downward_shift_m": 0.0078121590583388745,
+          "source": "current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis"
+        },
+        "failure_workspace": null,
+        "config_used": "outputs\\visual_space_pnp_20261008_55\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_55\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_55\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_56",
+        "success": true,
+        "failure_reason": null,
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "OPEN",
+          "RETREAT",
+          "HOME",
+          "VERIFY",
+          "DONE"
+        ],
+        "max_visual_lift_m": 0.18867718173998937,
+        "held_on_exit": false,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "scene_camera/222/component_1",
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.8049958775541356,
+          "height_gain_m": -9.866668426727898e-08,
+          "top_coverage": 0.532862658661653,
+          "top_spans_m": [
+            0.05376058684958685,
+            0.05499923727566469
+          ],
+          "side_points": 11358,
+          "surface_inlier_ratio": 0.9538461538461539,
+          "plane_residual_m": 0.0004189142011572225,
+          "surface_tilt_deg": 0.3597655645624994,
+          "top_model_error_m": 9.866668426727898e-08,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": {
+          "expected_lowest_corner_m": 0.7676193898208599,
+          "observed_supported_body": true,
+          "drop_bound_m": 0.010619389820859856,
+          "source": "current supported visual body and image-time FK; known fixed support"
+        },
+        "released_collision_estimate": {
+          "position_m": [
+            -0.20040920403116033,
+            -0.3972243983698662,
+            0.7824995935861792
+          ],
+          "axis_yaw_rad": 0.0024377841361024476,
+          "uncertainty_m": 0.003,
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "visible_signed_face",
+              "sign": 1.0,
+              "points": 9589
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.05485786272535054
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/549/component_1",
+            "left_wrist_camera/549/component_1"
+          ],
+          "top_bottom_semantics": "UNKNOWN",
+          "post_release_drop_bound_m": 0.010619389820859856,
+          "observed_downward_shift_m": 0.007812158929566881,
+          "source": "current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis"
+        },
+        "failure_workspace": null,
+        "config_used": "outputs\\visual_space_pnp_20261008_56\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_56\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_56\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_57",
+        "success": true,
+        "failure_reason": null,
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "OPEN",
+          "RETREAT",
+          "HOME",
+          "VERIFY",
+          "DONE"
+        ],
+        "max_visual_lift_m": 0.1886801191933707,
+        "held_on_exit": false,
+        "closed_surface_support": {
+          "time_s": 16.449999999999708,
+          "mask_refs": [
+            "left_wrist_camera/222/component_1"
+          ],
+          "evidence": "current RGB-D top and side surfaces consistent with pre-lift visual hypothesis and image-time FK",
+          "observed_top_z_m": 0.804998143428135,
+          "height_gain_m": -1.309000436933161e-07,
+          "top_coverage": 0.5319177892676195,
+          "top_spans_m": [
+            0.05364247350779391,
+            0.05499819753937627
+          ],
+          "side_points": 11284,
+          "surface_inlier_ratio": 0.9966336194140278,
+          "plane_residual_m": 0.0004087975485547997,
+          "surface_tilt_deg": 0.34861899653867917,
+          "top_model_error_m": 1.309000436933161e-07,
+          "full_6d_pose_measured": false
+        },
+        "release_geometry": {
+          "expected_lowest_corner_m": 0.76760954615511,
+          "observed_supported_body": true,
+          "drop_bound_m": 0.010609546155110002,
+          "source": "current supported visual body and image-time FK; known fixed support"
+        },
+        "released_collision_estimate": {
+          "position_m": [
+            -0.20045964984617906,
+            -0.39734355021160617,
+            0.7824997939986424
+          ],
+          "axis_yaw_rad": 0.005949825232883757,
+          "uncertainty_m": 0.003,
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "visible_signed_face",
+              "sign": 1.0,
+              "points": 9622
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.05492242554010568
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/549/component_1",
+            "left_wrist_camera/549/component_1"
+          ],
+          "top_bottom_semantics": "UNKNOWN",
+          "post_release_drop_bound_m": 0.010609546155110002,
+          "observed_downward_shift_m": 0.007797192129706199,
+          "source": "current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis"
+        },
+        "failure_workspace": null,
+        "config_used": "outputs\\visual_space_pnp_20261008_57\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_57\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_57\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      }
+    ],
+    "acceptance": "outputs/visual_continuation_20261008/stage_acceptance.json",
+    "separate_acceptance_suites": {
+      "fixed_repeat": {
+        "report": "outputs\\visual_continuation_20261008\\frozen_repeat_results56_57.json",
+        "results": {
+          "date": "2026-10-08",
+          "protocol": "outputs\\visual_continuation_20261008\\frozen_repeat_protocol56_57.json",
+          "reference_development_result": {
+            "run": "outputs\\visual_space_pnp_20261008_55",
+            "success": true,
+            "max_visual_lift_m": 0.1886771849713993,
+            "xy_error_m": 0.003077200038693462,
+            "z_error_m": 1.206315947133163e-08,
+            "axis_yaw_error_deg": 0.0,
+            "observed_stable_s": 0.5999999999999659,
+            "arms_home_and_open": true,
+            "held_on_exit": false,
+            "phases": [
+              "PREGRASP",
+              "APPROACH",
+              "CLOSE",
+              "LIFT",
+              "TRANSFER",
+              "LOWER",
+              "OPEN",
+              "RETREAT",
+              "HOME",
+              "VERIFY",
+              "DONE"
+            ],
+            "source_matches_reference": true,
+            "entire_config_matches_reference": true,
+            "robot_manifest_matches_reference": true,
+            "cameras_match_saved": true,
+            "run_status": "passed",
+            "report": "outputs\\visual_space_pnp_20261008_55\\visual_task_report.json",
+            "acceptance_passed": true
+          },
+          "frozen_repeat_trials": [
+            {
+              "run": "outputs\\visual_space_pnp_20261008_56",
+              "success": true,
+              "max_visual_lift_m": 0.18867718173998937,
+              "xy_error_m": 0.003077200038693462,
+              "z_error_m": 1.206315947133163e-08,
+              "axis_yaw_error_deg": 0.0,
+              "observed_stable_s": 0.5999999999999659,
+              "arms_home_and_open": true,
+              "held_on_exit": false,
+              "phases": [
+                "PREGRASP",
+                "APPROACH",
+                "CLOSE",
+                "LIFT",
+                "TRANSFER",
+                "LOWER",
+                "OPEN",
+                "RETREAT",
+                "HOME",
+                "VERIFY",
+                "DONE"
+              ],
+              "source_matches_reference": true,
+              "entire_config_matches_reference": true,
+              "robot_manifest_matches_reference": true,
+              "cameras_match_saved": true,
+              "run_status": "passed",
+              "report": "outputs\\visual_space_pnp_20261008_56\\visual_task_report.json",
+              "acceptance_passed": true
+            },
+            {
+              "run": "outputs\\visual_space_pnp_20261008_57",
+              "success": true,
+              "max_visual_lift_m": 0.1886801191933707,
+              "xy_error_m": 0.003092544100758429,
+              "z_error_m": 8.433485498837712e-08,
+              "axis_yaw_error_deg": 0.0,
+              "observed_stable_s": 0.5999999999999659,
+              "arms_home_and_open": true,
+              "held_on_exit": false,
+              "phases": [
+                "PREGRASP",
+                "APPROACH",
+                "CLOSE",
+                "LIFT",
+                "TRANSFER",
+                "LOWER",
+                "OPEN",
+                "RETREAT",
+                "HOME",
+                "VERIFY",
+                "DONE"
+              ],
+              "source_matches_reference": true,
+              "entire_config_matches_reference": true,
+              "robot_manifest_matches_reference": true,
+              "cameras_match_saved": true,
+              "run_status": "passed",
+              "report": "outputs\\visual_space_pnp_20261008_57\\visual_task_report.json",
+              "acceptance_passed": true
+            }
+          ],
+          "attempts": 2,
+          "successes": 2,
+          "same_fixed_condition": true,
+          "current_source_mismatches": [],
+          "weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+          "scope": "fixed upright single carton; simulated ideal RGB-D and known-size priors; not random success rate",
+          "boundaries": {
+            "whole_arm_convex_boundary_query": false,
+            "whole_arm_unknown_space_proven": false,
+            "empty_retreat_unknown_space_proven": false,
+            "continuous_collision_proof": false,
+            "cameras_modified": false
+          }
+        }
+      },
+      "independent_upright": {
+        "report": "outputs\\visual_continuation_20261008\\independent_upright_results101_103.json",
+        "results": {
+          "date": "2026-10-08",
+          "protocol": "outputs\\visual_continuation_20261008\\independent_upright_protocol101_103.json",
+          "attempts": 3,
+          "successes": 1,
+          "trials": [
+            {
+              "seed": 101,
+              "output": "outputs\\visual_upright_holdout_20261008_101",
+              "success": false,
+              "failure_reason": "CLOSED_TARGET_UNCERTAIN",
+              "phases": [
+                "PREGRASP",
+                "APPROACH",
+                "CLOSE",
+                "FAILED"
+              ],
+              "max_visual_lift_m": 0.0,
+              "held_on_exit": true,
+              "source_matches_reference": true,
+              "robot_manifest_matches_reference": true,
+              "cameras_match_saved": true,
+              "changed_config_keys": [
+                "diagnostic_visual_fixture",
+                "seed"
+              ],
+              "only_expected_fixture_and_seed_changes": true,
+              "run_status": "failed",
+              "report": "outputs\\visual_upright_holdout_20261008_101\\visual_task_report.json",
+              "acceptance_passed": false
+            },
+            {
+              "seed": 102,
+              "output": "outputs\\visual_upright_holdout_20261008_102",
+              "success": false,
+              "failure_reason": "CLOSED_TARGET_UNCERTAIN",
+              "phases": [
+                "PREGRASP",
+                "APPROACH",
+                "CLOSE",
+                "FAILED"
+              ],
+              "max_visual_lift_m": 0.0,
+              "held_on_exit": true,
+              "source_matches_reference": true,
+              "robot_manifest_matches_reference": true,
+              "cameras_match_saved": true,
+              "changed_config_keys": [
+                "diagnostic_visual_fixture",
+                "seed"
+              ],
+              "only_expected_fixture_and_seed_changes": true,
+              "run_status": "failed",
+              "report": "outputs\\visual_upright_holdout_20261008_102\\visual_task_report.json",
+              "acceptance_passed": false
+            },
+            {
+              "seed": 103,
+              "output": "outputs\\visual_upright_holdout_20261008_103",
+              "success": true,
+              "failure_reason": null,
+              "phases": [
+                "PREGRASP",
+                "APPROACH",
+                "CLOSE",
+                "LIFT",
+                "TRANSFER",
+                "LOWER",
+                "OPEN",
+                "RETREAT",
+                "HOME",
+                "VERIFY",
+                "DONE"
+              ],
+              "max_visual_lift_m": 0.18872266100383084,
+              "held_on_exit": false,
+              "source_matches_reference": true,
+              "robot_manifest_matches_reference": true,
+              "cameras_match_saved": true,
+              "changed_config_keys": [
+                "diagnostic_visual_fixture",
+                "seed"
+              ],
+              "only_expected_fixture_and_seed_changes": true,
+              "run_status": "passed",
+              "report": "outputs\\visual_upright_holdout_20261008_103\\visual_task_report.json",
+              "xy_error_m": 0.003137885726594085,
+              "z_error_m": 1.6799245883269975e-08,
+              "axis_yaw_error_deg": 0.21164852148678825,
+              "observed_stable_s": 0.5999999999999659,
+              "arms_home_and_open": true,
+              "acceptance_passed": true
+            }
+          ],
+          "suite_passed": false,
+          "general_random_success_rate_established": false,
+          "current_source_mismatches": [],
+          "failure_analysis": {
+            "code": "CLOSED_TARGET_UNCERTAIN",
+            "seeds": [
+              101,
+              102
+            ],
+            "scene": "COMPLETE_TOP current geometry with no geometric failures, UNKNOWN top/bottom and tape_observed=0",
+            "audit": "outputs\\visual_continuation_20261008\\closed_tape_holdout101_102_audit.json",
+            "evidence": "current saved bright tape extent about40..45mm versus rule60mm requirement; both current views fail extent despite bright-pixel fraction passing",
+            "next": "develop locally supported partial tape evidence with negative/conflict tests and preserved UNKNOWN; do not change cameras or simply remove all posture/holding checks"
+          },
+          "boundaries": "fixed repeat and this small predefined suite are separate; no multi-box, side/flip or general avoidance claims"
+        }
+      }
+    },
+    "same_version_random_success_rate_established": false
+  },
+  "implementation": {
+    "observed_space": "10mm cells; 2.5mm boundary samples; calibrated valid optical depth; unknown blocks",
+    "robot_model": "official Panda convex bodies for image-time self filtering;36 onward removes whole-arm convex boundary query;39 onward removes finger-shell visibility; keeps Lula sphere collisions/observed obstacles and 3mm TCP corridor/held-box unknown gates",
+    "whole_arm_unknown_space_proven": false,
+    "whole_arm_convex_boundary_query": false,
+    "finger_shell_visibility_required": false,
+    "future_local_visibility": "38 onward explicitly pending in preflight; runtime requires fresh frames",
+    "held_geometry": "40 onward latched visual box-to-TCP relation shared with holding monitor; not a physical attachment",
+    "held_space": "42 onward oriented metric cuboid with3mm padding; not its enclosing AABB; unknown interior remains checked",
+    "upright_tcp_height_m": 0.004,
+    "joint_planner": "bounded local RRT-Connect; every edge checked; exhaustion does not prove unreachable",
+    "reobserve": "current passive fresh frames only; historical empty wrist lifts/rotations/prefixes retained as diagnostics",
+    "current_camera_constraint": "saved config camera installation/optics preserved; dedicated active view moves disabled by default; old experiments are separate",
+    "occlusion_memory": "previous valid optical rays; current supported robot/payload foreground or measured farther background in all9 pixels; ordinary5s expiry; unexplained foreground/other-object motion veto; never creates unseen free space",
+    "payload_history": "43 onward up to4 pre-action optical-ray anchors <=30s, only with current supported payload; other-object envelopes/unexplained foreground veto; planning payload not physical attachment",
+    "mixed_depth_footprint": "45 onward erode union of raw robot/payload support; all9 pixels required; raw masks saved44 onward",
+    "payload_mask_holes": "46 onward self filter only: enclosed <=9pixel holes or1pixel-near-mask dropouts, with measured surface <=3mm; original masks and holding evidence unchanged",
+    "payload_lifecycle": "48 onward explicit and periodic observations both revalidate current holding support, no old-frame reuse;49 onward transferred/lowered frames saved before descent/release, current support required for carrying motion",
+    "cross_view_payload_filter": "50 onward another CURRENT supported holding view permits unlabelled measured pixels within3mm of the payload surface as self depth only; original masks/holding evidence unchanged; old free rays still mandatory",
+    "payload_proxy": "current confirmed oriented payload supersedes only its own clipped visual proxy; stale geometry revoked; neighbours and unseen swept volume retained",
+    "current_payload_uncertainty": "latched visual pose uncertainty >=3mm, <=8mm plus existing2mm mapping allowance; current modelled occupied volume only, not a free-space label",
+    "held_collision_uncertainty": "same latched visual uncertainty >=3mm; invalid/unbounded values reject rather than disappear when replacing clipped proxy",
+    "measured_vertical_carry": "closed image-time FK TCP plus180mm lift; unchanged yaw purevertical carrying retains measured quaternion, existing full sampled path checks still mandatory",
+    "near_fixed_surface": "measured fixed-face match2mm just BEHIND query in optical band can explain a current pixel; all9 valid pixels and an independent older free ray still required; never marks unseen volume free",
+    "nominal_body_release_gap_m": 0.01,
+    "nominal_place_tcp_clearance_m": 0.014,
+    "release_geometry": "drop bound<=20mm from current supported visual geometry and image-timeFK/knownsupport; after opening translation fitted from current top/signedfaces/extents, lateral consistency<=8mm, pre-release centre remains anchor rather than following arm unloading",
+    "release_grip": "54 onward <=1mm finger increments checked with currently supported held oriented body; missing/stale support or model collision refuses before drive; not a contact exemption for the palm",
+    "empty_retreat": "55 onward finger contact permission separated from TCP approach gate; actual approach gate retained; released RGB-D geometry replaces its clipped proxy in collision and workspace models; empty retreat uses sphere collisions/observed obstacles but unknown-space safety is explicitly NOT proved",
+    "elevated_posture": "short elevated footprint without measured height remains UNKNOWN with SIDE/UP/INV hypotheses; uncertain centres do not produce observed velocity",
+    "observer_preposition": "optional checked empty wrist staging; measured camera pose and its own depth ray; fresh full-task check required",
+    "sparse_convex_query": "historical/offline only; not invoked by current whole-arm execution",
+    "task_loop": "visual-sort; shared tracks, assigned slots, bounded failures/actions; physical multi-box unaccepted"
+  },
+  "boundaries": {
+    "truth_as_online_input": false,
+    "box_attachment": false,
+    "box_pose_teleport": false,
+    "original_three_cameras_rebuilt": false,
+    "continuous_collision_proof": false,
+    "empty_retreat_unknown_space_proven": false,
+    "strict_exposure_ids_verified": false,
+    "default_scene_config_changed": false,
+    "depth_backboard": "optional controlled diagnostic fixture; physically rendered and colliding; not synthetic depth"
+  },
+  "calibration": {
+    "pixel_centre": "integer image indices; rendered optical centre minus0.5 pixel",
+    "validation": "outputs/visual_continuation_20261008/pixel_centre_offset_audit.json",
+    "historical_frames_rewritten": false,
+    "default_depth_free_margin_m": 0.003,
+    "explicit_margin_experiments": "33/34 used1mm only after saved three-camera static-plane gate;35 restores saved configuration/default3mm",
+    "scope": "actual SDK pinhole static-plane frames; not real camera calibration"
+  },
+  "unavailable_or_unaccepted": [
+    "GraspGen Linux service and Panda TCP calibration",
+    "robust inverted semantic evidence",
+    "visual SideAdjustment and DualArmFlip physical skills",
+    "randomized single-box feasible domain",
+    "separated multi-box execution",
+    "clutter/nine-box sorting",
+    "continuous collision guarantee",
+    "hardware hand-eye calibration"
+  ],
+  "sources": [
+    "https://docs.ultralytics.com/models/yoloe/",
+    "https://github.com/NVlabs/GraspGen",
+    "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/manipulators/manipulators_lula_rrt.html",
+    "https://github.com/moveit/moveit2/blob/main/moveit_ros/planning/planning_scene_monitor/src/planning_scene_monitor.cpp",
+    "https://github.com/frankarobotics/franka_ros/blob/develop/franka_description/doc/index.rst"
+  ]
+}

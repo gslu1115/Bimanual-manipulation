@@ -1,0 +1,101 @@
+{
+  "schema": "convex_boundary_check_removal_v1",
+  "date": "2026-10-09",
+  "recorded_at": "2026-10-09T15:43:39.443543+08:00",
+  "scope": "complete removal of unused whole-arm convex boundary query; pure logic and entry validation only",
+  "removed": [
+    "ObservedWorkspace.check_convex",
+    "ConvexLink.world_bounds",
+    "ConvexLink.clip",
+    "CONVEX_QUERY_UNRESOLVED",
+    "whole_arm_convex_boundary_query report field",
+    "five dedicated boundary-query/projection tests"
+  ],
+  "retained": [
+    "image-time robot depth self filtering",
+    "Lula sphere collisions",
+    "observed depth obstacles",
+    "3 mm TCP approach corridor",
+    "held-carton unknown-space checks"
+  ],
+  "residual_symbols": {
+    "check_convex": [],
+    "CONVEX_QUERY_UNRESOLVED": [],
+    "whole_arm_convex_boundary_query": [],
+    "world_bounds": []
+  },
+  "remaining_robot_geometry_methods": [
+    "extruded",
+    "contains"
+  ],
+  "ast_files": 123,
+  "logic_checks": {
+    "isolated": {
+      "count": 306,
+      "passed": true,
+      "command": ".venv-models/Scripts/python.exe -X utf8 -m unittest discover -s tests -q",
+      "log": "outputs/convex_check_removal_20261009/logic_full.txt"
+    },
+    "sdk": {
+      "count": 306,
+      "passed": true,
+      "command": "D:/Issaccc/python.bat -X utf8 -m unittest discover -s tests -q",
+      "log": "outputs/convex_check_removal_20261009/sdk_logic_full.txt"
+    }
+  },
+  "entry_check": {
+    "command": ".venv-models/Scripts/python.exe -X utf8 -m workstation --mode visual-pnp --validate-only",
+    "exit_code": 0,
+    "log": "outputs/convex_check_removal_20261009/entry_validation.txt"
+  },
+  "protected_file_count": 17,
+  "protected_mismatches": [],
+  "camera_configuration_changed": false,
+  "historical_evidence_changed": false,
+  "source_changes": {
+    "AGENTS.md": {
+      "before_sha256": "0abb28d6339d990eba2b1df6cadcf912ea80946a14a8552d725534b241c3bec9",
+      "after_sha256": "2155fa328efcf7272c194fef855ba7e427c7b35b864311de889f7fee2fa7ebcb"
+    },
+    "README.md": {
+      "before_sha256": "328750c2a9f82334d2f455c4ae2cb146c93b96d46c514eec166fc1acda9b7be2",
+      "after_sha256": "239ebc4e13fcd2b865c39b9b33967b204737d7c08d779c64ac27a4fa751681c5"
+    },
+    "tests/test_arm_observation_checks.py": {
+      "before_sha256": "d365729fbf1609466e9d20ddb1289fe20ed4ea26993a939b0cca6520620bea59",
+      "after_sha256": "f57ee29e1d9cd0810a501f48669c9af1116fc6d87ed0ee7f791ad7bf3cc10166"
+    },
+    "tests/test_observed_workspace.py": {
+      "before_sha256": "9f2ad4ee165252a8390d7d0debf0a115d44441a6b71651c34d2ae57b0af733ac",
+      "after_sha256": "13ad1eb97259fd5df930c57b23dcd947a28c965974215f8b12f4b11699d9e792"
+    },
+    "tests/test_robot_geometry.py": {
+      "before_sha256": "d6481841725432c2861202ac7eccd4211059464a0345b3134be7f2f1cae0ffb9",
+      "after_sha256": "4587b7ab2450dc76a7a9ee5dbe10176d3af3efdee259a51ebf96d95ebdc1c4e3"
+    },
+    "workstation/diagnostics/continuation_report.py": {
+      "before_sha256": "4140ada1da77b4282079b3f2859ac4ec27e4e8a7530b60225b731be75712748d",
+      "after_sha256": "15548eb3d10923c5a5529f0a7922c36d4524f710603d6e2cde45819b8feccb60"
+    },
+    "workstation/planning/observed_workspace.py": {
+      "before_sha256": "66304e4950f501b1f303d563d620fda42e58f88fe42c95a23e28de709a677f57",
+      "after_sha256": "84682c5a3ae030427f8b4e1b2668b130a189491f031b4b0f06f8c30808342c36"
+    },
+    "workstation/planning/robot_geometry.py": {
+      "before_sha256": "8a4c7f9a6c80082fe276e783fa1911716024294a19b1fb1af513793d4f73ea26",
+      "after_sha256": "abff531b290670d0f59ff2e3dc0a420a1f287a9faf039737f00c48fb1cde29a6"
+    },
+    "workstation/simulation/robot_driver.py": {
+      "before_sha256": "297197590f4b6c081b984001e4498b8960737cedd89ab140f0b3e6ba48b7d0b0",
+      "after_sha256": "9bd47f74f4f5f0ba1ad05c690002b24efeb914a4bb8cee2be69f2d4fbeb9784d"
+    },
+    "项目路线与当前状态交接.md": {
+      "before_sha256": "e650606f8d7220574e4d2122a3feeb1f90d46902afe4933879f1d78e16a5b661",
+      "after_sha256": "dbe11f44693488ac65d66545d98567c9f9dd257a9d5779bc45acbabcd41088a9"
+    }
+  },
+  "physical_trials_this_revision": 0,
+  "whole_arm_unknown_space_verified": false,
+  "continuous_collision_proof": false,
+  "full_visual_goal_complete": false
+}

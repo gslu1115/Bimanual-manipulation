@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import math
 from types import MappingProxyType
-from typing import Mapping
+from typing import Mapping, Iterator
 
 import numpy as np
 
@@ -22,6 +22,61 @@ FORMAL_CAMERA_NAMES = (
 )
 ROBOT_NAMES = ("panda_left", "panda_right")
 CAMERA_STATUSES = frozenset(("OK", "MISSING", "STALE", "INVALID"))
+POLICY_CAMERA_SOURCES = MappingProxyType({
+    "cam_high": "scene_camera",
+    "cam_left_wrist": "left_wrist_camera",
+    "cam_right_wrist": "right_wrist_camera",
+})
+POLICY_CAMERA_NAMES = tuple(POLICY_CAMERA_SOURCES)
+PANDA_ARM_JOINT_NAMES = tuple(f"panda_joint{i}" for i in range(1, 8))
+PANDA_FINGER_JOINT_NAMES = ("panda_finger_joint1", "panda_finger_joint2")
+POLICY_STATE_SCHEMA = tuple(
+    field for side in ("left", "right")
+    for field in (*[f"{side}.{joint}" for joint in PANDA_ARM_JOINT_NAMES],
+                  f"{side}.gripper_width_m")
+)
+
+
+class _CameraAliases(Mapping):
+    """Keep legacy iteration/keys while allowing semantic policy-name lookup."""
+
+    def __init__(self, values):
+        self._values = MappingProxyType(dict(values))
+
+    def __getitem__(self, name):
+        return self._values[POLICY_CAMERA_SOURCES.get(name, name)]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._values)
+
+    def __len__(self) -> int:
+        return len(self._values)
+
+
+@dataclass(frozen=True)
+class PandaJointMap:
+    """Resolve measured DOFs by name, never by a presumed articulation order."""
+
+    dof_names: tuple[str, ...]
+
+    def __post_init__(self):
+        names = tuple(self.dof_names)
+        required = PANDA_ARM_JOINT_NAMES + PANDA_FINGER_JOINT_NAMES
+        if len(set(names)) != len(names) or set(names) != set(required):
+            raise ValueError(f"Expected unique Panda DOFs {required}; got {names}")
+        object.__setattr__(self, "dof_names", names)
+
+    def indices(self, names):
+        return [self.dof_names.index(name) for name in names]
+
+    def extract(self, positions, velocities, sample_time_s):
+        q = _number_array(positions, (len(self.dof_names),), "measured qpos")
+        v = None if velocities is None else _number_array(
+            velocities, (len(self.dof_names),), "measured qvel")
+        arm, fingers = self.indices(PANDA_ARM_JOINT_NAMES), self.indices(PANDA_FINGER_JOINT_NAMES)
+        return RobotState(sample_time_s, q[arm], q[fingers],
+                          None if v is None else v[arm],
+                          None if v is None else v[fingers])
 
 
 def _finite_time(value: float, label: str) -> float:
@@ -59,6 +114,9 @@ class RobotState:
     sample_time_s: float
     joint_positions_rad: np.ndarray
     finger_positions_m: np.ndarray
+    joint_velocities_rad_s: np.ndarray | None = None
+    finger_velocities_m_s: np.ndarray | None = None
+    tcp_pose_world: np.ndarray | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "sample_time_s",
@@ -67,11 +125,36 @@ class RobotState:
                            _number_array(self.joint_positions_rad, (7,), "joint_positions_rad"))
         object.__setattr__(self, "finger_positions_m",
                            _number_array(self.finger_positions_m, (2,), "finger_positions_m"))
+        for name, shape in (("joint_velocities_rad_s", (7,)), ("finger_velocities_m_s", (2,)),
+                            ("tcp_pose_world", (7,))):
+            value = getattr(self, name)
+            if value is not None:
+                object.__setattr__(self, name, _number_array(value, shape, name))
+        if (self.joint_velocities_rad_s is None) != (self.finger_velocities_m_s is None):
+            raise ValueError("Arm and finger velocities must both be supplied or both be absent")
+        if self.tcp_pose_world is not None and not np.isclose(
+                np.linalg.norm(self.tcp_pose_world[3:]), 1., atol=1e-5):
+            raise ValueError("tcp_pose_world quaternion must be unit wxyz")
 
     @property
     def gripper_width_m(self) -> float:
         """Opening inferred from the two measured finger positions."""
         return float(np.sum(self.finger_positions_m))
+
+    @property
+    def timestamp(self):
+        return self.sample_time_s
+
+    @property
+    def qpos(self):
+        """Canonical named order: joint1..7, finger1..2; not asset DOF order."""
+        return np.concatenate((self.joint_positions_rad, self.finger_positions_m))
+
+    @property
+    def qvel(self):
+        if self.joint_velocities_rad_s is None:
+            return None  # Old callers are compatible; missing encoders are never faked.
+        return np.concatenate((self.joint_velocities_rad_s, self.finger_velocities_m_s))
 
 
 @dataclass(frozen=True)
@@ -109,7 +192,7 @@ class CameraFrame:
         depth = np.asarray(self.depth_m)
         if not np.issubdtype(depth.dtype, np.floating) or depth.shape != rgb.shape[:2]:
             raise ValueError("depth_m must be a floating-point HxW array matching rgb")
-        depth = depth.copy()
+        depth = depth.astype(np.float32, copy=True)
         depth.setflags(write=False)
         object.__setattr__(self, "depth_m", depth)
 
@@ -150,6 +233,26 @@ class CameraFrame:
             raise ValueError("robot_state_at_frame must be aligned to the exposure time")
         object.__setattr__(self, "robot_state_at_frame", states)
 
+    @property
+    def timestamp(self):
+        return self.sample_time_s
+
+    @property
+    def T_world_cam(self):
+        return self.T_workcell_from_camera_cv
+
+    @property
+    def policy_name(self):
+        return next(key for key, source in POLICY_CAMERA_SOURCES.items() if source == self.name)
+
+    @property
+    def status(self):
+        return "OK"
+
+    @property
+    def valid(self):
+        return True  # Unavailable frames remain None; their status lives in the packet.
+
 
 @dataclass(frozen=True)
 class ObservationPacket:
@@ -159,6 +262,8 @@ class ObservationPacket:
     camera_status: Mapping[str, str]
     latest_robot_state: Mapping[str, RobotState]
     assembled_time_s: float
+    robot_state: Mapping[str, RobotState] | None = None
+    observation_time_s: float | None = None
 
     def __post_init__(self) -> None:
         cameras = dict(self.cameras)
@@ -175,9 +280,27 @@ class ObservationPacket:
                 raise ValueError(f"Camera {name} is OK without a frame")
             if status != "OK" and frame is not None:
                 raise ValueError(f"Camera {name} is {status} but has a frame")
-        object.__setattr__(self, "cameras", MappingProxyType(cameras))
-        object.__setattr__(self, "camera_status", MappingProxyType(statuses))
+        object.__setattr__(self, "cameras", _CameraAliases(cameras))
+        object.__setattr__(self, "camera_status", _CameraAliases(statuses))
         object.__setattr__(self, "latest_robot_state",
                            _robot_states(self.latest_robot_state, "latest_robot_state"))
         object.__setattr__(self, "assembled_time_s",
                            _finite_time(self.assembled_time_s, "ObservationPacket.assembled_time_s"))
+        states = self.latest_robot_state if self.robot_state is None else self.robot_state
+        object.__setattr__(self, "robot_state", _robot_states(states, "robot_state"))
+        time = self.assembled_time_s if self.observation_time_s is None else self.observation_time_s
+        object.__setattr__(self, "observation_time_s", _finite_time(time, "observation_time_s"))
+
+    @property
+    def timestamp(self):
+        return self.observation_time_s
+
+    @property
+    def robot(self):
+        return MappingProxyType({"left": self.robot_state["panda_left"],
+                                 "right": self.robot_state["panda_right"]})
+
+    @property
+    def policy_cameras(self):
+        return MappingProxyType({name: self.cameras[source]
+                                 for name, source in POLICY_CAMERA_SOURCES.items()})

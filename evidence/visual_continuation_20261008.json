@@ -1,0 +1,2470 @@
+{
+  "schema": "visual_continuation_development_v1",
+  "date": "2026-10-08",
+  "initial_git_status": "outputs/visual_continuation_20261008/initial_git_status.txt",
+  "preservation": {
+    "initial_files": 77,
+    "missing": [],
+    "changed": [
+      "AGENTS.md",
+      "README.md",
+      "launch.ps1",
+      "workstation/app.py",
+      "workstation/diagnostics/visual_run.py",
+      "workstation/observations/camera_geometry.py",
+      "workstation/perception/scene_estimate.py",
+      "workstation/planning/collision.py",
+      "workstation/planning/selection.py",
+      "workstation/simulation/environment.py",
+      "workstation/simulation/robot_driver.py",
+      "workstation/simulation/visual_fixtures.py",
+      "workstation/skills/reobserve.py",
+      "workstation/skills/visual_pick_place.py",
+      "tests/test_camera_system.py",
+      "tests/test_path_preflight.py",
+      "tests/test_robot_driver.py",
+      "tests/test_visual_planning.py",
+      "项目路线与当前状态交接.md"
+    ],
+    "protected_files": 21,
+    "protected_changed": [
+      "workstation/observations/camera_geometry.py"
+    ],
+    "intentional_calibration_fix": {
+      "source": "workstation/observations/camera_geometry.py",
+      "backup": "outputs/visual_continuation_20261008/camera_geometry_before_pixel_centre_fix.py",
+      "change": "Replicator raster corner -> integer pixel centre cx/cy -0.5; existing API and three-camera architecture retained",
+      "measured_evidence": "outputs/visual_continuation_20261008/pixel_centre_offset_audit.json"
+    }
+  },
+  "resources": {
+    "gpu": "RTX 4060 Laptop 8188 MiB",
+    "driver": "560.94",
+    "ram_total_gib": 31.7967,
+    "isaac": "6.1.0-rc.26",
+    "isaac_python": "3.12.13",
+    "isaac_numpy": "2.3.1",
+    "model_python": "3.12.13",
+    "model_numpy": "2.2.6",
+    "torch": "2.6.0+cu124",
+    "ultralytics": "8.3.253",
+    "cuda_available": true,
+    "inference_isolated": true,
+    "core_dependencies_modified": false
+  },
+  "model": {
+    "family": "project fine-tuned YOLO11n-seg",
+    "weights": "outputs/carton_seg_motion_training_20261007/fit/weights/best.pt",
+    "sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+    "confidence": 0.4,
+    "historical_selection": "evidence/model_progress_20261008.json",
+    "zero_shot_yoloe_accepted": false,
+    "grasp_source": "geometric templates; user selected; no GraspGen inference result"
+  },
+  "historical": {
+    "earlier_fixed_visual_repeats": "2/2; before unknown-space constraints; not current acceptance",
+    "evidence": "outputs/model_integration_20261007/fixed_repeat_results_20261008.json"
+  },
+  "current": {
+    "completed_development_trials": 42,
+    "complete_successes": 0,
+    "pending": [],
+    "trials": [
+      {
+        "run": "outputs\\visual_space_pnp_20261008_01",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_01\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_01\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_01\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_02",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_02\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_02\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_02\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_03",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_03\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_03\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_03\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_04",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_04\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_04\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_04\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_05",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_05\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_05\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_05\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_06",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_06\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_06\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_06\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_07",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_07\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_07\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_07\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_08",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_08\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_08\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_08\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": "rear",
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_09",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_09\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_09\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_09\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_10",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_10\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_10\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_10\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_11",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_11\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_11\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_11\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_12",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_12\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_12\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_12\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_13",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_13\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_13\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_13\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": "cross-left",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_14",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_14\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_14\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_14\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_15",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_15\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_15\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_15\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_16",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_16\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_16\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_16\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": "rear",
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_17",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_17\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_17\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_17\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_18",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_18\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_18\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_18\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_19",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_19\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_19\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_19\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_20",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_20\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_20\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_20\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_21",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_21\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_21\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_21\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "overhead",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_22",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_22\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_22\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_22\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_23",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_23\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_23\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_23\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_24",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_24\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_24\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_24\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_25",
+        "success": false,
+        "failure_reason": "PREPARED_TASK_NOT_FEASIBLE:UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_25\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_25\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_25\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.18664515764365272,
+                0.08430820472476626,
+                1.2648161970902136
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.11335484235634727,
+                  0.26430820472476624,
+                  1.3448161970902137
+                ],
+                "camera_position_fk_m": [
+                  0.11320977468623553,
+                  0.26419733188739536,
+                  1.344644702392458
+                ],
+                "camera_position_error_m": 0.00025049520222285526,
+                "camera_angle_error_rad": 0.001318152719928639,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [
+            "UNOBSERVED_PATH_SPACE"
+          ],
+          "joint_cost": 0.0,
+          "path_clearance_m": 0.0,
+          "rejection_phase": "APPROACH",
+          "rejection_details": {
+            "rejection": "UNOBSERVED_PATH_SPACE",
+            "link_index": "link4",
+            "workspace": {
+              "resolution_m": 0.01,
+              "query_refinement_m": 0.0025,
+              "lower_m": [
+                -0.38,
+                -0.51,
+                0.76
+              ],
+              "upper_m": [
+                0.38,
+                0.16,
+                1.3599999999999999
+              ],
+              "unknown_cells": 47311,
+              "unmodelled_occupied_cells": 14,
+              "observation_time_s": 8.308333333333502,
+              "last_unknown_subcell_centre_m": [
+                -0.23875,
+                -0.06624999999999998,
+                1.3562500000000002
+              ],
+              "last_unknown_sample_m": [
+                -0.23805501760818742,
+                -0.06535443646117886,
+                1.3569576085289325
+              ],
+              "unknown_point_views": [
+                {
+                  "camera": "scene_camera",
+                  "uv": [
+                    298.5671911288754,
+                    189.32432575760936
+                  ],
+                  "camera_z_m": 0.6941303408338451,
+                  "inside_valid_image_border": true,
+                  "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+                  "min_depth_3x3_m": 0.44769012928009033
+                },
+                {
+                  "camera": "left_wrist_camera",
+                  "uv": [
+                    -4.523274422613811,
+                    374.7983589630107
+                  ],
+                  "camera_z_m": 0.133605088807528,
+                  "inside_valid_image_border": false,
+                  "reason": "OUTSIDE_FIELD_OF_VIEW"
+                },
+                {
+                  "camera": "right_wrist_camera",
+                  "uv": [
+                    240.291001935177,
+                    148.39361058881937
+                  ],
+                  "camera_z_m": 0.4560108703991875,
+                  "inside_valid_image_border": true,
+                  "reason": "INVALID_DEPTH_FOOTPRINT",
+                  "min_depth_3x3_m": 0.0
+                }
+              ],
+              "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+              "continuous_collision_proof": false
+            },
+            "candidate_joint_positions_rad": [
+              0.4406178894036111,
+              0.4519912439725422,
+              -0.06855775972298361,
+              -2.7580402499685355,
+              -0.45475253946505395,
+              3.214887786405815,
+              2.8392141518769716
+            ],
+            "unknown_point_max_plane_distance_m": {
+              "link0": 0.39712605419010594,
+              "link1": 0.338031376887197,
+              "link2": 0.1609343188805874,
+              "link3": 0.0783019547219238,
+              "link4": 0.0030000000000001414,
+              "link5": 0.08567196910718516,
+              "link6": 0.26309237667984864,
+              "link7": 0.3962907219465456,
+              "hand": 0.43042511672810135,
+              "finger0": 0.5096668329935944,
+              "finger1": 0.5096668329935944
+            },
+            "unknown_point_local_bbox_overshoot_m": {
+              "link0": 0.3969547767122594,
+              "link1": 0.28208251615239355,
+              "link2": 0.15931246801939128,
+              "link3": 0.07789055935412709,
+              "link4": -0.008788079426984674,
+              "link5": 0.08338943534189713,
+              "link6": 0.2625859390957255,
+              "link7": 0.39625736437853926,
+              "hand": 0.4253420311671173,
+              "finger0": 0.5096668329935944,
+              "finger1": 0.5096668329935944
+            },
+            "unknown_point_inside_any_convex_body_3mm": true
+          }
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_26",
+        "success": false,
+        "failure_reason": "PREPARED_TASK_NOT_FEASIBLE:UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_26\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_26\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_26\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.1866446678192435,
+                0.08430732999124266,
+                1.2648164358763925
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.1133553321807565,
+                  0.2643073299912426,
+                  1.3448164358763925
+                ],
+                "camera_position_fk_m": [
+                  0.11319606785350203,
+                  0.26420397676405677,
+                  1.3446547661305799
+                ],
+                "camera_position_error_m": 0.00024936744417962815,
+                "camera_angle_error_rad": 0.0014026187814745116,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [
+            "UNOBSERVED_PATH_SPACE"
+          ],
+          "joint_cost": 0.0,
+          "path_clearance_m": 0.0,
+          "rejection_phase": "TRANSFER",
+          "rejection_details": {
+            "rejection": "UNOBSERVED_PATH_SPACE",
+            "link_index": "link5",
+            "workspace": {
+              "resolution_m": 0.01,
+              "query_refinement_m": 0.0025,
+              "lower_m": [
+                -0.38,
+                -0.51,
+                0.76
+              ],
+              "upper_m": [
+                0.38,
+                0.16,
+                1.3599999999999999
+              ],
+              "unknown_cells": 46853,
+              "unmodelled_occupied_cells": 14,
+              "observation_time_s": 8.308333333333502,
+              "last_unknown_subcell_centre_m": [
+                -0.12624999999999997,
+                -0.08625,
+                1.21875
+              ],
+              "last_unknown_sample_m": [
+                -0.1261603900419929,
+                -0.08401347863910351,
+                1.2189787221147086
+              ],
+              "unknown_point_views": [
+                {
+                  "camera": "scene_camera",
+                  "uv": [
+                    309.95230530437624,
+                    216.4521238209495
+                  ],
+                  "camera_z_m": 0.8669968314702869,
+                  "inside_valid_image_border": true,
+                  "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+                  "min_depth_3x3_m": 0.5207929611206055
+                },
+                {
+                  "camera": "left_wrist_camera",
+                  "uv": [
+                    -0.124849917723093,
+                    390.11915757505227
+                  ],
+                  "camera_z_m": 0.2597196453707405,
+                  "inside_valid_image_border": false,
+                  "reason": "OUTSIDE_FIELD_OF_VIEW"
+                },
+                {
+                  "camera": "right_wrist_camera",
+                  "uv": [
+                    164.82649167464467,
+                    272.1023671572679
+                  ],
+                  "camera_z_m": 0.4026892512631263,
+                  "inside_valid_image_border": true,
+                  "reason": "INVALID_DEPTH_FOOTPRINT",
+                  "min_depth_3x3_m": 0.0
+                }
+              ],
+              "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+              "continuous_collision_proof": false
+            },
+            "candidate_joint_positions_rad": [
+              0.09744028275223655,
+              0.05646214218880664,
+              0.2620916283537406,
+              -2.5620823973091245,
+              -0.027955629406678,
+              2.6168788719556617,
+              2.5048460447754914
+            ],
+            "unknown_point_max_plane_distance_m": {
+              "link0": 0.3803284257633992,
+              "link1": 0.3626649827606567,
+              "link2": 0.32590443013595544,
+              "link3": 0.33289264018358394,
+              "link4": 0.23806851458843137,
+              "link5": 0.0030000000000000165,
+              "link6": 0.0694233938107679,
+              "link7": 0.12017508764017934,
+              "hand": 0.15934310411408673,
+              "finger0": 0.21121298190861112,
+              "finger1": 0.21121298190861115
+            },
+            "unknown_point_local_bbox_overshoot_m": {
+              "link0": 0.26244648713109653,
+              "link1": 0.30001720108565677,
+              "link2": 0.2959041727354079,
+              "link3": 0.2532263286352821,
+              "link4": 0.23733069030863058,
+              "link5": -0.0027142414110939844,
+              "link6": 0.057074124397451464,
+              "link7": 0.09780351329355597,
+              "hand": 0.12688818008213412,
+              "finger0": 0.21121298190861112,
+              "finger1": 0.21121298190861115
+            },
+            "unknown_point_inside_any_convex_body_3mm": true
+          }
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_27",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_27\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_27\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_27\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.1866446678374162,
+                0.0843073299678502,
+                1.2648164357659197
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.11335533216258378,
+                  0.2643073299678502,
+                  1.3448164357659198
+                ],
+                "camera_position_fk_m": [
+                  0.11319606096830599,
+                  0.26420398598716954,
+                  1.344654734132839
+                ],
+                "camera_position_error_m": 0.00024938867217780416,
+                "camera_angle_error_rad": 0.001402739125258585,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.35880522216349,
+          "path_clearance_m": 0.021086620048980355,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.04804361614108707,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.03440486008096527,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.24697210859840096,
+            -0.2808678913011274,
+            0.8305906779095339,
+            -2.870556897494124,
+            0.4366608809263163,
+            2.638804423879846,
+            2.1824557884052624
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_28",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_28\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_28\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_28\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.1866446678192435,
+                0.08430732999124266,
+                1.2648164358763925
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.1133553321807565,
+                  0.2643073299912426,
+                  1.3448164358763925
+                ],
+                "camera_position_fk_m": [
+                  0.11319606785350203,
+                  0.26420397676405677,
+                  1.3446547661305799
+                ],
+                "camera_position_error_m": 0.00024936744417962815,
+                "camera_angle_error_rad": 0.0014026187814745116,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.358805221548635,
+          "path_clearance_m": 0.021062580373339225,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.048043616136983214,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.03441051463198384,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.2469721083412924,
+            -0.2808678918052135,
+            0.8305906775905273,
+            -2.870556897345889,
+            0.4366608810167408,
+            2.6388044230782755,
+            2.1824557885125446
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_29",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_29\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_29\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_29\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": false,
+              "reason": "UNOBSERVED_PATH_SPACE",
+              "path_check": {
+                "rejection": "UNOBSERVED_PATH_SPACE",
+                "joint_search": {
+                  "reason": "GOAL_STATE_NOT_VERIFIED",
+                  "iterations": 0,
+                  "edge_rejections": {
+                    "UNOBSERVED_PATH_SPACE": 1
+                  },
+                  "straight_path_rejection": "UNOBSERVED_PATH_SPACE",
+                  "straight_path_details": {
+                    "rejection": "UNOBSERVED_PATH_SPACE",
+                    "link_index": "finger0",
+                    "workspace": {
+                      "resolution_m": 0.01,
+                      "query_refinement_m": 0.0025,
+                      "lower_m": [
+                        -0.38,
+                        -0.51,
+                        0.76
+                      ],
+                      "upper_m": [
+                        0.38,
+                        0.16,
+                        1.3599999999999999
+                      ],
+                      "unknown_cells": 42186,
+                      "unmodelled_occupied_cells": 14,
+                      "observation_time_s": 3.1999999999999913,
+                      "last_unknown_subcell_centre_m": [
+                        0.19625000000000004,
+                        -0.08124999999999999,
+                        1.3587500000000001
+                      ],
+                      "last_unknown_sample_m": [
+                        0.19492412717845525,
+                        -0.07925065367676135,
+                        1.3592228315025374
+                      ],
+                      "unknown_point_views": [
+                        {
+                          "camera": "scene_camera",
+                          "uv": [
+                            308.6694174450685,
+                            115.2366004507965
+                          ],
+                          "camera_z_m": 1.0368096077560565,
+                          "inside_valid_image_border": true,
+                          "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+                          "min_depth_3x3_m": 0.4235824942588806
+                        },
+                        {
+                          "camera": "left_wrist_camera",
+                          "uv": [
+                            -1094.1417821817274,
+                            336.5057833830394
+                          ],
+                          "camera_z_m": 0.13952355727572036,
+                          "inside_valid_image_border": false,
+                          "reason": "OUTSIDE_FIELD_OF_VIEW"
+                        },
+                        {
+                          "camera": "right_wrist_camera",
+                          "uv": [
+                            429.5447506464258,
+                            543.3494967837836
+                          ],
+                          "camera_z_m": 0.14310123699053695,
+                          "inside_valid_image_border": false,
+                          "reason": "OUTSIDE_FIELD_OF_VIEW"
+                        }
+                      ],
+                      "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+                      "continuous_collision_proof": false
+                    },
+                    "candidate_joint_positions_rad": [
+                      0.06287097303788733,
+                      -0.6718330997144245,
+                      -0.2842694753136063,
+                      -2.090151871271157,
+                      -0.07286028173742214,
+                      1.4912910289389454,
+                      0.7474146690944228
+                    ],
+                    "unknown_point_max_plane_distance_m": {
+                      "link0": 0.39950570115120887,
+                      "link1": 0.3417066743198104,
+                      "link2": 0.37069412905838134,
+                      "link3": 0.42619463972249805,
+                      "link4": 0.36289841038534987,
+                      "link5": 0.19892588161718036,
+                      "link6": 0.1704503186874617,
+                      "link7": 0.11754211216505418,
+                      "hand": 0.048803965675257036,
+                      "finger0": 0.0030000000004977434,
+                      "finger1": 0.09601652773248875
+                    },
+                    "unknown_point_local_bbox_overshoot_m": {
+                      "link0": 0.3992199996858643,
+                      "link1": 0.2630672723426071,
+                      "link2": 0.3224443688238199,
+                      "link3": 0.2767274177342132,
+                      "link4": 0.3390644502092412,
+                      "link5": 0.17356301543874036,
+                      "link6": 0.17025553191302434,
+                      "link7": 0.1148067762913865,
+                      "hand": 0.048681853539005976,
+                      "finger0": 0.002364892226711865,
+                      "finger1": 0.09601652532671559
+                    },
+                    "unknown_point_inside_any_convex_body_3mm": true
+                  }
+                }
+              }
+            },
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.18664504074962524,
+                0.08430806030329947,
+                1.2648163173291809
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.11335495925037475,
+                  0.26430806030329945,
+                  1.344816317329181
+                ],
+                "camera_position_fk_m": [
+                  0.11320704646412123,
+                  0.2641987051900026,
+                  1.344646951617806
+                ],
+                "camera_position_error_m": 0.0002500429509724723,
+                "camera_angle_error_rad": 0.0013348511080162272,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.3587955607184883,
+          "path_clearance_m": 0.02096962772948633,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.04804443466861488,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.034413378956854604,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.24696562474653572,
+            -0.28086929808197325,
+            0.8305852731606612,
+            -2.8705603097189267,
+            0.436667024195122,
+            2.6388103076637632,
+            2.1824343897861165
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_30",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_30\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_30\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_30\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": false,
+              "reason": "UNOBSERVED_PATH_SPACE",
+              "path_check": {
+                "rejection": "UNOBSERVED_PATH_SPACE",
+                "joint_search": {
+                  "reason": "GOAL_STATE_NOT_VERIFIED",
+                  "iterations": 0,
+                  "edge_rejections": {
+                    "UNOBSERVED_PATH_SPACE": 1
+                  },
+                  "straight_path_rejection": "UNOBSERVED_PATH_SPACE",
+                  "straight_path_details": {
+                    "rejection": "UNOBSERVED_PATH_SPACE",
+                    "link_index": "finger1",
+                    "workspace": {
+                      "resolution_m": 0.01,
+                      "query_refinement_m": 0.0025,
+                      "lower_m": [
+                        -0.38,
+                        -0.51,
+                        0.76
+                      ],
+                      "upper_m": [
+                        0.38,
+                        0.16,
+                        1.3599999999999999
+                      ],
+                      "unknown_cells": 34786,
+                      "unmodelled_occupied_cells": 14,
+                      "observation_time_s": 3.1999999999999913,
+                      "last_unknown_subcell_centre_m": [
+                        0.27125,
+                        -0.08875,
+                        1.3587500000000001
+                      ],
+                      "last_unknown_sample_m": [
+                        0.27101448817086143,
+                        -0.08748381625698656,
+                        1.3594002227112902
+                      ],
+                      "unknown_point_views": [
+                        {
+                          "camera": "scene_camera",
+                          "uv": [
+                            311.670964416573,
+                            107.064634589993
+                          ],
+                          "camera_z_m": 1.0972191298873328,
+                          "inside_valid_image_border": true,
+                          "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+                          "min_depth_3x3_m": 0.432829350233078
+                        },
+                        {
+                          "camera": "left_wrist_camera",
+                          "uv": [
+                            -615.8910393223979,
+                            285.76269498158985
+                          ],
+                          "camera_z_m": 0.14383753725515136,
+                          "inside_valid_image_border": false,
+                          "reason": "OUTSIDE_FIELD_OF_VIEW"
+                        },
+                        {
+                          "camera": "right_wrist_camera",
+                          "uv": [
+                            513.2564737075512,
+                            640.7629749926114
+                          ],
+                          "camera_z_m": 0.06934690906891817,
+                          "inside_valid_image_border": false,
+                          "reason": "OUTSIDE_FIELD_OF_VIEW"
+                        }
+                      ],
+                      "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+                      "continuous_collision_proof": false
+                    },
+                    "candidate_joint_positions_rad": [
+                      0.07335146485683487,
+                      -0.6908468535851588,
+                      -0.33071817041689144,
+                      -2.119008261617888,
+                      -0.08464063384799429,
+                      1.513670883760196,
+                      0.7408710970117917
+                    ],
+                    "unknown_point_max_plane_distance_m": {
+                      "link0": 0.3996626507156855,
+                      "link1": 0.3374875659544534,
+                      "link2": 0.3510462799733914,
+                      "link3": 0.42495704159955383,
+                      "link4": 0.3483637976159823,
+                      "link5": 0.19180019092218936,
+                      "link6": 0.17087194201367173,
+                      "link7": 0.11542960837284406,
+                      "hand": 0.04936742670939842,
+                      "finger0": 0.07713703019151825,
+                      "finger1": 0.003004132241010717
+                    },
+                    "unknown_point_local_bbox_overshoot_m": {
+                      "link0": 0.3993973908946171,
+                      "link1": 0.27489372544377016,
+                      "link2": 0.33090679892089214,
+                      "link3": 0.2642679339251431,
+                      "link4": 0.3399127488037547,
+                      "link5": 0.17207134734458024,
+                      "link6": 0.1708326580538142,
+                      "link7": 0.1153839024317217,
+                      "hand": 0.049258979679341106,
+                      "finger0": 0.07713702891681856,
+                      "finger1": 0.003004129783170712
+                    },
+                    "unknown_point_inside_any_convex_body_3mm": false
+                  }
+                }
+              }
+            },
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.18713405340832523,
+                0.0840356850504875,
+                1.2653884962208362
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.11286594659167476,
+                  0.26403568505048747,
+                  1.3453884962208362
+                ],
+                "camera_position_fk_m": [
+                  0.11261717109575603,
+                  0.263976553662837,
+                  1.3452982478646491
+                ],
+                "camera_position_error_m": 0.00027116514187769625,
+                "camera_angle_error_rad": 0.002259369443544774,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.3535938821063875,
+          "path_clearance_m": 0.021794145874787042,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.0480630337010457,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.034406692121895566,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.2439217320473541,
+            -0.28200515385717423,
+            0.8257629041565436,
+            -2.869320532016835,
+            0.4343967144924277,
+            2.6354348267510757,
+            2.181948261076099
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": 12.0,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_31",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_31\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_31\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_31\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.18731452707695637,
+                0.08385691277334077,
+                1.2652566848903206
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.09268547292304366,
+                  -0.09614308722665922,
+                  1.3852566848903205
+                ],
+                "camera_position_fk_m": [
+                  0.09342799948750964,
+                  -0.09666381147210142,
+                  1.3853687603568514
+                ],
+                "camera_position_error_m": 0.0009138163649919593,
+                "camera_angle_error_rad": 0.003014641112814627,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.354911001181918,
+          "path_clearance_m": 0.02150351281158106,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.04802765480681598,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.034386152049609084,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.24436494857454816,
+            -0.28118129658709856,
+            0.8244098754822566,
+            -2.8699784252947387,
+            0.43256632070938156,
+            2.637575979227689,
+            2.1828731388236813
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": 1.3,
+          "diagnostic_wrist_focal_length_mm": 12.0,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_32",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_32\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_32\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_32\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": 1.3,
+          "diagnostic_wrist_focal_length_mm": 12.0,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_33",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_33\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_33\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_33\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.18748199013535055,
+                0.08364474649458019,
+                1.2645175805263036
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.09251800986464948,
+                  -0.0963552535054198,
+                  1.3845175805263037
+                ],
+                "camera_position_fk_m": [
+                  0.09334212160996319,
+                  -0.09682810170452427,
+                  1.384771095541457
+                ],
+                "camera_position_error_m": 0.0009833694377336063,
+                "camera_angle_error_rad": 0.002941117946938577,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.3584496932353143,
+          "path_clearance_m": 0.020627373248932192,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.04804295990304991,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.03438618224008623,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.2464521203961559,
+            -0.27785265251500446,
+            0.8266199811707203,
+            -2.871000389517041,
+            0.4323972422026171,
+            2.6412616510002738,
+            2.182472944594025
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "west",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": 1.3,
+          "diagnostic_wrist_focal_length_mm": 12.0,
+          "diagnostic_optical_depth_error_margin_m": 0.001
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": {
+          "accepted": true,
+          "optical_depth_error_margin_m": 0.001,
+          "frames": {
+            "scene_camera": {
+              "board_patch_pixels": 159817,
+              "foreground_pixels": 59634,
+              "inconsistent_pixels": 0,
+              "invalid_pixels": 199,
+              "max_abs_residual_m": 9.622856282920367e-07,
+              "p99_abs_residual_m": 4.519575162653665e-07,
+              "scope": "eroded measured board patches; foreground excluded; no carton truth; not full sensor validation"
+            },
+            "left_wrist_camera": {
+              "board_patch_pixels": 71064,
+              "foreground_pixels": 137684,
+              "inconsistent_pixels": 0,
+              "invalid_pixels": 0,
+              "max_abs_residual_m": 3.660530941140827e-05,
+              "p99_abs_residual_m": 3.387497394044867e-05,
+              "scope": "eroded measured board patches; foreground excluded; no carton truth; not full sensor validation"
+            },
+            "right_wrist_camera": {
+              "board_patch_pixels": 117124,
+              "foreground_pixels": 25057,
+              "inconsistent_pixels": 0,
+              "invalid_pixels": 50882,
+              "max_abs_residual_m": 2.4550464110317805e-05,
+              "p99_abs_residual_m": 1.6712296555749797e-05,
+              "scope": "eroded measured board patches; foreground excluded; no carton truth; not full sensor validation"
+            }
+          },
+          "scope": "controlled static-board initial calibration; foreground not marked free",
+          "criterion": "each formal camera >=500 eroded plane samples; max residual <= half selected margin"
+        },
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_34",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_34\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_34\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_34\\visual_task_report.json",
+        "observer_preparation": {
+          "success": true,
+          "executed": true,
+          "observer_arm": "panda_right",
+          "samples": [
+            {
+              "executed": true,
+              "camera": "right_wrist_camera",
+              "arm": "panda_right",
+              "point_m": [
+                -0.18739486773182468,
+                0.08369860069795945,
+                1.2644954713155823
+              ],
+              "point_depth_evidence": true,
+              "camera_check": {
+                "camera_position_goal_m": [
+                  0.09260513226817535,
+                  -0.09630139930204054,
+                  1.3844954713155824
+                ],
+                "camera_position_fk_m": [
+                  0.09337306406471026,
+                  -0.09677681611406172,
+                  1.3846760314823798
+                ],
+                "camera_position_error_m": 0.0009210550271919901,
+                "camera_angle_error_rad": 0.002790563320958049,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              }
+            }
+          ],
+          "scope": "one point reobserved; entire task still requires a fresh full-path check"
+        },
+        "post_observer_task_check": {
+          "reasons": [],
+          "joint_cost": 2.359002799536703,
+          "path_clearance_m": 0.02050982959980733,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "whole_task_template_checked": true,
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 108,
+              "clearance_m": 0.048008018263543784,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.03439275133900552,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "official convex Panda bodies + 3mm; measured fingers",
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "pregrasp_joint_positions_rad": [
+            -0.24706443209885837,
+            -0.2779679633030194,
+            0.8275133313092725,
+            -2.870852839279545,
+            0.4315373160489522,
+            2.64101621954612,
+            2.1833867860124334
+          ],
+          "pregrasp_hint_used": true
+        },
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": true,
+          "diagnostic_preposition_observer": true,
+          "diagnostic_depth_backboard": true,
+          "diagnostic_scene_view": "rear",
+          "diagnostic_right_wrist_view": "cross-left-offset",
+          "diagnostic_scene_height_m": 1.3,
+          "diagnostic_wrist_focal_length_mm": 12.0,
+          "diagnostic_optical_depth_error_margin_m": 0.001
+        },
+        "camera_configuration_matches_saved": false,
+        "optical_depth_calibration_gate": {
+          "accepted": true,
+          "optical_depth_error_margin_m": 0.001,
+          "frames": {
+            "scene_camera": {
+              "board_patch_pixels": 150969,
+              "foreground_pixels": 85121,
+              "inconsistent_pixels": 0,
+              "invalid_pixels": 0,
+              "max_abs_residual_m": 9.802387197499485e-07,
+              "p99_abs_residual_m": 5.312679243196783e-07,
+              "scope": "eroded measured board patches; foreground excluded; no carton truth; not full sensor validation"
+            },
+            "left_wrist_camera": {
+              "board_patch_pixels": 71064,
+              "foreground_pixels": 137684,
+              "inconsistent_pixels": 0,
+              "invalid_pixels": 0,
+              "max_abs_residual_m": 3.6626309209975005e-05,
+              "p99_abs_residual_m": 3.378781902699579e-05,
+              "scope": "eroded measured board patches; foreground excluded; no carton truth; not full sensor validation"
+            },
+            "right_wrist_camera": {
+              "board_patch_pixels": 117124,
+              "foreground_pixels": 25057,
+              "inconsistent_pixels": 0,
+              "invalid_pixels": 50882,
+              "max_abs_residual_m": 2.4253766790938158e-05,
+              "p99_abs_residual_m": 1.6612235475093064e-05,
+              "scope": "eroded measured board patches; foreground excluded; no carton truth; not full sensor validation"
+            }
+          },
+          "scope": "controlled static-board initial calibration; foreground not marked free",
+          "criterion": "each formal camera >=500 eroded plane samples; max residual <= half selected margin"
+        },
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_35",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_35\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_35\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_35\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_36",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_36\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_36\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_36\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_37",
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+        "phases": [
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_37\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_37\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_37\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_38",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": false,
+        "config_used": "outputs\\visual_space_pnp_20261008_38\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_38\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_38\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_39",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "config_used": "outputs\\visual_space_pnp_20261008_39\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_39\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_39\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_40",
+        "success": false,
+        "failure_reason": "HELD_CARTON_OWN_BODY_COLLISION",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "config_used": "outputs\\visual_space_pnp_20261008_40\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_40\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_40\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_41",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "config_used": "outputs\\visual_space_pnp_20261008_41\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_41\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_41\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      },
+      {
+        "run": "outputs\\visual_space_pnp_20261008_42",
+        "success": false,
+        "failure_reason": "UNOBSERVED_PATH_SPACE",
+        "phases": [
+          "PREGRASP",
+          "APPROACH",
+          "CLOSE",
+          "LIFT",
+          "FAILED"
+        ],
+        "max_visual_lift_m": 0.0,
+        "held_on_exit": true,
+        "config_used": "outputs\\visual_space_pnp_20261008_42\\config_used.json",
+        "source_hashes": "outputs\\visual_space_pnp_20261008_42\\online_source_hashes.json",
+        "report": "outputs\\visual_space_pnp_20261008_42\\visual_task_report.json",
+        "observer_preparation": null,
+        "post_observer_task_check": null,
+        "controlled_conditions": {
+          "diagnostic_robot_stow_home": null,
+          "diagnostic_preposition_observer": null,
+          "diagnostic_depth_backboard": null,
+          "diagnostic_scene_view": null,
+          "diagnostic_right_wrist_view": null,
+          "diagnostic_scene_height_m": null,
+          "diagnostic_wrist_focal_length_mm": null,
+          "diagnostic_optical_depth_error_margin_m": null
+        },
+        "camera_configuration_matches_saved": true,
+        "optical_depth_calibration_gate": null,
+        "evaluation_scope": "post-actor offline only; never a policy input"
+      }
+    ],
+    "acceptance": "outputs/visual_continuation_20261008/stage_acceptance.json",
+    "same_version_random_success_rate_established": false
+  },
+  "implementation": {
+    "observed_space": "10mm cells; 2.5mm boundary samples; calibrated valid optical depth; unknown blocks",
+    "robot_model": "official Panda convex bodies for image-time self filtering;36 onward removes whole-arm convex boundary query;39 onward removes finger-shell visibility; keeps Lula sphere collisions/observed obstacles and 3mm TCP corridor/held-box unknown gates",
+    "whole_arm_unknown_space_proven": false,
+    "whole_arm_convex_boundary_query": false,
+    "finger_shell_visibility_required": false,
+    "future_local_visibility": "38 onward explicitly pending in preflight; runtime requires fresh frames",
+    "held_geometry": "40 onward latched visual box-to-TCP relation shared with holding monitor; not a physical attachment",
+    "held_space": "42 onward oriented metric cuboid with3mm padding; not its enclosing AABB; unknown interior remains checked",
+    "upright_tcp_height_m": 0.004,
+    "joint_planner": "bounded local RRT-Connect; every edge checked; exhaustion does not prove unreachable",
+    "reobserve": "current passive fresh frames only; historical empty wrist lifts/rotations/prefixes retained as diagnostics",
+    "current_camera_constraint": "saved config camera installation/optics preserved; dedicated active view moves disabled by default; old experiments are separate",
+    "occlusion_memory": "previous valid optical rays; current robot-only self shadow;5s expiry; new nonrobot occlusion/visual motion envelopes veto; never a source of never-observed free space",
+    "observer_preposition": "optional checked empty wrist staging; measured camera pose and its own depth ray; fresh full-task check required",
+    "sparse_convex_query": "historical/offline only; not invoked by current whole-arm execution",
+    "task_loop": "visual-sort; shared tracks, assigned slots, bounded failures/actions; physical multi-box unaccepted"
+  },
+  "boundaries": {
+    "truth_as_online_input": false,
+    "box_attachment": false,
+    "box_pose_teleport": false,
+    "original_three_cameras_rebuilt": false,
+    "continuous_collision_proof": false,
+    "strict_exposure_ids_verified": false,
+    "default_scene_config_changed": false,
+    "depth_backboard": "optional controlled diagnostic fixture; physically rendered and colliding; not synthetic depth"
+  },
+  "calibration": {
+    "pixel_centre": "integer image indices; rendered optical centre minus0.5 pixel",
+    "validation": "outputs/visual_continuation_20261008/pixel_centre_offset_audit.json",
+    "historical_frames_rewritten": false,
+    "default_depth_free_margin_m": 0.003,
+    "explicit_margin_experiments": "33/34 used1mm only after saved three-camera static-plane gate;35 restores saved configuration/default3mm",
+    "scope": "actual SDK pinhole static-plane frames; not real camera calibration"
+  },
+  "unavailable_or_unaccepted": [
+    "GraspGen Linux service and Panda TCP calibration",
+    "robust inverted semantic evidence",
+    "visual SideAdjustment and DualArmFlip physical skills",
+    "randomized single-box feasible domain",
+    "separated multi-box execution",
+    "clutter/nine-box sorting",
+    "continuous collision guarantee",
+    "hardware hand-eye calibration"
+  ],
+  "sources": [
+    "https://docs.ultralytics.com/models/yoloe/",
+    "https://github.com/NVlabs/GraspGen",
+    "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/manipulators/manipulators_lula_rrt.html",
+    "https://github.com/frankarobotics/franka_ros/blob/develop/franka_description/doc/index.rst"
+  ]
+}

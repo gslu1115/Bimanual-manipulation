@@ -1,0 +1,84 @@
+{
+  "schema": "visual_supported_target_regression_v1",
+  "date": "2026-10-09",
+  "scope": "one seed105 development regression; current-frame RGB-D supported held-target identity association",
+  "attempts": 1,
+  "success": true,
+  "failure_reason": null,
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "HOME",
+    "VERIFY",
+    "DONE"
+  ],
+  "max_visual_lift_m": 0.18837719237882078,
+  "lift_includes_transfer_height": true,
+  "xy_error_m": 0.003149912566270903,
+  "z_error_m": 4.1891425661688686e-08,
+  "axis_yaw_error_deg": 0.0,
+  "observed_stable_s": 0.5999999999999659,
+  "arms_home_and_open": true,
+  "held_on_exit": false,
+  "supported_identity_frames": 1,
+  "supported_identity_samples": [
+    {
+      "time_s": 25.3999999999992,
+      "track_id": "visual_0001",
+      "refs": [
+        "left_wrist_camera/360/component_1",
+        "scene_camera/360/component_1"
+      ],
+      "posture": "UNKNOWN",
+      "failures": [
+        "VERTICAL_EXTENT_UNRESOLVED",
+        "PARTIAL_OR_MERGED_GEOMETRY",
+        "TRACK_AMBIGUOUS"
+      ]
+    }
+  ],
+  "protocol": "outputs/visual_continuation_20261009/supported_target_protocol62.json",
+  "run": "outputs/visual_space_pnp_20261009_62",
+  "run_status": {
+    "status": "passed",
+    "mode": "visual-pnp"
+  },
+  "source_matches_pretrial_protocol": true,
+  "source_mismatches_at_report": [],
+  "cameras_match_saved": true,
+  "saved_configuration_matches_protocol": true,
+  "weights_match_protocol": true,
+  "weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+  "robot_models_match61": true,
+  "logic_checks": "evidence/convex_check_removal_20261009.json; two environments306 passed; AST123",
+  "saved_frame_replay": "outputs/visual_space_pnp_20261008_61/path_replay_associated_held_lower_transferred_4030d239bb.json; 398 lower samples passed; no physical trial",
+  "boundaries": {
+    "original_cameras_changed": false,
+    "convex_boundary_query_implementation_deleted": true,
+    "unknown_map_cleared": false,
+    "observed_obstacles_and_collisions_retained": true,
+    "full_6d_pose_observed": false,
+    "target_truth_online": false,
+    "physical_attachment": false,
+    "box_teleport": false,
+    "whole_arm_unknown_space_proven": false,
+    "continuous_collision_proof": false
+  },
+  "full_goal_complete": false,
+  "unaccepted": [
+    "independent frozen generalization suite",
+    "actual inverted/side semantic perception",
+    "6D visual holding and reorientation",
+    "visual SideAdjustment and DualArmFlip",
+    "safe carrying recovery",
+    "separated multiple objects",
+    "clutter/nine-box completion"
+  ],
+  "acceptance_passed": true
+}

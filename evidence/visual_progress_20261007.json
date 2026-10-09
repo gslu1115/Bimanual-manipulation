@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-07",
+  "repository_head": "ccb9ac3",
+  "reached_stage": "controlled_static_single_carton_visual_estimation",
+  "complete_visual_pick_place_verified": false,
+  "static_estimation": {
+    "report": "outputs/vision_check_20261007_03/vision_report.json",
+    "success": true,
+    "conditions": "one upright 100x55x45 mm carton; fixed position/yaw; static; controlled lighting; known dimensions; three samples in one run",
+    "stable_track": true,
+    "position_errors_m": [
+      0.0010024307032501512,
+      0.0003316995556202569,
+      0.0003316995556202569
+    ],
+    "axis_yaw_errors_deg": [
+      0.005341292581501874,
+      0.06871132873285793,
+      0.06871132872793442
+    ],
+    "postures": [
+      "UPRIGHT",
+      "UPRIGHT",
+      "UPRIGHT"
+    ],
+    "online_inputs": "ObservationPacket RGB-D + calibration + image-time encoder FK",
+    "evaluator": "independent simulator truth after each estimate; not fed to actor"
+  },
+  "static_failed_revision": {
+    "report": "outputs/vision_check_20261007_02/vision_report.json",
+    "cause": "strong chroma gate excluded pale carton top; corrected and rerun"
+  },
+  "visible_edges": {
+    "code": "workstation/perception/visible_edges.py",
+    "contract": "SceneEstimate.edges; camera, mask reference, pixel/metric endpoints, evidence, geometric tolerance",
+    "review_image": "outputs/visual_development_20261007/visible_edge_review_left_wrist_camera.png",
+    "review_source": "outputs/visual_pnp_20261007_03/failed_left_wrist_camera.npz",
+    "scope": "visible horizontal/vertical face intersection; depth normals and straight-line support",
+    "not_verified": "all twelve cuboid edges; arbitrary rotations/occlusion/noise; using edges to drive grasps",
+    "old_reports_modified": false
+  },
+  "physical_trials": [
+    {
+      "report": "outputs/visual_pnp_20261007_01/visual_task_report.json",
+      "success": false,
+      "failure": "STATIC_PATH_BLOCKED:visual_0003",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "FAILED"
+      ],
+      "qualification": "Earlier source revisions; never a successful visual pick/place"
+    },
+    {
+      "report": "outputs/visual_pnp_20261007_03/visual_task_report.json",
+      "success": false,
+      "failure": "STATIC_PATH_BLOCKED:visual_0002",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "FAILED"
+      ],
+      "qualification": "Earlier source revisions; never a successful visual pick/place"
+    },
+    {
+      "report": "outputs/visual_pnp_20261007_04/visual_task_report.json",
+      "success": false,
+      "failure": "HELD_CARTON_NOT_OBSERVABLE",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "FAILED"
+      ],
+      "qualification": "Earlier source revisions; never a successful visual pick/place"
+    }
+  ],
+  "stopped_trial": "outputs/visual_pnp_20261007_02/development_stop.json",
+  "latest_monitor": "partial geometry never proves lift; support-stationary target vs missing observation distinguished; logic only, no fresh physical trial",
+  "checks": {
+    "unit_tests_passed": 82,
+    "unit_log": "outputs/visual_development_20261007/logic_checks_latest.log",
+    "python_ast_files": 41,
+    "configuration_modes": [
+      "scene",
+      "single-pnp",
+      "dual-handover",
+      "conveyor-check",
+      "sensor-check",
+      "vision-check",
+      "visual-pnp"
+    ],
+    "vscode_json_valid": true,
+    "protected_initial_paths_unchanged": 31
+  },
+  "remaining": [
+    "physical grasp and moving-camera observability",
+    "complete manipulation preflight and contact/collision coverage",
+    "executed reobserve/recovery",
+    "visual side/inverted skills",
+    "few-carton to clutter closed loop",
+    "hardware calibration/adapters"
+  ],
+  "all_work_uncommitted": true
+}

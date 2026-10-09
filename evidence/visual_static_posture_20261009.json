@@ -1,0 +1,369 @@
+{
+  "schema": "visual_static_posture_development_v1",
+  "date": "2026-10-09",
+  "cases": [
+    {
+      "fixture": "side",
+      "seed": 6,
+      "output": "outputs/visual_state_20261009_side63",
+      "success": true,
+      "stable_track": true,
+      "run_status": {
+        "status": "passed",
+        "mode": "vision-check"
+      },
+      "samples": [
+        {
+          "passed": true,
+          "position_error_m": 0.00010628513875479515,
+          "axis_yaw_error_deg": 0.00013550465166443367,
+          "reference_posture": "SIDE",
+          "estimated_posture": "SIDE",
+          "geometry_passed": true,
+          "posture_passed": true,
+          "estimate_failures": [],
+          "tracks": [
+            "visual_0001"
+          ],
+          "hypotheses": [
+            [
+              {
+                "label": "SIDE_UNRESOLVED",
+                "orientation_wxyz": [
+                  0.6963641060781427,
+                  0.6963641060781425,
+                  0.12278856529005144,
+                  0.1227885652900514
+                ],
+                "evidence": "footprint matches side face; local top direction unresolved"
+              },
+              {
+                "label": "SIDE_UNRESOLVED",
+                "orientation_wxyz": [
+                  0.6963641060781427,
+                  -0.6963641060781425,
+                  -0.12278856529005144,
+                  0.1227885652900514
+                ],
+                "evidence": "footprint matches side face; local top direction unresolved"
+              }
+            ]
+          ],
+          "appearance_evidence": [
+            {
+              "tape_observed": 0.0,
+              "tape_visible_span_m": 0.0,
+              "tape_partial_support": 0.0,
+              "tape_paired_bins": 0.0,
+              "tape_paired_span_m": 0.0,
+              "tape_stripe_width_m": 0.0
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "position_error_m": 0.00010628513875479515,
+          "axis_yaw_error_deg": 0.00013550465166443367,
+          "reference_posture": "SIDE",
+          "estimated_posture": "SIDE",
+          "geometry_passed": true,
+          "posture_passed": true,
+          "estimate_failures": [],
+          "tracks": [
+            "visual_0001"
+          ],
+          "hypotheses": [
+            [
+              {
+                "label": "SIDE_UNRESOLVED",
+                "orientation_wxyz": [
+                  0.6963641060781427,
+                  0.6963641060781425,
+                  0.12278856529005144,
+                  0.1227885652900514
+                ],
+                "evidence": "footprint matches side face; local top direction unresolved"
+              },
+              {
+                "label": "SIDE_UNRESOLVED",
+                "orientation_wxyz": [
+                  0.6963641060781427,
+                  -0.6963641060781425,
+                  -0.12278856529005144,
+                  0.1227885652900514
+                ],
+                "evidence": "footprint matches side face; local top direction unresolved"
+              }
+            ]
+          ],
+          "appearance_evidence": [
+            {
+              "tape_observed": 0.0,
+              "tape_visible_span_m": 0.0,
+              "tape_partial_support": 0.0,
+              "tape_paired_bins": 0.0,
+              "tape_paired_span_m": 0.0,
+              "tape_stripe_width_m": 0.0
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "position_error_m": 0.00010628513875479515,
+          "axis_yaw_error_deg": 0.00013550465166443367,
+          "reference_posture": "SIDE",
+          "estimated_posture": "SIDE",
+          "geometry_passed": true,
+          "posture_passed": true,
+          "estimate_failures": [],
+          "tracks": [
+            "visual_0001"
+          ],
+          "hypotheses": [
+            [
+              {
+                "label": "SIDE_UNRESOLVED",
+                "orientation_wxyz": [
+                  0.6963641060781427,
+                  0.6963641060781425,
+                  0.12278856529005144,
+                  0.1227885652900514
+                ],
+                "evidence": "footprint matches side face; local top direction unresolved"
+              },
+              {
+                "label": "SIDE_UNRESOLVED",
+                "orientation_wxyz": [
+                  0.6963641060781427,
+                  -0.6963641060781425,
+                  -0.12278856529005144,
+                  0.1227885652900514
+                ],
+                "evidence": "footprint matches side face; local top direction unresolved"
+              }
+            ]
+          ],
+          "appearance_evidence": [
+            {
+              "tape_observed": 0.0,
+              "tape_visible_span_m": 0.0,
+              "tape_partial_support": 0.0,
+              "tape_paired_bins": 0.0,
+              "tape_paired_span_m": 0.0,
+              "tape_stripe_width_m": 0.0
+            }
+          ]
+        }
+      ],
+      "cameras_match_protocol": true,
+      "inference_median_ms": null,
+      "segmentation_iou": null,
+      "scope": "three consecutive frames of one static controlled initial condition, not independent attempts"
+    },
+    {
+      "fixture": "inverted",
+      "seed": 6,
+      "output": "outputs/visual_state_20261009_inverted64",
+      "success": true,
+      "stable_track": true,
+      "run_status": {
+        "status": "passed",
+        "mode": "vision-check"
+      },
+      "samples": [
+        {
+          "passed": true,
+          "position_error_m": 0.00011132566444285902,
+          "axis_yaw_error_deg": 5.440159618181473e-05,
+          "reference_posture": "INVERTED",
+          "estimated_posture": "INVERTED",
+          "geometry_passed": true,
+          "posture_passed": true,
+          "estimate_failures": [],
+          "tracks": [
+            "visual_0001"
+          ],
+          "hypotheses": [
+            [
+              {
+                "label": "INVERTED",
+                "orientation_wxyz": [
+                  -0.0,
+                  -0.9848078197215431,
+                  -0.17364779933906668,
+                  -0.0
+                ],
+                "evidence": "INVERTED end fold in left_wrist_camera; 180-degree axis symmetry"
+              },
+              {
+                "label": "INVERTED",
+                "orientation_wxyz": [
+                  0.0,
+                  -0.17364779933906668,
+                  0.9848078197215431,
+                  0.0
+                ],
+                "evidence": "INVERTED end fold in left_wrist_camera; 180-degree axis symmetry"
+              }
+            ]
+          ],
+          "appearance_evidence": [
+            {
+              "tape_observed": 0.0,
+              "tape_visible_span_m": 0.0,
+              "tape_partial_support": 0.0,
+              "tape_paired_bins": 0.0,
+              "tape_paired_span_m": 0.0,
+              "tape_stripe_width_m": 0.0,
+              "tape_camera_count": 0.0,
+              "tape_fold_upright_views": 0.0,
+              "tape_fold_inverted_views": 1.0,
+              "packaging_conflict": 0.0
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "position_error_m": 7.383567449122921e-06,
+          "axis_yaw_error_deg": 0.0022716288219041176,
+          "reference_posture": "INVERTED",
+          "estimated_posture": "INVERTED",
+          "geometry_passed": true,
+          "posture_passed": true,
+          "estimate_failures": [],
+          "tracks": [
+            "visual_0001"
+          ],
+          "hypotheses": [
+            [
+              {
+                "label": "INVERTED",
+                "orientation_wxyz": [
+                  -0.0,
+                  -0.984811221587055,
+                  -0.17362850525248588,
+                  -0.0
+                ],
+                "evidence": "INVERTED end fold in left_wrist_camera; 180-degree axis symmetry"
+              },
+              {
+                "label": "INVERTED",
+                "orientation_wxyz": [
+                  0.0,
+                  -0.17362850525248588,
+                  0.984811221587055,
+                  0.0
+                ],
+                "evidence": "INVERTED end fold in left_wrist_camera; 180-degree axis symmetry"
+              }
+            ]
+          ],
+          "appearance_evidence": [
+            {
+              "tape_observed": 0.0,
+              "tape_visible_span_m": 0.0,
+              "tape_partial_support": 0.0,
+              "tape_paired_bins": 0.0,
+              "tape_paired_span_m": 0.0,
+              "tape_stripe_width_m": 0.0,
+              "tape_camera_count": 0.0,
+              "tape_fold_upright_views": 0.0,
+              "tape_fold_inverted_views": 1.0,
+              "packaging_conflict": 0.0
+            }
+          ]
+        },
+        {
+          "passed": true,
+          "position_error_m": 7.383453233679962e-06,
+          "axis_yaw_error_deg": 0.0022716288218405066,
+          "reference_posture": "INVERTED",
+          "estimated_posture": "INVERTED",
+          "geometry_passed": true,
+          "posture_passed": true,
+          "estimate_failures": [],
+          "tracks": [
+            "visual_0001"
+          ],
+          "hypotheses": [
+            [
+              {
+                "label": "INVERTED",
+                "orientation_wxyz": [
+                  -0.0,
+                  -0.984811221587055,
+                  -0.17362850525248588,
+                  -0.0
+                ],
+                "evidence": "INVERTED end fold in left_wrist_camera; 180-degree axis symmetry"
+              },
+              {
+                "label": "INVERTED",
+                "orientation_wxyz": [
+                  0.0,
+                  -0.17362850525248588,
+                  0.984811221587055,
+                  0.0
+                ],
+                "evidence": "INVERTED end fold in left_wrist_camera; 180-degree axis symmetry"
+              }
+            ]
+          ],
+          "appearance_evidence": [
+            {
+              "tape_observed": 0.0,
+              "tape_visible_span_m": 0.0,
+              "tape_partial_support": 0.0,
+              "tape_paired_bins": 0.0,
+              "tape_paired_span_m": 0.0,
+              "tape_stripe_width_m": 0.0,
+              "tape_camera_count": 0.0,
+              "tape_fold_upright_views": 0.0,
+              "tape_fold_inverted_views": 1.0,
+              "packaging_conflict": 0.0
+            }
+          ]
+        }
+      ],
+      "cameras_match_protocol": true,
+      "inference_median_ms": null,
+      "segmentation_iou": null,
+      "scope": "three consecutive frames of one static controlled initial condition, not independent attempts"
+    }
+  ],
+  "attempted_cases": 2,
+  "passed_cases": 2,
+  "suite_passed": true,
+  "source_mismatches_at_report": [],
+  "config_matches_protocol": true,
+  "weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+  "weights_match_protocol": true,
+  "protocol": "outputs/visual_continuation_20261009/static_posture_protocol63_64.json",
+  "logic_checks": {
+    "isolated": {
+      "count": 316,
+      "passed": true,
+      "log": "outputs/visual_continuation_20261009/logic_posture_evaluation.txt"
+    },
+    "sdk": {
+      "count": 316,
+      "passed": true,
+      "log": "outputs/visual_continuation_20261009/sdk_logic_posture_evaluation.txt"
+    }
+  },
+  "ast_files": 124,
+  "scope": "static SIDE/INVERTED recognition development, known-size packaging; separate geometric/semantic verdicts",
+  "independent_truth_only_after_each_visual_estimate": true,
+  "online_truth": false,
+  "original_cameras_changed": false,
+  "physical_reorientation_executed": false,
+  "unknown_is_not_success": true,
+  "limits": [
+    "one initial condition per posture, three temporally adjacent frames",
+    "no random initial posture success rate",
+    "no segmentation-mask IoU or inference-latency acceptance in this protocol",
+    "no SideAdjustment/DualArmFlip or 6D holding acceptance",
+    "ideal simulator depth, not real-camera precision"
+  ],
+  "full_goal_complete": false
+}

@@ -21,7 +21,7 @@ class CameraGeometryTests(unittest.TestCase):
         cv = np.asarray(frame['T_world_from_camera_opencv'])
         np.testing.assert_allclose(cv[:3, 2], -world[:3, 2])
         np.testing.assert_allclose(np.asarray(frame['T_camera_opencv_from_world'])@cv, np.eye(4))
-        np.testing.assert_allclose(frame['K'], [[426.6666666667, 0, 320], [0, 426.6666666667, 240], [0, 0, 1]])
+        np.testing.assert_allclose(frame['K'], [[426.6666666667, 0, 319.5], [0, 426.6666666667, 239.5], [0, 0, 1]])
 
     def test_wrist_quaternions_look_towards_fingers_with_consistent_image_right(self):
         cameras = {x['name']: x for x in self.c['cameras']}

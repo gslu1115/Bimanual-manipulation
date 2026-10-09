@@ -1,0 +1,13 @@
+{
+  "python.defaultInterpreterPath": "D:\\Issaccc\\kit\\python\\python.exe",
+  "python.envFile": "${workspaceFolder}/.vscode/isaac.env",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "D:/Issaccc/extscache/omni.kit.pip_archive-0.0.0+00c488ae.wx64.cp312/pip_prebundle",
+    "D:/Issaccc/exts/omni.pip.compute/pip_prebundle"
+  ],
+  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestArgs": ["-v", "-s", "tests", "-p", "test_*.py"],
+  "python.testing.cwd": "${workspaceFolder}"
+}

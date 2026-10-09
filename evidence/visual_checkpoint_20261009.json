@@ -1,0 +1,135 @@
+{
+  "checkpoint": "2026-10-09 visual cuboid handoff",
+  "date": "2026-10-09",
+  "git_head": "ccb9ac30282b497b231e5358eb01cd5c4f5b72b3",
+  "committed": false,
+  "pushed": false,
+  "full_goal_complete": false,
+  "source_archive": {
+    "path": "outputs/visual_reorientation_20261009/source_snapshot.zip",
+    "sha256": "e2a4428a3b49f6cbd11aaedde1fd226d56f29d3709b2c063dfbca7720827ec7a",
+    "files": 149,
+    "scope": "Python sources, three root Markdown documents, launcher/config, requirements and existing small evidence",
+    "excludes": [
+      "model weights",
+      "venv",
+      "Isaac SDK",
+      "large outputs",
+      "Git metadata"
+    ]
+  },
+  "checks": {
+    "models": {
+      "date": "2026-10-09",
+      "python": "3.12.13 (tags/v3.12.13-dirty:3bb231a, Apr 22 2026, 07:13:40) [MSC v.1929 64 bit (AMD64)]",
+      "executable": "D:\\xietong\\Bimanual-manipulation\\.venv-models\\Scripts\\python.exe",
+      "scope": "cuboid pose, holding, target identity, observed map/history, robot port and visual monitor logic",
+      "tests": 116,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "ast_sources": [
+        "workstation/perception/cuboid_pose.py",
+        "workstation/perception/held_surface.py",
+        "workstation/perception/rgbd_cartons.py",
+        "workstation/planning/observed_workspace.py",
+        "workstation/simulation/robot_driver.py",
+        "tests/test_cuboid_pose.py"
+      ],
+      "simulation_started": false,
+      "model_inference": false
+    },
+    "isaac_python": {
+      "date": "2026-10-09",
+      "python": "3.12.13 (tags/v3.12.13-dirty:3bb231a, Apr 22 2026, 07:13:40) [MSC v.1929 64 bit (AMD64)]",
+      "executable": "D:\\Issaccc\\kit\\python\\kit.exe",
+      "scope": "cuboid pose, holding, target identity, observed map/history, robot port and visual monitor logic",
+      "tests": 116,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "ast_sources": [
+        "workstation/perception/cuboid_pose.py",
+        "workstation/perception/held_surface.py",
+        "workstation/perception/rgbd_cartons.py",
+        "workstation/planning/observed_workspace.py",
+        "workstation/simulation/robot_driver.py",
+        "tests/test_cuboid_pose.py"
+      ],
+      "simulation_started": false,
+      "model_inference": false
+    }
+  },
+  "entry_validation": {
+    "args": [
+      "D:\\xietong\\Bimanual-manipulation\\.venv-models\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "workstation",
+      "--mode",
+      "visual-pnp",
+      "--validate-only"
+    ],
+    "exit_code": 0,
+    "log": "outputs/visual_reorientation_20261009/entry_validate.txt"
+  },
+  "diff_check_exit_code": 0,
+  "protected_files": 20,
+  "protected_mismatches": [],
+  "model": {
+    "type": "project fine-tuned YOLO11n-seg",
+    "weights": "outputs/carton_seg_motion_training_20261007/fit/weights/best.pt",
+    "sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+    "confidence": 0.4
+  },
+  "config_sha256": "b13aab93b2720822b0445e80b51161a94f970c1039f343d55d2f239f2497078b",
+  "newly_verified": {
+    "targeted_tests_per_environment": 116,
+    "new_cuboid_tests": 20,
+    "saved_frame_cases": 9,
+    "geometric_fits": 18,
+    "geometric_fits_observed": 18,
+    "saved_replay": "outputs/visual_reorientation_20261009/cuboid_saved_replay_refined.json",
+    "initial_failed_replay": "outputs/visual_reorientation_20261009/cuboid_saved_replay.json"
+  },
+  "physical_scope": {
+    "new_simulation_started": false,
+    "new_physical_trials": 0,
+    "live_rotating_holding_verified": false,
+    "side_adjustment_verified": false,
+    "visual_flip_verified": false,
+    "multi_box_sorting_verified": false,
+    "independent_current_success_rate_verified": false,
+    "historical_controlled_direct_pick": "evidence/visual_supported_target_20261009.json",
+    "historical_static_postures": "evidence/visual_static_posture_20261009.json"
+  },
+  "ready": {
+    "cuboid_fitter": true,
+    "geometric_holding_tracker": true,
+    "measured_payload_port": true,
+    "existing_upright_skill_uses_original_tracker": true
+  },
+  "remaining": [
+    "full TCP orientation execution interface and rotating holding physical validation",
+    "visual SideAdjustment",
+    "visual DualArmFlip",
+    "complete skill routing and bounded recovery",
+    "physical separated few-box sorting",
+    "occluded/random nine-box sorting",
+    "independent validation and complete path/continuous safety evidence"
+  ],
+  "boundaries": {
+    "original_cameras_preserved": true,
+    "core_dependencies_unchanged": true,
+    "old_evidence_unchanged": true,
+    "whole_arm_convex_boundary_query_removed": true,
+    "geometric_symmetry_preserved": true,
+    "truth_used_for_online_input": false,
+    "whole_arm_unknown_space_verified": false,
+    "continuous_collision_proof": false
+  },
+  "manifest": "outputs/visual_reorientation_20261009/checkpoint_manifest.json"
+}

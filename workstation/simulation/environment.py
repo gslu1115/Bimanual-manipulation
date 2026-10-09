@@ -20,7 +20,7 @@ from workstation.observations.camera_system import CameraSystem
 
 
 class SortingEnvironment:
-    def __init__(self, app, config, output, robot_usd=None, sensors=True, conveyor_test=False, single_pnp=False, dual_handover=False):
+    def __init__(self, app, config, output, robot_usd=None, sensors=True, conveyor_test=False, single_pnp=False, dual_handover=False, visual_fixture=None):
         self.app, self.c, self.output = app, config, Path(output)
         self.output.mkdir(parents=True, exist_ok=True)
         self.seed = config['seed']
@@ -74,6 +74,9 @@ class SortingEnvironment:
                                            [1, 0, 0, 0], [0, 0, 0], [0, 0, 0])
                                    for i, xy in enumerate(config['conveyor']['slots_xy'])]
         self.box_paths = []
+        if visual_fixture is not None:
+            from workstation.simulation.visual_fixtures import initial_cartons
+            self.initial_states=initial_cartons(config,visual_fixture)
         for state in self.initial_states:
             self._box(state)
         self.boxes = RigidPrim(self.box_paths)
@@ -117,6 +120,10 @@ class SortingEnvironment:
         c = self.c
         t, belt, u = c['table'], c['conveyor'], c['upstream']
         self._cube('/World/Floor', [0, 0, -.05], [6, 5, .1], [.19, .22, .25], True)
+        from workstation.simulation.station_priors import depth_backboards
+        for board in depth_backboards(c):
+            self._cube('/World/DiagnosticDepthBackdrop/'+board.name,board.centre,
+                       board.size,board.colour,True)
         self._cube('/World/Station/Table', t['center_xy']+[t['top_z']-t['size'][2]/2], t['size'], [.48, .53, .56], True, .45)
         front, back = t['center_xy'][1]-t['size'][1]/2+.065, t['center_xy'][1]+t['size'][1]/2-.065
         for i, (x, y) in enumerate([(-.60, front), (.60, front), (-.60, back), (.60, back)]):
@@ -239,6 +246,20 @@ class SortingEnvironment:
             from workstation.observations.sim_sensor_adapter import SimSensorAdapter
             self._policy_sensor_adapter = SimSensorAdapter(self)
         return self._policy_sensor_adapter.read(refresh=refresh)
+
+    def observe_robot_states(self):
+        """Read both measured qpos and qvel at the current physics time by DOF name."""
+        from workstation.observations.observation_packet import PandaJointMap
+        states = {}
+        for name, arm in self.arms.items():
+            mapping = PandaJointMap(tuple(arm.dof_names))
+            states[name] = mapping.extract(arm.get_dof_positions().numpy()[0],
+                arm.get_dof_velocities().numpy()[0], self.time)
+        return states
+
+    def get_observation_packet(self, refresh=False):
+        """Alias of the existing packet API; no extra sampling or alternate camera system."""
+        return self.observe_policy_inputs(refresh=refresh)
 
     def start(self):
         SimulationManager.set_physics_dt(self.c['physics']['dt'])

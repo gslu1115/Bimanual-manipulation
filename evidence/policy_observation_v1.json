@@ -1,0 +1,907 @@
+{
+  "success": true,
+  "scope": "camera_robot_policy_interface_only",
+  "frames": {
+    "home": {
+      "scene_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.482534153247273e-16,
+        "rotation_error_deg": 0.0,
+        "sample_time_s": 0.5000000000000007,
+        "sequence_id": 12
+      },
+      "left_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 5.471837175698432e-06,
+        "rotation_error_deg": 0.0008091053881955567,
+        "sample_time_s": 0.5000000000000007,
+        "sequence_id": 12
+      },
+      "right_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 7.304963443184681e-06,
+        "rotation_error_deg": 0.0008091026854673319,
+        "sample_time_s": 0.5000000000000007,
+        "sequence_id": 12
+      }
+    },
+    "left_moved": {
+      "scene_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.482534153247273e-16,
+        "rotation_error_deg": 0.0,
+        "sample_time_s": 1.3249999999999977,
+        "sequence_id": 24
+      },
+      "left_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 1.4582892454897038e-07,
+        "rotation_error_deg": 2.393613458937197e-05,
+        "sample_time_s": 1.3249999999999977,
+        "sequence_id": 24
+      },
+      "right_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 7.304963443184681e-06,
+        "rotation_error_deg": 0.0008091026854673319,
+        "sample_time_s": 1.3249999999999977,
+        "sequence_id": 24
+      }
+    },
+    "both_moved": {
+      "scene_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 2.482534153247273e-16,
+        "rotation_error_deg": 0.0,
+        "sample_time_s": 2.149999999999995,
+        "sequence_id": 36
+      },
+      "left_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 1.0,
+        "translation_error_m": 1.190607014185176e-06,
+        "rotation_error_deg": 0.0002261194962219073,
+        "sample_time_s": 2.149999999999995,
+        "sequence_id": 36
+      },
+      "right_wrist_camera": {
+        "rgb_shape": [
+          480,
+          640,
+          3
+        ],
+        "depth_shape": [
+          480,
+          640
+        ],
+        "positive_depth_fraction": 0.9995572916666666,
+        "translation_error_m": 3.010176489306569e-07,
+        "rotation_error_deg": 3.6939895910400344e-05,
+        "sample_time_s": 2.149999999999995,
+        "sequence_id": 36
+      }
+    }
+  },
+  "motion_checks": {
+    "panda_left": {
+      "wrist_transform_change": 0.1470688979492493,
+      "other_wrist_transform_change": 0.0,
+      "scene_transform_change": 0.0
+    },
+    "panda_right": {
+      "wrist_transform_change": 0.14706879284034535,
+      "other_wrist_transform_change": 0.002282429928527091,
+      "scene_transform_change": 0.0
+    }
+  },
+  "policy_frames": {
+    "home": {
+      "timestamp": 0.5000000000000007,
+      "robots": {
+        "left": {
+          "arm_qpos_shape": [
+            7
+          ],
+          "arm_qvel_shape": [
+            7
+          ],
+          "finger_qpos_shape": [
+            2
+          ],
+          "finger_qvel_shape": [
+            2
+          ],
+          "qpos": [
+            1.6635143538223929e-06,
+            -0.5990877747535706,
+            2.8454866196625517e-07,
+            -2.400967836380005,
+            4.150566041971615e-07,
+            1.7999545335769653,
+            0.7853978276252747,
+            0.039995867758989334,
+            0.039995867758989334
+          ],
+          "qvel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "gripper_width_m": 0.07999173551797867,
+          "timestamp": 0.5000000000000007,
+          "tcp_pose_world": [
+            -0.35999920687097997,
+            -0.12023286402413536,
+            1.2456790543717664,
+            0.0006806912529767708,
+            -0.7071056970625784,
+            -0.7071072098821712,
+            -0.0006808624779691543
+          ]
+        },
+        "right": {
+          "arm_qpos_shape": [
+            7
+          ],
+          "arm_qvel_shape": [
+            7
+          ],
+          "finger_qpos_shape": [
+            2
+          ],
+          "finger_qvel_shape": [
+            2
+          ],
+          "qpos": [
+            1.6635071915516164e-06,
+            -0.5990877747535706,
+            2.8452481615204306e-07,
+            -2.400967836380005,
+            4.1506049797135347e-07,
+            1.7999545335769653,
+            0.7853978276252747,
+            0.039995864033699036,
+            0.039995864033699036
+          ],
+          "qvel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "gripper_width_m": 0.07999172806739807,
+          "timestamp": 0.5000000000000007,
+          "tcp_pose_world": [
+            0.36000079311853816,
+            -0.12023286402413558,
+            1.2456790543717664,
+            0.0006806912468732534,
+            -0.7071056970723826,
+            -0.7071072098723671,
+            -0.0006808624840726897
+          ]
+        }
+      },
+      "image_shapes": {
+        "cam_high": [
+          3,
+          480,
+          640
+        ],
+        "cam_left_wrist": [
+          3,
+          480,
+          640
+        ],
+        "cam_right_wrist": [
+          3,
+          480,
+          640
+        ]
+      },
+      "image_mask": {
+        "cam_high": true,
+        "cam_left_wrist": true,
+        "cam_right_wrist": true
+      },
+      "state_shape": [
+        16
+      ],
+      "state_dtype": "float32",
+      "state": [
+        1.6635143538223929e-06,
+        -0.5990877747535706,
+        2.8454866196625517e-07,
+        -2.400967836380005,
+        4.150566041971615e-07,
+        1.7999545335769653,
+        0.7853978276252747,
+        0.07999173551797867,
+        1.6635071915516164e-06,
+        -0.5990877747535706,
+        2.8452481615204306e-07,
+        -2.400967836380005,
+        4.1506049797135347e-07,
+        1.7999545335769653,
+        0.7853978276252747,
+        0.07999172806739807
+      ],
+      "stack_rgb_shape": [
+        3,
+        3,
+        480,
+        640
+      ],
+      "sync_ok": true,
+      "metadata": {
+        "camera_timestamps": {
+          "cam_high": 0.5000000000000007,
+          "cam_left_wrist": 0.5000000000000007,
+          "cam_right_wrist": 0.5000000000000007
+        },
+        "robot_timestamps": {
+          "panda_left": 0.5000000000000007,
+          "panda_right": 0.5000000000000007
+        },
+        "assembled_time_s": 0.5000000000000007,
+        "camera_status": {
+          "cam_high": "OK",
+          "cam_left_wrist": "OK",
+          "cam_right_wrist": "OK"
+        },
+        "camera_errors": {},
+        "sync_ok": true,
+        "max_camera_robot_skew_s": 0.0,
+        "timestamp_span_s": 0.0,
+        "sync_tolerance_s": 0.02,
+        "robot_fresh": true,
+        "state_schema": [
+          "left.panda_joint1",
+          "left.panda_joint2",
+          "left.panda_joint3",
+          "left.panda_joint4",
+          "left.panda_joint5",
+          "left.panda_joint6",
+          "left.panda_joint7",
+          "left.gripper_width_m",
+          "right.panda_joint1",
+          "right.panda_joint2",
+          "right.panda_joint3",
+          "right.panda_joint4",
+          "right.panda_joint5",
+          "right.panda_joint6",
+          "right.panda_joint7",
+          "right.gripper_width_m"
+        ],
+        "state_schema_version": "panda_positions_and_width_v1"
+      },
+      "lerobot_keys": [
+        "observation.images.cam_high",
+        "observation.images.cam_left_wrist",
+        "observation.images.cam_right_wrist",
+        "observation.state"
+      ]
+    },
+    "left_moved": {
+      "timestamp": 1.3249999999999977,
+      "robots": {
+        "left": {
+          "arm_qpos_shape": [
+            7
+          ],
+          "arm_qvel_shape": [
+            7
+          ],
+          "finger_qpos_shape": [
+            2
+          ],
+          "finger_qvel_shape": [
+            2
+          ],
+          "qpos": [
+            0.1476016640663147,
+            -0.5980274677276611,
+            5.418732598627685e-06,
+            -2.402071237564087,
+            8.799440252005297e-07,
+            1.7999087572097778,
+            0.7853976488113403,
+            0.03999718651175499,
+            0.03999719396233559
+          ],
+          "qvel": [
+            0.01204914040863514,
+            -0.005318687297403812,
+            -1.7542557543492876e-05,
+            0.005526036024093628,
+            -8.268935971500468e-07,
+            0.00022737927793059498,
+            5.410966537056083e-07,
+            -4.832287231693044e-06,
+            -4.832286776945693e-06
+          ],
+          "gripper_width_m": 0.07999438047409058,
+          "timestamp": 1.3249999999999977,
+          "tcp_pose_world": [
+            -0.30557110658949366,
+            -0.11605919443508167,
+            1.244752883593578,
+            0.0015664813349061597,
+            -0.653041086535717,
+            -0.7573196582149231,
+            -0.001349338248751408
+          ]
+        },
+        "right": {
+          "arm_qpos_shape": [
+            7
+          ],
+          "arm_qvel_shape": [
+            7
+          ],
+          "finger_qpos_shape": [
+            2
+          ],
+          "finger_qvel_shape": [
+            2
+          ],
+          "qpos": [
+            1.6635071915516164e-06,
+            -0.5990877747535706,
+            2.8452481615204306e-07,
+            -2.400967836380005,
+            4.1506049797135347e-07,
+            1.7999545335769653,
+            0.7853978276252747,
+            0.039995864033699036,
+            0.039995864033699036
+          ],
+          "qvel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "gripper_width_m": 0.07999172806739807,
+          "timestamp": 1.3249999999999977,
+          "tcp_pose_world": [
+            0.36000079311853816,
+            -0.12023286402413558,
+            1.2456790543717664,
+            0.0006806912468732534,
+            -0.7071056970723826,
+            -0.7071072098723671,
+            -0.0006808624840726897
+          ]
+        }
+      },
+      "image_shapes": {
+        "cam_high": [
+          3,
+          480,
+          640
+        ],
+        "cam_left_wrist": [
+          3,
+          480,
+          640
+        ],
+        "cam_right_wrist": [
+          3,
+          480,
+          640
+        ]
+      },
+      "image_mask": {
+        "cam_high": true,
+        "cam_left_wrist": true,
+        "cam_right_wrist": true
+      },
+      "state_shape": [
+        16
+      ],
+      "state_dtype": "float32",
+      "state": [
+        0.1476016640663147,
+        -0.5980274677276611,
+        5.418732598627685e-06,
+        -2.402071237564087,
+        8.799440252005297e-07,
+        1.7999087572097778,
+        0.7853976488113403,
+        0.07999438047409058,
+        1.6635071915516164e-06,
+        -0.5990877747535706,
+        2.8452481615204306e-07,
+        -2.400967836380005,
+        4.1506049797135347e-07,
+        1.7999545335769653,
+        0.7853978276252747,
+        0.07999172806739807
+      ],
+      "stack_rgb_shape": [
+        3,
+        3,
+        480,
+        640
+      ],
+      "sync_ok": true,
+      "metadata": {
+        "camera_timestamps": {
+          "cam_high": 1.3249999999999977,
+          "cam_left_wrist": 1.3249999999999977,
+          "cam_right_wrist": 1.3249999999999977
+        },
+        "robot_timestamps": {
+          "panda_left": 1.3249999999999977,
+          "panda_right": 1.3249999999999977
+        },
+        "assembled_time_s": 1.3249999999999977,
+        "camera_status": {
+          "cam_high": "OK",
+          "cam_left_wrist": "OK",
+          "cam_right_wrist": "OK"
+        },
+        "camera_errors": {},
+        "sync_ok": true,
+        "max_camera_robot_skew_s": 0.0,
+        "timestamp_span_s": 0.0,
+        "sync_tolerance_s": 0.02,
+        "robot_fresh": true,
+        "state_schema": [
+          "left.panda_joint1",
+          "left.panda_joint2",
+          "left.panda_joint3",
+          "left.panda_joint4",
+          "left.panda_joint5",
+          "left.panda_joint6",
+          "left.panda_joint7",
+          "left.gripper_width_m",
+          "right.panda_joint1",
+          "right.panda_joint2",
+          "right.panda_joint3",
+          "right.panda_joint4",
+          "right.panda_joint5",
+          "right.panda_joint6",
+          "right.panda_joint7",
+          "right.gripper_width_m"
+        ],
+        "state_schema_version": "panda_positions_and_width_v1"
+      },
+      "lerobot_keys": [
+        "observation.images.cam_high",
+        "observation.images.cam_left_wrist",
+        "observation.images.cam_right_wrist",
+        "observation.state"
+      ]
+    },
+    "both_moved": {
+      "timestamp": 2.149999999999995,
+      "robots": {
+        "left": {
+          "arm_qpos_shape": [
+            7
+          ],
+          "arm_qvel_shape": [
+            7
+          ],
+          "finger_qpos_shape": [
+            2
+          ],
+          "finger_qvel_shape": [
+            2
+          ],
+          "qpos": [
+            0.14991340041160583,
+            -0.5980173349380493,
+            6.767461968593125e-07,
+            -2.4021153450012207,
+            4.3519375481082534e-07,
+            1.7999091148376465,
+            0.7853976488113403,
+            0.03999713435769081,
+            0.03999713435769081
+          ],
+          "qvel": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "gripper_width_m": 0.07999426871538162,
+          "timestamp": 2.149999999999995,
+          "tcp_pose_world": [
+            -0.3047280487367814,
+            -0.11592423440690625,
+            1.244728001721903,
+            0.0015877313467588066,
+            -0.6521666969722058,
+            -0.758072696155174,
+            -0.0013659478611408875
+          ]
+        },
+        "right": {
+          "arm_qpos_shape": [
+            7
+          ],
+          "arm_qvel_shape": [
+            7
+          ],
+          "finger_qpos_shape": [
+            2
+          ],
+          "finger_qvel_shape": [
+            2
+          ],
+          "qpos": [
+            -0.14759834110736847,
+            -0.5980274677276611,
+            -4.8485562729183584e-06,
+            -2.402071237564087,
+            2.986886045164283e-07,
+            1.7999087572097778,
+            0.7853977680206299,
+            0.03999725729227066,
+            0.03999724239110947
+          ],
+          "qvel": [
+            -0.012049145996570587,
+            -0.00531867565587163,
+            1.7524611394037493e-05,
+            0.005526046268641949,
+            3.417490006540902e-06,
+            0.00022742403962183744,
+            -4.1640669223852456e-07,
+            -3.3814169455581577e-06,
+            -3.3814169455581577e-06
+          ],
+          "gripper_width_m": 0.07999449968338013,
+          "timestamp": 2.149999999999995,
+          "tcp_pose_world": [
+            0.30557273632463045,
+            -0.11605943675434338,
+            1.2447528835947423,
+            0.001349027641601219,
+            -0.7573182106110684,
+            -0.6530427652905223,
+            -0.0015667491756956398
+          ]
+        }
+      },
+      "image_shapes": {
+        "cam_high": [
+          3,
+          480,
+          640
+        ],
+        "cam_left_wrist": [
+          3,
+          480,
+          640
+        ],
+        "cam_right_wrist": [
+          3,
+          480,
+          640
+        ]
+      },
+      "image_mask": {
+        "cam_high": true,
+        "cam_left_wrist": true,
+        "cam_right_wrist": true
+      },
+      "state_shape": [
+        16
+      ],
+      "state_dtype": "float32",
+      "state": [
+        0.14991340041160583,
+        -0.5980173349380493,
+        6.767461968593125e-07,
+        -2.4021153450012207,
+        4.3519375481082534e-07,
+        1.7999091148376465,
+        0.7853976488113403,
+        0.07999426871538162,
+        -0.14759834110736847,
+        -0.5980274677276611,
+        -4.8485562729183584e-06,
+        -2.402071237564087,
+        2.986886045164283e-07,
+        1.7999087572097778,
+        0.7853977680206299,
+        0.07999449968338013
+      ],
+      "stack_rgb_shape": [
+        3,
+        3,
+        480,
+        640
+      ],
+      "sync_ok": true,
+      "metadata": {
+        "camera_timestamps": {
+          "cam_high": 2.149999999999995,
+          "cam_left_wrist": 2.149999999999995,
+          "cam_right_wrist": 2.149999999999995
+        },
+        "robot_timestamps": {
+          "panda_left": 2.149999999999995,
+          "panda_right": 2.149999999999995
+        },
+        "assembled_time_s": 2.149999999999995,
+        "camera_status": {
+          "cam_high": "OK",
+          "cam_left_wrist": "OK",
+          "cam_right_wrist": "OK"
+        },
+        "camera_errors": {},
+        "sync_ok": true,
+        "max_camera_robot_skew_s": 0.0,
+        "timestamp_span_s": 0.0,
+        "sync_tolerance_s": 0.02,
+        "robot_fresh": true,
+        "state_schema": [
+          "left.panda_joint1",
+          "left.panda_joint2",
+          "left.panda_joint3",
+          "left.panda_joint4",
+          "left.panda_joint5",
+          "left.panda_joint6",
+          "left.panda_joint7",
+          "left.gripper_width_m",
+          "right.panda_joint1",
+          "right.panda_joint2",
+          "right.panda_joint3",
+          "right.panda_joint4",
+          "right.panda_joint5",
+          "right.panda_joint6",
+          "right.panda_joint7",
+          "right.gripper_width_m"
+        ],
+        "state_schema_version": "panda_positions_and_width_v1"
+      },
+      "lerobot_keys": [
+        "observation.images.cam_high",
+        "observation.images.cam_left_wrist",
+        "observation.images.cam_right_wrist",
+        "observation.state"
+      ]
+    }
+  },
+  "rest_checks": {
+    "home": {
+      "physics_steps": 60,
+      "elapsed_s": 0.5,
+      "max_arm_speed_rad_s": 0.0,
+      "speed_tolerance_rad_s": 0.02,
+      "stable_hold_s": 0.5000000000000007
+    },
+    "left_moved": {
+      "physics_steps": 99,
+      "elapsed_s": 0.825,
+      "max_arm_speed_rad_s": 0.01204914040863514,
+      "speed_tolerance_rad_s": 0.02,
+      "stable_hold_s": 0.10833333333333332
+    },
+    "both_moved": {
+      "physics_steps": 99,
+      "elapsed_s": 0.825,
+      "max_arm_speed_rad_s": 0.012049145996570587,
+      "speed_tolerance_rad_s": 0.02,
+      "stable_hold_s": 0.10833333333333332
+    }
+  },
+  "policy_state_schema": [
+    "left.panda_joint1",
+    "left.panda_joint2",
+    "left.panda_joint3",
+    "left.panda_joint4",
+    "left.panda_joint5",
+    "left.panda_joint6",
+    "left.panda_joint7",
+    "left.gripper_width_m",
+    "right.panda_joint1",
+    "right.panda_joint2",
+    "right.panda_joint3",
+    "right.panda_joint4",
+    "right.panda_joint5",
+    "right.panda_joint6",
+    "right.panda_joint7",
+    "right.gripper_width_m"
+  ],
+  "robot_dof_mapping": {
+    "panda_left": {
+      "dof_names": [
+        "panda_joint1",
+        "panda_joint2",
+        "panda_joint3",
+        "panda_joint4",
+        "panda_joint5",
+        "panda_joint6",
+        "panda_joint7",
+        "panda_finger_joint1",
+        "panda_finger_joint2"
+      ],
+      "arm_dof_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "finger_dof_indices": [
+        7,
+        8
+      ],
+      "arm_policy_slots": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "gripper_policy_slot": 7
+    },
+    "panda_right": {
+      "dof_names": [
+        "panda_joint1",
+        "panda_joint2",
+        "panda_joint3",
+        "panda_joint4",
+        "panda_joint5",
+        "panda_joint6",
+        "panda_joint7",
+        "panda_finger_joint1",
+        "panda_finger_joint2"
+      ],
+      "arm_dof_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "finger_dof_indices": [
+        7,
+        8
+      ],
+      "arm_policy_slots": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "gripper_policy_slot": 15
+    }
+  },
+  "timestamp_skew_fault_injection": {
+    "success": true,
+    "injected_offset_s": 0.03,
+    "sync_ok": false
+  },
+  "stale_test_physics_steps": 19,
+  "stale": {
+    "scene_camera": "STALE",
+    "left_wrist_camera": "STALE",
+    "right_wrist_camera": "STALE"
+  },
+  "missing": {
+    "scene_camera": "OK",
+    "left_wrist_camera": "OK",
+    "right_wrist_camera": "MISSING"
+  },
+  "single_error": {
+    "scene_camera": "OK",
+    "left_wrist_camera": "INVALID",
+    "right_wrist_camera": "OK"
+  },
+  "low_frequency_no_image_save": {
+    "success": true,
+    "physics_steps": 48,
+    "render_calls": 4,
+    "periodic_captures": 2,
+    "image_files": []
+  }
+}

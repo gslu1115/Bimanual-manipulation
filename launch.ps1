@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('scene','single-pnp','dual-handover','conveyor-check','sensor-check')]
+    [ValidateSet('scene','single-pnp','dual-handover','conveyor-check','sensor-check','vision-check','visual-pnp','visual-sort','model-capture')]
     [string]$Mode = 'scene',
     [string]$IsaacRoot = 'D:\isaacsim',
     [int]$Seed = 6,
@@ -9,7 +9,25 @@ param(
     [switch]$CameraRecording,
     [switch]$RecordVideo,
     [string]$RobotUsd = '',
-    [string]$Output = ''
+    [string]$Output = '',
+    [ValidateSet('geometry','yoloe','yolo-seg')][string]$Segmenter = 'geometry',
+    [ValidateSet('text','visual','trained')][string]$PromptMode = 'text',
+    [string]$Weights = '',
+    [string]$Reference = '',
+    [ValidateSet('upright','side','inverted','separated','clutter')][string]$Fixture = 'upright',
+    [ValidateSet('upright','side','inverted','separated-upright','separated','clutter')][string]$VisualFixture,
+    [ValidateRange(10,50)][double]$SceneFocalLengthMm = 20,
+    [ValidateRange(10,30)][double]$WristFocalLengthMm = 20,
+    [ValidateRange(1,3)][int]$MaxItems = 3,
+    [ValidateRange(0.0001,0.9999)][double]$Confidence = .4,
+    [ValidateSet('front','rear','overhead','west')][string]$SceneView = 'front',
+    [ValidateSet('default','cross-left','cross-left-offset')][string]$RightWristView = 'default',
+    [ValidateRange(0.8,1.2)][double]$SceneLookHeightM = .8,
+    [ValidateRange(1.1,2.5)][double]$SceneHeightM = 1.7,
+    [ValidateRange(1,10)][double]$OpticalDepthMarginMm = 3,
+    [switch]$DepthBackboard,
+    [switch]$RobotStowHome,
+    [switch]$PrepositionObserver
 )
 $ErrorActionPreference = 'Stop'
 if (-not $PSBoundParameters.ContainsKey('IsaacRoot') -and
@@ -25,6 +43,22 @@ if ($CameraRecording) { $runArgs += '--camera-recording' }
 if ($RecordVideo) { $runArgs += '--record-video' }
 if ($RobotUsd) { $runArgs += @('--robot-usd', $RobotUsd) }
 if ($Output) { $runArgs += @('--output', $Output) }
+$runArgs += @('--segmenter',$Segmenter,'--prompt-mode',$PromptMode,'--fixture',$Fixture)
+if ($Weights) { $runArgs += @('--weights',$Weights) }
+if ($Reference) { $runArgs += @('--reference',$Reference) }
+if ($VisualFixture) { $runArgs += @('--visual-fixture',$VisualFixture) }
+if ($PSBoundParameters.ContainsKey('SceneFocalLengthMm')) { $runArgs += @('--scene-focal-length-mm',"$SceneFocalLengthMm") }
+if ($PSBoundParameters.ContainsKey('WristFocalLengthMm')) { $runArgs += @('--wrist-focal-length-mm',"$WristFocalLengthMm") }
+if ($PSBoundParameters.ContainsKey('Confidence')) { $runArgs += @('--confidence',"$Confidence") }
+if ($Mode -eq 'visual-sort') { $runArgs += @('--max-items',"$MaxItems") }
+if ($SceneView -ne 'front') { $runArgs += @('--scene-view',$SceneView) }
+if ($RightWristView -ne 'default') { $runArgs += @('--right-wrist-view',$RightWristView) }
+if ($PSBoundParameters.ContainsKey('SceneLookHeightM')) { $runArgs += @('--scene-look-height-m',"$SceneLookHeightM") }
+if ($PSBoundParameters.ContainsKey('SceneHeightM')) { $runArgs += @('--scene-height-m',"$SceneHeightM") }
+if ($PSBoundParameters.ContainsKey('OpticalDepthMarginMm')) { $runArgs += @('--optical-depth-margin-mm',"$OpticalDepthMarginMm") }
+if ($DepthBackboard) { $runArgs += '--depth-backboard' }
+if ($RobotStowHome) { $runArgs += '--robot-stow-home' }
+if ($PrepositionObserver) { $runArgs += '--preposition-observer' }
 Push-Location -LiteralPath $PSScriptRoot
 try {
     & $pythonEntry @runArgs

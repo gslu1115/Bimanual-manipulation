@@ -10,3 +10,8 @@ evidence/dual_handover.mp4
 .env
 .env.*
 !.env.example
+
+# Isolated model runtime, downloaded weights and local model caches
+/.venv-models/
+/models/
+/.model_cache/

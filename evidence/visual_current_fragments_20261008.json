@@ -1,0 +1,84 @@
+{
+  "schema": "visual_current_fragment_association_v1",
+  "date": "2026-10-08",
+  "scope": "one development regression105; partial current RGB-D camera association",
+  "success": false,
+  "failure_reason": "STATIC_PATH_BLOCKED:visual_0003",
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "FAILED"
+  ],
+  "max_visual_lift_m": 0.18840168561377924,
+  "lift_includes_transfer_height": true,
+  "xy_error_m": null,
+  "z_error_m": null,
+  "axis_yaw_error_deg": null,
+  "observed_stable_s": null,
+  "arms_home_and_open": false,
+  "held_on_exit": true,
+  "protocol": "outputs/visual_continuation_20261008/current_fragments_protocol61.json",
+  "run": "outputs/visual_space_pnp_20261008_61",
+  "run_status": {
+    "status": "failed",
+    "mode": "visual-pnp",
+    "error": "Traceback (most recent call last):\n  File \"D:\\xietong\\Bimanual-manipulation\\workstation\\app.py\", line 252, in main\n    run(env,segmenter,max_items=args.max_items if args.mode=='visual-sort' else None)\n  File \"D:\\xietong\\Bimanual-manipulation\\workstation\\diagnostics\\visual_run.py\", line 86, in run\n    raise RuntimeError('Visual skill failed: '+result.get('failure_reason',result.get('stop_reason','unknown')))\nRuntimeError: Visual skill failed: STATIC_PATH_BLOCKED:visual_0003\n"
+  },
+  "source_matches_pretrial_protocol": true,
+  "source_mismatches_at_report": [],
+  "cameras_match_saved": true,
+  "weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+  "weights_match_protocol": true,
+  "logic_checks": {
+    "isolated": {
+      "count": 302,
+      "passed": true,
+      "log": "outputs/visual_continuation_20261008/logic_current_fragments_302_verified.txt",
+      "scope": "pure logic, not physical acceptance"
+    },
+    "sdk": {
+      "count": 302,
+      "passed": true,
+      "log": "outputs/visual_continuation_20261008/sdk_logic_current_fragments_302_verified.txt",
+      "scope": "pure logic, not physical acceptance"
+    }
+  },
+  "syntax": {
+    "python_ast_files": 122,
+    "config_json": true,
+    "scope": "current fragment association before physical61",
+    "first_command_failure": "PowerShell native -c argument removed literal quotes; source files unchanged; file invocation used"
+  },
+  "saved_replay": "outputs/visual_continuation_20261008/current_fragments_replay105_results.json",
+  "metric_audit": "outputs/visual_continuation_20261008/cross_view_clipping105_metric_audit.json",
+  "prior_frozen_version": "evidence/visual_partial_tape_20261008.json; regression3/3, fresh104/105/1062/3; prior failure preserved",
+  "boundaries": {
+    "convex_execution_gate": false,
+    "convex_robot_depth_self_filter_retained": true,
+    "observed_obstacles_and_collisions_retained": true,
+    "unknown_map_cleared": false,
+    "image_masks_or_depth_filled": false,
+    "target_truth_online": false,
+    "physical_attachment": false,
+    "box_teleport": false,
+    "original_cameras_changed": false,
+    "whole_arm_unknown_space_proven": false,
+    "continuous_collision_proof": false
+  },
+  "full_goal_complete": false,
+  "unaccepted": [
+    "fresh full-source generalization suite",
+    "actual inverted/side semantic perception",
+    "6D visual holding and reorientation",
+    "visualSideAdjustment andDualArmFlip",
+    "safe carrying recovery",
+    "separated multiple objects",
+    "clutter/nine-box completion",
+    "real-world sensor/driver calibration"
+  ],
+  "acceptance_passed": false
+}

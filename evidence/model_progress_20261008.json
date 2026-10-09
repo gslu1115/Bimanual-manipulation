@@ -1,0 +1,494 @@
+{
+  "schema": "model_visual_progress_v1",
+  "record_date_local": "2026-10-08",
+  "repository_head": "ccb9ac30282b497b231e5358eb01cd5c4f5b72b3",
+  "stage": "fixed upright single-carton model-driven physical visual loop; two prospective same-version repeats passed",
+  "information_boundary": {
+    "online": "whitelisted RGB-D ObservationPacket, calibration, fixed size/scene priors, image-time and latest robot encoders",
+    "privileged_labels": "offline training/evaluation only",
+    "physical_attachment_or_pose_writes": false
+  },
+  "runtime": {
+    "os": "Windows 11",
+    "isaac_sim": "6.1.0-rc.26",
+    "isaac_root": "D:/Issaccc",
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_memory_mib": 8188,
+    "ram_gib_approx": 32,
+    "inference_environment": ".venv-models",
+    "ultralytics": "8.3.253",
+    "torch": "2.6.0+cu124",
+    "sdk_core_torch_upgraded": false,
+    "grasp_candidate_source": "geometric templates; user choice",
+    "GraspGen_execution_verified": false
+  },
+  "model": {
+    "source": "YOLO11n-seg project finetune with motion-view augmentation",
+    "official_base": "https://docs.ultralytics.com/models/yolo11/",
+    "YOLOE_reference": "https://docs.ultralytics.com/models/yoloe/",
+    "license": "Ultralytics AGPL-3.0 / applicable commercial terms",
+    "weights_path": "outputs/carton_seg_motion_training_20261007/fit/weights/best.pt",
+    "weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+    "confidence": 0.4,
+    "weights_in_git": false,
+    "zero_shot_YOLOE_accepted": false
+  },
+  "evaluations": [
+    {
+      "report": "outputs/yoloe_text_eval_20261007/report.json",
+      "summary": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 29,
+        "mean_matched_iou": null,
+        "infer_p50_ms": 11.081800010288134,
+        "infer_p95_ms": 12.421799983712845
+      },
+      "segmentation_acceptance_passed": false,
+      "rgbd_refined_summary": null
+    },
+    {
+      "report": "outputs/yoloe_visual_eval_20261007/report.json",
+      "summary": {
+        "tp": 4,
+        "fp": 1,
+        "fn": 25,
+        "mean_matched_iou": 0.8833073702189587,
+        "infer_p50_ms": 11.578499979805201,
+        "infer_p95_ms": 12.662139988970011
+      },
+      "segmentation_acceptance_passed": false,
+      "rgbd_refined_summary": null
+    },
+    {
+      "report": "outputs/yolo11n_motion_heldout_eval_20261007/report.json",
+      "summary": {
+        "tp": 14,
+        "fp": 0,
+        "fn": 0,
+        "mean_matched_iou": 0.9642554090556367,
+        "infer_p50_ms": 29.620999994222075,
+        "infer_p95_ms": 33.40137501072604
+      },
+      "segmentation_acceptance_passed": true,
+      "rgbd_refined_summary": null
+    },
+    {
+      "report": "outputs/yolo11n_motion_teacher_eval_20261008/report.json",
+      "summary": {
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "mean_matched_iou": 0.9597873677295059,
+        "infer_p50_ms": 9.364999976241961,
+        "infer_p95_ms": 14.547020010650156
+      },
+      "segmentation_acceptance_passed": true,
+      "rgbd_refined_summary": null
+    },
+    {
+      "report": "outputs/yolo11n_motion_development_eval_20261007/report.json",
+      "summary": {
+        "tp": 12,
+        "fp": 1,
+        "fn": 17,
+        "mean_matched_iou": 0.8928951975645628,
+        "infer_p50_ms": 23.234099964611232,
+        "infer_p95_ms": 27.431880007497966
+      },
+      "segmentation_acceptance_passed": false,
+      "rgbd_refined_summary": null
+    },
+    {
+      "report": "outputs/rgbd_refined_teacher_eval_20261008/report.json",
+      "summary": {
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "mean_matched_iou": 0.9597873677295059,
+        "infer_p50_ms": 11.135850014397874,
+        "infer_p95_ms": 20.626740012085047
+      },
+      "segmentation_acceptance_passed": true,
+      "rgbd_refined_summary": {
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "mean_matched_iou": 0.9700483176379581,
+        "scope": "stored RGB-D proposals including geometrically rejected ones; independent of raw model metrics"
+      }
+    }
+  ],
+  "physical_trials": [
+    {
+      "output": "outputs/model_visual_pnp_20261007_01",
+      "success": false,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "FAILED"
+      ],
+      "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "max_visual_lift_m": 0.0,
+      "observed_stable_s": 0,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial"
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261007_02",
+      "success": false,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "FAILED"
+      ],
+      "failure_reason": "PREGRASP_TARGET_UNCERTAIN",
+      "max_visual_lift_m": 0.0,
+      "observed_stable_s": 0,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial"
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_03",
+      "success": false,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "FAILED"
+      ],
+      "failure_reason": "HELD_CARTON_OWN_BODY_COLLISION",
+      "max_visual_lift_m": 0.0,
+      "observed_stable_s": 0,
+      "held_on_exit": true,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial"
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_04",
+      "success": false,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "FAILED"
+      ],
+      "failure_reason": "HELD_CARTON_NOT_OBSERVABLE",
+      "max_visual_lift_m": 0.1796721431549113,
+      "observed_stable_s": 0,
+      "held_on_exit": true,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial"
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_05",
+      "success": false,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "FAILED"
+      ],
+      "failure_reason": "TARGET_BODY_COLLISION",
+      "max_visual_lift_m": 0.17991737467779378,
+      "observed_stable_s": 0,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial"
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_06",
+      "success": false,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "FAILED"
+      ],
+      "failure_reason": "TARGET_BODY_COLLISION",
+      "max_visual_lift_m": 0.17996364813922172,
+      "observed_stable_s": 0,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial"
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_07",
+      "success": true,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "failure_reason": null,
+      "max_visual_lift_m": 0.18260361179869367,
+      "observed_stable_s": 0.5999999999999659,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "development_trial",
+      "visual_verification": {
+        "xy_error_max_m": 0.0026344941502799797,
+        "z_error_max_m": 0.00021510518066725215,
+        "axis_yaw_error_max_deg": 0.007877473831990028,
+        "all_arms_home_and_open": true
+      },
+      "independent_after_actor_slot_error": {
+        "xy_m": 0.002704149810655705,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 5.663293681020318e-06,
+        "axis_yaw_deg": 0.1779939344237137,
+        "linear_speed": 0.0016016921783107863,
+        "angular_speed": 2.920907731448487e-05
+      },
+      "acceptance_checks": {
+        "actor_success": true,
+        "lift": true,
+        "stable": true,
+        "xy": true,
+        "z": true,
+        "yaw": true,
+        "arms_home_open": true,
+        "not_held": true
+      }
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_08",
+      "success": true,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "failure_reason": null,
+      "max_visual_lift_m": 0.1825881779461972,
+      "observed_stable_s": 0.5999999999999659,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "prospective_same_version_fixed_repeat",
+      "visual_verification": {
+        "xy_error_max_m": 0.0026342556206496704,
+        "z_error_max_m": 0.00021529957827337576,
+        "axis_yaw_error_max_deg": 0.0029616365931371897,
+        "all_arms_home_and_open": true
+      },
+      "independent_after_actor_slot_error": {
+        "xy_m": 0.0027162514479630593,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 3.91248236030638e-06,
+        "axis_yaw_deg": 0.0847351648487881,
+        "linear_speed": 0.0016016886865305958,
+        "angular_speed": 2.9151287107527246e-05
+      },
+      "acceptance_checks": {
+        "actor_success": true,
+        "lift": true,
+        "stable": true,
+        "xy": true,
+        "z": true,
+        "yaw": true,
+        "arms_home_open": true,
+        "not_held": true
+      }
+    },
+    {
+      "output": "outputs/model_visual_pnp_20261008_09",
+      "success": true,
+      "scope": "controlled_upright_single_carton",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "failure_reason": null,
+      "max_visual_lift_m": 0.1825195611548076,
+      "observed_stable_s": 0.5999999999999659,
+      "held_on_exit": false,
+      "box_attachment": false,
+      "box_pose_teleport": false,
+      "trial_kind": "prospective_same_version_fixed_repeat",
+      "visual_verification": {
+        "xy_error_max_m": 0.0026333991587487084,
+        "z_error_max_m": 0.00021517629496725643,
+        "axis_yaw_error_max_deg": 0.007675486198460143,
+        "all_arms_home_and_open": true
+      },
+      "independent_after_actor_slot_error": {
+        "xy_m": 0.0026714049646451715,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 4.094554566467037e-06,
+        "axis_yaw_deg": 0.07423621507015314,
+        "linear_speed": 0.001601692407736101,
+        "angular_speed": 2.9152755104299676e-05
+      },
+      "acceptance_checks": {
+        "actor_success": true,
+        "lift": true,
+        "stable": true,
+        "xy": true,
+        "z": true,
+        "yaw": true,
+        "arms_home_open": true,
+        "not_held": true
+      }
+    }
+  ],
+  "fixed_repeat": {
+    "protocol": "outputs/model_integration_20261007/fixed_repeat_acceptance_20261008.json",
+    "trials": [
+      "outputs/model_visual_pnp_20261008_08",
+      "outputs/model_visual_pnp_20261008_09"
+    ],
+    "passed": 2,
+    "attempts": 2,
+    "online_sources_identical": true,
+    "online_source_file_count": 26,
+    "source_hashes": {
+      "workstation\\app.py": "eba1a4e8a1c5436c80974430df36b6e313fe01eef2a5738b40d0c471b20a4b6b",
+      "workstation\\simulation\\robot_driver.py": "411222f1161c50670319ff7a971767ca65ed609d7a7e062dc65e48a9a0fac592",
+      "workstation\\observations\\camera_config.py": "ca651c2679322eb443050014785cde606c2fd36e5bb2b2ab88d5bfa169c1d378",
+      "workstation\\observations\\camera_geometry.py": "5ed8bc468c2b6a1f2b27cabf219db7b511d91d9b9b35bba9f9b3023d5e4103a1",
+      "workstation\\observations\\camera_system.py": "a38fb701430c6e94151c5afb51d26b9ec24ffa002cb2518a13442ed89d5ab2cc",
+      "workstation\\observations\\observation_packet.py": "4b1d88a54d7bf1983c8680d03a0612217d9aaf9957f9d566443c521526467eb7",
+      "workstation\\observations\\policy_observation.py": "dcf21210ea025ddbabff0eeea67cdd6f09656c1d177f0327039f8483f2adf137",
+      "workstation\\observations\\sim_sensor_adapter.py": "108e614bc7dba67778f2987b13026ee64f8fe4759e170002047dc518ff93457e",
+      "workstation\\observations\\__init__.py": "b1fe27da57a421c1188ddf65174537fa0349ef0f9edcaed5cd933c75ead06068",
+      "workstation\\perception\\held_surface.py": "5d7f6b63579f5b0ba07066f75366ecc6715abacb1a97fc624befc87807269def",
+      "workstation\\perception\\mask_refinement.py": "96ac8316563a02912daf6b4acaee6ceda1744f5db67577d29f3301471e8de0b1",
+      "workstation\\perception\\rgbd_cartons.py": "4302402573167323a5cd3223b2b7e4b7eac35009bf5df7e7f150d27e2adc5d69",
+      "workstation\\perception\\scene_estimate.py": "5d7970ef42799c4764bec22dafa69996e2ad033ea5694ee43c9194c826782b0e",
+      "workstation\\perception\\segmentation.py": "f83ab4333afa0b1a50a69726078f064753982713c272f5abd9e09ea6d9fd53e1",
+      "workstation\\perception\\visible_edges.py": "a694265749165a181102d900b3a045a969c70cc1d06134d6c8ad228bd81b20a3",
+      "workstation\\perception\\__init__.py": "19fc90f521c920bae8853a9abe01b16a31a7e2a0afb53894430a736b40ce47ee",
+      "workstation\\planning\\collision.py": "d0535ac80e1d97088d24a21c05abcfdb48cd55717ef84732b5b7017b426e0de8",
+      "workstation\\planning\\selection.py": "18bf9c9e13a9fd18c726b528971116cbc259ace8a7ca4968f17d371e6d9358f6",
+      "workstation\\planning\\__init__.py": "2b7e9d21909ef4b5c12d0657cce69d431c3486cfe62a5e70f889f3089fd6225c",
+      "workstation\\skills\\reobserve.py": "5ce36acdc8825196fdf970d562ba1e0b453e88cc04a3bbc78edd1f45257367fc",
+      "workstation\\skills\\visual_pick_place.py": "25556e593304bd89c383f9f0483ce73ea89f310a257a1f5332a6cc843a1a2948",
+      "workstation\\skills\\__init__.py": "cd525964032273b7a5bb4f1f3671994ad56c48a58e2de519463e2662d1b7e267",
+      "workstation\\models\\graspgen_client.py": "ee208ef60f2f795d592c01a881cb29a911afbe26a6bc2923e9852b7037d07ebb",
+      "workstation\\models\\yoloe_client.py": "ad86fdaec556e5074a6aa07aa5697cd017507d4f01a54a6917dff5831af73daa",
+      "workstation\\models\\yoloe_worker.py": "cb1d36882f40dbb03424db887daff80e4098bad6c3657667b75c68044982de5f",
+      "workstation\\models\\__init__.py": "28c116ea470b5e188e57f6e1bab648ca394f1599ab7c8ef32abed2dab279aefd"
+    },
+    "condition": {
+      "box_size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "box_xy_m": [
+        -0.2,
+        -0.06
+      ],
+      "box_yaw_deg": 20,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "posture": "upright",
+      "occlusion": "controlled low occlusion",
+      "release_tcp_clearance_m": 0.006
+    },
+    "randomized_success_rate_established": false,
+    "seed_alone_randomizes_visual_pnp": false
+  },
+  "mask_boundary_fix": {
+    "report": "outputs/mask_boundary_fix_20261008/report.json",
+    "image": "outputs/mask_boundary_fix_20261008/refined_left_wrist_camera.png",
+    "restored_pixels_original_frame": 365,
+    "scope": "visible valid-depth, nearby same-plane/color support only"
+  },
+  "visible_edge_fix": {
+    "report": "outputs/edge_continuity_fix_20261008/report.json",
+    "image": "outputs/edge_continuity_fix_20261008/continuous_aa_left_wrist_camera.png",
+    "pixels_uv": [
+      [
+        133,
+        347
+      ],
+      [
+        504,
+        352
+      ]
+    ],
+    "occluded_or_invalid_depth_gaps_bridged": false,
+    "scope": "controlled visible near-horizontal face junction; diagnostic only"
+  },
+  "logical_checks": {
+    "passed": 122,
+    "isaac_python_exit_code": 0,
+    "log": "outputs/model_integration_20261007/sdk_tests_20261008_release.txt",
+    "source_AST_parse_passed": true,
+    "source_AST_file_count": 62
+  },
+  "preservation": {
+    "initial_snapshot": "outputs/visual_development_20261007/initial_hashes.json",
+    "protected_existing_paths": 30,
+    "changed_protected_paths": [],
+    "git_commit_or_push_performed": false
+  },
+  "remaining": [
+    "unknown-space and observed free-slot occupancy constraints",
+    "independent randomized position/yaw matrix",
+    "visual SideAdjustment and DualArmFlip physical skills",
+    "active wrist reobservation",
+    "separated multi-carton closed-loop execution and failure history persistence",
+    "clutter/occlusion segmentation and tracking",
+    "full continuous collision/path planning and dual-arm dynamic interaction",
+    "strict sensor exposure proof and real hand-eye/TCP calibration"
+  ],
+  "availability": "Selected JSON is small evidence; referenced outputs, model weights and inference environment are local ignored files. Fixed repeats do not establish random, nine-carton, or general collision success."
+}

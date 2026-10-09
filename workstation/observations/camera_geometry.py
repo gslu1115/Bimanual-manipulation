@@ -33,7 +33,13 @@ def look_at_quaternion(position, target, up):
 
 
 def intrinsics_from_params(params, resolution):
-    """Derive pinhole K from lens calibration fields, without reading camera pose."""
+    """Derive K for integer pixel CENTRES from Replicator lens fields.
+
+    Replicator raster rays sample (u+.5,v+.5) relative to the image corner.
+    RGB-D arrays and OpenCV use integer indices at those centres. Subtract
+    half a pixel from the corner-based optical centre; do not shift images.
+    Validated with actual oblique static planes from this SDK, not box truth.
+    """
     w, h = resolution
     focal = float(params['cameraFocalLength'])
     aperture = np.asarray(params['cameraAperture'], dtype=float)
@@ -43,8 +49,8 @@ def intrinsics_from_params(params, resolution):
     offset = np.asarray(params.get('cameraApertureOffset', [0., 0.]), dtype=float)
     if offset.shape != (2,) or not np.isfinite(offset).all():
         raise RuntimeError('Invalid rendered camera aperture offset')
-    return np.array([[focal/aperture[0]*w, 0., w/2-offset[0]/aperture[0]*w],
-                     [0., focal/aperture[1]*h, h/2+offset[1]/aperture[1]*h], [0., 0., 1.]])
+    return np.array([[focal/aperture[0]*w, 0., (w-1)/2-offset[0]/aperture[0]*w],
+                     [0., focal/aperture[1]*h, (h-1)/2+offset[1]/aperture[1]*h], [0., 0., 1.]])
 
 
 def calibration_from_params(params, resolution):
@@ -65,5 +71,6 @@ def calibration_from_params(params, resolution):
                 world_orientation_wxyz_usd=quaternion_from_matrix(world_from_usd).tolist(),
                 camera_axes='USD: +X right, +Y up, -Z forward; OpenCV: +X right, +Y down, +Z forward',
                 matrix_convention='column vectors; translation in metres',
+                pixel_coordinates='integer indices at pixel centres; first pixel centre is (0,0)',
                 depth='distance_to_image_plane; metres; optical +Z; inf means background',
                 distortion=[0., 0., 0., 0., 0.], pose_source='rendered_camera_params')
