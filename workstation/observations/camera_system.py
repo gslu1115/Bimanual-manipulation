@@ -8,6 +8,7 @@ import subprocess
 import time
 
 import numpy as np
+import omni.timeline
 from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics
 from isaacsim.core.rendering_manager import RenderingManager
 
@@ -20,6 +21,7 @@ class CameraSystem:
         self.env = env
         self.settings = camera_settings(env.c)
         self.sensors, self.cameras, self.hand_paths = {}, {}, {}
+        self._closed = False
         self.last_metadata = {}
         self.render_frame_index = 0
         self.rendered_tick, self.rendered_time = 0, 0.
@@ -74,15 +76,36 @@ class CameraSystem:
                            dynamic_world_pose=hand is not None)
             env._write_json(name+'_calibration.json', initial)
             if sampling:
-                product = rep.create.render_product(path, tuple(cfg['resolution']))
-                annotators = {}
-                for label in dict.fromkeys(list(cfg.get('annotations', ANNOTATIONS))+['camera_params']):
-                    ann = rep.AnnotatorRegistry.get_annotator(label)
-                    ann.attach([product])
-                    annotators[label] = ann
-                self.sensors[name] = dict(product=product, annotators=annotators)
+                self._attach_sensor(name)
+        self._timeline_subscription = env.timeline.get_timeline_event_stream().create_subscription_to_pop(
+            self._on_timeline_event, order=-1000, name='Bimanual camera lifecycle')
         env._write_json('camera_rig.json', self.describe())
         print('[camera-rig] '+str({n: c['descriptor']['prim_path'] for n, c in self.cameras.items()}), flush=True)
+
+    def _attach_sensor(self, name):
+        import omni.replicator.core as rep
+        camera = self.cameras[name]
+        cfg = camera['config']
+        product = rep.create.render_product(camera['descriptor']['prim_path'], tuple(cfg['resolution']))
+        annotators = {}
+        for label in dict.fromkeys(list(cfg.get('annotations', ANNOTATIONS))+['camera_params']):
+            ann = rep.AnnotatorRegistry.get_annotator(label)
+            ann.attach([product])
+            annotators[label] = ann
+        self.sensors[name] = dict(product=product, annotators=annotators)
+
+    def _on_timeline_event(self, event):
+        if self._closed:
+            return
+        if event.type == int(omni.timeline.TimelineEventType.STOP):
+            self._release_sensors()
+            self.last_metadata.clear()
+            self.rendered_robot_states = None
+            self.rendered_joint_positions = None
+        elif event.type == int(omni.timeline.TimelineEventType.PLAY):
+            for name, camera in self.cameras.items():
+                if camera['descriptor']['sampling_enabled'] and name not in self.sensors:
+                    self._attach_sensor(name)
 
     def _hand(self, robot):
         if robot not in self.hand_paths:
@@ -254,6 +277,13 @@ class CameraSystem:
         return m
 
     def close(self):
-        for sensor in self.sensors.values():
+        self._closed = True
+        self._timeline_subscription = None
+        self._release_sensors()
+
+    def _release_sensors(self):
+        sensors = list(self.sensors.values())
+        self.sensors.clear()
+        for sensor in sensors:
             for ann in sensor['annotators'].values(): ann.detach([sensor['product']])
             sensor['product'].destroy()

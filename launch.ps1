@@ -1,9 +1,11 @@
 param(
     [ValidateSet('scene','single-pnp','dual-handover','conveyor-check','sensor-check','vision-check','visual-pnp','visual-sort','model-capture')]
     [string]$Mode = 'scene',
-    [string]$IsaacRoot = 'D:\isaacsim',
+    [string]$IsaacRoot = '',
     [int]$Seed = 6,
     [switch]$Headless,
+    [switch]$Livestream,
+    [string]$StreamHost = '127.0.0.1',
     [switch]$NoSensors,
     [switch]$SaveImages,
     [switch]$CameraRecording,
@@ -30,13 +32,21 @@ param(
     [switch]$PrepositionObserver
 )
 $ErrorActionPreference = 'Stop'
+$onWindows = [Environment]::OSVersion.Platform -eq 'Win32NT'
+if (-not $IsaacRoot) {
+    if ($env:ISAAC_PATH) { $IsaacRoot = $env:ISAAC_PATH }
+    elseif ($onWindows) { $IsaacRoot = 'D:\isaacsim' }
+    else { $IsaacRoot = '/isaac-sim' }
+}
 if (-not $PSBoundParameters.ContainsKey('IsaacRoot') -and
     -not (Test-Path -LiteralPath (Join-Path $IsaacRoot 'python.bat')) -and
+    $onWindows -and -not $env:ISAAC_PATH -and
     (Test-Path -LiteralPath 'D:\Issaccc\python.bat')) { $IsaacRoot = 'D:\Issaccc' }
-$pythonEntry = Join-Path $IsaacRoot 'python.bat'
-if (-not (Test-Path -LiteralPath $pythonEntry)) { throw "Isaac Sim python.bat not found: $pythonEntry" }
+$pythonEntry = Join-Path $IsaacRoot $(if ($onWindows) { 'python.bat' } else { 'python.sh' })
+if (-not (Test-Path -LiteralPath $pythonEntry)) { throw "Isaac Sim Python launcher not found: $pythonEntry" }
 $runArgs = @('-u', '-m', 'workstation', '--mode', $Mode, '--seed', "$Seed")
 if ($Headless) { $runArgs += '--headless' } else { $runArgs += '--keep-open' }
+if ($Livestream) { $runArgs += @('--livestream', '--stream-host', $StreamHost) }
 if ($NoSensors) { $runArgs += '--no-sensors' }
 if ($SaveImages) { $runArgs += '--save-images' }
 if ($CameraRecording) { $runArgs += '--camera-recording' }

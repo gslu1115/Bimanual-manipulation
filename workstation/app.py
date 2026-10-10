@@ -11,6 +11,7 @@ import time
 import traceback
 from workstation.task_logic import validate
 from workstation.observations.camera_config import camera_settings
+from workstation.runtime_paths import isaac_root
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-sort",
@@ -24,6 +25,8 @@ def build_parser():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--seed", type=int)
     parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--livestream", action="store_true", help="WebRTC GUI without a local window; keeps the app open")
+    parser.add_argument("--stream-host", default="127.0.0.1", help="WebRTC endpoint address (SSH relay: 127.0.0.1)")
     parser.add_argument("--keep-open", action="store_true")
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
@@ -209,15 +212,23 @@ def main(argv=None):
         print(f"Configuration valid: {args.mode}, {config['boxes']['count']} cartons, "
               "2 Panda arms, 3 formal cameras.")
         return
-    output = (args.output or PROJECT_ROOT/"outputs"/(
+    output_root = Path(os.environ.get('WORKSTATION_OUTPUT_ROOT', str(PROJECT_ROOT/'outputs')))
+    output = (args.output or output_root/(
         args.mode+"_"+datetime.now().strftime("%Y%m%d_%H%M%S_%f"))).resolve()
     # Isaac imports must follow SimulationApp initialization.
     from isaacsim import SimulationApp
-    root = Path(os.environ.get("ISAAC_PATH", "D:/isaacsim"))
-    app = SimulationApp({"headless": args.headless, "width": 960, "height": 600,
+    root = isaac_root()
+    extra_args = ["--ext-folder", str(root/"extscache"), "--ext-folder", str(root/"extsDeprecated")]
+    if args.livestream:
+        args.keep_open = True
+        extra_args += ['--enable', 'omni.kit.livestream.app',
+            '--/exts/omni.kit.livestream.app/primaryStream/publicIp='+args.stream_host,
+            '--/exts/omni.kit.livestream.app/primaryStream/signalPort=49100',
+            '--/exts/omni.kit.livestream.app/primaryStream/streamPort=47998']
+    app = SimulationApp({"headless": args.headless or args.livestream,
+        "hide_ui": False if args.livestream else None, "width": 960, "height": 600,
         "renderer": "RaytracedLighting", "anti_aliasing": 2, "multi_gpu": False,
-        "sync_loads": True, "extra_args": ["--ext-folder", str(root/"extscache"),
-        "--ext-folder", str(root/"extsDeprecated")]},
+        "sync_loads": True, "extra_args": extra_args},
         experience=str(PROJECT_ROOT/"config"/"sorting.kit"))
     env, failure = None, None
     faulthandler.enable()
@@ -297,17 +308,23 @@ def main(argv=None):
             else:
                 app.update()
             time.sleep(max(0., config["physics"]["dt"]-(time.perf_counter()-started)))
-    except BaseException:
+    except BaseException as error:
         failure = traceback.format_exc()
         print(failure, file=sys.stderr, flush=True)
         output.mkdir(parents=True, exist_ok=True)
         (output/"failure.txt").write_text(failure, encoding="utf-8")
         (output/"run_status.json").write_text(json.dumps(
             {"status": "failed", "mode": args.mode, "error": failure}), encoding="utf-8")
+        faulthandler.cancel_dump_traceback_later()
+        from workstation.interactive_failure import should_preserve_scene, preserve_failed_scene
+        if should_preserve_scene(error, args.keep_open, app):
+            preserve_failed_scene(app, env, error, output)
     finally:
         faulthandler.cancel_dump_traceback_later()
-        if env is not None:
-            env.close()
-        app.close(wait_for_replicator=False, exit_code=1 if failure else 0)
+        try:
+            if env is not None:
+                env.close()
+        finally:
+            app.close(wait_for_replicator=False, exit_code=1 if failure else 0)
     if failure:
         raise RuntimeError("Simulation failed; see "+str(output/"failure.txt"))

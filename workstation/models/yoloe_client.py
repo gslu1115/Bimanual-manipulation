@@ -8,6 +8,7 @@ import subprocess
 import threading
 import numpy as np
 from workstation.perception.segmentation import InstanceMask, SegmentationFrame
+from workstation.runtime_paths import model_python, model_environment
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -19,15 +20,13 @@ class ModelUnavailable(RuntimeError):
 class YOLOESegmenter:
     def __init__(self, mode='text', weights=None, reference=None, log_path=None,
                  timeout_s=30., startup_timeout_s=120., confidence=.15):
-        python = ROOT/'.venv-models/Scripts/python.exe'
+        python = model_python(ROOT)
         weights = Path(weights or ROOT/'models/yoloe-11s-cardboard.pt').resolve()
         if not python.is_file() or not weights.is_file():
             raise ModelUnavailable('Prepare isolated model environment and local weights first')
         self.timeout_s, self._request_id = timeout_s, 0
         self._responses = queue.Queue()
-        env = os.environ.copy()
-        for key in ('PYTHONPATH', 'PYTHONHOME', 'ISAAC_PATH', 'CARB_APP_PATH', 'EXP_PATH'):
-            env.pop(key, None)
+        env = model_environment(os.environ)
         env['YOLO_CONFIG_DIR'] = str(ROOT/'.model_cache/ultralytics')
         env['TORCH_HOME'] = str(ROOT/'.model_cache/torch')
         env['PYTHONUNBUFFERED'] = '1'

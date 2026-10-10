@@ -1,5 +1,7 @@
 # 双臂乱序纸盒整理仿真
 
+本分支 `linux-based` 保存 Linux / 远程 Isaac Sim 6.1 适配；`main` 保留 Windows 版本。Linux 用户从下方“Linux / Featurize”章节开始。平台的驱动修复、SSH 中继和备份脚本独立保存在云盘 `isaac-support`，不包含在本项目源码中。
+
 项目使用 Isaac Sim 6.1 搭建固定双 Franka Panda 工位，目标是通过**现实可获得的三相机观测和机器人状态**识别纸盒、选择动作、调整姿态并定向归位。
 
 当前具备九盒释放与沉降、三路 RGB-D 输入接口，以及直立抓放和倒置交接两个真值物理基线。已新增独立 RGB-D `SceneEstimate V1`、候选排序、采样路径检查与受控单盒视觉技能；实现及实测边界见 [项目交接文档](项目路线与当前状态交接.md)。多盒整理、侧放/倒置视觉技能、通用避碰和真机适配仍待完成。协作前阅读 [AGENTS.md](AGENTS.md)。
@@ -62,9 +64,52 @@ D:\isaacsim\python.bat -m workstation --mode single-pnp --headless
 
 Python 场景参数为 `--mode`、`--config`、`--output`、`--seed`、`--headless`、`--keep-open`、`--robot-usd`、`--no-sensors`、`--save-images`、`--camera-recording`、`--record-video`、`--validate-only`。模型参数另有 `--segmenter`、`--weights`、`--prompt-mode`、`--reference`、`--confidence`、`--dataset`、`--fixture`、`--capture-seeds`、`--teacher-capture`、`--epochs`。直接调用默认任务结束退出；需要保留 GUI 时加 `--keep-open`。
 
+## Linux / Featurize（2026-10-10）
+
+仍使用唯一入口 `python -m workstation`，无需在 Linux 安装 PowerShell。云盘代码位于
+`/home/featurize/work/isaac-support/projects/Bimanual-manipulation`，容器内对应
+`/project/Bimanual-manipulation`。代码、必要权重和最终证据保存在云盘；SDK、依赖环境、着色器缓存及大量运行输出使用临时盘。
+
+在已配置 NVIDIA 图形环境的 Isaac Sim 6.1 容器内：
+
+```bash
+cd /project/Bimanual-manipulation
+export ISAAC_PATH=/isaac-sim
+export WORKSTATION_OUTPUT_ROOT=/output/bimanual-linux
+/isaac-sim/python.sh -m workstation --mode sensor-check --headless
+/isaac-sim/python.sh -m workstation --mode scene --livestream
+```
+
+`--livestream` 使用无本地窗口的 WebRTC GUI 并保持进程运行；默认端点 `127.0.0.1`，
+TCP 49100 / UDP 47998。需要其他地址时显式传 `--stream-host`。同一端口不能同时启动两个串流实例。
+`--output` 优先于 `WORKSTATION_OUTPUT_ROOT`；二者均未设置时保持原仓库 `outputs/` 默认行为。
+`ISAAC_PATH` 优先于平台默认值：Linux `/isaac-sim`，Windows 保留原安装目录回退。
+若使用 PowerShell 7，原 `launch.ps1` 也会选择平台对应的 `python.sh` / `python.bat`，并支持 `-Livestream`。
+
+本次 Featurize 云盘另有机器恢复材料，按其 `README.txt` 完成 Docker、匹配驱动用户态库、虚拟显示和 SSH 视频中继检查后，可在服务器使用：
+
+```bash
+bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation --mode sensor-check
+```
+
+该基础设施入口仍调用本仓库 CLI，不复制业务配置。先确认历史名为 `isaac-acceptance` 的容器是否占用端口；切换前保存所需场景及文件。
+先用已通过的 `sensor-check` 验收。2026-10-10 的 Linux 串流 `scene` 九盒实测未通过原沉降判据；当前修复版会暂停并保留现场与 GUI，继续记录 failed。证据已保留，未放宽阈值，不能把三相机验收当成九盒场景成功。
+浏览器通过操作者电脑的 `connect_isaac.py` 隧道访问 `http://127.0.0.1:8210/`。
+无窗口服务器需要正确的 `DISPLAY`、X11 socket 和只向授权用户开放的 `XAUTHORITY`；不得用关闭日志代替环境修复。
+
+模型保持隔离：Linux 默认解释器是 `.venv-models/bin/python`；通过
+`WORKSTATION_MODEL_PYTHON=/临时盘模型环境/bin/python` 可将环境放到临时盘。
+依赖版本仍以本文件和 `workstation/models/requirements.txt` 为准，使用 Python 3.12，不安装进 Isaac 核心环境。
+子进程会移除 Isaac 的 Python 配置及 Kit 私有动态库路径，保留 NVIDIA 驱动路径。
+训练权重与完整数据不在 Git 仓库中；传感器验收通过不表示已恢复微调模型或完成视觉抓放回归。
+
+相机资源在 Stop 时解除绑定，Play 时按现有配置重建；不会修改原三路安装参数。
+关闭环境先清理相机，再停止仿真；重复关闭不会再次销毁同一组采集资源。
+本轮实测范围与日志见交接文档的 Linux 增量记录。
+
 ## 隔离模型推理
 
-以下命令仍使用唯一 `python -m workstation` 入口。首次创建独立环境，禁止把模型依赖安装到 Isaac 的核心环境：
+以下 Windows 命令仍使用唯一 `python -m workstation` 入口。首次创建独立环境，禁止把模型依赖安装到 Isaac 的核心环境：
 
 ```powershell
 D:\Issaccc\kit\python\python.exe -I -m venv .venv-models
@@ -289,3 +334,8 @@ python -m unittest discover -s tests -v
 2026-10-09 提交前检查：模型环境与 Isaac Python 各 **351 项逻辑测试通过，0 失败/错误/跳过**；九个仿真/采集模式的 `--validate-only`、95 个待上传 Python 文件 AST、18 个 JSON 及 `launch.ps1` 语法检查通过。本次没有启动物理仿真、重新推理或训练；历史物理结果及新接口未验证部分见 [项目交接文档](项目路线与当前状态交接.md) 第 15–18 节。2026-10-06 的 `sensor-check` 真实运行记录另保留在交接中，不由纯逻辑检查继承为本版全部物理回归。
 
 本轮上传源码、测试、配置、现有三份 Markdown 与精选小型 `evidence/` JSON。`.gitignore` 继续排除 `outputs/`、权重目录 `models/`、`.venv-models/`、模型缓存与历史录像；本地文件保留。新克隆须按上面的模型环境与训练说明准备依赖和权重，Git 源码不是包含全部运行资产的安装包。`evidence/visual_checkpoint_20261009.json` 中 `committed/pushed=false` 描述较早的本地冻结节点，保留原样；当前提交状态以 Git 历史为准。
+
+
+### 交互任务失败保持现场（2026-10-10）
+
+`--livestream` 或 `--keep-open` 下任务异常仍记录 failed 和 failure.txt，但暂停时间线并持续更新 GUI，不再立即关闭应用。错误面板给出原因与报告路径；关闭面板仍保留会话，只有 End this session 或关闭应用才结束。失败后 Play 不会恢复任务，需要诊断后重新启动。批处理模式保持非零退出；进程崩溃和网络故障不在此保障范围。未修改物理、相机或验收阈值。Linux Isaac Python 359 项逻辑测试通过，新增 4 项覆盖失败保留、暂停而不重置、不推进任务及明确退出。

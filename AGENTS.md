@@ -19,6 +19,7 @@
 - `task_logic.py` 当前合并配置校验、物理初态、落位判据和输送状态机；`TaskLoop` 是占位合同。出现真实感知/规划消费者后再按职责拆分，不预建空模块。
 - `config/` 只放唯一场景配置与 Kit experience；`tests/` 放逻辑检查；`evidence/` 放精选小型历史 JSON，并本地保留唯一历史成功录像（Git 忽略）；`outputs/` 放可重生成的本次运行文件并由 Git 忽略。
 - 模块使用 `workstation.*` package 导入，唯一 Python 入口为 `python -m workstation`，PowerShell 入口为根 `launch.ps1`。新增功能接模式分发，不增第二套启动脚本或平行配置副本。
+- Linux 同样使用上述 Python 入口（经 Isaac 的 `python.sh`）；平台路径统一在 `runtime_paths.py` 解析，模型环境仍隔离。Featurize 的机器启动脚本在仓库外，仅负责图形/挂载/串流基础设施。Stop/Play 只重建采集资源，不更改已固定的三路相机配置。
 
 ## 真机可观测约束
 

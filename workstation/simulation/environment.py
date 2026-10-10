@@ -385,5 +385,6 @@ class SortingEnvironment:
 
     def close(self):
         self.belt_api.GetSurfaceVelocityAttr().Set(Gf.Vec3f(0))
-        self.timeline.stop()
         self.camera_system.close()
+        self.app.update()
+        self.timeline.stop()

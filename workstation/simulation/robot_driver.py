@@ -60,9 +60,9 @@ class RobotMotion:
         # remain opt-in diagnostic code, never an automatic fallback.
         self.allow_active_reobserve=False
         self.preposition_observer=bool(config.get('diagnostic_preposition_observer',False))
-        import os
+        from workstation.runtime_paths import isaac_root
         from workstation.planning.robot_geometry import load_panda_collision_models
-        self.collision_links=load_panda_collision_models(os.environ.get('ISAAC_PATH','D:/Issaccc'))
+        self.collision_links=load_panda_collision_models(isaac_root())
 
     def set_observation(self,packet,scene,priors):
         from workstation.planning.observed_workspace import ObservedWorkspace
