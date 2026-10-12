@@ -1,0 +1,5370 @@
+{
+  "scope": "development_fixed_snapshot_full_pool_preflight",
+  "task_execution": false,
+  "online_freshness_verified": false,
+  "source_points": 5956,
+  "source_run": "graspgen-check_20261012_023947_985711",
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage3/graspgen-check_20261012_023947_985711",
+  "full_report_sha256": "cf121df9a0fbe9a87b4ed9c4e507c57ca34a0301fbf62e75fafcc3ce55a07c49",
+  "model_runs": [
+    {
+      "trial": 0,
+      "candidate_count": 256,
+      "round_trip_s": 0.33534381499976007,
+      "timing": {
+        "infer_ms": 260.0449279998429
+      }
+    },
+    {
+      "trial": 1,
+      "candidate_count": 256,
+      "round_trip_s": 0.2740435499999876,
+      "timing": {
+        "infer_ms": 255.39642599960644
+      }
+    },
+    {
+      "trial": 2,
+      "candidate_count": 256,
+      "round_trip_s": 0.2876403760001267,
+      "timing": {
+        "infer_ms": 265.9250249998877
+      }
+    }
+  ],
+  "camera_config_unchanged": true,
+  "geometry_candidates": {
+    "total": 4,
+    "feasible": 2,
+    "rejection_counts": {
+      "IK_DISCONTINUITY": 2
+    },
+    "passed": [
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.20009181275963783,
+            -0.06009087339043617,
+            0.7864999008359497
+          ],
+          "yaw_rad": 0.34771032684789294,
+          "opening_m": 0.073,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": null,
+          "source": "geometry",
+          "candidate_id": "",
+          "observation_time_s": null,
+          "approach_direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": null,
+          "opening_source": "known carton width with approach clearance",
+          "model_score": null,
+          "metadata": {},
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "terms": {
+          "geometry_quality": 0.9982861695662395,
+          "valid_depth_ratio": 1.0,
+          "visibility_complete": 1.0,
+          "uncertainty_m": 0.003,
+          "neighbour_clearance_m": 0.2,
+          "joint_cost": 1.9529906806445247,
+          "path_clearance_m": 0.022510904117436427,
+          "task_priority": 1.0,
+          "previous_failures": 0,
+          "whole_task_template_checked": true,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 112,
+              "clearance_m": 0.04654349234570607,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 148,
+              "clearance_m": 0.034417586798764555,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "whole_task_check_scope": "sampled geometry/collision and currently observed obstacles; future local visibility deferred",
+          "pending_observation_phases": [
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT"
+          ],
+          "pregrasp_joint_positions_rad": [
+            -0.16421096591700698,
+            -0.2672618621025552,
+            0.7308547115823467,
+            -2.874083729404141,
+            0.37779794385392484,
+            2.6434831279736843,
+            2.2223530255028963
+          ],
+          "candidate_source": "geometry",
+          "model_score": null,
+          "model_score_is_success_probability": false,
+          "full_pose_checked": false
+        },
+        "score": 2.5685287235907563
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.20009181275963783,
+            -0.06009087339043617,
+            0.7864999008359497
+          ],
+          "yaw_rad": 3.489302980437686,
+          "opening_m": 0.073,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": null,
+          "source": "geometry",
+          "candidate_id": "",
+          "observation_time_s": null,
+          "approach_direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": null,
+          "opening_source": "known carton width with approach clearance",
+          "model_score": null,
+          "metadata": {},
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "terms": {
+          "geometry_quality": 0.9982861695662395,
+          "valid_depth_ratio": 1.0,
+          "visibility_complete": 1.0,
+          "uncertainty_m": 0.003,
+          "neighbour_clearance_m": 0.2,
+          "joint_cost": 2.157573078229024,
+          "path_clearance_m": 0.022487212724775864,
+          "task_priority": 1.0,
+          "previous_failures": 0,
+          "whole_task_template_checked": true,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT",
+            "HOME"
+          ],
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 132,
+              "clearance_m": 0.032486228100889136,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 154,
+              "clearance_m": 0.033199699380995526,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "whole_task_check_scope": "sampled geometry/collision and currently observed obstacles; future local visibility deferred",
+          "pending_observation_phases": [
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "RETREAT"
+          ],
+          "pregrasp_joint_positions_rad": [
+            -0.16421096591723516,
+            -0.26726186210253394,
+            0.7308547115825446,
+            -2.874083729404026,
+            0.37779794385358784,
+            2.6434831279734445,
+            -0.9192396280864017
+          ],
+          "candidate_source": "geometry",
+          "model_score": null,
+          "model_score_is_success_probability": false,
+          "full_pose_checked": false
+        },
+        "score": 2.5274937871105534
+      }
+    ],
+    "rejected": [
+      {
+        "candidate_id": "",
+        "arm": "panda_right",
+        "reasons": [
+          "IK_DISCONTINUITY"
+        ],
+        "phase": "TRANSFER"
+      },
+      {
+        "candidate_id": "",
+        "arm": "panda_right",
+        "reasons": [
+          "IK_DISCONTINUITY"
+        ],
+        "phase": "TRANSFER"
+      }
+    ]
+  },
+  "model_candidate_assessments": {
+    "total": 512,
+    "feasible": 3,
+    "rejection_counts": {
+      "GRIPPER_SPACE_INSUFFICIENT": 504,
+      "GRASP_OFF_CENTRE": 502,
+      "IK_DISCONTINUITY": 1,
+      "ROBOT_UNREACHABLE": 2
+    },
+    "passed": [
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.18991266489028927,
+            -0.05493073016405104,
+            0.8132526636123658
+          ],
+          "yaw_rad": -2.759691935772643,
+          "opening_m": 0.07398470725825024,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.2424369248132823,
+            0.18065162399957324,
+            -0.9526286157539169,
+            0.032985582913932124
+          ],
+          "source": "graspgen",
+          "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:175:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.44998693466186523,
+            -0.1504392772912979,
+            -0.880272626876831
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.054171077276190305,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.45716965198516846,
+          "metadata": {
+            "request_id": "8b81b1146ddd4d36b7b50b26176341d9",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.0581710772761903,
+              "centre_offset_m": -0.0019068149910299618,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.36018168926239014,
+                0.8171787261962891,
+                -0.44998693466186523,
+                -0.14491397142410278
+              ],
+              [
+                0.9325538873672485,
+                0.3281939625740051,
+                -0.1504392772912979,
+                -0.039886802434921265
+              ],
+              [
+                0.024747241288423538,
+                -0.47382253408432007,
+                -0.880272626876831,
+                0.9012799263000488
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "terms": {
+          "geometry_quality": 0.9982861695662395,
+          "valid_depth_ratio": 1.0,
+          "visibility_complete": 1.0,
+          "uncertainty_m": 0.003,
+          "neighbour_clearance_m": 0.2,
+          "joint_cost": 2.119551831902572,
+          "path_clearance_m": 0.03248722771204125,
+          "task_priority": 1.0,
+          "previous_failures": 0,
+          "whole_task_template_checked": true,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "CLOSE",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "OPEN",
+            "RETREAT",
+            "HOME"
+          ],
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 120,
+              "clearance_m": 0.032488295418185265,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 172,
+              "clearance_m": 0.03248722771204125,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "whole_task_check_scope": "full model SE(3); sampled project-robot collisions; future local visibility deferred",
+          "pending_observation_phases": [
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "OPEN",
+            "RETREAT"
+          ],
+          "pregrasp_joint_positions_rad": [
+            -0.5835587742134791,
+            -0.5162189773561644,
+            1.5574010394301825,
+            -2.6375147716144127,
+            0.14608494688432094,
+            2.331013966586925,
+            -0.38090977711814733
+          ],
+          "candidate_source": "graspgen",
+          "model_score": 0.45716965198516846,
+          "model_score_is_success_probability": false,
+          "full_pose_checked": true
+        },
+        "score": 2.6765320417092044
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.2113223645836115,
+            -0.06681523404549808,
+            0.8055677771568299
+          ],
+          "yaw_rad": -2.781630155324655,
+          "opening_m": 0.07286658385943533,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.015418144250907515,
+            0.17892903650858566,
+            -0.9837401795853432,
+            -0.0013927639297925435
+          ],
+          "source": "graspgen",
+          "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:220:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.030833307653665543,
+            -0.00277727167122066,
+            -0.9995206594467163
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.05256625749996438,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.26711398363113403,
+          "metadata": {
+            "request_id": "8b81b1146ddd4d36b7b50b26176341d9",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.056566257499964384,
+              "centre_offset_m": 0.0021501631797354675,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.35199642181396484,
+                0.9354933500289917,
+                -0.030833307653665543,
+                -0.20823903381824493
+              ],
+              [
+                0.9359649419784546,
+                0.3520823121070862,
+                -0.00277727167122066,
+                -0.06653750687837601
+              ],
+              [
+                0.00825774297118187,
+                -0.029836483299732208,
+                -0.9995206594467163,
+                0.9055198431015015
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "terms": {
+          "geometry_quality": 0.9982861695662395,
+          "valid_depth_ratio": 1.0,
+          "visibility_complete": 1.0,
+          "uncertainty_m": 0.003,
+          "neighbour_clearance_m": 0.2,
+          "joint_cost": 2.0772306588487903,
+          "path_clearance_m": 0.032486243717564714,
+          "task_priority": 1.0,
+          "previous_failures": 0,
+          "whole_task_template_checked": true,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "CLOSE",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "OPEN",
+            "RETREAT",
+            "HOME"
+          ],
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 132,
+              "clearance_m": 0.032488403779478245,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 92,
+              "clearance_m": 0.03248746052112032,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "whole_task_check_scope": "full model SE(3); sampled project-robot collisions; future local visibility deferred",
+          "pending_observation_phases": [
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "OPEN",
+            "RETREAT"
+          ],
+          "pregrasp_joint_positions_rad": [
+            -0.1445009151897463,
+            -0.3255881962695465,
+            0.686168891866282,
+            -2.8535729326822152,
+            0.32373278685609835,
+            2.5612151694369656,
+            -0.9055205198061894
+          ],
+          "candidate_source": "graspgen",
+          "model_score": 0.26711398363113403,
+          "model_score_is_success_probability": false,
+          "full_pose_checked": true
+        },
+        "score": 2.6469802226767714
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.2261006712913514,
+            -0.0710300609469414,
+            0.7944795489311219
+          ],
+          "yaw_rad": -2.7654805447977915,
+          "opening_m": 0.07208814894822742,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.2587544861915346,
+            -0.17695482434516874,
+            0.9489206841775427,
+            0.035813979906602476
+          ],
+          "source": "graspgen",
+          "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:185:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.4784001111984253,
+            0.15954498946666718,
+            -0.8635270595550537
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.05350378291090982,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.4417188763618469,
+          "metadata": {
+            "request_id": "8b81b1146ddd4d36b7b50b26176341d9",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.05750378291090982,
+              "centre_offset_m": 0.0012921830186587951,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.3543663024902344,
+                0.803466260433197,
+                0.4784001111984253,
+                -0.27394068241119385
+              ],
+              [
+                0.9348087906837463,
+                0.31729811429977417,
+                0.15954498946666718,
+                -0.0869845598936081
+              ],
+              [
+                -0.02360648289322853,
+                0.5037499070167542,
+                -0.8635270595550537,
+                0.8808322548866272
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "terms": {
+          "geometry_quality": 0.9982861695662395,
+          "valid_depth_ratio": 1.0,
+          "visibility_complete": 1.0,
+          "uncertainty_m": 0.003,
+          "neighbour_clearance_m": 0.2,
+          "joint_cost": 2.795114117420921,
+          "path_clearance_m": 0.028966773792187185,
+          "task_priority": 1.0,
+          "previous_failures": 0,
+          "whole_task_template_checked": true,
+          "checked_phases": [
+            "PREGRASP",
+            "APPROACH",
+            "CLOSE",
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "OPEN",
+            "RETREAT",
+            "HOME"
+          ],
+          "joint_plans": {
+            "PREGRASP": {
+              "samples": 200,
+              "clearance_m": 0.03249018166396665,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            "HOME": {
+              "samples": 150,
+              "clearance_m": 0.032486838333676604,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          },
+          "whole_task_check_scope": "full model SE(3); sampled project-robot collisions; future local visibility deferred",
+          "pending_observation_phases": [
+            "LIFT",
+            "TRANSFER",
+            "LOWER",
+            "OPEN",
+            "RETREAT"
+          ],
+          "pregrasp_joint_positions_rad": [
+            0.07272741836350237,
+            -0.03923773899998001,
+            -0.10170168968400813,
+            -2.7200830274812673,
+            0.7167717408948676,
+            2.343146488715221,
+            -1.778377726861985
+          ],
+          "candidate_source": "graspgen",
+          "model_score": 0.4417188763618469,
+          "model_score_is_success_probability": false,
+          "full_pose_checked": true
+        },
+        "score": 2.5207271598816003
+      }
+    ],
+    "rejected": [
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:0:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:0:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:1:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:1:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:2:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:2:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:3:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:3:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:4:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:4:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:5:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:5:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:6:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:6:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:7:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:7:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:8:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:8:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:9:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:9:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:10:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:10:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:11:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:11:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:12:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:12:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:13:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:13:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:14:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:14:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:15:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:15:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:16:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:16:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:17:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:17:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:18:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:18:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:19:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:19:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:20:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:20:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:21:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:21:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:22:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:22:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:23:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:23:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:24:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:24:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:25:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:25:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:26:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:26:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:27:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:27:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:28:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:28:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:29:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:29:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:30:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:30:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:31:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:31:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:32:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:32:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:33:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:33:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:34:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:34:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:35:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:35:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:36:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:36:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:37:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:37:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:38:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:38:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:39:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:39:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:40:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:40:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:41:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:41:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:42:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:42:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:43:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:43:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:44:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:44:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:45:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:45:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:46:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:46:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:47:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:47:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:48:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:48:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:49:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:49:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:50:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:50:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:51:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:51:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:52:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:52:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:53:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:53:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:54:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:54:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:55:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:55:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:56:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:56:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:57:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:57:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:58:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:58:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:59:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:59:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:60:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:60:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:61:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:61:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:62:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:62:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:63:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:63:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:64:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:64:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:65:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:65:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:66:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:66:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:67:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:67:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:68:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:68:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:69:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:69:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:70:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:70:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:71:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:71:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:72:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:72:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:73:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:73:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:74:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:74:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:75:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:75:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:76:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:76:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:77:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:77:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:78:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:78:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:79:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:79:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:80:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:80:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:81:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:81:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:82:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:82:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:83:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:83:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:84:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:84:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:85:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:85:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:86:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:86:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:87:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:87:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:88:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:88:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:89:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:89:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:90:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:90:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:91:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:91:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:92:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:92:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:93:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:93:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:94:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:94:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:95:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:95:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:96:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:96:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:97:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:97:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:98:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:98:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:99:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:99:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:100:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:100:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:101:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:101:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:102:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:102:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:103:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:103:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:104:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:104:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:105:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:105:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:106:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:106:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:107:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:107:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:108:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:108:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:109:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:109:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:110:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:110:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:111:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:111:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:112:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:112:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:113:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:113:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:114:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:114:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:115:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:115:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:116:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:116:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:117:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:117:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:118:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:118:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:119:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:119:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:120:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:120:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:121:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:121:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:122:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:122:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:123:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:123:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:124:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:124:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:125:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:125:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:126:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:126:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:127:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:127:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:128:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:128:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:129:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:129:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:130:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:130:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:131:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:131:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:132:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:132:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:133:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:133:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:134:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:134:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:135:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:135:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:136:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:136:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:137:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:137:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:138:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:138:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:139:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:139:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:140:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:140:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:141:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:141:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:142:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:142:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:143:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:143:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:144:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:144:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:145:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:145:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:146:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:146:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:147:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:147:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:148:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:148:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:149:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:149:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:150:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:150:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:151:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:151:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:152:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:152:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:153:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:153:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:154:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:154:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:155:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:155:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:156:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:156:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:157:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:157:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:158:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:158:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:159:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:159:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:160:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:160:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:161:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:161:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:162:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:162:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:163:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:163:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:164:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:164:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:165:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:165:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:166:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:166:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:167:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:167:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:168:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:168:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:169:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:169:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:170:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:170:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:171:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:171:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:172:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:172:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:173:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:173:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:174:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:174:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:175:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "IK_DISCONTINUITY"
+        ],
+        "phase": "LOWER"
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:176:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:176:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:177:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:177:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:178:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:178:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:179:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:179:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:180:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:180:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:181:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:181:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:182:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:182:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:183:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:183:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:184:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:184:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:185:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "ROBOT_UNREACHABLE"
+        ],
+        "phase": "PREGRASP"
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:186:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:186:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:187:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:187:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:188:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:188:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:189:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:189:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:190:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:190:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:191:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:191:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:192:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:192:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:193:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:193:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:194:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:194:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:195:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:195:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:196:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:196:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:197:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:197:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:198:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:198:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:199:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:199:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:200:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:200:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:201:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:201:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:202:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:202:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:203:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:203:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:204:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:204:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:205:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:205:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:206:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:206:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:207:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:207:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:208:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:208:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:209:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:209:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:210:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:210:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:211:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:211:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:212:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:212:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:213:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:213:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:214:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:214:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:215:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:215:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:216:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:216:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:217:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:217:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:218:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:218:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:219:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:219:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:220:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "ROBOT_UNREACHABLE"
+        ],
+        "phase": "TRANSFER"
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:221:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:221:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:222:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:222:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:223:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:223:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:224:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:224:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:225:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:225:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:226:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:226:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:227:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:227:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:228:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:228:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:229:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:229:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:230:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:230:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:231:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:231:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:232:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:232:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:233:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:233:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:234:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:234:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:235:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:235:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:236:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:236:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:237:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:237:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:238:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:238:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:239:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:239:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:240:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:240:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:241:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:241:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:242:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:242:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:243:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:243:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:244:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:244:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:245:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:245:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:246:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:246:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:247:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:247:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:248:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:248:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:249:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:249:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:250:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:250:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:251:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:251:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:252:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:252:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:253:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:253:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:254:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:254:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:255:panda_left",
+        "arm": "panda_left",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      },
+      {
+        "candidate_id": "8b81b1146ddd4d36b7b50b26176341d9:255:panda_right",
+        "arm": "panda_right",
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "phase": null
+      }
+    ]
+  }
+}

@@ -27,3 +27,15 @@ class GraspGenInterfaceTests(unittest.TestCase):
     def test_wrong_gripper_rejected(self):
         client=GraspGenClient(); client.request=lambda unused:{'gripper_name':'robotiq_2f_140'}
         with self.assertRaises(ValueError): client.metadata()
+
+    def test_robot_checks_receive_all_requested_candidates_not_score_top_twenty(self):
+        from workstation.models.graspgen_client import VisualClouds
+        client=GraspGenClient();requests=[]
+        def request(payload):
+            requests.append(payload)
+            if payload['action']=='metadata':return {'gripper_name':'franka_panda'}
+            return {'grasps':np.repeat(np.eye(4)[None],256,axis=0),'confidences':np.linspace(1,0,256)}
+        client.request=request
+        result=client.infer(VisualClouds(np.zeros((200,3),np.float32),np.zeros((0,3)),1.),256)
+        self.assertEqual(requests[-1]['topk_num_grasps'],256)
+        self.assertEqual(len(result['scores']),256)

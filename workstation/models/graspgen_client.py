@@ -112,7 +112,7 @@ class GraspGenClient:
             raise ValueError('Carton cloud extent suggests a unit/frame error')
         metadata=self.metadata()
         response=self.request(dict(action='infer',point_cloud=points,num_grasps=num_grasps,
-            topk_num_grasps=20,min_grasps=1,max_tries=1,grasp_threshold=-1.,remove_outliers=True))
+            topk_num_grasps=num_grasps,min_grasps=1,max_tries=1,grasp_threshold=-1.,remove_outliers=True))
         poses,scores=validate_grasps(response['grasps'],response['confidences'])
         return dict(base_poses_workcell=poses,scores=scores,scores_are_success_probability=False,
                     robot_path_checked=False,TCP_calibration_verified=False,timing=response.get('timing',{}),
