@@ -1,0 +1,5 @@
+# Isolated CPU regression environment; never install into Isaac's Python.
+numpy==2.2.4
+opencv-python-headless==4.10.0.84
+scipy==1.15.2
+pillow==11.1.0

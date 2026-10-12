@@ -13,5 +13,6 @@ evidence/dual_handover.mp4
 
 # Isolated model runtime, downloaded weights and local model caches
 /.venv-models/
+/.venv-cpu/
 /models/
 /.model_cache/

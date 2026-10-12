@@ -1,0 +1,46 @@
+name: CPU tests
+
+on:
+  push:
+    branches: [linux-based]
+  pull_request:
+    branches: [linux-based]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cpu-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cpu:
+    name: Ubuntu / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.12', '3.13']
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: tests/requirements-cpu.txt
+      - name: Install CPU test dependencies
+        run: python -m pip install --only-binary=:all: -r tests/requirements-cpu.txt
+      - name: Environment interfaces (no Isaac SDK)
+        run: >-
+          python -m unittest -v
+          tests.test_runtime_paths tests.test_interactive_failure
+          tests.test_camera_system tests.test_visual_cli
+      - name: Validate scene configuration without starting Isaac
+        run: python -m workstation --mode scene --validate-only
+      - name: Full CPU regression (includes research logic)
+        run: python -m unittest discover -s tests -v
