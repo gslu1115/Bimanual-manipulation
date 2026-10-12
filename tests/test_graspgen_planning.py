@@ -2,7 +2,7 @@ import unittest
 from dataclasses import replace
 import numpy as np
 from workstation.planning.graspgen_candidates import candidates_from_result,opening_from_visual_box,upright_body_rotation
-from workstation.planning.selection import assess
+from workstation.planning.selection import assess,visual_pinch_balance
 from workstation.observations.camera_geometry import pose_matrix
 from workstation.simulation.robot_driver import RobotMotion
 from tests import test_visual_planning
@@ -92,3 +92,32 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertEqual(report['reasons'],('TARGET_BODY_COLLISION',))
         self.assertEqual(report['rejection_phase'],'PREGRASP')
         self.assertIsNone(driver.held_visual_geometry)
+
+    def test_balance_prefers_central_original_pose_despite_higher_edge_model_score(self):
+        centred=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        edge=replace(centred,position_m=tuple(np.asarray(centred.position_m)+self.pose[:3,0]*.025),
+                     model_score=.99,candidate_id='edge')
+        centred=replace(centred,model_score=.3,candidate_id='centred')
+        poses=[(c.position_m,c.orientation_wxyz) for c in (edge,centred)]
+        rows=assess(self.scene,self.states,lambda c,o,s:dict(reasons=(),joint_cost=0.,path_clearance_m=.03),
+                    np.zeros(9),candidate_provider=lambda o,s:[edge,centred])
+        self.assertTrue(all(row.feasible for row in rows))
+        self.assertEqual(rows[0].candidate.candidate_id,'centred')
+        self.assertGreater(rows[1].terms['visual_pinch_balance']['penalty'],.4)
+        self.assertEqual(poses,[(c.position_m,c.orientation_wxyz) for c in (edge,centred)])
+
+    def test_balance_is_frame_invariant_and_does_not_bypass_path_rejection(self):
+        from workstation.observations.camera_geometry import quaternion_from_matrix
+        candidate=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        edge=replace(candidate,position_m=tuple(np.asarray(candidate.position_m)+self.pose[:3,0]*.02))
+        original=visual_pinch_balance(edge,self.obj)
+        a=.7;c,s=np.cos(a),np.sin(a);r=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+        t=np.array([.3,-.7,.1]);obj=replace(self.obj,position_m=tuple(r@self.obj.position_m+t),
+                                         axis_yaw_rad=self.obj.axis_yaw_rad+a)
+        moved=replace(edge,position_m=tuple(r@edge.position_m+t),
+                      orientation_wxyz=tuple(quaternion_from_matrix(r@self.pose[:3,:3])))
+        self.assertAlmostEqual(visual_pinch_balance(moved,obj)['penalty'],original['penalty'])
+        rows=assess(self.scene,self.states,lambda c,o,s:dict(reasons=('SELF_COLLISION',),
+                    joint_cost=0.,path_clearance_m=0.),np.zeros(9),candidate_provider=lambda o,s:[candidate])
+        self.assertFalse(rows[0].feasible);self.assertIn('SELF_COLLISION',rows[0].reasons)
+        self.assertEqual(visual_pinch_balance(replace(candidate,source='geometry'),self.obj)['penalty'],0.)

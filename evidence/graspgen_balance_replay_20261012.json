@@ -1,0 +1,60 @@
+{
+  "scope": "saved feasible candidate re-ranking; no new path or physical validation",
+  "balance_scene_scope": "saved before_model_pregrasp initial_scene, later than original ranking frame",
+  "source_run": "visual-pnp_20261012_042704_599712",
+  "source_report_sha256": "c14cb005b580408832a7da43c29bdb4801bb4e71a3807ebbaf1ed9b9f64d571f",
+  "original_chosen": "7c8e7ef645c2442cae1661c264da51ec:181:panda_left",
+  "revised_chosen": "7c8e7ef645c2442cae1661c264da51ec:193:panda_left",
+  "model_poses_changed": false,
+  "failures_ignored": false,
+  "rows": [
+    {
+      "candidate_id": "7c8e7ef645c2442cae1661c264da51ec:181:panda_left",
+      "position_m": [
+        -0.17324163764715195,
+        -0.05356237143278122,
+        0.809199607372284
+      ],
+      "orientation_wxyz": [
+        0.0018046657612715998,
+        0.9836709555854397,
+        0.17632905312735864,
+        0.0360036017965841
+      ],
+      "old_utility": 2.7470386018605804,
+      "new_utility": 2.180810136465781,
+      "visual_pinch_balance": {
+        "offset_m": 0.029236372096707156,
+        "half_extent_m": 0.05163352583541038,
+        "penalty": 0.5662284653947995,
+        "applicable": true
+      },
+      "original_model_score": 0.5154337882995605,
+      "recorded_path_feasible": true
+    },
+    {
+      "candidate_id": "7c8e7ef645c2442cae1661c264da51ec:193:panda_left",
+      "position_m": [
+        -0.2129390072077513,
+        -0.06642088443040847,
+        0.804660713672638
+      ],
+      "orientation_wxyz": [
+        0.018098784287754802,
+        -0.17203130393837798,
+        0.9845823346100665,
+        -0.025986358851478215
+      ],
+      "old_utility": 2.6520325098845943,
+      "new_utility": 2.382464122102906,
+      "visual_pinch_balance": {
+        "offset_m": 0.01365096102073906,
+        "half_extent_m": 0.050640066266948176,
+        "penalty": 0.2695683877816879,
+        "applicable": true
+      },
+      "original_model_score": 0.4248949885368347,
+      "recorded_path_feasible": true
+    }
+  ]
+}

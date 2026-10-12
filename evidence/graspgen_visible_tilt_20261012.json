@@ -1,0 +1,135 @@
+{
+  "scope": "saved depth/mask visible-plane diagnostic only; not a replacement holding observer",
+  "source_run": "visual-pnp_20261012_042704_599712",
+  "truth_inputs": false,
+  "robot_commands": 0,
+  "actor_thresholds_changed": false,
+  "rows": [
+    {
+      "phase": "preloaded",
+      "time_s": 17.466666666666317,
+      "mask_ref": "scene_camera/606/component_1",
+      "near_horizontal_points": 87,
+      "measured_normal": [
+        0.002175642738731291,
+        -0.0007575821170677856,
+        0.9999973463204836
+      ],
+      "tilt_deg": 0.13199636222339714,
+      "plane_rms_m": 8.425062056809545e-05,
+      "second_spread_m": 0.0015638727267422961
+    },
+    {
+      "phase": "preloaded",
+      "time_s": 17.466666666666317,
+      "mask_ref": "scene_camera/606/component_2",
+      "near_horizontal_points": 724,
+      "measured_normal": [
+        -0.0005882888362788318,
+        -0.001136056572592579,
+        0.9999991816455197
+      ],
+      "tilt_deg": 0.07330074557439807,
+      "plane_rms_m": 8.461133479613379e-05,
+      "second_spread_m": 0.010979462380034843
+    },
+    {
+      "phase": "preloaded",
+      "time_s": 17.466666666666317,
+      "mask_ref": "left_wrist_camera/606/component_1",
+      "near_horizontal_points": 25971,
+      "measured_normal": [
+        8.077810764956863e-05,
+        0.00020907376456878488,
+        0.9999999748815287
+      ],
+      "tilt_deg": 0.012842046366608387,
+      "plane_rms_m": 8.10353268834627e-05,
+      "second_spread_m": 0.014760564067835031
+    },
+    {
+      "phase": "failure_trigger",
+      "time_s": 18.824999999999573,
+      "mask_ref": "scene_camera/663/component_1",
+      "near_horizontal_points": 68,
+      "measured_normal": [
+        -0.13756295989564424,
+        -0.05120379240982113,
+        0.9891686427033568
+      ],
+      "tilt_deg": 8.440571478109085,
+      "plane_rms_m": 8.215572846602401e-05,
+      "second_spread_m": 0.001268878123349864
+    },
+    {
+      "phase": "failure_trigger",
+      "time_s": 18.824999999999573,
+      "mask_ref": "scene_camera/663/component_2",
+      "near_horizontal_points": 517,
+      "measured_normal": [
+        -0.14349655781425694,
+        -0.05183700697661272,
+        0.9882922961367078
+      ],
+      "tilt_deg": 8.776030481260788,
+      "plane_rms_m": 8.529813902778354e-05,
+      "second_spread_m": 0.008423924421047594
+    },
+    {
+      "phase": "failure_trigger",
+      "time_s": 18.824999999999573,
+      "mask_ref": "left_wrist_camera/663/component_1",
+      "near_horizontal_points": 15366,
+      "measured_normal": [
+        -0.14227896577353372,
+        -0.05027858045317282,
+        0.9885488153075839
+      ],
+      "tilt_deg": 8.67916899819472,
+      "plane_rms_m": 8.107793901428394e-05,
+      "second_spread_m": 0.008539444001456955
+    },
+    {
+      "phase": "failed",
+      "time_s": 19.033333333332894,
+      "mask_ref": "scene_camera/666/component_1",
+      "near_horizontal_points": 67,
+      "measured_normal": [
+        -0.12779417108339375,
+        -0.05085952351408054,
+        0.9904958145822873
+      ],
+      "tilt_deg": 7.905687608506202,
+      "plane_rms_m": 7.914185026859875e-05,
+      "second_spread_m": 0.0012666229680193168
+    },
+    {
+      "phase": "failed",
+      "time_s": 19.033333333332894,
+      "mask_ref": "scene_camera/666/component_2",
+      "near_horizontal_points": 528,
+      "measured_normal": [
+        -0.1389708421275435,
+        -0.05353313052446803,
+        0.9888484762462911
+      ],
+      "tilt_deg": 8.564640770007614,
+      "plane_rms_m": 8.529332929752042e-05,
+      "second_spread_m": 0.008562611571114235
+    },
+    {
+      "phase": "failed",
+      "time_s": 19.033333333332894,
+      "mask_ref": "left_wrist_camera/666/component_1",
+      "near_horizontal_points": 15547,
+      "measured_normal": [
+        -0.13772515091853785,
+        -0.05192188260912032,
+        0.9891086395896007
+      ],
+      "tilt_deg": 8.463961047402856,
+      "plane_rms_m": 8.080894998463763e-05,
+      "second_spread_m": 0.008665669606775358
+    }
+  ]
+}

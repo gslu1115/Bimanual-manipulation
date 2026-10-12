@@ -58,6 +58,25 @@ class CandidateAssessment:
     score: float  # Uncalibrated rule utility, NEVER a success probability.
 
 
+def visual_pinch_balance(candidate,obj):
+    """Prefer a central side pinch among feasible, unmodified model poses.
+
+    TCP Y closes the jaws; offset along TCP X makes an upright box hang
+    eccentrically. Its visual geometric centre is a ranking heuristic, not
+    a measured centre of mass, contact patch, or holding/force proof.
+    """
+    if candidate.source!='graspgen' or candidate.orientation_wxyz is None:
+        return dict(offset_m=0.,half_extent_m=None,penalty=0.,applicable=False)
+    from workstation.observations.camera_geometry import pose_matrix
+    tangent=pose_matrix(candidate.position_m,candidate.orientation_wxyz)[:3,0]
+    c,s=np.cos(obj.axis_yaw_rad),np.sin(obj.axis_yaw_rad)
+    body=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+    offset=abs(float(tangent@(np.asarray(obj.position_m)-candidate.position_m)))
+    extent=float(np.abs(tangent@body)@(np.asarray(obj.size_m)/2))
+    return dict(offset_m=offset,half_extent_m=extent,
+                penalty=float(np.clip(offset/extent,0.,1.)),applicable=True)
+
+
 def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history=None,priorities=None,eligible=None,
            candidate_provider=None):
     """feasibility(candidate, object, scene) must check IK AND whole-path collisions."""
@@ -113,10 +132,12 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
             if all_reasons:
                 terms['rejection_phase']=path.get('rejection_phase')
                 terms['rejection_details']=path.get('rejection_details',{})
+            balance=visual_pinch_balance(candidate,obj)
+            terms['visual_pinch_balance']=balance
             utility = (2*terms['geometry_quality']+min(clearance,.10)*5
                        +min(terms['path_clearance_m'],.05)*5
                        +terms['task_priority']*.2+terms['valid_depth_ratio']*.3
-                       -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5
+                       -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5-balance['penalty']
                        +(.2*float(np.clip(candidate.model_score,0,1)) if candidate.model_score is not None else 0.))
             results.append(CandidateAssessment(candidate,not all_reasons,all_reasons,terms,utility))
     return sorted(results,key=lambda item:(not item.feasible,-item.score,item.candidate.target_id,item.candidate.arm))
