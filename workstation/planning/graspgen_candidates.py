@@ -10,6 +10,7 @@ from dataclasses import replace
 from workstation.models.graspgen_client import tcp_poses,validate_grasps
 from workstation.observations.camera_geometry import quaternion_from_matrix,pose_matrix
 from workstation.planning.selection import GraspCandidate
+from workstation.perception.scene_estimate import pose_is_observed
 
 
 def upright_body_rotation(obj):
@@ -69,7 +70,7 @@ def revalidate_candidate(candidate,obj,scene,sequence_ids):
     """Retain the ORIGINAL world pose only when fresh visual geometry agrees."""
     original=candidate.metadata['source_visual_object']
     if (obj.track_id!=candidate.target_id or obj.failures or obj.posture!='UPRIGHT' or
-            obj.visibility!='COMPLETE_TOP' or obj.valid_depth_ratio<.9 or obj.uncertainty_m>.008):
+            not pose_is_observed(obj,scene) or obj.valid_depth_ratio<.9 or obj.uncertainty_m>.008):
         raise RuntimeError('MODEL_TARGET_UNCERTAIN')
     age=scene.assembled_time_s-obj.time_s
     if (not 0<=age<=.15 or abs(scene.observation_time_s-obj.time_s)>1e-6 or

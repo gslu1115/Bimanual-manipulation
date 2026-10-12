@@ -12,7 +12,7 @@ from workstation.planning.selection import (assess, select_skill, upright_grasp_
     nearest_aligned_yaw, nearest_upright_slot_rotation)
 from workstation.skills.reobserve import Reobserve, ActiveReobserve, GuidedReobserve
 from workstation.perception.held_surface import HeldSurfaceTracker,CuboidHoldingTracker
-from workstation.perception.scene_estimate import PoseHypothesis
+from workstation.perception.scene_estimate import PoseHypothesis,pose_is_observed
 from workstation.observations.camera_geometry import quaternion_from_matrix
 
 
@@ -137,7 +137,7 @@ class VisualPickPlace:
                 self.max_visual_lift=max(self.max_visual_lift,measurement['height_gain_m'])
                 self.events[-1]['last_visual_hold']=measurement
                 return
-        reliable=[o for o in scene.objects if not o.failures and o.visibility == 'COMPLETE_TOP'
+        reliable=[o for o in scene.objects if not o.failures and pose_is_observed(o,scene)
                   and o.posture == 'UPRIGHT' and o.uncertainty_m <= .008]
         # A centre inferred from clipped geometry is not a lift measurement.
         # If the target remains visible at its original support while the robot
@@ -310,7 +310,7 @@ class VisualPickPlace:
                 if preparation['executed']:self.observer_arms.add(preparation['observer_arm'])
                 if not preparation['success']:raise RuntimeError('OBSERVER_PREPARATION_NOT_VERIFIED')
                 current=[o for o in self.scene.objects if o.track_id==candidate.target_id and
-                    not o.failures and o.posture=='UPRIGHT' and o.visibility=='COMPLETE_TOP' and
+                    not o.failures and o.posture=='UPRIGHT' and pose_is_observed(o,self.scene) and
                     o.valid_depth_ratio>=.9 and o.uncertainty_m<=.008 and o.velocity_m_s is not None and
                     np.linalg.norm(o.velocity_m_s)<=.015 and
                     np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
@@ -359,7 +359,7 @@ class VisualPickPlace:
             # visual geometry before starting the guarded lift experiment.
             closed=self.observe('closed')
             nearby=[o for o in closed.objects if not o.failures and o.posture == 'UPRIGHT'
-                    and o.visibility == 'COMPLETE_TOP' and o.uncertainty_m <= .008
+                    and pose_is_observed(o,closed) and o.uncertainty_m <= .008
                     and np.linalg.norm(np.asarray(o.position_m)-(self.initial_position if model else pick)) < .015
                     and (not model or o.track_id==self.candidate.target_id)]
             if len(nearby) != 1: raise RuntimeError('CLOSED_TARGET_UNCERTAIN')
@@ -376,7 +376,7 @@ class VisualPickPlace:
                 self.event('PRELOAD');self.robot.grip(self.arm,preload,self.scene,self.candidate.target_id)
                 closed=self.observe('preloaded')
                 nearby=[o for o in closed.objects if o.track_id==self.candidate.target_id and
-                    not o.failures and o.posture=='UPRIGHT' and o.visibility=='COMPLETE_TOP' and
+                    not o.failures and o.posture=='UPRIGHT' and pose_is_observed(o,closed) and
                     o.uncertainty_m<=.008 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
                 if len(nearby)!=1:raise RuntimeError('PRELOADED_TARGET_UNCERTAIN')
             tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
@@ -386,7 +386,7 @@ class VisualPickPlace:
             self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
                 offset=self.hold_tracker.offset.copy(),relative_rotation=self.hold_tracker.relative_rotation.copy(),
                 uncertainty_m=self.hold_tracker.uncertainty_m,
-                source='pre-lift current COMPLETE_TOP SceneEstimate and image-time encoder FK')
+                source='pre-lift current observed visual pose and image-time encoder FK')
             result['held_visual_geometry']=dict(offset_tcp_m=self.hold_tracker.offset.tolist(),
                 relative_rotation=self.hold_tracker.relative_rotation.tolist(),observation_time_s=closed.observation_time_s,
                 uncertainty_m=self.hold_tracker.uncertainty_m,

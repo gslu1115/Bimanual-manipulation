@@ -7,11 +7,12 @@ become a fabricated complete SceneEstimate or independently measured 6D pose.
 import math
 import numpy as np
 from workstation.perception.rgbd_cartons import deproject
+from workstation.perception.scene_estimate import pose_is_observed
 
 
 class HeldSurfaceTracker:
     def __init__(self, obj, tcp_position, tcp_rotation, size_m):
-        if obj.failures or obj.posture != 'UPRIGHT' or obj.visibility != 'COMPLETE_TOP':
+        if obj.failures or obj.posture != 'UPRIGHT' or not pose_is_observed(obj):
             raise ValueError('Holding hypothesis requires a complete visual upright estimate')
         self.size=np.asarray(size_m,float)
         uncertainty=float(obj.uncertainty_m)
@@ -187,7 +188,7 @@ class CuboidHoldingTracker:
     """
     def __init__(self,obj,tcp_position,tcp_rotation,size_m,priors):
         from workstation.observations.camera_geometry import pose_matrix
-        if obj.failures or obj.visibility!='COMPLETE_TOP' or not obj.hypotheses:
+        if obj.failures or not pose_is_observed(obj) or not obj.hypotheses:
             raise ValueError('Cuboid holding requires a complete visual geometry with pose hypotheses')
         self.size=np.asarray(size_m,float);self.priors=priors
         self.uncertainty_m=max(.003,float(obj.uncertainty_m))

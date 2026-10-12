@@ -154,7 +154,8 @@ class CartonEstimator:
         must measure all three translation axes and rotation from this frame;
         the old pose never becomes a fresh output or a holding claim. The
         original three-second association horizon and neighbour ambiguity
-        gate stay in force. Partial geometry and semantic UNKNOWN are kept.
+        gate stay in force. Missing top pixels stay missing; only a separate
+        current RGB check below can resolve the top/bottom semantics.
         """
         partial={o.track_id:o for o in scene.objects if o.failures}
         if not partial:return scene
@@ -179,15 +180,73 @@ class CartonEstimator:
                     not original.mask_refs or not set(original.mask_refs)<=refs):continue
             if {ref for o in members for ref in o.mask_refs}!=refs:continue
             scene=self.associate_supported_target(scene,anchor.track_id,measured)
-            # Keep partial top/semantic uncertainty, but expose independently
-            # measured current geometry for collision bounds. Never substitute
-            # the old anchor or its clipped fit for these measured coordinates.
+            # Attach current geometry before checking current packaging. Never
+            # substitute an old anchor or clipped fit for measured coordinates.
             bounded=replace(next(o for o in scene.objects if o.track_id==anchor.track_id),
                             measured_cuboid=measured)
+            bounded=self._resolve_measured_flat_cuboid(packet,scene,bounded,measured,anchor)
             scene=replace(scene,objects=tuple(bounded if o.track_id==anchor.track_id else o
                                              for o in scene.objects))
             self._tracks[anchor.track_id]=bounded
+            if not bounded.failures:self._anchors[anchor.track_id]=bounded
         return scene
+
+    def _resolve_measured_flat_cuboid(self,packet,scene,obj,measured,previous):
+        """Re-read CURRENT packaging on independent flat-box geometry.
+
+        A clipped single-view footprint cannot veto independently measured
+        3D planes/extents. Neither those planes nor an old label prove the top
+        semantics: stripe/fold cues must be measured again in these same frames.
+        """
+        recoverable={'PARTIAL_OR_MERGED_GEOMETRY','INCOMPATIBLE_SIZE_OR_SUPPORT',
+                     'INSTANCE_GEOMETRY_INCONSISTENT','VERTICAL_EXTENT_UNRESOLVED'}
+        rotation=np.asarray(measured['rotation']);centre=np.asarray(measured['position_m'])
+        if not set(obj.failures)<=recoverable or abs(rotation[2,2])<math.cos(math.radians(8)):
+            return obj
+        # Canonical geometric upper face; only RGB below assigns top/bottom.
+        if rotation[2,2]<0:rotation=rotation@np.diag([1.,-1.,-1.])
+        yaw=math.atan2(rotation[1,0],rotation[0,0]);size=np.asarray(measured['size_m'])
+        views={};visible_top=[]
+        for ref in measured['mask_refs']:
+            name=ref.split('/')[0];frame=packet.cameras[name]
+            valid=scene.masks[ref]&frame.valid_depth
+            body=deproject(frame)[valid];rgb=frame.rgb[valid]
+            local=(body-centre)@rotation
+            top=np.abs(local[:,2]-size[2]/2)<.003
+            if top.sum()<20:continue
+            visible_top.append(local[top,:2])
+            views.setdefault(name,[]).append((rgb[top],body[top,:2],body,rgb))
+        views={name:tuple(np.concatenate([sample[i] for sample in samples]) for i in range(4))
+               for name,samples in views.items()}
+        if not views:return obj
+        posture,cues,evidence=self._flat_packaging(views,centre[:2],yaw,*size,
+                                                  centre[2]+rotation[2,2]*size[2]/2)
+        import cv2
+        top_points=np.concatenate(visible_top);spans=np.ptp(top_points,axis=0)
+        quality={**obj.quality,**{'partial_fit_'+key:obj.quality[key] for key in
+            ('footprint_coverage','footprint_error_m','geometry_inlier_ratio','plane_residual_m')
+            if key in obj.quality},**cues,'independent_cuboid_pose':1.,
+            'footprint_coverage':min(1.,float(cv2.contourArea(cv2.convexHull(top_points.astype(np.float32))))/float(np.prod(size[:2]))),
+            'footprint_error_m':float(np.max(np.abs(spans-size[:2]))),
+            'observed_length_m':float(spans[0]),'observed_width_m':float(spans[1]),
+            'geometry_inlier_ratio':measured['surface_inlier_ratio'],
+            'plane_residual_m':measured['plane_residual_m'],
+            'surface_tilt_deg':math.degrees(math.acos(np.clip(rotation[2,2],-1.,1.))),
+            'geometric_length_m':float(size[0]),'geometric_width_m':float(size[1]),
+            'observed_height_m':float(size[2])}
+        labels=(posture,) if posture in ('UPRIGHT','INVERTED') else ('UPRIGHT','INVERTED')
+        hypotheses=tuple(PoseHypothesis(label,tuple(quaternion_from_matrix(rotation@
+            np.diag([1.,1.,1.] if label=='UPRIGHT' else [1.,-1.,-1.])@np.diag([sign,sign,1.]))),
+            'current measured cuboid geometry; '+evidence+'; 180-degree axis symmetry')
+            for label in labels for sign in (1.,-1.))
+        dt=measured['time_s']-previous.time_s
+        velocity=tuple((centre-previous.position_m)/dt) if 1e-6<dt<=self.priors.max_age_s else None
+        return replace(obj,position_m=tuple(centre),axis_yaw_rad=yaw,posture=posture,velocity_m_s=velocity,
+            hypotheses=hypotheses,visibility='OBSERVED_CUBOID',uncertainty_m=measured['uncertainty_m'],
+            valid_depth_ratio=min(float(packet.cameras[ref.split('/')[0]].valid_depth[scene.masks[ref]].mean())
+                                  for ref in measured['mask_refs']),
+            failures=('PACKAGING_CUE_CONFLICT',) if cues['packaging_conflict'] else (),
+            quality=quality)
 
     def associate_supported_target(self,scene,target_id,measurement):
         """Reconcile identity from CURRENT whole-instance holding support.

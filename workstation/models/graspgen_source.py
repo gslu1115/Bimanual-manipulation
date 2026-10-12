@@ -5,6 +5,7 @@ import math
 import time
 from workstation.models.graspgen_client import visual_clouds
 from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate
+from workstation.perception.scene_estimate import pose_is_observed
 
 
 class GraspGenSource:
@@ -14,7 +15,7 @@ class GraspGenSource:
 
     def generate(self,packet,scene,robot,refresh):
         candidates=[]
-        targets=[obj for obj in scene.objects if not obj.failures and obj.posture=='UPRIGHT' and obj.visibility=='COMPLETE_TOP']
+        targets=[obj for obj in scene.objects if not obj.failures and obj.posture=='UPRIGHT' and pose_is_observed(obj,scene)]
         for obj in targets:
             clouds=visual_clouds(packet,scene,obj.track_id)
             started=time.monotonic();before=robot.read_states()
@@ -60,7 +61,7 @@ class GraspGenSource:
                 if (any(not c.rejection_reasons for c in checked) or
                         not any(not c.rejection_reasons for c in prepared) or len(matches)!=1):break
                 current=matches[0]
-                if (current.posture!='UNKNOWN' or current.failures or current.visibility!='COMPLETE_TOP' or
+                if (current.posture!='UNKNOWN' or current.failures or not pose_is_observed(current,fresh_scene) or
                         current.valid_depth_ratio<.9 or current.uncertainty_m>.008 or
                         not 0<=fresh_scene.assembled_time_s-current.time_s<=.15 or
                         abs(fresh_scene.observation_time_s-current.time_s)>1e-6 or

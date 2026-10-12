@@ -1,0 +1,21 @@
+{
+  "scope": "independently observed flat cuboid pose and same-frame packaging; logic and saved-frame replay",
+  "tests_passed": 420,
+  "runtime": "Isaac Sim 6.1 Python",
+  "command": "python.sh -m unittest discover -s tests",
+  "log": "/home/featurize/work/isaac-support/graspgen/reports/20261012-observed-pose/tests-final.log",
+  "replay": "observed_pose_closed_replay_20261012.json",
+  "physical_regression": "pending",
+  "note": "Visible top coverage remains measured and may be incomplete. Geometric observability is separate from current packaging semantics. No holding or physical success inferred.",
+  "source_sha256": {
+    "workstation/perception/scene_estimate.py": "458c176bfc4a89b07435911c9cf1264352d0e509d502616f5ea4917c07787dbe",
+    "workstation/perception/rgbd_cartons.py": "aaf5a49013b4c193b372e743baa494da7339b861900c3ea62bb53098e17dbb60",
+    "workstation/perception/held_surface.py": "c618ea663a62bb8c24f5e82b0c891e4991d1e4df014d5f7466bbe64fa5c0f16b",
+    "workstation/planning/collision.py": "2ff679a14c8569cac5a85f8b556f5b4b3edf1813f77cadc4ef2d710456440679",
+    "workstation/planning/selection.py": "94e838b6a1de69d5ff596cccf1a08be2f6f3b56829fceba739c9c5ba79fe410a",
+    "workstation/planning/graspgen_candidates.py": "15155c40d3612bcf13d5d08bda5852db8e512913dbedc23baad63b66351ed4db",
+    "workstation/models/graspgen_source.py": "711877a03089d87f19767b8a1c57fd8df2468aeb5f0eaadba98568b8c0bab7e6",
+    "workstation/skills/visual_pick_place.py": "ab36f4ee7e56aae7c189fe5f63d123dc2470dc8c266cecf6545c3b37a2478eff",
+    "tests/test_measured_fragment_identity.py": "e830ac616845156a059bfbc386def89bae8968352972996ca310f71245816961"
+  }
+}

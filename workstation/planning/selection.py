@@ -2,6 +2,7 @@
 from dataclasses import dataclass, asdict, field
 import math
 import numpy as np
+from workstation.perception.scene_estimate import pose_is_observed
 
 
 # Upright side pinch: keep the palm above the carton top while retaining
@@ -115,7 +116,7 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
         if obj.posture != 'UPRIGHT':
             reasons.append('SIDE_POSTURE' if obj.posture == 'SIDE' else
                            'INVERTED_POSTURE' if obj.posture == 'INVERTED' else 'POSTURE_UNCERTAIN')
-        if obj.visibility != 'COMPLETE_TOP': reasons.append('OCCLUDED')
+        if not pose_is_observed(obj,scene): reasons.append('OCCLUDED')
         if obj.valid_depth_ratio < .9: reasons.append('DEPTH_INSUFFICIENT')
         if obj.velocity_m_s is None:
             reasons.append('MOTION_NOT_OBSERVED')
@@ -141,6 +142,7 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
             all_reasons = tuple(dict.fromkeys(candidate_reasons+list(path['reasons'])))
             terms = dict(geometry_quality=float(obj.quality['footprint_coverage']),
                 valid_depth_ratio=obj.valid_depth_ratio,visibility_complete=float(obj.visibility == 'COMPLETE_TOP'),
+                pose_observed=float(pose_is_observed(obj,scene)),
                 uncertainty_m=obj.uncertainty_m, neighbour_clearance_m=float(clearance),
                 joint_cost=float(path['joint_cost']),path_clearance_m=float(path['path_clearance_m']),
                 task_priority=float(priorities.get(obj.track_id,1.)),previous_failures=failures,

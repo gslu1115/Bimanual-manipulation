@@ -58,6 +58,38 @@ class ObjectEstimate:
     measured_cuboid: Mapping | None = None
 
 
+def current_cuboid_measurement(obj,scene):
+    """Validated current whole-instance geometry, separate from top semantics."""
+    from workstation.perception.cuboid_pose import measured_cuboid_supported
+    measured=getattr(obj,'measured_cuboid',None)
+    if measured is None:return None
+    now=scene.observation_time_s;refs=set(measured.get('mask_refs',()))
+    if (scene.frame=='workcell' and 0<=scene.assembled_time_s-now<=.15 and abs(obj.time_s-now)<=1e-6 and
+            measured_cuboid_supported(measured,now) and refs==set(obj.mask_refs) and
+            all(ref in scene.masks and scene.camera_status.get(ref.split('/')[0])=='OK' for ref in refs) and
+            np.allclose(measured['size_m'],obj.size_m,atol=1e-6,rtol=0)):
+        return measured
+    return None
+
+
+def pose_is_observed(obj,scene=None):
+    """A full top fit OR independently measured pose; never inferred visibility.
+
+    Consumers still check failures, semantics and motion. Scene-less use is
+    only for constructing a tracker from an already checked image-time object.
+    """
+    if obj.visibility=='COMPLETE_TOP':return True
+    if obj.visibility!='OBSERVED_CUBOID':return False
+    from workstation.perception.cuboid_pose import measured_cuboid_supported
+    measured=(current_cuboid_measurement(obj,scene) if scene is not None else
+              getattr(obj,'measured_cuboid',None))
+    return bool(measured is not None and measured_cuboid_supported(measured,obj.time_s) and
+        set(measured['mask_refs'])==set(obj.mask_refs) and
+        np.allclose(measured['size_m'],obj.size_m,atol=1e-6,rtol=0) and
+        np.allclose(measured['position_m'],obj.position_m,atol=1e-8,rtol=0) and
+        measured['uncertainty_m']<=obj.uncertainty_m<=.008)
+
+
 @dataclass(frozen=True)
 class ObservedEdge:
     camera: str
