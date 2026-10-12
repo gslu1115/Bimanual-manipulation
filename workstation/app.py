@@ -32,6 +32,7 @@ def build_parser():
     parser.add_argument('--graspgen-proxy-port',type=int,default=5558)
     parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')
     parser.add_argument('--num-grasps',type=int,default=64)
+    parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
     parser.add_argument("--camera-recording", action="store_true")

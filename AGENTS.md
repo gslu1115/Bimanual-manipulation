@@ -1,6 +1,6 @@
 # AGENTS.md
 
-更新：2026-10-09。协作前阅读 [README.md](README.md) 的结构与入口，再阅读 [项目交接文档](项目路线与当前状态交接.md) 的进度、证据和实施顺序。本仓库仅保留这三份 Markdown 文档。
+更新：2026-10-12。协作前阅读 [README.md](README.md) 的结构与入口，再阅读 [项目交接文档](项目路线与当前状态交接.md) 的进度、证据和实施顺序。本仓库仅保留这三份 Markdown 文档。
 
 ## 当前主线
 
@@ -15,7 +15,7 @@
 - 复用唯一 `ObservationPacket / CameraFrame / RobotState`；策略名称 `cam_high / cam_left_wrist / cam_right_wrist` 映射原有三路采集名称，保持旧 API。采集不生成模型 tensor；独立 `PolicyObservationAdapter` 负责图像格式、16 维 schema、mask 和同步检查。按 `dof_names` 提取编码器状态，不在新接口中依赖固定 DOF 下标。
 - `baselines/` 保留真值开发基线及交接数学；`diagnostics/` 可独立用真值核查传感器几何。后续可迁移技能应放入新的 `skills/`，不得把基线改名后声称已完成迁移。
 - `perception/` 只消费白名单包，`planning/` 消费视觉估计和模型计算，`skills/` 只持有传感器/机器人端口。新 `visual-*` 路径禁止调用真值沉降和 `step` 默认的真值输送监控；独立 runner 的事后评价不得回送在线模块。
-- `models/` 源码提供隔离推理适配；模型依赖只安装到仓库 `.venv-models`，禁止升级 Isaac 核心 Torch/NumPy。`model-capture/model-train/model-eval` 的真值教师和标签仅用于离线监督/评价，不作为视觉技能完成证据。2026-10-08 用户选择继续几何抓取模板；GraspGen 服务及 TCP 标定缺失时保持拒绝执行。
+- `models/` 源码提供隔离推理适配；模型依赖安装到仓库 `.venv-models` 或独立模型容器，禁止升级 Isaac 核心 Torch/NumPy。`model-capture/model-train/model-eval` 的真值教师和标签仅用于离线监督/评价，不作为视觉技能完成证据。2026-10-08 用户选择继续几何抓取模板；GraspGen 服务及 TCP 标定缺失时保持拒绝执行。
 - `task_logic.py` 当前合并配置校验、物理初态、落位判据和输送状态机；`TaskLoop` 是占位合同。出现真实感知/规划消费者后再按职责拆分，不预建空模块。
 - `config/` 只放唯一场景配置与 Kit experience；`tests/` 放逻辑检查；`evidence/` 放精选小型历史 JSON，并本地保留唯一历史成功录像（Git 忽略）；`outputs/` 放可重生成的本次运行文件并由 Git 忽略。
 - 模块使用 `workstation.*` package 导入，唯一 Python 入口为 `python -m workstation`，PowerShell 入口为根 `launch.ps1`。新增功能接模式分发，不增第二套启动脚本或平行配置副本。

@@ -1,0 +1,132 @@
+{
+  "scope": "rigid_palm_frame_and_Lula_FK_only",
+  "verified": true,
+  "gripper_geometry_equivalence_verified": false,
+  "finger_maximum_nearest_vertex_distance_m": 0.016250498004499982,
+  "candidate_execution_authorized": false,
+  "T_graspgen_base_from_panda_hand": [
+    [
+      6.123233995736766e-17,
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      6.123233995736766e-17,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_panda_hand_from_project_tcp": [
+    [
+      -1.0,
+      -2.7932101076544297e-12,
+      -1.14902521226098e-28,
+      -1.3877787807814457e-17
+    ],
+    [
+      2.793210107654433e-12,
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      -1.1492717312938616e-28,
+      -1.6155871338926322e-27,
+      1.0,
+      0.09999999999999987
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "T_graspgen_base_from_project_tcp": [
+    [
+      -2.7932713399943904e-12,
+      1.0,
+      -7.035750241675087e-45,
+      -8.497694209043069e-34
+    ],
+    [
+      -1.0,
+      -2.7932713399943872e-12,
+      -1.14902521226098e-28,
+      -1.3877787807814457e-17
+    ],
+    [
+      -1.1492717312938616e-28,
+      -1.6155871338926322e-27,
+      1.0,
+      0.09999999999999987
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "mesh_checks": [
+    {
+      "degrees": 0,
+      "maximum_vertex_distance_m": {
+        "hand": 0.08678394425712269,
+        "finger": 0.02731028250188374
+      }
+    },
+    {
+      "degrees": 90,
+      "maximum_vertex_distance_m": {
+        "hand": 7.850758259334229e-09,
+        "finger": 0.016250498004499982
+      }
+    },
+    {
+      "degrees": -90,
+      "maximum_vertex_distance_m": {
+        "hand": 0.033179512061756324,
+        "finger": 0.033549334859858095
+      }
+    },
+    {
+      "degrees": 180,
+      "maximum_vertex_distance_m": {
+        "hand": 0.08678394306463233,
+        "finger": 0.02595817409185084
+      }
+    }
+  ],
+  "fk_check": {
+    "samples": 6,
+    "maximum_matrix_error": 4.440892098500626e-16
+  },
+  "gripper_config_sha256": "91321c3a7de51e0d1a1c9ed57cddf75d0749fe29c2b6c32f051581c227c480c2",
+  "asset_sha256": {
+    "model": {
+      "hand": "65983ed489e673599d05b048dda3c883a0bd59823caed149b1d561525f30f52a",
+      "finger": "b69c173da7c8986281307b51f6181a8d0827c8727eaf87f6a959fa3098567ee2"
+    },
+    "robot": {
+      "hand": "94493e94f30fe940f2c8ca2f155c3bbe67bbff406d3edf5e261670d2f0f6e2ed",
+      "finger": "eade0765d87446c8833d88511a4c46573baba2e8eacc15b975aecd123d740296"
+    }
+  },
+  "physical_execution": false,
+  "real_robot_calibration": false
+}

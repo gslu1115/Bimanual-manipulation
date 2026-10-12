@@ -1,0 +1,68 @@
+{
+  "scope": "saved_visual_snapshot_candidates_only",
+  "success": true,
+  "task_execution": false,
+  "TCP_calibration_verified": true,
+  "online_freshness_verified": false,
+  "gripper_geometry_equivalence_verified": false,
+  "trials_are_independent": false,
+  "source_points": 5957,
+  "comparison_scope": "same snapshot; geometry approach checks only; model TCP/path not yet checked",
+  "runs": [
+    {
+      "trial": 0,
+      "candidate_count": 20,
+      "round_trip_s": 0.23487930199962648,
+      "timing": {
+        "infer_ms": 178.5363160001907
+      }
+    },
+    {
+      "trial": 1,
+      "candidate_count": 20,
+      "round_trip_s": 0.17446180499973707,
+      "timing": {
+        "infer_ms": 158.6532520000219
+      }
+    },
+    {
+      "trial": 2,
+      "candidate_count": 20,
+      "round_trip_s": 0.17278122600009738,
+      "timing": {
+        "infer_ms": 155.08331000000908
+      }
+    }
+  ],
+  "geometry_candidates": [
+    {
+      "arm": "panda_left",
+      "feasible": true,
+      "reasons": []
+    },
+    {
+      "arm": "panda_left",
+      "feasible": true,
+      "reasons": []
+    },
+    {
+      "arm": "panda_right",
+      "feasible": true,
+      "reasons": []
+    },
+    {
+      "arm": "panda_right",
+      "feasible": true,
+      "reasons": []
+    }
+  ],
+  "all_model_candidates_non_executable": true,
+  "model_rejection_reasons": [
+    "GRIPPER_GEOMETRY_EQUIVALENCE_UNVERIFIED",
+    "OPENING_UNVERIFIED",
+    "PATH_NOT_CHECKED"
+  ],
+  "full_report_sha256": "9fb59731672fdaf086d31819887e4139671fcbe3c89a47fd457752b7ef88da7e",
+  "raw_evidence_cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012/graspgen-check_20261012_020408_771276",
+  "camera_config_unchanged": true
+}

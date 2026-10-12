@@ -123,13 +123,20 @@ python -m workstation --mode graspgen-proxy
 
 ```bash
 /isaac-sim/python.sh -m workstation --mode graspgen-check --livestream
+
+# 可选：用固定版本的官方源码资产核验夹爪基座与项目 TCP 的静态变换
+# 路径必须在 Isaac 容器内可读；这里只读网格与配置，不导入模型依赖
+/isaac-sim/python.sh -m workstation --mode graspgen-check --livestream \
+  --graspgen-assets /home/featurize/isaac-runtime/graspgen-source
 ```
 
 Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgpack 留在模型环境。可通过 `--graspgen-endpoint`、`--graspgen-proxy-port` 和 `--graspgen-proxy` 分别设置服务与代理地址。
 
 诊断冻结同一份观测并做三次推理，报告冷/热请求耗时、完整姿态、来源与拒绝原因；重复推理不是三个独立物理试验，也不证明在线时效性。几何模板只做同观测的接近路径检查，模型路径仍标为待查，不能用两者数量推断性能优劣。输出为 `graspgen_report.json`、源 RGB-D/掩码和 `graspgen_cloud.npz`。基础设施构建文件及权重在云盘 `isaac-support/graspgen`，不上传模型到源码仓库。
 
-已实测的推理构建定义另纳入 `workstation/models/graspgen_inference.dockerfile`；构建上下文必须是官方 `NVlabs/GraspGen` 的 `2dd8852e1be60f5f9d277fafcc621835cdf59110` 源码根目录。2026-10-12 官方 Panda 样例及项目代理真实请求已通过；这与项目点云/标定/物理抓放是不同验收阶段，详见交接第 20 节。上游代码许可限定研究或评价用途，继续保留官方许可和资产声明。
+已实测的推理构建定义另纳入 `workstation/models/graspgen_inference.dockerfile`；构建上下文必须是官方 `NVlabs/GraspGen` 的 `2dd8852e1be60f5f9d277fafcc621835cdf59110` 源码根目录。2026-10-12 已通过官方 Panda 样例、项目代理及原三路相机的受控单盒快照推理；静态基座/TCP 变换也有网格与双臂 FK 核验。模型与 SDK 夹指网格并不等同，开度、模型候选完整路径及物理抓放仍未验收，详见交接第 20 节。上游代码许可限定研究或评价用途，继续保留官方许可和资产声明。
+
+`graspgen_tcp_calibration.json` 区分固定坐标变换、夹爪几何一致性和执行授权。当前固定变换为 `Rz(-90°), z=+0.1 m`（从项目 TCP 到 GraspGen 基座的坐标变换）；它不是抓取偏移调参，也不是真机标定。即使固定变换通过，夹指差异、未知开度或未检查路径仍使候选不可执行。界面彩色坐标轴始终表示原始模型基座，不表示已经可达的机器人姿态。
 
 以下 Windows 命令仍使用唯一 `python -m workstation` 入口。首次创建独立环境，禁止把模型依赖安装到 Isaac 的核心环境：
 

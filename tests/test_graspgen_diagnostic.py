@@ -62,6 +62,15 @@ class GraspGenDiagnosticTests(unittest.TestCase):
         poses,scores=validate_grasps([],[])
         self.assertEqual(poses.shape,(0,4,4));self.assertEqual(len(scores),0)
 
+    def test_frame_calibration_never_approves_different_gripper_geometry(self):
+        result=dict(base_poses_workcell=np.eye(4)[None],scores=[.8],request_id='r',observation_time_s=1.,metadata={})
+        calibration={'verified':True,'T_graspgen_base_from_project_tcp':np.eye(4).tolist(),
+                     'gripper_geometry_equivalence_verified':False}
+        record=proposal_records(result,'track',{},calibration)[0]
+        self.assertTrue(record['TCP_calibration_verified']);self.assertIsNotNone(record['project_tcp_pose'])
+        self.assertFalse(record['executable'])
+        self.assertIn('GRIPPER_GEOMETRY_EQUIVALENCE_UNVERIFIED',record['rejection_reasons'])
+
     def test_snapshot_mode_keeps_original_camera_config(self):
         parser=build_parser();args=parser.parse_args(['--mode','graspgen-check'])
         config=load_config(args,parser)
