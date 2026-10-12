@@ -15,7 +15,7 @@ from workstation.runtime_paths import isaac_root
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-sort",
-         "model-worker", "model-prepare", "model-eval", "model-capture", "model-train")
+         "model-worker", "model-prepare", "model-eval", "model-capture", "model-train", "graspgen-proxy", "graspgen-check")
 
 
 def build_parser():
@@ -28,6 +28,10 @@ def build_parser():
     parser.add_argument("--livestream", action="store_true", help="WebRTC GUI without a local window; keeps the app open")
     parser.add_argument("--stream-host", default="127.0.0.1", help="WebRTC endpoint address (SSH relay: 127.0.0.1)")
     parser.add_argument("--keep-open", action="store_true")
+    parser.add_argument('--graspgen-endpoint',default='tcp://127.0.0.1:5557')
+    parser.add_argument('--graspgen-proxy-port',type=int,default=5558)
+    parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')
+    parser.add_argument('--num-grasps',type=int,default=64)
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
     parser.add_argument("--camera-recording", action="store_true")
@@ -87,7 +91,7 @@ def load_config(args, parser):
         config['diagnostic_robot_stow_home']=True
     if args.seed is not None:
         config["seed"] = args.seed
-    if args.mode in ("single-pnp", "dual-handover", "sensor-check", "vision-check", "visual-pnp"):
+    if args.mode in ("single-pnp", "dual-handover", "sensor-check", "vision-check", "visual-pnp", "graspgen-check"):
         config["boxes"]["count"] = 1
     elif args.mode == "conveyor-check":
         config["boxes"]["count"] = 3
@@ -184,6 +188,9 @@ def load_config(args, parser):
 def main(argv=None):
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.mode == 'graspgen-proxy':
+        from workstation.models.graspgen_proxy import serve
+        return serve(args)
     if args.confidence is None:
         args.confidence=.4 if args.prompt_mode == 'trained' or args.segmenter == 'yolo-seg' else .15
     if not 0 < args.confidence < 1: parser.error('--confidence must be between 0 and 1')
@@ -238,12 +245,15 @@ def main(argv=None):
         env_output=output/('seed_'+str(config['seed'])) if capture_seeds else output
         env = SortingEnvironment(app, config, env_output, args.robot_usd,
             sensors=not args.no_sensors, conveyor_test=args.mode == "conveyor-check",
-            single_pnp=args.mode in ("single-pnp", "sensor-check", "vision-check", "visual-pnp"),
+            single_pnp=args.mode in ("single-pnp", "sensor-check", "vision-check", "visual-pnp", "graspgen-check"),
             dual_handover=args.mode == "dual-handover",
             visual_fixture=args.fixture if args.mode == 'model-capture' else args.visual_fixture)
         env.record_video = args.record_video
         env.start()
-        if args.mode == "sensor-check":
+        if args.mode == 'graspgen-check':
+            from workstation.diagnostics.graspgen_check import check
+            check(env,args)
+        elif args.mode == "sensor-check":
             from workstation.diagnostics.sensor_check import check
             check(env)
         elif args.mode == "vision-check":

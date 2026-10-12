@@ -20,6 +20,7 @@
 - `config/` 只放唯一场景配置与 Kit experience；`tests/` 放逻辑检查；`evidence/` 放精选小型历史 JSON，并本地保留唯一历史成功录像（Git 忽略）；`outputs/` 放可重生成的本次运行文件并由 Git 忽略。
 - 模块使用 `workstation.*` package 导入，唯一 Python 入口为 `python -m workstation`，PowerShell 入口为根 `launch.ps1`。新增功能接模式分发，不增第二套启动脚本或平行配置副本。
 - Linux 同样使用上述 Python 入口（经 Isaac 的 `python.sh`）；平台路径统一在 `runtime_paths.py` 解析，模型环境仍隔离。Featurize 的机器启动脚本在仓库外，仅负责图形/挂载/串流基础设施。Stop/Play 只重建采集资源，不更改已固定的三路相机配置。
+- 2026-10-12 继续推进 GraspGen：`graspgen-check` 是不执行机械臂动作的快照诊断，`graspgen-proxy` 是独立模型环境的协议适配入口。官方输出仍是夹爪基座姿态；未有坐标/TCP、开度和路径验证证据时不得接通动作。几何模板保留作对照。
 
 ## 真机可观测约束
 

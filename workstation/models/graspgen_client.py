@@ -20,10 +20,16 @@ class VisualClouds:
 
 
 def visual_clouds(packet,scene,target_id,max_points=20000):
+    if scene.frame != 'workcell' or abs(packet.observation_time_s-scene.observation_time_s) > 1e-6:
+        raise ValueError('Scene/packet frame or timestamp mismatch')
+    if not 0 <= packet.assembled_time_s-scene.observation_time_s <= .15:
+        raise ValueError('Stale source observation')
+    if not 200 <= max_points <= 20000:
+        raise ValueError('Point budget must be 200..20000')
     target=next(o for o in scene.objects if o.track_id == target_id)
     object_points=[]; scene_points=[]
     for name,frame in packet.cameras.items():
-        if frame is None or scene.camera_status.get(name) != 'OK': continue
+        if frame is None or scene.camera_status.get(name) != 'OK' or packet.camera_status.get(name) != 'OK': continue
         if abs(frame.sample_time_s-scene.observation_time_s) > .02:
             raise ValueError('Cloud/frame time mismatch')
         points=deproject(frame)
@@ -31,7 +37,10 @@ def visual_clouds(packet,scene,target_id,max_points=20000):
         scene_points.append(points[valid])
         for ref in target.mask_refs:
             if ref.startswith(name+'/'):
-                object_points.append(points[valid & scene.masks[ref]])
+                mask=np.asarray(scene.masks[ref])
+                if mask.dtype != bool or mask.shape != valid.shape:
+                    raise ValueError('Target mask must match the RGB-D grid')
+                object_points.append(points[valid & mask])
     if not object_points: raise ValueError('No observed target points')
     def bounded(items):
         points=np.concatenate(items).astype(np.float32)
@@ -43,6 +52,7 @@ def visual_clouds(packet,scene,target_id,max_points=20000):
 
 def validate_grasps(grasps,scores):
     poses=np.asarray(grasps,dtype=np.float64); scores=np.asarray(scores,dtype=float).reshape(-1)
+    if poses.shape == (0,) and len(scores)==0:poses=poses.reshape(0,4,4)
     if poses.shape != (len(scores),4,4) or not np.isfinite(poses).all() or not np.isfinite(scores).all():
         raise ValueError('Malformed GraspGen output')
     if len(poses) and (not np.allclose(poses[:,3,:],[0,0,0,1],atol=1e-5) or
@@ -91,6 +101,8 @@ class GraspGenClient:
         return metadata
 
     def infer(self,clouds,num_grasps=64):
+        if type(num_grasps) is not int or not 1 <= num_grasps <= 256:
+            raise ValueError('num_grasps must be 1..256')
         if clouds.frame != 'workcell' or clouds.unseen_space_is_free:
             raise ValueError('Expected observed metre workcell clouds with unknown unseen space')
         points=np.asarray(clouds.target_m,np.float32)
@@ -98,9 +110,10 @@ class GraspGenClient:
             raise ValueError('Insufficient or malformed observed object cloud')
         if np.max(np.ptp(points,axis=0)) > 1.:
             raise ValueError('Carton cloud extent suggests a unit/frame error')
-        self.metadata()
+        metadata=self.metadata()
         response=self.request(dict(action='infer',point_cloud=points,num_grasps=num_grasps,
             topk_num_grasps=20,min_grasps=1,max_tries=1,grasp_threshold=-1.,remove_outliers=True))
         poses,scores=validate_grasps(response['grasps'],response['confidences'])
         return dict(base_poses_workcell=poses,scores=scores,scores_are_success_probability=False,
-                    robot_path_checked=False,TCP_calibration_verified=False,timing=response.get('timing',{}))
+                    robot_path_checked=False,TCP_calibration_verified=False,timing=response.get('timing',{}),
+                    metadata=metadata)

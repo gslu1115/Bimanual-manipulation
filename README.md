@@ -109,6 +109,26 @@ bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation --m
 
 ## 隔离模型推理
 
+### GraspGen 候选诊断
+
+Linux 分支新增 `--mode graspgen-check`，只从原三路 RGB-D 和视觉掩码生成米制目标点云，将完整夹爪基座位姿与评分保存并显示。它不会执行抓放，也不把夹爪基座冒充项目 TCP；TCP 标定、开度及路径未验收的候选均为不可执行。
+
+官方 Panda ZMQ 服务监听服务器回环 `127.0.0.1:5557`。在独立模型环境中运行本仓库的轻量代理：
+
+```bash
+python -m workstation --mode graspgen-proxy
+```
+
+然后在已恢复图形环境的 Isaac 容器内，从仓库根目录运行：
+
+```bash
+/isaac-sim/python.sh -m workstation --mode graspgen-check --livestream
+```
+
+Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgpack 留在模型环境。可通过 `--graspgen-endpoint`、`--graspgen-proxy-port` 和 `--graspgen-proxy` 分别设置服务与代理地址。
+
+诊断冻结同一份观测并做三次推理，报告冷/热请求耗时、完整姿态、来源与拒绝原因；重复推理不是三个独立物理试验，也不证明在线时效性。几何模板只做同观测的接近路径检查，模型路径仍标为待查，不能用两者数量推断性能优劣。输出为 `graspgen_report.json`、源 RGB-D/掩码和 `graspgen_cloud.npz`。基础设施构建文件及权重在云盘 `isaac-support/graspgen`，不上传模型到源码仓库。
+
 以下 Windows 命令仍使用唯一 `python -m workstation` 入口。首次创建独立环境，禁止把模型依赖安装到 Isaac 的核心环境：
 
 ```powershell
