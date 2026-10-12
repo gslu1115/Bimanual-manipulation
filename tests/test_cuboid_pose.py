@@ -27,14 +27,16 @@ def turn(axis,angle):
     return np.array([[c,-s,0],[s,c,0],[0,0,1.]])
 
 
-def synthetic_observation(rotation,centre=CENTRE,views=None):
+def synthetic_observation(rotation,centre=CENTRE,views=None,focal_lengths=None):
     # Ray/cuboid intersections generate an optical depth image. Tests use no
     # simulator, labels or mocked deprojection. These are not physical trials.
     h,w=240,320;k=np.array([[520.,0,w/2],[0,520.,h/2],[0,0,1.]])
     states={name:RobotState(1.,np.zeros(7),np.full(2,.025)) for name in ROBOT_NAMES}
     views=views or ([0.,-.45,1.28],[.32,-.16,1.12],[-.28,-.08,1.08])
     cameras={name:None for name in FORMAL_CAMERA_NAMES};statuses={name:'MISSING' for name in FORMAL_CAMERA_NAMES};masks={}
-    for name,origin in zip(FORMAL_CAMERA_NAMES,views):
+    for index,(name,origin) in enumerate(zip(FORMAL_CAMERA_NAMES,views)):
+        focal=520. if focal_lengths is None else focal_lengths[index]
+        k=np.array([[focal,0,w/2],[0,focal,h/2],[0,0,1.]])
         origin=np.asarray(origin,float);forward=np.asarray(centre)-origin;forward/=np.linalg.norm(forward)
         right=np.cross(forward,[0.,0.,1.]);right/=np.linalg.norm(right);down=np.cross(forward,right)
         t=np.eye(4);t[:3,:3]=np.column_stack((right,down,forward));t[:3,3]=origin
@@ -53,6 +55,53 @@ def synthetic_observation(rotation,centre=CENTRE,views=None):
 
 
 class CuboidPoseTests(unittest.TestCase):
+    def unequal_density_views(self):
+        from workstation.perception.rgbd_cartons import deproject
+        p,s=synthetic_observation(np.eye(3),views=([0.,-.1001,1.35],[0.,-.1001,1.35]),
+                                  focal_lengths=(140.,1040.))
+        masks={}
+        for ref,mask in s.masks.items():
+            name=ref.split('/')[0];x=deproject(p.cameras[name])[...,0]
+            visible=x<CENTRE[0]-.015 if name==FORMAL_CAMERA_NAMES[0] else x>CENTRE[0]-.040
+            masks[ref]=mask&visible
+        return p,replace(s,masks=masks)
+
+    def test_sparse_view_edge_survives_a_dense_clipped_wrist_image(self):
+        p,s=self.unequal_density_views()
+        result=fit_cuboid_pose(p,s,CENTRE+[.002,0,0],np.eye(3),SIZE,PRIORS)
+        self.assertEqual(result['status'],'GEOMETRY_OBSERVED',result)
+        np.testing.assert_allclose(result['position_m'],CENTRE,atol=.003)
+        self.assertTrue(measured_cuboid_supported(result,1.))
+        axis=next(c for c in result['coordinate_constraints'] if c['axis']==0)
+        self.assertGreaterEqual(axis['span_m'],SIZE[0]-.006)
+        self.assertEqual(len(axis['mask_refs']),2)
+
+    def test_two_clipped_views_cannot_fill_the_unseen_end(self):
+        from workstation.perception.rgbd_cartons import deproject
+        p,s=self.unequal_density_views()
+        masks={ref:mask&(deproject(p.cameras[ref.split('/')[0]])[...,0]>CENTRE[0]-.040)
+               for ref,mask in s.masks.items()}
+        result=fit_cuboid_pose(p,replace(s,masks=masks),CENTRE,np.eye(3),SIZE,PRIORS)
+        self.assertEqual(result['status'],'UNKNOWN')
+        self.assertNotIn('position_m',result)
+
+    def test_sparse_edge_is_not_reused_from_a_stale_camera(self):
+        p,s=self.unequal_density_views();cameras=dict(p.cameras)
+        name=FORMAL_CAMERA_NAMES[0]
+        old_states={arm:replace(state,sample_time_s=.7) for arm,state in cameras[name].robot_state_at_frame.items()}
+        cameras[name]=replace(cameras[name],sample_time_s=.7,robot_state_at_frame=old_states)
+        result=fit_cuboid_pose(replace(p,cameras=cameras),s,CENTRE,np.eye(3),SIZE,PRIORS)
+        self.assertEqual(result['status'],'UNKNOWN')
+        self.assertNotIn('position_m',result)
+
+    def test_per_view_extents_do_not_override_rotated_pose_conflict(self):
+        for angle in (10.,20.,40.):
+            with self.subTest(angle=angle):
+                p,s=synthetic_observation(turn(1,angle))
+                result=fit_cuboid_pose(p,s,CENTRE,np.eye(3),SIZE,PRIORS)
+                self.assertEqual(result['status'],'UNKNOWN')
+                self.assertNotIn('position_m',result)
+
     def test_rotating_geometry_is_measured_in_metric_workcell(self):
         for angle in (0.,35.,90.,135.,180.):
             with self.subTest(angle=angle):

@@ -10,6 +10,18 @@ from workstation.perception.rgbd_cartons import deproject
 from workstation.observations.camera_geometry import quaternion_from_matrix
 
 
+def _plane_patch(points,expected_normal):
+    """The same measured-plane gate for pooled faces and each view's patch."""
+    if len(points)<30:return None
+    _,singular,vectors=np.linalg.svd(points-points.mean(axis=0),full_matrices=False)
+    if singular[1]/math.sqrt(len(points))<.0015:return None
+    normal=vectors[-1]
+    if normal@expected_normal<0:normal=-normal
+    residual=float(np.sqrt(np.mean(((points-points.mean(axis=0))@normal)**2)))
+    if residual>.002 or normal@expected_normal<math.cos(math.radians(8)):return None
+    return normal,residual
+
+
 def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
     import cv2
     centre,r,size=map(lambda value:np.asarray(value,float),(position_hint,rotation_hint,size_m))
@@ -48,6 +60,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
         normal_points.append(pts);normals.append(ns)
     if not instances:return unknown('NO_SUPPORTED_CURRENT_INSTANCE')
     points=np.concatenate(instances);npoints=np.concatenate(normal_points);ns=np.concatenate(normals)
+    source_indices=np.repeat(np.arange(len(normal_points)),[len(pts) for pts in normal_points])
     local_normal=ns@r;local_points=(npoints-centre)@r;faces=[]
     for axis in range(3):
         for sign in (-1.,1.):
@@ -55,14 +68,16 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
                 np.abs(local_points[:,axis]-sign*half[axis])<.006)&(
                 np.all(np.abs(local_points)<=half+.006,axis=1))
             pts=npoints[select]
-            if len(pts)<30:continue
-            _,singular,vectors=np.linalg.svd(pts-pts.mean(axis=0),full_matrices=False)
-            if singular[1]/math.sqrt(len(pts))<.0015:continue
-            normal=vectors[-1]
-            if normal@r[:,axis]<0:normal=-normal
-            residual=float(np.sqrt(np.mean(((pts-pts.mean(axis=0))@normal)**2)))
-            if residual>.002 or normal@r[:,axis]<math.cos(math.radians(8)):continue
-            faces.append(dict(axis=axis,sign=sign,points=pts,normal=normal,residual=residual))
+            plane=_plane_patch(pts,r[:,axis])
+            if plane is None:continue
+            normal,residual=plane
+            patches=[];selected_sources=source_indices[select]
+            for index in np.unique(selected_sources):
+                patch=pts[selected_sources==index]
+                if _plane_patch(patch,r[:,axis]) is not None:
+                    patches.append(dict(mask_ref=refs[index],points=patch))
+            faces.append(dict(axis=axis,sign=sign,points=pts,normal=normal,residual=residual,
+                              extent_patches=patches))
     axes={}
     for axis in range(3):
         same=[face for face in faces if face['axis']==axis]
@@ -104,7 +119,13 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
     # Extents come from measured, signed planar patches, not isolated mask
     # outliers. The WHOLE instance still has to pass both 95% support gates;
     # a merged mask cannot be rescued by fitting only a convenient crop.
-    local=np.concatenate([face['points'] for face in faces])@measured
+    # Compute robust boundaries within each independently validated view.
+    # Pooling pixels first lets a close wrist image erase a sparse distant
+    # camera's real edge. The union adds only measured planar evidence; it
+    # cannot extend a clipped view to the expected size or inherit the hint.
+    extent_patches=[dict(mask_ref=patch['mask_ref'],
+        bounds=np.quantile(patch['points']@measured,[.002,.998],axis=0))
+        for face in faces for patch in face['extent_patches']]
     coordinates=[];constraints=[];extent_errors=[]
     for axis in range(3):
         values=[]
@@ -114,10 +135,14 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
             if np.quantile(np.abs(samples-plane),.9)>.002:continue
             values.append(plane-face['sign']*half[axis])
             constraints.append(dict(axis=axis,source='visible_signed_plane',sign=face['sign'],points=len(samples)))
-        lo,hi=np.quantile(local[:,axis],[.002,.998]);span=float(hi-lo)
-        if abs(span-size[axis])<=.006:
+        lo=min((patch['bounds'][0,axis] for patch in extent_patches),default=float('inf'))
+        hi=max((patch['bounds'][1,axis] for patch in extent_patches),default=-float('inf'))
+        span=float(hi-lo) if extent_patches else 0.
+        if extent_patches and abs(span-size[axis])<=.006:
             values.append(float((lo+hi)/2));extent_errors.append(abs(span-size[axis]))
-            constraints.append(dict(axis=axis,source='complete_observed_extent',span_m=span))
+            constraints.append(dict(axis=axis,source='complete_observed_extent',span_m=span,
+                aggregation='union of per-view validated planar quantiles',
+                mask_refs=sorted({patch['mask_ref'] for patch in extent_patches})))
         if not values:return unknown('TRANSLATION_AXIS_UNOBSERVED:'+str(axis),
             unobserved_axis=axis,observed_span_m=span,expected_span_m=float(size[axis]),
             visible_face_axes=sorted(axes),face_point_counts=[dict(axis=f['axis'],sign=f['sign'],points=len(f['points'])) for f in faces])

@@ -1,0 +1,108 @@
+{
+  "scope": "original preloaded RGB-D and masks; cuboid geometry replay only, not a physical success",
+  "source_run": "visual-pnp_20261012_045102_969948",
+  "original_fitter_sha256": "59e2f28ca0bafedf28d261b537ef799d27220095067b946ccb701dd21cd4f4d0",
+  "revised_fitter_sha256": "a5d9af74a6bbbf7bc7bc6d36a34d76982ab21e0c91b31411310370a0b04bea71",
+  "before": {
+    "status": "UNKNOWN",
+    "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+    "time_s": 18.38333333333293,
+    "unobserved_axis": 0,
+    "observed_span_m": 0.08899215303839725,
+    "expected_span_m": 0.1,
+    "visible_face_axes": [
+      2
+    ],
+    "face_point_counts": [
+      {
+        "axis": 2,
+        "sign": 1.0,
+        "points": 84975
+      }
+    ]
+  },
+  "after": {
+    "status": "GEOMETRY_OBSERVED",
+    "time_s": 18.38333333333293,
+    "position_m": [
+      -0.1989634076348857,
+      -0.0614166767600819,
+      0.7826139652487841
+    ],
+    "orientation_wxyz": [
+      0.985728576546392,
+      -0.00024280531591127662,
+      -0.0009244233819468706,
+      0.16833971565502065
+    ],
+    "rotation": [
+      [
+        0.9433217802932573,
+        -0.3318741136590346,
+        -0.0019042086445056048
+      ],
+      [
+        0.33187495949631296,
+        0.9433233532134434,
+        0.0001674459383386348
+      ],
+      [
+        0.0017407135549098408,
+        -0.0007899146633473861,
+        0.999998172973979
+      ]
+    ],
+    "size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "mask_refs": [
+      "scene_camera/645/component_1",
+      "left_wrist_camera/645/component_1"
+    ],
+    "surface_inlier_ratio": 1.0,
+    "plane_residual_m": 8.054655973251552e-05,
+    "uncertainty_m": 0.004370535115875782,
+    "observed_face_axes": [
+      2
+    ],
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "complete_observed_extent",
+        "span_m": 0.0975811160071785,
+        "aggregation": "union of per-view validated planar quantiles",
+        "mask_refs": [
+          "left_wrist_camera/645/component_1",
+          "scene_camera/645/component_1"
+        ]
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05432693019672702,
+        "aggregation": "union of per-view validated planar quantiles",
+        "mask_refs": [
+          "left_wrist_camera/645/component_1",
+          "scene_camera/645/component_1"
+        ]
+      },
+      {
+        "axis": 2,
+        "source": "visible_signed_plane",
+        "sign": 1.0,
+        "points": 84975
+      }
+    ],
+    "translation_difference_from_hint_m": 0.00030499584464557334,
+    "orientation_difference_from_hint_deg": 0.12499715045500938,
+    "geometric_pose_measured": true,
+    "semantic_pose_unique": false,
+    "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes"
+  },
+  "truth_inputs": false,
+  "robot_commands": 0,
+  "thresholds_changed": false,
+  "passed": true
+}

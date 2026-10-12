@@ -1,0 +1,83 @@
+{
+  "scope": "saved preloaded-frame point-density diagnosis; not physical or path acceptance",
+  "source_run": "visual-pnp_20261012_045102_969948",
+  "original_fit": {
+    "status": "UNKNOWN",
+    "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+    "time_s": 18.38333333333293,
+    "unobserved_axis": 0,
+    "observed_span_m": 0.08899215303839725,
+    "expected_span_m": 0.1,
+    "visible_face_axes": [
+      2
+    ],
+    "face_point_counts": [
+      {
+        "axis": 2,
+        "sign": 1.0,
+        "points": 84975
+      }
+    ]
+  },
+  "per_view_faces": [
+    {
+      "mask_ref": "scene_camera/645/component_1",
+      "axis": 2,
+      "sign": 1.0,
+      "points": 533,
+      "lower_m": [
+        -0.2554974238695086,
+        -0.018500468286661263,
+        0.8054779949247908
+      ],
+      "upper_m": [
+        -0.22553300762444706,
+        0.033145801777863464,
+        0.8057404886606239
+      ],
+      "span_m": [
+        0.02996441624506152,
+        0.05164627006452473,
+        0.00026249373583309143
+      ]
+    },
+    {
+      "mask_ref": "left_wrist_camera/645/component_1",
+      "axis": 2,
+      "sign": 1.0,
+      "points": 84442,
+      "lower_m": [
+        -0.24613800916063538,
+        -0.01968665564109991,
+        0.8054770833962417
+      ],
+      "upper_m": [
+        -0.15791630786233007,
+        0.03464027455562711,
+        0.8057401412527783
+      ],
+      "span_m": [
+        0.08822170129830531,
+        0.05432693019672702,
+        0.0002630578565365749
+      ]
+    }
+  ],
+  "pooled_span_m": [
+    0.08899215303839725,
+    0.054326010943832194,
+    0.000263059933654719
+  ],
+  "per_view_quantile_union_span_m": [
+    0.0975811160071785,
+    0.05432693019672702,
+    0.00026340526438217715
+  ],
+  "expected_size_m": [
+    0.1,
+    0.055,
+    0.045
+  ],
+  "truth_inputs": false,
+  "robot_commands": 0
+}
