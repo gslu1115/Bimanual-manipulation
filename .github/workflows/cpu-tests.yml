@@ -34,7 +34,8 @@ jobs:
           cache: pip
           cache-dependency-path: tests/requirements-cpu.txt
       - name: Install CPU test dependencies
-        run: python -m pip install --only-binary=:all: -r tests/requirements-cpu.txt
+        run: >-
+          python -m pip install --only-binary=:all: -r tests/requirements-cpu.txt
       - name: Environment interfaces (no Isaac SDK)
         run: >-
           python -m unittest -v
