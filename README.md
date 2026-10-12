@@ -6,6 +6,12 @@
 
 当前具备九盒释放与沉降、三路 RGB-D 输入接口，以及直立抓放和倒置交接两个真值物理基线。已新增独立 RGB-D `SceneEstimate V1`、候选排序、采样路径检查与受控单盒视觉技能；实现及实测边界见 [项目交接文档](项目路线与当前状态交接.md)。多盒整理、侧放/倒置视觉技能、通用避碰和真机适配仍待完成。协作前阅读 [AGENTS.md](AGENTS.md)。
 
+## 许可
+
+本项目的代码与文档采用 [PolyForm Noncommercial License 1.0.0](LICENSE)，以完整许可文本为准。SPDX 标识符：`PolyForm-Noncommercial-1.0.0`。
+
+第三方组件、模型权重与仿真资产仍遵循各自的许可和声明。本仓库的许可文本原样取自 [PolyForm 官方仓库](https://github.com/polyformproject/polyform-licenses/blob/1.0.0/PolyForm-Noncommercial-1.0.0.md)。
+
 ## 冻结版本与 CPU 自动检查
 
 linux-based 持续开发，环境、实验和开发检查点分别用固定附注标签定位，不移动旧标签、不改写 main。
