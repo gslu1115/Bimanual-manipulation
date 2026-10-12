@@ -1,0 +1,245 @@
+{
+  "scope": "three-scene paired upright backend workflows; not generalization or isolated model causal effect",
+  "protocol_id": "controlled-upright-independent-v1",
+  "source_commit": "8cff8404253360697b24b2c3b2c618d09288351d",
+  "planned": 6,
+  "audited": 6,
+  "complete": true,
+  "all_passed": false,
+  "totals": {
+    "geometry": {
+      "planned": 3,
+      "passed": 3,
+      "failed": 0,
+      "not_audited": 0,
+      "success_fraction": 1.0
+    },
+    "graspgen": {
+      "planned": 3,
+      "passed": 1,
+      "failed": 2,
+      "not_audited": 0,
+      "success_fraction": 0.3333333333333333
+    }
+  },
+  "cases": [
+    {
+      "seed": 411,
+      "grasp_backend": "geometry",
+      "case_id": "isaac-independent-v1-geometry-411",
+      "status": "passed",
+      "failed_checks": [],
+      "failure_reason": null,
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "wall_seconds": 334.75584,
+      "maximum_visual_lift_m": 0.1871020555548043,
+      "stable_seconds": 0.5999999999999659,
+      "final_pose_errors": {
+        "xy_m": 0.0026398091951078595,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 4.00455336570039e-06,
+        "axis_yaw_deg": 0.004920769430362799,
+        "linear_speed": 0.0016016794915565385,
+        "angular_speed": 2.8830305737750773e-05
+      },
+      "sampled_whole_gpu_peak_mib": 7791.0,
+      "audit_file": "isaac-independent-v1-geometry-411-audit-v2.json"
+    },
+    {
+      "seed": 411,
+      "grasp_backend": "graspgen",
+      "case_id": "isaac-independent-v1-graspgen-411",
+      "status": "passed",
+      "failed_checks": [],
+      "failure_reason": null,
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "PRELOAD",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "wall_seconds": 2662.076377,
+      "maximum_visual_lift_m": 0.18565789198261407,
+      "stable_seconds": 0.5999999999999659,
+      "final_pose_errors": {
+        "xy_m": 0.0025917531424782202,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 4.436338000413295e-06,
+        "axis_yaw_deg": 0.3241888486794542,
+        "linear_speed": 0.0016016391028175405,
+        "angular_speed": 2.8930478699077047e-05
+      },
+      "sampled_whole_gpu_peak_mib": 7791.0,
+      "audit_file": "isaac-independent-v1-graspgen-411-audit-v2.json"
+    },
+    {
+      "seed": 412,
+      "grasp_backend": "geometry",
+      "case_id": "isaac-independent-v1-geometry-412",
+      "status": "passed",
+      "failed_checks": [],
+      "failure_reason": null,
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "wall_seconds": 320.413017,
+      "maximum_visual_lift_m": 0.1889267732255705,
+      "stable_seconds": 0.5999999999999659,
+      "final_pose_errors": {
+        "xy_m": 0.002910316653556787,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 3.7215130446689415e-06,
+        "axis_yaw_deg": 0.29988832748224703,
+        "linear_speed": 0.0016015672910149493,
+        "angular_speed": 2.8505909716790802e-05
+      },
+      "sampled_whole_gpu_peak_mib": 7814.0,
+      "audit_file": "isaac-independent-v1-geometry-412-audit-v2.json"
+    },
+    {
+      "seed": 412,
+      "grasp_backend": "graspgen",
+      "case_id": "isaac-independent-v1-graspgen-412",
+      "status": "failed",
+      "failed_checks": [
+        "actor_passed",
+        "run_status_passed",
+        "process_exited_cleanly",
+        "all_phases_in_order",
+        "visual_lift_passed",
+        "stable_samples_passed",
+        "release_and_home_passed",
+        "full_orientation_commanded",
+        "offline_final_pose_agrees"
+      ],
+      "failure_reason": "STATIC_PATH_BLOCKED:visual_0002",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "FAILED"
+      ],
+      "wall_seconds": 334.161708,
+      "maximum_visual_lift_m": 0.0,
+      "stable_seconds": null,
+      "final_pose_errors": {
+        "xy_m": 0.345173950142314,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 1.0663629423853027e-05,
+        "axis_yaw_deg": 58.36865612452723,
+        "linear_speed": 0.0016019857236727253,
+        "angular_speed": 0.000539021723651306
+      },
+      "sampled_whole_gpu_peak_mib": 7641.0,
+      "audit_file": "isaac-independent-v1-graspgen-412-audit-v2.json"
+    },
+    {
+      "seed": 413,
+      "grasp_backend": "geometry",
+      "case_id": "isaac-independent-v1-geometry-413",
+      "status": "passed",
+      "failed_checks": [],
+      "failure_reason": null,
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "wall_seconds": 328.417135,
+      "maximum_visual_lift_m": 0.18872190050474535,
+      "stable_seconds": 0.5999999999999659,
+      "final_pose_errors": {
+        "xy_m": 0.002874991294834909,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 2.9575586669421963e-06,
+        "axis_yaw_deg": 0.1636519073474682,
+        "linear_speed": 0.0016015622870666892,
+        "angular_speed": 2.857354945775488e-05
+      },
+      "sampled_whole_gpu_peak_mib": 7791.0,
+      "audit_file": "isaac-independent-v1-geometry-413-audit-v2.json"
+    },
+    {
+      "seed": 413,
+      "grasp_backend": "graspgen",
+      "case_id": "isaac-independent-v1-graspgen-413",
+      "status": "failed",
+      "failed_checks": [
+        "actor_passed",
+        "run_status_passed",
+        "process_exited_cleanly",
+        "all_phases_in_order",
+        "visual_lift_passed",
+        "stable_samples_passed",
+        "release_and_home_passed",
+        "full_orientation_commanded",
+        "offline_final_pose_agrees"
+      ],
+      "failure_reason": "STATIC_PATH_BLOCKED:visual_0002",
+      "phases": [
+        "PREGRASP",
+        "APPROACH",
+        "FAILED"
+      ],
+      "wall_seconds": 298.663958,
+      "maximum_visual_lift_m": 0.0,
+      "stable_seconds": null,
+      "final_pose_errors": {
+        "xy_m": 0.34451121606260154,
+        "z_m": 3.099441525655777e-08,
+        "tilt_deg": 2.9228501544683465e-05,
+        "axis_yaw_deg": 11.557225142239863,
+        "linear_speed": 0.0015967070282529386,
+        "angular_speed": 0.0009598654911498736
+      },
+      "sampled_whole_gpu_peak_mib": 7641.0,
+      "audit_file": "isaac-independent-v1-graspgen-413-audit-v2.json"
+    }
+  ],
+  "audit_sha256": {
+    "isaac-independent-v1-geometry-411": "ad97faabaaa937134d02b12e69d2f39981e7b04204dcdc22669742fba6b93975",
+    "isaac-independent-v1-graspgen-411": "3330112fa1db086a2179b13c27273cae0738a82a45dc086efd6b5345d06ff1bb",
+    "isaac-independent-v1-geometry-412": "f1b7de8a5f51e12ad2099c2e54c1bd88b161bb5795d03e32490f9f1f365436a3",
+    "isaac-independent-v1-graspgen-412": "13ddafbf55d646682510d29e55288bb3285859ccef977e3d2791225ddcf19ca5",
+    "isaac-independent-v1-geometry-413": "06b9b0c79e02427ccf4e983a34a2a5a4bbe12d4376283f037404f46b0009693b",
+    "isaac-independent-v1-graspgen-413": "9df25b0b8a2724c66ca95c38fc82b9ecd12c89b582e3f0a2338112a3b850b37e"
+  },
+  "resource_scope": "whole GPU includes GUI/model services; sampled peak is a lower bound"
+}
