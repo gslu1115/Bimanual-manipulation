@@ -42,6 +42,7 @@ class CartonEstimator:
 
     def estimate(self, packet):
         self.last_robot_filter_counts={}
+        previous_anchors=tuple(self._anchors.values())
         masks, detections, failures, statuses = {}, [], [], {}
         for name, frame in packet.cameras.items():
             statuses[name] = packet.camera_status[name]
@@ -142,8 +143,42 @@ class CartonEstimator:
             xyz=deproject(frame)
             for ref in dict.fromkeys(refs):
                 edges.extend(observed_face_edges(frame,masks[ref],xyz,ref))
-        return SceneEstimate(now, packet.assembled_time_s, 'workcell', tuple(tracked),
-                             tuple(failures), statuses, masks,tuple(edges))
+        scene=SceneEstimate(now, packet.assembled_time_s, 'workcell', tuple(tracked),
+                            tuple(failures), statuses, masks,tuple(edges))
+        return self._associate_measured_fragments(packet,scene,previous_anchors)
+
+    def _associate_measured_fragments(self,packet,scene,anchors):
+        """Reconcile clipped identities using current independently fitted planes.
+
+        A recent visual pose only supplies correspondence. The cuboid fitter
+        must measure all three translation axes and rotation from this frame;
+        the old pose never becomes a fresh output or a holding claim. The
+        original three-second association horizon and neighbour ambiguity
+        gate stay in force. Partial geometry and semantic UNKNOWN are kept.
+        """
+        partial={o.track_id:o for o in scene.objects if o.failures}
+        if len(partial)<2:return scene
+        from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported
+        from workstation.observations.camera_geometry import pose_matrix
+        recent=[o for o in anchors if not o.failures and o.hypotheses and
+                0<=packet.observation_time_s-o.time_s<=3.]
+        for anchor in recent:
+            original=partial.get(anchor.track_id)
+            if original is None:continue
+            # A nearby distinct previous carton makes identity ambiguous,
+            # just as in the existing visible-fragment association.
+            if any(other.track_id!=anchor.track_id and np.linalg.norm(
+                    np.asarray(other.position_m[:2])-anchor.position_m[:2])<.07
+                   for other in recent):continue
+            rotation=pose_matrix([0.,0.,0.],anchor.hypotheses[0].orientation_wxyz)[:3,:3]
+            measured=fit_cuboid_pose(packet,scene,anchor.position_m,rotation,anchor.size_m,self.priors)
+            if not measured_cuboid_supported(measured,scene.observation_time_s):continue
+            refs=set(measured['mask_refs'])
+            members=[o for o in scene.objects if o.mask_refs and set(o.mask_refs)<=refs]
+            if (len(members)<2 or any(not o.failures for o in members) or
+                    not original.mask_refs or not set(original.mask_refs)<=refs):continue
+            scene=self.associate_supported_target(scene,anchor.track_id,measured)
+        return scene
 
     def associate_supported_target(self,scene,target_id,measurement):
         """Reconcile identity from CURRENT whole-instance holding support.

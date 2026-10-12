@@ -1,0 +1,145 @@
+{
+  "scope": "archived first-split RGB-D with original preceding visual anchors; not physical success",
+  "cases": [
+    {
+      "seed": 412,
+      "source_run": "isaac-independent-v1-graspgen-412",
+      "time_s": 16.5749999999997,
+      "anchor_age_s": 0.07499999999999574,
+      "anchor": [
+        -0.1920606791973114,
+        -0.05846327729523182,
+        0.7824995210021376
+      ],
+      "fit": {
+        "status": "GEOMETRY_OBSERVED",
+        "time_s": 16.5749999999997,
+        "position_m": [
+          -0.18992290848646326,
+          -0.05497919883076439,
+          0.7834545974034038
+        ],
+        "orientation_wxyz": [
+          0.8729643286402242,
+          2.7222271270782748e-05,
+          -2.1839748651109048e-05,
+          0.4877840502760377
+        ],
+        "rotation": [
+          [
+            0.5241334396386587,
+            -0.8516361531303164,
+            -1.1573463561236185e-05
+          ],
+          [
+            0.8516361507522061,
+            0.5241334391105038,
+            -6.8834305635915e-05
+          ],
+          [
+            6.468782251393795e-05,
+            2.6221981419928736e-05,
+            0.9999999975639466
+          ]
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "mask_refs": [
+          "scene_camera/573/component_1",
+          "left_wrist_camera/573/component_1"
+        ],
+        "surface_inlier_ratio": 1.0,
+        "plane_residual_m": 7.92921762934185e-05,
+        "uncertainty_m": 0.004803407311440692,
+        "observed_face_axes": [
+          0,
+          2
+        ],
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_plane",
+            "sign": -1.0,
+            "points": 1026
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05422992159571813,
+            "aggregation": "union of per-view validated planar quantiles",
+            "mask_refs": [
+              "left_wrist_camera/573/component_1",
+              "scene_camera/573/component_1"
+            ]
+          },
+          {
+            "axis": 2,
+            "source": "visible_signed_plane",
+            "sign": 1.0,
+            "points": 52471
+          },
+          {
+            "axis": 2,
+            "source": "complete_observed_extent",
+            "span_m": 0.04171035408229229,
+            "aggregation": "union of per-view validated planar quantiles",
+            "mask_refs": [
+              "left_wrist_camera/573/component_1",
+              "scene_camera/573/component_1"
+            ]
+          }
+        ],
+        "translation_difference_from_hint_m": 0.004197741927629851,
+        "orientation_difference_from_hint_deg": 0.03307569557706338,
+        "geometric_pose_measured": true,
+        "semantic_pose_unique": false,
+        "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes"
+      },
+      "before_ids": [
+        "visual_0001",
+        "visual_0002"
+      ],
+      "after_ids": [
+        "visual_0001"
+      ],
+      "masks_unchanged": true,
+      "semantic_unknown_preserved": true,
+      "previous_anchor_time_unchanged": true
+    },
+    {
+      "seed": 413,
+      "source_run": "isaac-independent-v1-graspgen-413",
+      "time_s": 12.899999999999908,
+      "anchor_age_s": 0.07499999999999574,
+      "anchor": [
+        -0.2188424989581108,
+        -0.05545160407200456,
+        0.7824997249455232
+      ],
+      "fit": {
+        "status": "UNKNOWN",
+        "reason": "ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE",
+        "time_s": 12.899999999999908
+      },
+      "before_ids": [
+        "visual_0001",
+        "visual_0002"
+      ],
+      "after_ids": [
+        "visual_0001",
+        "visual_0002"
+      ],
+      "masks_unchanged": true,
+      "semantic_unknown_preserved": true,
+      "previous_anchor_time_unchanged": true
+    }
+  ],
+  "truth_inputs": false,
+  "robot_commands": 0,
+  "thresholds_changed": false,
+  "passed": true,
+  "source_sha256": "5b1dd290525411e363dea013ba03c6bfa417037e3950de22f56bbc68233f4049"
+}

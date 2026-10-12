@@ -1,0 +1,13 @@
+{
+  "scope": "current measured identity reconciliation; logic and original-frame replay only",
+  "tests_passed": 407,
+  "runtime": "Isaac Sim 6.1 Python",
+  "command": "python.sh -m unittest discover -s tests",
+  "log": "/home/featurize/work/isaac-support/graspgen/reports/20261012-approach-identity/tests.log",
+  "replay": "approach_identity_replay_20261012.json",
+  "physical_regression": "pending",
+  "source_sha256": {
+    "workstation/perception/rgbd_cartons.py": "8299a937c341b2d79bbf2ade00efb54e7cea57a563962ce6d7b2b3ca5f785cec",
+    "tests/test_measured_fragment_identity.py": "347d3b4e5973896b697b4eaf8841a1c09769c5e4ff22ff91e50fe72fe1c2591b"
+  }
+}
