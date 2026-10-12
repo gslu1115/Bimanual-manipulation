@@ -35,6 +35,7 @@ class VisualPickPlace:
         self.releasing=False
         self.grasp_source=grasp_source
         self.release_tracker=None
+        self.observation_anchors=[]
         self.robot.monitor=self.monitor
 
     def _assess(self,feasibility):
@@ -68,9 +69,19 @@ class VisualPickPlace:
         self.robot.set_observation(packet,self.scene,self.priors)
         measurement=self._register_holding_surface(measurement)
         self._hold_observation=(packet,self.scene,self.hold_tracker,measurement) if self.hold_tracker is not None and not self.releasing else None
+        self._anchor_normal_stage(label,measurement)
         self.trace_scene(packet,self.scene)
         if label is not None: self.save_scene(label,packet,self.scene)
         return self.scene
+
+    def _anchor_normal_stage(self,label,measurement):
+        # Fresh rays acquired by NORMAL task motion, with the original 30 s
+        # age/4-anchor limits. Never retimestamp old frames or move a camera.
+        if (label in ('pregrasp','lifted') and (not self.held or measurement is not None)
+                and hasattr(self.robot,'anchor_observation')):
+            self.robot.anchor_observation()
+            self.observation_anchors.append(dict(phase=label,time_s=self.packet.observation_time_s,
+                current_payload_supported=bool(self.held and measurement is not None)))
 
     def _read_holding_surface(self):
         if not self.held or self.releasing or self.hold_tracker is None:return None
@@ -481,6 +492,9 @@ class VisualPickPlace:
             self.event('DONE')
         except Exception as exc:
             result['failure_reason']=str(exc)
+            if self.packet is not None and self.scene is not None:
+                try:self.save_scene('failure_trigger',self.packet,self.scene)
+                except Exception as save_error:result['failure_capture_error']=str(save_error)
             if self.hold_tracker is not None:
                 result['holding_geometry_failure']=getattr(self.hold_tracker,'last_failure',None)
             if hasattr(self.robot,'last_plan_check'):
@@ -500,6 +514,7 @@ class VisualPickPlace:
             self.robot.monitor=None
             result['max_visual_lift_m']=self.max_visual_lift
             result['held_on_exit']=self.held
+            result['normal_stage_observation_anchors']=self.observation_anchors
             if self.grasp_source is not None:
                 result['grasp_backend']='graspgen'
                 result['model_requests']=self.grasp_source.requests

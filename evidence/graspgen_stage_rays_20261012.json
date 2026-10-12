@@ -1,0 +1,102 @@
+{
+  "scope": "saved measured optical ray at failed query; not full-path acceptance",
+  "point_m": [
+    -0.25699033972329827,
+    -0.43169829123389114,
+    0.8672562807366094
+  ],
+  "failure_time_s": 33.22499999999876,
+  "anchor_limit_s": 30.0,
+  "frames": [
+    {
+      "phase": "initial",
+      "time_s": 2.999999999999992,
+      "age_at_failure_s": 30.224999999998765,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": true,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "tracked",
+      "time_s": 3.1999999999999913,
+      "age_at_failure_s": 30.024999999998766,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": true,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "before_model_pregrasp",
+      "time_s": 3.4249999999999905,
+      "age_at_failure_s": 29.799999999998768,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": true,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "pregrasp",
+      "time_s": 7.900000000000182,
+      "age_at_failure_s": 25.324999999998575,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": false,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "closed",
+      "time_s": 16.233333333333054,
+      "age_at_failure_s": 16.991666666665704,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": false,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "preloaded",
+      "time_s": 17.53333333333298,
+      "age_at_failure_s": 15.691666666665778,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": false,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "lifted",
+      "time_s": 23.466666666665976,
+      "age_at_failure_s": 9.758333333332782,
+      "ray_free": {
+        "scene_camera": true,
+        "left_wrist_camera": false,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "transferred",
+      "time_s": 30.199999999998926,
+      "age_at_failure_s": 3.0249999999998316,
+      "ray_free": {
+        "scene_camera": false,
+        "left_wrist_camera": false,
+        "right_wrist_camera": false
+      }
+    },
+    {
+      "phase": "failed",
+      "time_s": 33.43333333333208,
+      "age_at_failure_s": -0.2083333333333215,
+      "ray_free": {
+        "scene_camera": false,
+        "left_wrist_camera": false,
+        "right_wrist_camera": false
+      }
+    }
+  ]
+}

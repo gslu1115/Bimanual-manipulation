@@ -1,0 +1,180 @@
+{
+  "scope": "post-stop saved frame replay of original blocked volume and remaining lower path",
+  "physical_execution": false,
+  "all_live_history_available": false,
+  "current_time_s": 33.43333333333208,
+  "original_failure_time_s": 33.22499999999876,
+  "current_payload_geometry_measured": true,
+  "history_age_limit_s": 30.0,
+  "maximum_anchors": 4,
+  "comparisons": {
+    "initial_only": {
+      "blocking_volume_reason": "UNOBSERVED_PATH_SPACE",
+      "workspace": {
+        "resolution_m": 0.01,
+        "query_refinement_m": 0.0025,
+        "lower_m": [
+          -0.38,
+          -0.51,
+          0.76
+        ],
+        "upper_m": [
+          0.38,
+          0.16,
+          1.3599999999999999
+        ],
+        "unknown_cells": 107876,
+        "unmodelled_occupied_cells": 0,
+        "observation_time_s": 33.43333333333208,
+        "optical_depth_error_margin_m": 0.003,
+        "last_unknown_subcell_centre_m": [
+          -0.25625,
+          -0.43125,
+          0.86625
+        ],
+        "last_unknown_sample_m": [
+          -0.25699033972329827,
+          -0.43169829123389114,
+          0.8672562807366094
+        ],
+        "unknown_point_views": [
+          {
+            "camera": "scene_camera",
+            "uv": [
+              125.0023478724393,
+              456.70506334445565
+            ],
+            "camera_z_m": 0.845633947884581,
+            "inside_valid_image_border": true,
+            "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+            "min_depth_3x3_m": 0.572790265083313
+          },
+          {
+            "camera": "left_wrist_camera",
+            "uv": [
+              240.5099481168029,
+              155.21583356836192
+            ],
+            "camera_z_m": 0.17539452712970588,
+            "inside_valid_image_border": true,
+            "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+            "min_depth_3x3_m": 0.10598774999380112
+          },
+          {
+            "camera": "right_wrist_camera",
+            "uv": [
+              1226.8263998271561,
+              -428.05000104512504
+            ],
+            "camera_z_m": 0.24178166611897403,
+            "inside_valid_image_border": false,
+            "reason": "OUTSIDE_FIELD_OF_VIEW"
+          }
+        ],
+        "occlusion_memory": {
+          "max_age_s": 5.0,
+          "snapshots": 2,
+          "reused_sample_evaluations": 2989,
+          "oldest_reused_age_s": 3.233333333333153,
+          "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground, farther background or measured fixed surface just behind query in optical band; other foreground/motion envelopes veto",
+          "anchor_max_age_s": 30.0,
+          "anchors": 0,
+          "anchor_reused_sample_evaluations": 0,
+          "anchor_requires_current_payload_surface_support": true,
+          "uncertainty_growth_m_s": 0.02,
+          "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+        },
+        "payload_history_support": {
+          "target_id": "visual_0001",
+          "time_s": 33.43333333333208,
+          "mask_refs": [
+            "scene_camera/1254/component_1",
+            "left_wrist_camera/1254/component_1"
+          ],
+          "support_mask_refs": [
+            "scene_camera/1254/component_1",
+            "left_wrist_camera/1254/component_1"
+          ],
+          "physical_attachment": false
+        },
+        "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+        "continuous_collision_proof": false
+      },
+      "anchor_times": []
+    },
+    "normal_stages": {
+      "blocking_volume_reason": null,
+      "workspace": {
+        "resolution_m": 0.01,
+        "query_refinement_m": 0.0025,
+        "lower_m": [
+          -0.38,
+          -0.51,
+          0.76
+        ],
+        "upper_m": [
+          0.38,
+          0.16,
+          1.3599999999999999
+        ],
+        "unknown_cells": 107876,
+        "unmodelled_occupied_cells": 0,
+        "observation_time_s": 33.43333333333208,
+        "optical_depth_error_margin_m": 0.003,
+        "last_unknown_subcell_centre_m": null,
+        "last_unknown_sample_m": null,
+        "unknown_point_views": [],
+        "occlusion_memory": {
+          "max_age_s": 5.0,
+          "snapshots": 2,
+          "reused_sample_evaluations": 18391,
+          "oldest_reused_age_s": 9.966666666666104,
+          "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground, farther background or measured fixed surface just behind query in optical band; other foreground/motion envelopes veto",
+          "anchor_max_age_s": 30.0,
+          "anchors": 2,
+          "anchor_reused_sample_evaluations": 15729,
+          "anchor_requires_current_payload_surface_support": true,
+          "uncertainty_growth_m_s": 0.02,
+          "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+        },
+        "payload_history_support": {
+          "target_id": "visual_0001",
+          "time_s": 33.43333333333208,
+          "mask_refs": [
+            "scene_camera/1254/component_1",
+            "left_wrist_camera/1254/component_1"
+          ],
+          "support_mask_refs": [
+            "scene_camera/1254/component_1",
+            "left_wrist_camera/1254/component_1"
+          ],
+          "physical_attachment": false
+        },
+        "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+        "continuous_collision_proof": false
+      },
+      "anchor_times": [
+        7.900000000000182,
+        23.466666666665976
+      ]
+    }
+  },
+  "remaining_lower": {
+    "passed": true,
+    "clearance_m": 0.03373963923321774,
+    "path_check": {
+      "samples": 244,
+      "clearance_m": 0.03373963923321774,
+      "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+      "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+      "whole_arm_unknown_space_verified": false,
+      "finger_shell_visibility_required": false,
+      "approach_corridor_unknown_space_checked": false,
+      "approach_corridor_applicable": true,
+      "empty_motion_unknown_space_verified": false,
+      "local_unknown_space_check_deferred": false,
+      "max_joint_sample_rad": 0.025,
+      "continuous_collision_proof": false
+    }
+  }
+}

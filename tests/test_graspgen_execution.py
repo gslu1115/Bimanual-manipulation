@@ -11,6 +11,31 @@ from workstation.observations.observation_packet import RobotState
 
 
 class GraspGenExecutionTests(unittest.TestCase):
+    def test_normal_stage_anchor_uses_current_sample_and_requires_payload_evidence(self):
+        skill=VisualPickPlace.__new__(VisualPickPlace);calls=[]
+        skill.robot=SimpleNamespace(anchor_observation=lambda:calls.append(True))
+        skill.packet=SimpleNamespace(observation_time_s=8.);skill.observation_anchors=[];skill.held=False
+        skill._anchor_normal_stage('pregrasp',None)
+        self.assertEqual(len(calls),1);self.assertEqual(skill.observation_anchors[-1]['time_s'],8.)
+        skill.held=True;skill.packet.observation_time_s=23.
+        skill._anchor_normal_stage('lifted',None);self.assertEqual(len(calls),1)
+        skill._anchor_normal_stage('lifted',{'geometric_pose_measured':True})
+        self.assertEqual(len(calls),2);self.assertEqual(skill.observation_anchors[-1]['time_s'],23.)
+        skill._anchor_normal_stage('transferred',{'geometric_pose_measured':True})
+        self.assertEqual(len(calls),2)
+
+    def test_stage_observation_refresh_does_not_change_history_limits(self):
+        from workstation.planning.occlusion_memory import OcclusionMemory
+        memory=OcclusionMemory()
+        def workspace(time):
+            return SimpleNamespace(packet=SimpleNamespace(observation_time_s=time),_frames=lambda:[object()])
+        old,current=workspace(8.),workspace(23.)
+        memory.anchor(old);memory.anchor(current)
+        memory.add(workspace(39.))
+        self.assertNotIn(old,memory.anchors)
+        self.assertEqual(memory.anchors,[current])
+        self.assertEqual(old.packet.observation_time_s,8.)
+
     def test_preload_depends_on_current_fingers_and_keeps_command_limits(self):
         self.assertAlmostEqual(finger_preload_target([.0277,.0278],.054),.0237)
         self.assertAlmostEqual(finger_preload_target([.032,.031],.060),.027)
