@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "registered_date": "2026-10-12",
+  "registration_scope": "Retrospective tags; original audits define preregistration and physical outcomes.",
+  "tag_policy": "Never move or force-update.",
+  "versions": [
+    {
+      "tag": "env-linux-isaac6.1-20261010",
+      "kind": "environment_code",
+      "commit": "91a4e83b8bd438b8b14d45417c2bbe885701274c",
+      "scope": "Pre-GraspGen Linux adaptation; cloud scripts and weights are external and not frozen by this code tag.",
+      "isaac_image": "nvcr.io/nvidia/isaac-sim:6.1.0",
+      "isaac_image_digest": "sha256:af1d2b4e75d553bfa27beb5a401198654aa8d607f3b7a6749196e9ce253def20",
+      "tested_driver": "580.95.05"
+    },
+    {
+      "tag": "exp-graspgen-upright-independent-v1",
+      "kind": "experiment_source",
+      "commit": "8cff8404253360697b24b2c3b2c618d09288351d",
+      "scope": "Six completed fixed-size upright cases, seeds 411/412/413, geometry and GraspGen once each.",
+      "result": "geometry 3/3; GraspGen 1/3; model suite not fully passed",
+      "evidence": "evidence/independent_v1_summary_20261012.json",
+      "evidence_location_note": "Summary committed later; read on linux-based, not source tag."
+    },
+    {
+      "tag": "checkpoint-research-20261012",
+      "kind": "development_checkpoint",
+      "commit": "c968129a2425ff3cb0be0198e1e1a2c91c211811",
+      "scope": "Shutdown checkpoint with physically unvalidated side prototype, not stable environment release.",
+      "evidence": "evidence/shutdown_checkpoint_20261012.json"
+    }
+  ]
+}

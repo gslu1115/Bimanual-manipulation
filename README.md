@@ -6,6 +6,32 @@
 
 当前具备九盒释放与沉降、三路 RGB-D 输入接口，以及直立抓放和倒置交接两个真值物理基线。已新增独立 RGB-D `SceneEstimate V1`、候选排序、采样路径检查与受控单盒视觉技能；实现及实测边界见 [项目交接文档](项目路线与当前状态交接.md)。多盒整理、侧放/倒置视觉技能、通用避碰和真机适配仍待完成。协作前阅读 [AGENTS.md](AGENTS.md)。
 
+## 冻结版本与 CPU 自动检查
+
+linux-based 持续开发，环境、实验和开发检查点分别用固定附注标签定位，不移动旧标签、不改写 main。
+
+| 标签 | 提交 | 范围 |
+|---|---|---|
+| env-linux-isaac6.1-20261010 | 91a4e83 | GraspGen 接入前 Linux 适配，不含云盘基础设施快照 |
+| exp-graspgen-upright-independent-v1 | 8cff840 | 六次固定条件对照源码：geometry 3/3，GraspGen 1/3 |
+| checkpoint-research-20261012 | c968129 | 关机检查点，含未物理验收的侧放原型，不是稳定环境版 |
+
+完整 SHA/范围见 [冻结版本索引](evidence/frozen_versions_20261012.json)。标签是对已有提交补建的定位标记；是否事前冻结看原协议/审计，不把补建标签冒充事前注册。环境操作在 README，研究结果在交接。新提交用 env / research / docs / ci 前缀，环境修复与算法修改分开提交。
+
+新实验 ID 示例 dev-side-graspgen-seed006-attempt01；开发回归标 dev，冻结验收标 eval。保留完整源码 SHA、环境标签/镜像摘要、后端、初态/seed、配置/权重哈希、次数、所有成败和输出目录。条件改变另立记录，不覆盖旧证据或混用分母；历史 JSON 保持原样。
+
+[CPU tests](.github/workflows/cpu-tests.yml) 在 linux-based 的 push 与面向它的 PR 上执行 Ubuntu 24.04 / Python 3.12、3.13，分步检查环境路径/隔离、失败生命周期、相机/CLI 合同、无 SDK 配置校验及完整 CPU 回归。Actions 固定官方 SHA、权限只读，不访问服务器凭据；只安装固定 NumPy、SciPy、Pillow 和无界面 OpenCV，不安装 Isaac/CUDA/Torch/权重。
+
+~~~bash
+python -m venv .venv-cpu
+# Windows 将解释器换成 .venv-cpu/Scripts/python.exe
+.venv-cpu/bin/python -m pip install -r tests/requirements-cpu.txt
+.venv-cpu/bin/python -m workstation --mode scene --validate-only
+.venv-cpu/bin/python -m unittest discover -s tests -v
+~~~
+
+CI 仅验证当前提交逻辑，不能替代 RTX/Vulkan、模型服务、物理抓放和 WebRTC 验收。依据 [GitHub Python CI 文档](https://docs.github.com/en/actions/tutorials/build-and-test-code/python) 配置。
+
 ## 运行
 
 在仓库根目录打开 PowerShell，统一使用根目录的 `launch.ps1`：
@@ -68,49 +94,163 @@ Python 场景参数为 `--mode`、`--config`、`--output`、`--seed`、`--headle
 
 `visual-adjust` 仅通过同一 Python 入口启用，要求 `--grasp-backend graspgen` 和有效 `--graspgen-assets`；侧放初态实验使用 `--visual-fixture side`。它复用已有全姿态抓放阶段，释放后重新识别顶底语义。该初版仅通过当前 420 项本地既有回归检查，尚缺 SIDE 专项、Isaac SDK 和物理验证，不能当作可用的自动扶正功能。默认 `visual-pnp` 仍是直立路径。准确状态见交接 20.15–20.16。
 
-## Linux / Featurize（2026-10-10）
+## Linux / Featurize：新机准备与归还
 
-仍使用唯一入口 `python -m workstation`，无需在 Linux 安装 PowerShell。云盘代码位于
-`/home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux`，容器内对应
-`/project/Bimanual-manipulation-linux`。同级旧 `Bimanual-manipulation` 工作树保留，不覆盖。代码、必要权重和最终证据保存在云盘；SDK、依赖环境、着色器缓存及大量运行输出使用临时盘。
+连接地址、端口、账号、密码和时间戳仅保留在操作者自己的 TXT，不提交 Git。本节替代此前 TXT 中的操作记录；实验状态查 [项目交接文档](项目路线与当前状态交接.md)，不照历史 running 记录重启已结束案例。
 
-在已配置 NVIDIA 图形环境的 Isaac Sim 6.1 容器内：
+### 机器、磁盘与恢复材料
 
-```bash
+已实测 RTX 4090 24 GB、GPU Docker 镜像、Ubuntu 22.04、16 CPU / 54 GiB 内存，Isaac Sim 6.1.0 容器 nvcr.io/nvidia/isaac-sim:6.1.0，摘要 sha256:af1d2b4e75d553bfa27beb5a401198654aa8d607f3b7a6749196e9ce253def20。驱动 580.95.05 是实测版本，不代表官方唯一支持版本；换驱动/镜像后须重新验收。需 featurize 账户 sudo 权限、原云盘及软件包/NVIDIA 下载网络；恢复脚本按 UID/GID 1000 编写。临时盘至少留 50 GB，建议 100 GB；云盘建议留 10 GiB 余量。
+
+| 内容 | 路径与保存方式 |
+|---|---|
+| 云盘 | /home/featurize/work，关机/归还后保留 |
+| 恢复材料 | 云盘 isaac-support 下的 scripts、downloads、viewer、reports、backups |
+| 活跃 Linux 代码 | /home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux；容器内 /project/Bimanual-manipulation-linux |
+| 官方模型源码/权重 | 云盘 isaac-support/graspgen/{source,models}，不随 Git 下载 |
+| Isaac 环境及输出 | /home/featurize/isaac-runtime，临时盘，重要 output 须归档 |
+| 模型环境及结果 | /home/featurize/graspgen-runtime，临时盘，results 须单独归档 |
+
+同级旧 Bimanual-manipulation 工作树保留，运行选 -linux。容器 /project 对应云盘 projects，/output 对应临时盘 output；GUI 场景、USD、纹理及代码保存到 /project/自己的项目。Docker 数据、驱动解压、缓存放临时盘。恢复脚本目前在云盘维护，Git 标签只冻结项目代码，不包含这些脚本快照；若 isaac-support 缺失先核对云盘，克隆仓库不能代替 SDK/权重/串流恢复。
+
+### 检查与补齐环境
+
+~~~bash
+nvidia-smi
+id
+cat /etc/os-release
+df -h / /home/featurize/work
+ls /home/featurize/work/isaac-support/scripts
+docker ps -a --format '{{.Names}}  {{.Image}}  {{.Status}}'
+# 缺 Docker / NVIDIA Container Toolkit 时：
+bash /home/featurize/work/isaac-support/scripts/prepare-host.sh
+test -f /home/featurize/isaac-runtime/environment.sh && cat /home/featurize/isaac-runtime/environment.sh
+nvidia-smi --query-gpu=driver_version --format=csv,noheader
+# environment.sh 缺失或驱动不匹配时：
+bash /home/featurize/work/isaac-support/scripts/bootstrap.sh
+# 已有匹配环境时可单独检查：
+bash /home/featurize/work/isaac-support/scripts/run-host.sh /home/featurize/isaac-runtime/tools/usr/bin/vulkaninfo --summary
+~~~
+
+prepare-host 应出现 HOST_PREPARED；若需刷新 docker 用户组，重新登录，已有其他任务时协调重启。bootstrap 应出现 HOST_VULKAN_OK / DOCKER_VULKAN_OK，识别 NVIDIA GPU，不能只有 llvmpipe。镜像曾有全零 glcore/glsi；脚本从匹配驱动的官方包提取配套 GL/EGL/Vulkan/NGX 用户态库，不重装内核驱动、不混用版本。start-display.sh 配置 Xvfb、DISPLAY=:99、Xauthority 与 X11 socket，解决 GLFW 初始化。
+
+### 同步代码和启动
+
+先查看工作树并保留他人变更；确认 linux-based 且干净时更新：
+
+~~~bash
+cd /home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux
+git status --short
+git branch --show-current
+git pull --ff-only origin linux-based
+# 没有同名实例时，先做基础验收：
+ISAAC_WORKSTATION_PROJECT=Bimanual-manipulation-linux \
+  bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation --mode sensor-check
+~~~
+
+脚本各模式沿用 isaac-acceptance 容器名，已有实例先查用途，不重复启动；docker start 只恢复原模式。项目场景改用 --mode scene；空白 GUI 用 start-isaac.sh；彩块演示用 start-acceptance.sh，三者选一。切换模式先保存场景/结果，再停止、移除已确认的旧容器，容器可写层会丢失，云盘挂载保留。后台启动用独立终端或 nohup，日志放临时盘。
+
+启动器使用 ACCEPT_EULA=Y，操作者须有软件使用授权。首次下载和光追编译可能数分钟，以 app ready、run_status.json 和实际画面判断。自定义入口可能因默认健康探针日志路径不存在而显示 unhealthy，不能仅据此判定失败。交互任务失败暂停并保留 GUI/现场，仍报告 failed；Stop/Play 释放并重建采集资源。九盒 scene 曾未通过沉降检查，不能把传感器验收当成九盒整理通过。
+
+容器内只用唯一项目入口：
+
+~~~bash
 cd /project/Bimanual-manipulation-linux
 export ISAAC_PATH=/isaac-sim
 export WORKSTATION_OUTPUT_ROOT=/output/bimanual-linux
 /isaac-sim/python.sh -m workstation --mode sensor-check --headless
+# 前一模式结束后按需启动 GUI：
 /isaac-sim/python.sh -m workstation --mode scene --livestream
-```
+~~~
 
-`--livestream` 使用无本地窗口的 WebRTC GUI 并保持进程运行；默认端点 `127.0.0.1`，
-TCP 49100 / UDP 47998。需要其他地址时显式传 `--stream-host`。同一端口不能同时启动两个串流实例。
-`--output` 优先于 `WORKSTATION_OUTPUT_ROOT`；二者均未设置时保持原仓库 `outputs/` 默认行为。
-`ISAAC_PATH` 优先于平台默认值：Linux `/isaac-sim`，Windows 保留原安装目录回退。
-若使用 PowerShell 7，原 `launch.ps1` 也会选择平台对应的 `python.sh` / `python.bat`，并支持 `-Livestream`。
+--output 优先于 WORKSTATION_OUTPUT_ROOT；--livestream 保持无本地窗口 WebRTC GUI，默认 127.0.0.1，可用 --stream-host 指定。模型环境隔离，WORKSTATION_MODEL_PYTHON 可指向临时盘解释器，不能升级 Isaac 核心 Torch/NumPy。
 
-本次 Featurize 云盘另有机器恢复材料，按其 `README.txt` 完成 Docker、匹配驱动用户态库、虚拟显示和 SSH 视频中继检查后，可在服务器使用：
+### 独立 GraspGen 服务
 
-```bash
+先恢复图形环境。镜像不存在时用云盘官方 NVlabs/GraspGen@2dd8852e1be60f5f9d277fafcc621835cdf59110 源码构建：
+
+~~~bash
+docker build -t project-graspgen:2dd8852 \
+  -f /home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux/workstation/models/graspgen_inference.dockerfile \
+  /home/featurize/work/isaac-support/graspgen/source
+bash /home/featurize/work/isaac-support/graspgen/start-service.sh
+test -d /home/featurize/isaac-runtime/graspgen-source || \
+  cp -a /home/featurize/work/isaac-support/graspgen/source /home/featurize/isaac-runtime/graspgen-source
+~~~
+
+start-service.sh 不自动替换同名服务。Panda ZMQ 仅回环 5557，项目 HTTP 代理仅回环 5558，不暴露公网。确认没有需保留的同名 Isaac 实例后，可预览候选：
+
+~~~bash
 ISAAC_WORKSTATION_PROJECT=Bimanual-manipulation-linux \
-  bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation --mode sensor-check
-```
+  bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation \
+  --mode graspgen-check --save-images --graspgen-assets /home/featurize/isaac-runtime/graspgen-source
+~~~
 
-该基础设施入口仍调用本仓库 CLI，不复制业务配置。先确认历史名为 `isaac-acceptance` 的容器是否占用端口；切换前保存所需场景及文件。
-先用已通过的 `sensor-check` 验收。2026-10-10 的 Linux 串流 `scene` 九盒实测未通过原沉降判据；当前修复版会暂停并保留现场与 GUI，继续记录 failed。证据已保留，未放宽阈值，不能把三相机验收当成九盒场景成功。
-浏览器通过操作者电脑的 `connect_isaac.py` 隧道访问 `http://127.0.0.1:8210/`。
-无窗口服务器需要正确的 `DISPLAY`、X11 socket 和只向授权用户开放的 `XAUTHORITY`；不得用关闭日志代替环境修复。
+graspgen-check 只诊断；visual-pnp 是物理开发入口，visual-adjust 是未验收侧放原型；具体进展见交接，恢复环境不自动启动研究实验。
 
-模型保持隔离：Linux 默认解释器是 `.venv-models/bin/python`；通过
-`WORKSTATION_MODEL_PYTHON=/临时盘模型环境/bin/python` 可将环境放到临时盘。
-依赖版本仍以本文件和 `workstation/models/requirements.txt` 为准，使用 Python 3.12，不安装进 Isaac 核心环境。
-子进程会移除 Isaac 的 Python 配置及 Kit 私有动态库路径，保留 NVIDIA 驱动路径。
-训练权重与完整数据不在 Git 仓库中；传感器验收通过不表示已恢复微调模型或完成视觉抓放回归。
+### 网页与操作者本地连接
 
-相机资源在 Stop 时解除绑定，Play 时按现有配置重建；不会修改原三路安装参数。
-关闭环境先清理相机，再停止仿真；重复关闭不会再次销毁同一组采集资源。
-本轮实测范围与日志见交接文档的 Linux 增量记录。
+服务器 8210 尚无服务时启动，start-viewer.sh 本身为前台服务：
+
+~~~bash
+nohup bash /home/featurize/work/isaac-support/scripts/start-viewer.sh \
+  > /home/featurize/isaac-runtime/viewer.log 2>&1 < /dev/null &
+curl -I http://127.0.0.1:8210/
+~~~
+
+应返回 HTTP 200。操作者在 Windows PowerShell 首次准备：
+
+~~~powershell
+$server = Read-Host "输入本地 TXT 中的 SSH 地址"
+$port = Read-Host "输入 SSH 端口"
+$remoteScript = "featurize@{0}:/home/featurize/work/isaac-support/scripts/connect_isaac.py" -f $server
+scp -P $port $remoteScript .
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install paramiko
+$connectionFile = Read-Host "输入连接 TXT 的完整路径"
+.\.venv\Scripts\python.exe .\connect_isaac.py --connection-file $connectionFile
+~~~
+
+TXT 保留地址/端口/用户/密码各标签下一行填写值，换机更新连接与时间戳。看到 Tunnel ready 后保留终端，浏览器访问 http://127.0.0.1:8210/，只连一个客户端。地址是操作者本地电脑；关闭隧道只断画面、不停后台任务。
+
+串流需 TCP 49100、UDP 47998，网页 TCP 8210。connect_isaac.py 经 SSH 转发 TCP，配合 udp_ssh_server.py 保留 UDP 数据报边界；单独 ssh -L 或 Featurize TCP 导出不能代替视频中继。此方案已实测交互，网络丢包仍可能卡顿。
+
+### 验收与排错
+
+应看到 NVIDIA Vulkan、app ready、三路有效 RGB-D，GUI 选择/视角/暂停播放正常。彩块 report.json 在 output/acceptance，RGB 样本 480×640×4、深度 480×640，.npy 是米制数据；静态样本图不是连续视频。项目看 sensor_check_report.json / run_status.json。基础验收不证明复杂场景或完整抓放通过。
+
+| 现象 | 先检查 |
+|---|---|
+| 网页拒绝连接 | 本地隧道是否 Tunnel ready，再查服务器 8210 |
+| signaling/sign-in 失败 | Isaac 是否 ready、TCP 49100 是否监听 |
+| 菜单正常但黑屏 | 日志中的光追编译、Vulkan、驱动库 |
+| invalid ELF header / 全零库 | 匹配驱动 bootstrap；单装 Docker 无效 |
+| _glapi_tls_Current | GL 组件是否混用，使用配套启动器 |
+| Address already in use | 原服务/隧道占用，不重复开启 |
+| SSH host key changed | 在平台核对换机后更新 known_hosts |
+| Stop 后 HydraTexture 警告 | 使用资源释放/重建修复版并保留日志 |
+
+### 关机保存与恢复
+
+先结束实验/训练/采集并保存报告、冻结源码和日志；保存模型结果后停止 project-graspgen-proxy / project-graspgen。标准脚本只停止 isaac-acceptance：
+
+~~~bash
+python3 /home/featurize/work/isaac-support/scripts/backup-results.py --stop
+~~~
+
+保存 Isaac output、日志、config、data、Kit/容器日志，逐文件 SHA-256 比对后独立恢复复核。正式目录 receipt.json 的 status=VERIFIED、restore_sha256_verified=true 才算完成，.partial/报错不是成功。不带 --stop 且会话仍运行时拒绝；脚本不关云机器、不删原文件、不推送 Git。
+
+该脚本不含 graspgen-runtime/results 或自选的其他临时目录，须另复制到云盘并校验。[上次收据](evidence/shutdown_checkpoint_20261012.json) 列出两个备份目录与范围；历史单次收尾脚本含旧 PID/路径，不能直接当新机通用脚本。云盘 projects/scripts/downloads 已持久化，Docker 镜像、驱动解压及缓存可重建。确认备份、推送、后台任务结束后再归还。
+
+以后直接读 backups/对应时间/payload/output 即可。确需恢复，选定 VERIFIED 的实际目录、停止写入后执行：
+
+~~~bash
+mkdir -p /home/featurize/isaac-runtime/output
+# 将已核验备份目录赋值给 backup_dir 后执行：
+rsync -a --ignore-existing "$backup_dir/payload/output/" /home/featurize/isaac-runtime/output/
+~~~
+
+配置/data 按需恢复、不覆盖新环境。完整结果放云盘、精选小型证据提交 Git；一次恢复校验不等于所有新机部署均已验收。
 
 ## 隔离模型推理
 
@@ -165,7 +305,7 @@ Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgp
 
 初闭与视觉复核后，以图像时刻的实际指关节位置计算最多 4 mm 的位置预紧，保留原 30 N 指关节力上限。它用于补偿整体投影宽度与实际指垫接触宽度的差异，不能当作接触力测量或持盒证明；预紧后仍重新观察，并通过原视觉抬升及持续持盒要求。
 
-预抓完成、抬升完成时保存正常任务运动取得的新射线观测；持盒阶段需要当前几何支持。历史仍限制为原来的 30 秒、最多四份保留观测，普通短期记录仍为 5 秒；不延长旧帧寿命，也不执行专门补看的腕部运动。第七次模型开发运行已完整通过：视觉抬升约 18.6 cm，松爪撤臂及 home/open 后稳定 0.60 s，独立终态 XY 误差约 1.02 mm。此前失败全部保留；这是一例固定开发条件下的成功，随后冻结版本的三初态独立对照结果为 geometry 3/3、GraspGen 1/3，模型两次在接近阶段被 `visual_0002` 碰撞检查拦下；修复与多盒仍待验收，见交接记录。
+预抓完成、抬升完成时保存正常任务运动取得的新射线观测；持盒阶段需要当前几何支持。历史仍限制为原来的 30 秒、最多四份保留观测，普通短期记录仍为 5 秒；不延长旧帧寿命；该历史实测未执行专门补看的腕部运动。第七次模型开发运行已完整通过：视觉抬升约 18.6 cm，松爪撤臂及 home/open 后稳定 0.60 s，独立终态 XY 误差约 1.02 mm。此前失败全部保留；这是一例固定开发条件下的成功，随后冻结版本的三初态独立对照结果为 geometry 3/3、GraspGen 1/3，模型两次在接近阶段被 `visual_0002` 碰撞检查拦下；修复与多盒仍待验收，见交接记录。
 
 完整持盒几何的可见范围按各视角的已验证平面分别计算稳健分位数，再合并观测范围，避免近距离腕图的大量像素淹没总览相机的稀疏有效边缘。每个视角仍须满足原平面质量、时间同步和完整实例支持条件；没有看到的端部不按已知尺寸补齐。第六次开发运行中定位到的点密度问题已通过原始帧前后对照与逻辑检查；修复后的第七次完整物理抓放通过，精确条件与结果见交接。
 
@@ -193,7 +333,7 @@ D:\Issaccc\python.bat -m workstation --mode visual-pnp --segmenter yolo-seg --we
 
 GraspGen 客户端已接通官方 Panda ZMQ 协议及米制观测点云接口；服务或项目 TCP 标定缺失时显式拒绝接入执行。`geometry` 与 `graspgen` 是可切换的候选来源；两者的实际验收范围分别记录，模型后端不会在失败后暗中回退到几何模板。
 
-**相机约束（用户 2026-10-08 更新）**：正式开发及后续回归使用 `config/scene.json` 中你已设置的三路安装位置、朝向、焦距。上表相机安装参数只保留历史诊断的可复现入口，后续未经确认不使用。专门为补看移动腕部的自动回退已停用；正常抓放时腕相机随臂运动，仍使用图像同期 FK。
+**相机约定（用户 2026-10-12 最终确认）**：相机内参和现有三个机位的安装位置不变，允许通过机械臂带动腕部相机补看。补看须通过路径/碰撞检查，外参使用图像同期关节 FK，并记录验证结果。历史机位/内参覆盖参数只供对应实验复现。允许补看不等于现有自动恢复已经接通或验收。
 
 部分遮挡本身不代表不可抓。当前空间检查新增有限观测历史：只复用过去有效深度射线证实的空间，且当前遮挡必须由同期机器人几何解释；真实前景、视觉运动范围和超过 5 s 的历史不能被这样清掉。这是有限时域的映射规则，不能保证未知运动物体不会进入盲区。TCP 接近通道与持盒扫掠中的从未观测区域仍拒绝；全臂外壳不再要求全空间可见。新版本完整物理验收见交接与每次报告。
 
@@ -213,7 +353,7 @@ GraspGen 客户端已接通官方 Panda ZMQ 协议及米制观测点云接口；
 
 侧放/倒置静态诊断 63/64 已在原机位各运行一例 seed 6，各三帧的类别、位置、轴向和稳定 ID 均通过。两个环境各 316 项逻辑检查通过；参见 [visual_static_posture_20261009.json](evidence/visual_static_posture_20261009.json) 和交接第 16 节。三帧是同一初态的连续观测，不是三次独立试验；尚无侧放调整或倒置翻面的视觉物理技能通过记录。
 
-路径检查保留 Lula 球体的自碰、双臂和固定/视觉物体碰撞约束，以及所有球体与未分割深度障碍的检查。2026-10-09 按用户要求**彻底删除全臂凸包边界查询实现、专用辅助函数、测试及报告开关**。机器人几何继续用于同期深度自过滤，执行不要求整个机械臂外壳空间一直可见。TCP 接近通道保留 3 mm 观测检查；持盒扫掠仍检查观测空间，指爪开合仍按 ≤1 mm 行程做碰撞采样。未来阶段的局部可见性在预检报告中明确标为待检查，并在实际阶段用新帧检查。报告保留 `whole_arm_unknown_space_verified=False`、`finger_shell_visibility_required=False`；检查范围与验证记录见交接第 14 节。`GapReobserve` 保留历史可复现源码，当前固定相机约束下不自动调用。
+路径检查保留 Lula 球体的自碰、双臂和固定/视觉物体碰撞约束，以及所有球体与未分割深度障碍的检查。2026-10-09 按用户要求**彻底删除全臂凸包边界查询实现、专用辅助函数、测试及报告开关**。机器人几何继续用于同期深度自过滤，执行不要求整个机械臂外壳空间一直可见。TCP 接近通道保留 3 mm 观测检查；持盒扫掠仍检查观测空间，指爪开合仍按 ≤1 mm 行程做碰撞采样。未来阶段的局部可见性在预检报告中明确标为待检查，并在实际阶段用新帧检查。报告保留 `whole_arm_unknown_space_verified=False`、`finger_shell_visibility_required=False`；检查范围与验证记录见交接第 14 节。`GapReobserve` 保留历史可复现源码，现有实现未自动调用；可按任务需要接通补看并验证路径与恢复结果。
 
 ```powershell
 # 独立初态估计实验；不是随机抓放成功率
