@@ -154,7 +154,7 @@ class RobotMotion:
             raise RuntimeError('JOINT_LIMIT')
         return q
 
-    def solve_pregrasp(self,arm,position,yaw,start,scene,target_id,pregrasp_hint=None):
+    def solve_pregrasp(self,arm,position,yaw,start,scene,target_id,pregrasp_hint=None,orientation_wxyz=None):
         """Try bounded redundant IK seeds; goal bodies must be observed and clear."""
         attempts=getattr(self,'pregrasp_attempts',1)
         seeds=[np.asarray(start).copy()]
@@ -165,14 +165,17 @@ class RobotMotion:
             if np.any(hint<self.limits[0]+.005) or np.any(hint>self.limits[1]-.005):
                 raise RuntimeError('JOINT_LIMIT')
             seeds.insert(0,hint.copy())
-        if attempts==1:return self.solve(arm,position,yaw,seeds[0])
+        def solve(warm):
+            return (self.solve(arm,position,yaw,warm) if orientation_wxyz is None else
+                    self.solve_pose(arm,position,orientation_wxyz,warm))
+        if attempts==1:return solve(seeds[0])
         for joint,offset in ((2,.6),(2,-.6),(4,.5),(4,-.5),(1,.35),(1,-.35),(0,.4),(0,-.4)):
             warm=np.asarray(start).copy();warm[joint]+=offset
             seeds.append(np.clip(warm,self.limits[0]+.005,self.limits[1]-.005))
         records=[];solutions=[];last='ROBOT_UNREACHABLE'
         for index,warm in enumerate(seeds[:attempts]):
             try:
-                q=self.solve(arm,position,yaw,warm)
+                q=solve(warm)
                 if any(np.max(np.abs(q-old))<.015 for old in solutions):continue
                 solutions.append(q)
                 self.validate_path(arm,[q,q],scene,target_id)
@@ -456,6 +459,8 @@ class RobotMotion:
         return knots
 
     def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None):
+        if getattr(candidate,'orientation_wxyz',None) is not None:
+            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint)
         start=self.read_states()[candidate.arm].joint_positions_rad
         raised=np.asarray(candidate.position_m)+[0,0,.18]
         phase='PREGRASP'; self.last_plan_check={}
@@ -514,6 +519,94 @@ class RobotMotion:
         except RuntimeError as exc:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
                         rejection_phase=phase,rejection_details=self.last_plan_check.copy())
+
+    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None):
+        """Forecast complete model-pose paths; no commands or holding claims."""
+        from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
+        from workstation.planning.graspgen_candidates import upright_body_rotation
+        from workstation.planning.selection import UPRIGHT_RELEASE_GAP_M
+        arm=candidate.arm;start=self.read_states()[arm].joint_positions_rad
+        orientation=np.asarray(candidate.orientation_wxyz,float)
+        pose=pose_matrix(candidate.position_m,orientation)
+        direction=np.asarray(candidate.approach_direction,float)
+        if (direction.shape!=(3,) or not np.isfinite(direction).all() or
+                abs(np.linalg.norm(direction)-1)>1e-5 or
+                not np.isfinite(orientation).all() or abs(np.linalg.norm(orientation)-1)>1e-5):
+            return dict(reasons=('INVALID_CANDIDATE_POSE',),joint_cost=0.,path_clearance_m=0.)
+        if candidate.closing_width_m is None or not 0<=candidate.closing_width_m<candidate.opening_m<=.08:
+            return dict(reasons=('OPENING_UNVERIFIED',),joint_cost=0.,path_clearance_m=0.)
+        pick=pose[:3,3];raised=pick-direction*candidate.pregrasp_distance_m
+        body_rotation=upright_body_rotation(obj)
+        relation=dict(arm=arm,target_id=candidate.target_id,
+            offset=pose[:3,:3].T@(np.asarray(obj.position_m)-pick),
+            relative_rotation=pose[:3,:3].T@body_rotation,uncertainty_m=obj.uncertainty_m,
+            source='visual object/TCP nominal preflight relation; NOT a holding measurement')
+        previous=getattr(self,'held_visual_geometry',None)
+        phase='PREGRASP';phases=[];self.last_plan_check={}
+        try:
+            q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
+                                 pregrasp_hint,orientation_wxyz=orientation)
+            _,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
+            joint_plans={'PREGRASP':self.last_plan_check.copy()};phases.append(phase)
+            phase='APPROACH'
+            descend=self.cartesian_knots(arm,raised,pick,0.,0.,.05,q,
+                                         orientation0=orientation,orientation1=orientation)
+            minimum=min(minimum,self.validate_path(arm,descend,scene,candidate.target_id,
+                target_contact=True,finger_positions=np.full(2,candidate.opening_m/2)))
+            phases.append(phase);phase='CLOSE'
+            count=max(1,math.ceil((candidate.opening_m-candidate.closing_width_m)/.002))
+            for width in np.linspace(candidate.opening_m,candidate.closing_width_m,count+1):
+                minimum=min(minimum,self.validate_path(arm,[descend[-1],descend[-1]],scene,
+                    candidate.target_id,target_contact=True,finger_positions=np.full(2,width/2)))
+            phases.append(phase)
+            if slot_xy is not None:
+                self.held_visual_geometry=relation
+                desired_body=np.eye(3)
+                place_rotation=desired_body@relation['relative_rotation'].T
+                place_orientation=quaternion_from_matrix(place_rotation)
+                place_body=np.array([*slot_xy,self.place_support_z+obj.size_m[2]/2+UPRIGHT_RELEASE_GAP_M])
+                place=place_body-place_rotation@relation['offset']
+                position=pick;current=descend[-1];old_orientation=orientation
+                released=[AABB(candidate.target_id,(*slot_xy,self.place_support_z+obj.size_m[2]/2),
+                    tuple(np.asarray(obj.size_m)+2*obj.uncertainty_m))]
+                for phase,destination,new_orientation,held,contact in (
+                    ('LIFT',pick+[0,0,.18],orientation,True,True),
+                    ('TRANSFER',place+[0,0,.18],place_orientation,True,False),
+                    ('LOWER',place,place_orientation,True,True),
+                    ('RETREAT',place+[0,0,.18],place_orientation,False,True)):
+                    path=self.cartesian_knots(arm,position,destination,0.,0.,.05,current,
+                        orientation0=old_orientation,orientation1=new_orientation)
+                    minimum=min(minimum,self.validate_path(arm,path,scene,candidate.target_id,
+                        held_size=obj.size_m if held else None,support_contact=contact,target_contact=not held,
+                        target_boxes_override=released if not held else None,
+                        finger_positions=np.full(2,candidate.closing_width_m/2 if held else candidate.opening_m/2),
+                        check_local_unknown=False,check_approach_corridor=phase!='RETREAT'))
+                    if phase=='LOWER':
+                        phase='OPEN'
+                        for width in np.linspace(candidate.closing_width_m,candidate.opening_m,count+1):
+                            self.validate_path(arm,[path[-1],path[-1]],scene,candidate.target_id,
+                                held_size=obj.size_m,support_contact=True,target_contact=True,
+                                finger_positions=np.full(2,width/2),check_local_unknown=False)
+                        phases.extend(['LOWER','OPEN'])
+                    else:phases.append(phase)
+                    current=path[-1];position=destination;old_orientation=new_orientation
+                phase='HOME'
+                _,clearance=self.checked_joint_plan(arm,current,self.home[:7],scene,
+                    candidate.target_id,target_boxes_override=released)
+                minimum=min(minimum,clearance);phases.append(phase)
+                joint_plans['HOME']=self.last_plan_check.copy()
+            return dict(reasons=(),joint_cost=float(np.linalg.norm(q-start)),path_clearance_m=minimum,
+                full_pose_checked=True,checked_phases=phases,whole_task_template_checked=slot_xy is not None,
+                whole_task_check_scope='full model SE(3); sampled project-robot collisions; future local visibility deferred',
+                pending_observation_phases=['LIFT','TRANSFER','LOWER','OPEN','RETREAT'] if slot_xy is not None else [],
+                joint_plans=joint_plans,pregrasp_joint_positions_rad=q.tolist(),
+                nominal_visual_payload_relation={k:(v.tolist() if isinstance(v,np.ndarray) else v) for k,v in relation.items()},
+                candidate_execution_authorized=False)
+        except RuntimeError as exc:
+            return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,full_pose_checked=True,
+                checked_phases=phases,rejection_phase=phase,rejection_details=self.last_plan_check.copy())
+        finally:
+            self.held_visual_geometry=previous
 
     def tick(self):
         for name,q in self.targets.items(): self.command(name,q)

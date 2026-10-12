@@ -128,6 +128,10 @@ python -m workstation --mode graspgen-proxy
 # 路径必须在 Isaac 容器内可读；这里只读网格与配置，不导入模型依赖
 /isaac-sim/python.sh -m workstation --mode graspgen-check --livestream \
   --graspgen-assets /home/featurize/isaac-runtime/graspgen-source
+
+# 同一快照与可见空槽位下比较完整任务预检；仅计算，不执行机械臂动作
+/isaac-sim/python.sh -m workstation --mode graspgen-check --headless \
+  --grasp-backend graspgen --graspgen-assets /home/featurize/isaac-runtime/graspgen-source
 ```
 
 Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgpack 留在模型环境。可通过 `--graspgen-endpoint`、`--graspgen-proxy-port` 和 `--graspgen-proxy` 分别设置服务与代理地址。
@@ -137,6 +141,8 @@ Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgp
 已实测的推理构建定义另纳入 `workstation/models/graspgen_inference.dockerfile`；构建上下文必须是官方 `NVlabs/GraspGen` 的 `2dd8852e1be60f5f9d277fafcc621835cdf59110` 源码根目录。2026-10-12 已通过官方 Panda 样例、项目代理及原三路相机的受控单盒快照推理；静态基座/TCP 变换也有网格与双臂 FK 核验。模型与 SDK 夹指网格并不等同，开度、模型候选完整路径及物理抓放仍未验收，详见交接第 20 节。上游代码许可限定研究或评价用途，继续保留官方许可和资产声明。
 
 `graspgen_tcp_calibration.json` 区分固定坐标变换、夹爪几何一致性和执行授权。当前固定变换为 `Rz(-90°), z=+0.1 m`（从项目 TCP 到 GraspGen 基座的坐标变换）；它不是抓取偏移调参，也不是真机标定。即使固定变换通过，夹指差异、未知开度或未检查路径仍使候选不可执行。界面彩色坐标轴始终表示原始模型基座，不表示已经可达的机器人姿态。
+
+`GraspCandidate` 兼容原几何位置/yaw 接口，并可保留完整 TCP 四元数、接近方向、预抓距离、视觉估计开度/闭合宽度、评分和来源。模型结果不重定中心或压成 yaw；已知尺寸与当前视觉姿态只用于开度及碰撞估计，不补造隐藏点云。预检复用项目机器人的 IK、球体/观测障碍和持盒扫掠，明确区别于上游夹爪网格相等。当前 `--grasp-backend graspgen` 仅开放给候选诊断；物理技能尚未接线，选择其他模式会明确报错。
 
 以下 Windows 命令仍使用唯一 `python -m workstation` 入口。首次创建独立环境，禁止把模型依赖安装到 Isaac 的核心环境：
 

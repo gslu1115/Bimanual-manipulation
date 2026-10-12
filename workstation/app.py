@@ -33,6 +33,8 @@ def build_parser():
     parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')
     parser.add_argument('--num-grasps',type=int,default=64)
     parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
+    parser.add_argument('--grasp-backend',choices=('geometry','graspgen'),default='geometry',
+                        help='Candidate comparison backend for graspgen-check; physical integration is staged')
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
     parser.add_argument("--camera-recording", action="store_true")
@@ -78,6 +80,10 @@ def build_parser():
 def load_config(args, parser):
     if args.headless and args.keep_open:
         parser.error("--keep-open requires a GUI")
+    if args.grasp_backend=='graspgen' and args.mode!='graspgen-check':
+        parser.error('--grasp-backend graspgen currently requires graspgen-check; physical execution is not wired')
+    if args.grasp_backend=='graspgen' and not args.graspgen_assets:
+        parser.error('--grasp-backend graspgen requires --graspgen-assets for frame verification')
     config = json.loads(args.config.read_text(encoding="utf-8"))
     if args.preposition_observer:
         if args.mode not in ('visual-pnp','visual-sort'):parser.error('--preposition-observer requires a visual skill')

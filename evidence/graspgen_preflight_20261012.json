@@ -1,0 +1,4122 @@
+{
+  "scope": "development_fixed_snapshot_full_pose_preflight",
+  "task_execution": false,
+  "physics_grasp_success_verified": false,
+  "online_freshness_verified": false,
+  "source_points": 5955,
+  "source_run": "graspgen-check_20261012_023012_466103",
+  "full_report_sha256": "b88063435edad298a33131e83db67c88e3f16edea9edf2fa09b305dacfcb0434",
+  "source_cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage3/graspgen-check_20261012_023012_466103",
+  "candidate_backend_switch": "geometry / graspgen",
+  "geometry_candidates": {
+    "total": 4,
+    "feasible": 2,
+    "rejection_counts": {
+      "IK_DISCONTINUITY": 2
+    },
+    "candidates": [
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.20009181275963783,
+            -0.06009087339043617,
+            0.7864999008359497
+          ],
+          "yaw_rad": 0.34771032684789294,
+          "opening_m": 0.073,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": null,
+          "source": "geometry",
+          "candidate_id": "",
+          "observation_time_s": null,
+          "approach_direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": null,
+          "opening_source": "known carton width with approach clearance",
+          "model_score": null,
+          "metadata": {},
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "checked_phases": [
+          "PREGRASP",
+          "APPROACH",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "RETREAT",
+          "HOME"
+        ],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.20009181275963783,
+            -0.06009087339043617,
+            0.7864999008359497
+          ],
+          "yaw_rad": 3.489302980437686,
+          "opening_m": 0.073,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": null,
+          "source": "geometry",
+          "candidate_id": "",
+          "observation_time_s": null,
+          "approach_direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": null,
+          "opening_source": "known carton width with approach clearance",
+          "model_score": null,
+          "metadata": {},
+          "rejection_reasons": []
+        },
+        "feasible": true,
+        "reasons": [],
+        "checked_phases": [
+          "PREGRASP",
+          "APPROACH",
+          "LIFT",
+          "TRANSFER",
+          "LOWER",
+          "RETREAT",
+          "HOME"
+        ],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.20009181275963783,
+            -0.06009087339043617,
+            0.7864999008359497
+          ],
+          "yaw_rad": 0.34771032684789294,
+          "opening_m": 0.073,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": null,
+          "source": "geometry",
+          "candidate_id": "",
+          "observation_time_s": null,
+          "approach_direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": null,
+          "opening_source": "known carton width with approach clearance",
+          "model_score": null,
+          "metadata": {},
+          "rejection_reasons": []
+        },
+        "feasible": false,
+        "reasons": [
+          "IK_DISCONTINUITY"
+        ],
+        "checked_phases": [],
+        "rejection_phase": "TRANSFER"
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.20009181275963783,
+            -0.06009087339043617,
+            0.7864999008359497
+          ],
+          "yaw_rad": 3.489302980437686,
+          "opening_m": 0.073,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": null,
+          "source": "geometry",
+          "candidate_id": "",
+          "observation_time_s": null,
+          "approach_direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": null,
+          "opening_source": "known carton width with approach clearance",
+          "model_score": null,
+          "metadata": {},
+          "rejection_reasons": []
+        },
+        "feasible": false,
+        "reasons": [
+          "IK_DISCONTINUITY"
+        ],
+        "checked_phases": [],
+        "rejection_phase": "TRANSFER"
+      }
+    ]
+  },
+  "model_candidate_assessments": {
+    "total": 40,
+    "feasible": 0,
+    "rejection_counts": {
+      "GRIPPER_SPACE_INSUFFICIENT": 40,
+      "GRASP_OFF_CENTRE": 40
+    },
+    "candidates": [
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.22950098514556894,
+            -0.05189210176467886,
+            0.811639928817749
+          ],
+          "yaw_rad": 0.8622299939610303,
+          "opening_m": 0.12645361277574543,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6551123028530338,
+            0.6292968611392594,
+            0.2759285444151105,
+            0.31412858766407986
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:0:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7568886280059814,
+            -0.6511661410331726,
+            0.05569779872894287
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04834149143558708,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9496705532073975,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.05234149143558708,
+              "centre_offset_m": -0.03105606067007917,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.06429708003997803,
+                -0.6503733396530151,
+                0.7568886280059814,
+                -0.305189847946167
+              ],
+              [
+                0.010617374442517757,
+                -0.7588609457015991,
+                -0.6511661410331726,
+                0.013224512338638306
+              ],
+              [
+                0.99787437915802,
+                -0.0338318906724453,
+                0.05569779872894287,
+                0.8060701489448547
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.22950098514556894,
+            -0.05189210176467886,
+            0.811639928817749
+          ],
+          "yaw_rad": 0.8622299939610303,
+          "opening_m": 0.12645361277574543,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6551123028530338,
+            0.6292968611392594,
+            0.2759285444151105,
+            0.31412858766407986
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:0:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7568886280059814,
+            -0.6511661410331726,
+            0.05569779872894287
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04834149143558708,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9496705532073975,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.05234149143558708,
+              "centre_offset_m": -0.03105606067007917,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.06429708003997803,
+                -0.6503733396530151,
+                0.7568886280059814,
+                -0.305189847946167
+              ],
+              [
+                0.010617374442517757,
+                -0.7588609457015991,
+                -0.6511661410331726,
+                0.013224512338638306
+              ],
+              [
+                0.99787437915802,
+                -0.0338318906724453,
+                0.05569779872894287,
+                0.8060701489448547
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.2344151854515077,
+            -0.055083209276199266,
+            0.8085600972175598
+          ],
+          "yaw_rad": -2.3169024088012877,
+          "opening_m": 0.10973008892190325,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.27863073860365484,
+            -0.28808096782573184,
+            0.6495544376232814,
+            -0.6461062606457812
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:1:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7342334389686584,
+            -0.6788259148597717,
+            -0.009823203086853027
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04258075436863301,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.946261465549469,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.046580754368633015,
+              "centre_offset_m": 0.02557466727663511,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.0141984224319458,
+                0.6787485480308533,
+                0.7342334389686584,
+                -0.3078385293483734
+              ],
+              [
+                -0.0008878706721588969,
+                0.7342987060546875,
+                -0.6788259148597717,
+                0.012799382209777832
+              ],
+              [
+                -0.9998987913131714,
+                -0.01029017474502325,
+                -0.009823203086853027,
+                0.8095424175262451
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.2344151854515077,
+            -0.055083209276199266,
+            0.8085600972175598
+          ],
+          "yaw_rad": -2.3169024088012877,
+          "opening_m": 0.10973008892190325,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.27863073860365484,
+            -0.28808096782573184,
+            0.6495544376232814,
+            -0.6461062606457812
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:1:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7342334389686584,
+            -0.6788259148597717,
+            -0.009823203086853027
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04258075436863301,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.946261465549469,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.046580754368633015,
+              "centre_offset_m": 0.02557466727663511,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.0141984224319458,
+                0.6787485480308533,
+                0.7342334389686584,
+                -0.3078385293483734
+              ],
+              [
+                -0.0008878706721588969,
+                0.7342987060546875,
+                -0.6788259148597717,
+                0.012799382209777832
+              ],
+              [
+                -0.9998987913131714,
+                -0.01029017474502325,
+                -0.009823203086853027,
+                0.8095424175262451
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.23376778364181522,
+            -0.04781430810689913,
+            0.8097618758678437
+          ],
+          "yaw_rad": 0.3319064557444883,
+          "opening_m": 0.11547270980073346,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7109977306542458,
+            0.6835155838916864,
+            0.11472567613911322,
+            0.11885576475772115
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:2:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.3256189227104187,
+            -0.9446845054626465,
+            0.03928893804550171
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04325331122464185,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9371612071990967,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04725331122464185,
+              "centre_offset_m": -0.028109699288045797,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.012178778648376465,
+                -0.9454226493835449,
+                0.3256189227104187,
+                -0.26632967591285706
+              ],
+              [
+                0.03735950589179993,
+                -0.32584595680236816,
+                -0.9446845054626465,
+                0.04665414243936539
+              ],
+              [
+                0.9992277026176453,
+                0.0006598532199859619,
+                0.03928893804550171,
+                0.8058329820632935
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.23376778364181522,
+            -0.04781430810689913,
+            0.8097618758678437
+          ],
+          "yaw_rad": 0.3319064557444883,
+          "opening_m": 0.11547270980073346,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7109977306542458,
+            0.6835155838916864,
+            0.11472567613911322,
+            0.11885576475772115
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:2:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.3256189227104187,
+            -0.9446845054626465,
+            0.03928893804550171
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04325331122464185,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9371612071990967,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04725331122464185,
+              "centre_offset_m": -0.028109699288045797,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.012178778648376465,
+                -0.9454226493835449,
+                0.3256189227104187,
+                -0.26632967591285706
+              ],
+              [
+                0.03735950589179993,
+                -0.32584595680236816,
+                -0.9446845054626465,
+                0.04665414243936539
+              ],
+              [
+                0.9992277026176453,
+                0.0006598532199859619,
+                0.03928893804550171,
+                0.8058329820632935
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.2275177508592606,
+            -0.046059438586234916,
+            0.8056177377700806
+          ],
+          "yaw_rad": 0.3346362418053372,
+          "opening_m": 0.11210476349280782,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7265615303445555,
+            0.6666090651125116,
+            0.11076484966345101,
+            0.12438587143335122
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:3:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.32678845524787903,
+            -0.9411098957061768,
+            0.08672702312469482
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04597562644655831,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9368392825126648,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04997562644655831,
+              "centre_offset_m": -0.025064568523124744,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.033074259757995605,
+                -0.9445186257362366,
+                0.32678845524787903,
+                -0.26019659638404846
+              ],
+              [
+                0.08032101392745972,
+                -0.3284217119216919,
+                -0.9411098957061768,
+                0.04805155098438263
+              ],
+              [
+                0.9962202310562134,
+                -0.00487855076789856,
+                0.08672702312469482,
+                0.7969450354576111
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.2275177508592606,
+            -0.046059438586234916,
+            0.8056177377700806
+          ],
+          "yaw_rad": 0.3346362418053372,
+          "opening_m": 0.11210476349280782,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7265615303445555,
+            0.6666090651125116,
+            0.11076484966345101,
+            0.12438587143335122
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:3:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.32678845524787903,
+            -0.9411098957061768,
+            0.08672702312469482
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04597562644655831,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9368392825126648,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04997562644655831,
+              "centre_offset_m": -0.025064568523124744,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.033074259757995605,
+                -0.9445186257362366,
+                0.32678845524787903,
+                -0.26019659638404846
+              ],
+              [
+                0.08032101392745972,
+                -0.3284217119216919,
+                -0.9411098957061768,
+                0.04805155098438263
+              ],
+              [
+                0.9962202310562134,
+                -0.00487855076789856,
+                0.08672702312469482,
+                0.7969450354576111
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.20499441623687753,
+            -0.04262168705463401,
+            0.8052018880844116
+          ],
+          "yaw_rad": -2.333547966578122,
+          "opening_m": 0.10354397719400532,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.27459261842443283,
+            -0.28133299624130115,
+            0.6527498371072562,
+            -0.6475865110463287
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:4:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7228555679321289,
+            -0.6909200549125671,
+            -0.010461211204528809
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.042361019000823424,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.936489462852478,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04636101900082342,
+              "centre_offset_m": 0.022591479096590948,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.011635184288024902,
+                0.6909013390541077,
+                0.7228555679321289,
+                -0.27727997303009033
+              ],
+              [
+                0.002966910135000944,
+                0.722925066947937,
+                -0.6909200549125671,
+                0.02647031843662262
+              ],
+              [
+                -0.9999279379844666,
+                -0.005894332192838192,
+                -0.010461211204528809,
+                0.8062480092048645
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.20499441623687753,
+            -0.04262168705463401,
+            0.8052018880844116
+          ],
+          "yaw_rad": -2.333547966578122,
+          "opening_m": 0.10354397719400532,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.27459261842443283,
+            -0.28133299624130115,
+            0.6527498371072562,
+            -0.6475865110463287
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:4:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7228555679321289,
+            -0.6909200549125671,
+            -0.010461211204528809
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.042361019000823424,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.936489462852478,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04636101900082342,
+              "centre_offset_m": 0.022591479096590948,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.011635184288024902,
+                0.6909013390541077,
+                0.7228555679321289,
+                -0.27727997303009033
+              ],
+              [
+                0.002966910135000944,
+                0.722925066947937,
+                -0.6909200549125671,
+                0.02647031843662262
+              ],
+              [
+                -0.9999279379844666,
+                -0.005894332192838192,
+                -0.010461211204528809,
+                0.8062480092048645
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.229201775789261,
+            -0.07935102134943015,
+            0.8001043677330018
+          ],
+          "yaw_rad": -1.2559068801953597,
+          "opening_m": 0.09690407235764992,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5776472780100834,
+            -0.5667205138380603,
+            0.40717354099134784,
+            -0.42351055349215794
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:5:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.9504296183586121,
+            0.3098445534706116,
+            0.026075124740600586
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.044132929344116,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9280598759651184,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.048132929344116004,
+              "centre_offset_m": 0.018385571506766955,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.027772247791290283,
+                -0.3096970319747925,
+                0.9504296183586121,
+                -0.32424473762512207
+              ],
+              [
+                -0.001066654920578003,
+                0.9507866501808167,
+                0.3098445534706116,
+                -0.11033547669649124
+              ],
+              [
+                -0.9996137022972107,
+                -0.009618863463401794,
+                0.026075124740600586,
+                0.7974968552589417
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.229201775789261,
+            -0.07935102134943015,
+            0.8001043677330018
+          ],
+          "yaw_rad": -1.2559068801953597,
+          "opening_m": 0.09690407235764992,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5776472780100834,
+            -0.5667205138380603,
+            0.40717354099134784,
+            -0.42351055349215794
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:5:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.9504296183586121,
+            0.3098445534706116,
+            0.026075124740600586
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.044132929344116,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9280598759651184,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.048132929344116004,
+              "centre_offset_m": 0.018385571506766955,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.027772247791290283,
+                -0.3096970319747925,
+                0.9504296183586121,
+                -0.32424473762512207
+              ],
+              [
+                -0.001066654920578003,
+                0.9507866501808167,
+                0.3098445534706116,
+                -0.11033547669649124
+              ],
+              [
+                -0.9996137022972107,
+                -0.009618863463401794,
+                0.026075124740600586,
+                0.7974968552589417
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.2089299499988557,
+            -0.045867401361465374,
+            0.8070041298866272
+          ],
+          "yaw_rad": -2.3472622970142734,
+          "opening_m": 0.10821601724422017,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.2673239878310043,
+            -0.2795781149026335,
+            0.6606896904506416,
+            -0.6433219226249429
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:6:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7129538655281067,
+            -0.7005964517593384,
+            -0.029349565505981445
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.0441336716305252,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.927585780620575,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.0481336716305252,
+              "centre_offset_m": 0.02404117280684748,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.025478005409240723,
+                0.7007479071617126,
+                0.7129538655281067,
+                -0.28022533655166626
+              ],
+              [
+                0.01594596914947033,
+                0.7133795022964478,
+                -0.7005964517593384,
+                0.024192243814468384
+              ],
+              [
+                -0.9995481967926025,
+                -0.00648105051368475,
+                -0.029349565505981445,
+                0.8099390864372253
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.2089299499988557,
+            -0.045867401361465374,
+            0.8070041298866272
+          ],
+          "yaw_rad": -2.3472622970142734,
+          "opening_m": 0.10821601724422017,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.2673239878310043,
+            -0.2795781149026335,
+            0.6606896904506416,
+            -0.6433219226249429
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:6:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7129538655281067,
+            -0.7005964517593384,
+            -0.029349565505981445
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.0441336716305252,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.927585780620575,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.0481336716305252,
+              "centre_offset_m": 0.02404117280684748,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.025478005409240723,
+                0.7007479071617126,
+                0.7129538655281067,
+                -0.28022533655166626
+              ],
+              [
+                0.01594596914947033,
+                0.7133795022964478,
+                -0.7005964517593384,
+                0.024192243814468384
+              ],
+              [
+                -0.9995481967926025,
+                -0.00648105051368475,
+                -0.029349565505981445,
+                0.8099390864372253
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.16917763203382483,
+            -0.03715752661228171,
+            0.8072742104530335
+          ],
+          "yaw_rad": -0.7137318430420636,
+          "opening_m": 0.11077899412120287,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6707104613493216,
+            0.6542972965029455,
+            -0.24581456148417757,
+            -0.24822918077425613
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:7:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.6545721292495728,
+            -0.7556513547897339,
+            0.022940516471862793
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04360207329329524,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9247907996177673,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04760207329329524,
+              "centre_offset_m": -0.025588460413953816,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.01130819320678711,
+                -0.7559149265289307,
+                -0.6545721292495728,
+                -0.10372041910886765
+              ],
+              [
+                0.02055463194847107,
+                0.654651403427124,
+                -0.7556513547897339,
+                0.03840760886669159
+              ],
+              [
+                0.9997247457504272,
+                -0.004909425973892212,
+                0.022940516471862793,
+                0.8049801588058472
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.16917763203382483,
+            -0.03715752661228171,
+            0.8072742104530335
+          ],
+          "yaw_rad": -0.7137318430420636,
+          "opening_m": 0.11077899412120287,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6707104613493216,
+            0.6542972965029455,
+            -0.24581456148417757,
+            -0.24822918077425613
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:7:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.6545721292495728,
+            -0.7556513547897339,
+            0.022940516471862793
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04360207329329524,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9247907996177673,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04760207329329524,
+              "centre_offset_m": -0.025588460413953816,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.01130819320678711,
+                -0.7559149265289307,
+                -0.6545721292495728,
+                -0.10372041910886765
+              ],
+              [
+                0.02055463194847107,
+                0.654651403427124,
+                -0.7556513547897339,
+                0.03840760886669159
+              ],
+              [
+                0.9997247457504272,
+                -0.004909425973892212,
+                0.022940516471862793,
+                0.8049801588058472
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.19999650418758397,
+            -0.03570462763309466,
+            0.80676828622818
+          ],
+          "yaw_rad": 0.33954326246303934,
+          "opening_m": 0.11040291039829306,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7104666183258315,
+            0.6831299022218779,
+            0.11339795087493876,
+            0.1253460237596301
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:8:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.33238616585731506,
+            -0.9422540664672852,
+            0.04094886779785156
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04419482610611633,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9245683550834656,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04819482610611633,
+              "centre_offset_m": -0.02510404214608836,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.023177266120910645,
+                -0.9428585767745972,
+                0.33238616585731506,
+                -0.23323512077331543
+              ],
+              [
+                0.035243842750787735,
+                -0.33303940296173096,
+                -0.9422540664672852,
+                0.05852077901363373
+              ],
+              [
+                0.9991099834442139,
+                -0.010124326683580875,
+                0.04094886779785156,
+                0.8026733994483948
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.19999650418758397,
+            -0.03570462763309466,
+            0.80676828622818
+          ],
+          "yaw_rad": 0.33954326246303934,
+          "opening_m": 0.11040291039829306,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7104666183258315,
+            0.6831299022218779,
+            0.11339795087493876,
+            0.1253460237596301
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:8:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.33238616585731506,
+            -0.9422540664672852,
+            0.04094886779785156
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04419482610611633,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9245683550834656,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04819482610611633,
+              "centre_offset_m": -0.02510404214608836,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.023177266120910645,
+                -0.9428585767745972,
+                0.33238616585731506,
+                -0.23323512077331543
+              ],
+              [
+                0.035243842750787735,
+                -0.33303940296173096,
+                -0.9422540664672852,
+                0.05852077901363373
+              ],
+              [
+                0.9991099834442139,
+                -0.010124326683580875,
+                0.04094886779785156,
+                0.8026733994483948
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.24542221426963817,
+            -0.06265933811664572,
+            0.8110739529132843
+          ],
+          "yaw_rad": 0.8505604883677095,
+          "opening_m": 0.12200201245749151,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6586693095055535,
+            0.629233007209746,
+            0.28377558838187467,
+            0.29948619132069776
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:9:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7507216930389404,
+            -0.6589391827583313,
+            0.04707449674606323
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04567424269501029,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9188779592514038,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.049674242695010286,
+              "centre_offset_m": -0.03016388488124061,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.03740274906158447,
+                -0.6595588326454163,
+                0.7507216930389404,
+                -0.3204943835735321
+              ],
+              [
+                0.02874770388007164,
+                -0.7516466379165649,
+                -0.6589391827583313,
+                0.003234580159187317
+              ],
+              [
+                0.9988867044448853,
+                -0.0030646915547549725,
+                0.04707449674606323,
+                0.806366503238678
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.24542221426963817,
+            -0.06265933811664572,
+            0.8110739529132843
+          ],
+          "yaw_rad": 0.8505604883677095,
+          "opening_m": 0.12200201245749151,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6586693095055535,
+            0.629233007209746,
+            0.28377558838187467,
+            0.29948619132069776
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:9:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.7507216930389404,
+            -0.6589391827583313,
+            0.04707449674606323
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04567424269501029,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.9188779592514038,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.049674242695010286,
+              "centre_offset_m": -0.03016388488124061,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.03740274906158447,
+                -0.6595588326454163,
+                0.7507216930389404,
+                -0.3204943835735321
+              ],
+              [
+                0.02874770388007164,
+                -0.7516466379165649,
+                -0.6589391827583313,
+                0.003234580159187317
+              ],
+              [
+                0.9988867044448853,
+                -0.0030646915547549725,
+                0.04707449674606323,
+                0.806366503238678
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.22921088337898265,
+            -0.08389904499053964,
+            0.8006219148635865
+          ],
+          "yaw_rad": 2.4387045478492917,
+          "opening_m": 0.09844847015354882,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.24230290231971055,
+            0.24461864389885962,
+            0.6524010940139432,
+            0.6751472692042366
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:10:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.6464645266532898,
+            0.7623899579048157,
+            0.029069066047668457
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04426586210921871,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8910588622093201,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04826586210921871,
+              "centre_offset_m": -0.019091304022165054,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.008001327514648438,
+                0.762902021408081,
+                0.6464645266532898,
+                -0.2938573360443115
+              ],
+              [
+                -0.03132423758506775,
+                -0.6463592052459717,
+                0.7623899579048157,
+                -0.16013804078102112
+              ],
+              [
+                0.999477207660675,
+                -0.014149844646453857,
+                0.029069066047668457,
+                0.7977150082588196
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.22921088337898265,
+            -0.08389904499053964,
+            0.8006219148635865
+          ],
+          "yaw_rad": 2.4387045478492917,
+          "opening_m": 0.09844847015354882,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.24230290231971055,
+            0.24461864389885962,
+            0.6524010940139432,
+            0.6751472692042366
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:10:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            0.6464645266532898,
+            0.7623899579048157,
+            0.029069066047668457
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04426586210921871,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8910588622093201,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04826586210921871,
+              "centre_offset_m": -0.019091304022165054,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.008001327514648438,
+                0.762902021408081,
+                0.6464645266532898,
+                -0.2938573360443115
+              ],
+              [
+                -0.03132423758506775,
+                -0.6463592052459717,
+                0.7623899579048157,
+                -0.16013804078102112
+              ],
+              [
+                0.999477207660675,
+                -0.014149844646453857,
+                0.029069066047668457,
+                0.7977150082588196
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.17408988177776327,
+            -0.02584940642118444,
+            0.8118811130523682
+          ],
+          "yaw_rad": -0.695742016710578,
+          "opening_m": 0.11594084910537919,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6643052687795177,
+            0.6651966682550525,
+            -0.24209171251268913,
+            -0.24000730227812814
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:11:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.6409497857093811,
+            -0.7675797939300537,
+            -0.0021899938583374023
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.041357528783732014,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8785625100135803,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04535752878373201,
+              "centre_offset_m": -0.029291660160823588,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.003201007843017578,
+                -0.7675762176513672,
+                -0.6409497857093811,
+                -0.10999490320682526
+              ],
+              [
+                -0.00018021464347839355,
+                0.6409534215927124,
+                -0.7675797939300537,
+                0.05090857297182083
+              ],
+              [
+                0.9999949336051941,
+                -0.00234144926071167,
+                -0.0021899938583374023,
+                0.8121001124382019
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.17408988177776327,
+            -0.02584940642118444,
+            0.8118811130523682
+          ],
+          "yaw_rad": -0.695742016710578,
+          "opening_m": 0.11594084910537919,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.6643052687795177,
+            0.6651966682550525,
+            -0.24209171251268913,
+            -0.24000730227812814
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:11:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.6409497857093811,
+            -0.7675797939300537,
+            -0.0021899938583374023
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.041357528783732014,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8785625100135803,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04535752878373201,
+              "centre_offset_m": -0.029291660160823588,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.003201007843017578,
+                -0.7675762176513672,
+                -0.6409497857093811,
+                -0.10999490320682526
+              ],
+              [
+                -0.00018021464347839355,
+                0.6409534215927124,
+                -0.7675797939300537,
+                0.05090857297182083
+              ],
+              [
+                0.9999949336051941,
+                -0.00234144926071167,
+                -0.0021899938583374023,
+                0.8121001124382019
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.1951359689235687,
+            -0.04309102743864046,
+            0.8113150954246521
+          ],
+          "yaw_rad": -0.20969377607708165,
+          "opening_m": 0.11683408485231127,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7028297551825757,
+            0.7035421293389437,
+            -0.08143121027572353,
+            -0.0665414567638626
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:12:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.20809400081634521,
+            -0.9781036376953125,
+            -0.0032051801681518555
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.0433842531598017,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8745715618133545,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.047384253159801694,
+              "centre_offset_m": -0.02872491584625478,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.021045923233032227,
+                -0.977882444858551,
+                -0.20809400081634521,
+                -0.1743265688419342
+              ],
+              [
+                0.0012014508247375488,
+                0.20811522006988525,
+                -0.9781036376953125,
+                0.054719336330890656
+              ],
+              [
+                0.9997777938842773,
+                -0.020835131406784058,
+                -0.0032051801681518555,
+                0.8116356134414673
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.1951359689235687,
+            -0.04309102743864046,
+            0.8113150954246521
+          ],
+          "yaw_rad": -0.20969377607708165,
+          "opening_m": 0.11683408485231127,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.7028297551825757,
+            0.7035421293389437,
+            -0.08143121027572353,
+            -0.0665414567638626
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:12:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.20809400081634521,
+            -0.9781036376953125,
+            -0.0032051801681518555
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.0433842531598017,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8745715618133545,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.047384253159801694,
+              "centre_offset_m": -0.02872491584625478,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.021045923233032227,
+                -0.977882444858551,
+                -0.20809400081634521,
+                -0.1743265688419342
+              ],
+              [
+                0.0012014508247375488,
+                0.20811522006988525,
+                -0.9781036376953125,
+                0.054719336330890656
+              ],
+              [
+                0.9997777938842773,
+                -0.020835131406784058,
+                -0.0032051801681518555,
+                0.8116356134414673
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.16742884814739215,
+            -0.04376419335603711,
+            0.8106001794338227
+          ],
+          "yaw_rad": -1.2590384442114795,
+          "opening_m": 0.117869722693516,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5806542709949072,
+            0.5623093670650197,
+            -0.41573914658106503,
+            -0.4169049715299132
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:13:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.951660692691803,
+            -0.30636724829673767,
+            0.0219382643699646
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.043950298141226765,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8651506304740906,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04795029814122677,
+              "centre_offset_m": -0.028959712276144613,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.016607284545898438,
+                -0.3067024350166321,
+                -0.951660692691803,
+                -0.07226277887821198
+              ],
+              [
+                0.019996853545308113,
+                0.9517033100128174,
+                -0.30636724829673767,
+                -0.013127468526363373
+              ],
+              [
+                0.9996622204780579,
+                -0.013942273333668709,
+                0.0219382643699646,
+                0.8084063529968262
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.16742884814739215,
+            -0.04376419335603711,
+            0.8106001794338227
+          ],
+          "yaw_rad": -1.2590384442114795,
+          "opening_m": 0.117869722693516,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5806542709949072,
+            0.5623093670650197,
+            -0.41573914658106503,
+            -0.4169049715299132
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:13:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.951660692691803,
+            -0.30636724829673767,
+            0.0219382643699646
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.043950298141226765,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8651506304740906,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04795029814122677,
+              "centre_offset_m": -0.028959712276144613,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.016607284545898438,
+                -0.3067024350166321,
+                -0.951660692691803,
+                -0.07226277887821198
+              ],
+              [
+                0.019996853545308113,
+                0.9517033100128174,
+                -0.30636724829673767,
+                -0.013127468526363373
+              ],
+              [
+                0.9996622204780579,
+                -0.013942273333668709,
+                0.0219382643699646,
+                0.8084063529968262
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.19086044728755946,
+            -0.08665587007999433,
+            0.7969779729843139
+          ],
+          "yaw_rad": -2.7980063401680035,
+          "opening_m": 0.10037067538521496,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.10762112508636781,
+            0.13542524980663517,
+            -0.6632445606828,
+            -0.7281375885604549
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:14:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.3399747312068939,
+            0.9367173910140991,
+            0.08353328704833984
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.05082571239082896,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8605866432189941,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.054825712390828965,
+              "centre_offset_m": -0.01677248149719299,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.02291417121887207,
+                0.9401553869247437,
+                -0.3399747312068939,
+                -0.15686297416687012
+              ],
+              [
+                -0.09704872965812683,
+                0.33636605739593506,
+                0.9367173910140991,
+                -0.1803276091814041
+              ],
+              [
+                0.9950158596038818,
+                0.0544581413269043,
+                0.08353328704833984,
+                0.78862464427948
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.19086044728755946,
+            -0.08665587007999433,
+            0.7969779729843139
+          ],
+          "yaw_rad": -2.7980063401680035,
+          "opening_m": 0.10037067538521496,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.10762112508636781,
+            0.13542524980663517,
+            -0.6632445606828,
+            -0.7281375885604549
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:14:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.3399747312068939,
+            0.9367173910140991,
+            0.08353328704833984
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.05082571239082896,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8605866432189941,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.054825712390828965,
+              "centre_offset_m": -0.01677248149719299,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.02291417121887207,
+                0.9401553869247437,
+                -0.3399747312068939,
+                -0.15686297416687012
+              ],
+              [
+                -0.09704872965812683,
+                0.33636605739593506,
+                0.9367173910140991,
+                -0.1803276091814041
+              ],
+              [
+                0.9950158596038818,
+                0.0544581413269043,
+                0.08353328704833984,
+                0.78862464427948
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.1717050790786742,
+            -0.03408038616180417,
+            0.814657574892044
+          ],
+          "yaw_rad": -1.2470673106472772,
+          "opening_m": 0.12486326495962138,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5788537569964127,
+            0.569191181848164,
+            -0.40732238654799346,
+            -0.41837566843003043
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:15:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9478316903114319,
+            -0.31812936067581177,
+            0.020219743251800537
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.043286084292013555,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8597809672355652,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04728608429201355,
+              "centre_offset_m": -0.032788590333803914,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.02066802978515625,
+                -0.31810054183006287,
+                -0.9478316903114319,
+                -0.07692191004753113
+              ],
+              [
+                0.001966416835784912,
+                0.9480452537536621,
+                -0.31812936067581177,
+                -0.0022674500942230225
+              ],
+              [
+                0.999784529209137,
+                0.004711315035820007,
+                0.020219743251800537,
+                0.812635600566864
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.1717050790786742,
+            -0.03408038616180417,
+            0.814657574892044
+          ],
+          "yaw_rad": -1.2470673106472772,
+          "opening_m": 0.12486326495962138,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5788537569964127,
+            0.569191181848164,
+            -0.40732238654799346,
+            -0.41837566843003043
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:15:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9478316903114319,
+            -0.31812936067581177,
+            0.020219743251800537
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.043286084292013555,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8597809672355652,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04728608429201355,
+              "centre_offset_m": -0.032788590333803914,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.02066802978515625,
+                -0.31810054183006287,
+                -0.9478316903114319,
+                -0.07692191004753113
+              ],
+              [
+                0.001966416835784912,
+                0.9480452537536621,
+                -0.31812936067581177,
+                -0.0022674500942230225
+              ],
+              [
+                0.999784529209137,
+                0.004711315035820007,
+                0.020219743251800537,
+                0.812635600566864
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.17379907518625248,
+            -0.042101093381643265,
+            0.8139882743358612
+          ],
+          "yaw_rad": -1.2482453755251186,
+          "opening_m": 0.12454663826442113,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5801303746641762,
+            0.5673965057125561,
+            -0.4057008841942973,
+            -0.4206147242562359
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:16:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9480294585227966,
+            -0.317040354013443,
+            0.026935994625091553
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04405849575381342,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8568074107170105,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04805849575381342,
+              "centre_offset_m": -0.03224407125530385,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.027636229991912842,
+                -0.3169800937175751,
+                -0.9480294585227966,
+                -0.07899612933397293
+              ],
+              [
+                0.002288907766342163,
+                0.9484092593193054,
+                -0.317040354013443,
+                -0.010397057980298996
+              ],
+              [
+                0.9996153712272644,
+                0.006591826677322388,
+                0.026935994625091553,
+                0.811294674873352
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.17379907518625248,
+            -0.042101093381643265,
+            0.8139882743358612
+          ],
+          "yaw_rad": -1.2482453755251186,
+          "opening_m": 0.12454663826442113,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5801303746641762,
+            0.5673965057125561,
+            -0.4057008841942973,
+            -0.4206147242562359
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:16:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9480294585227966,
+            -0.317040354013443,
+            0.026935994625091553
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04405849575381342,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8568074107170105,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04805849575381342,
+              "centre_offset_m": -0.03224407125530385,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                0.027636229991912842,
+                -0.3169800937175751,
+                -0.9480294585227966,
+                -0.07899612933397293
+              ],
+              [
+                0.002288907766342163,
+                0.9484092593193054,
+                -0.317040354013443,
+                -0.010397057980298996
+              ],
+              [
+                0.9996153712272644,
+                0.006591826677322388,
+                0.026935994625091553,
+                0.811294674873352
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.1704239040613173,
+            -0.037669971585273763,
+            0.8060217440128327
+          ],
+          "yaw_rad": 1.3166248405349243,
+          "opening_m": 0.10557480894015792,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5727402375213565,
+            -0.545521437037037,
+            -0.43960574340453873,
+            0.42558403685144086
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:17:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9678902626037598,
+            0.2507057785987854,
+            0.018306314945220947
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04401716053300052,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8532945513725281,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.048017160533000515,
+              "centre_offset_m": 0.02277882420357869,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.007869482040405273,
+                -0.2512500286102295,
+                -0.9678902626037598,
+                -0.07363487780094147
+              ],
+              [
+                0.04256917163729668,
+                -0.9671268463134766,
+                0.2507057785987854,
+                -0.06274054944515228
+              ],
+              [
+                -0.9990625381469727,
+                -0.039229366928339005,
+                0.018306314945220947,
+                0.8041911125183105
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.1704239040613173,
+            -0.037669971585273763,
+            0.8060217440128327
+          ],
+          "yaw_rad": 1.3166248405349243,
+          "opening_m": 0.10557480894015792,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.5727402375213565,
+            -0.545521437037037,
+            -0.43960574340453873,
+            0.42558403685144086
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:17:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9678902626037598,
+            0.2507057785987854,
+            0.018306314945220947
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04401716053300052,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8532945513725281,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.048017160533000515,
+              "centre_offset_m": 0.02277882420357869,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.007869482040405273,
+                -0.2512500286102295,
+                -0.9678902626037598,
+                -0.07363487780094147
+              ],
+              [
+                0.04256917163729668,
+                -0.9671268463134766,
+                0.2507057785987854,
+                -0.06274054944515228
+              ],
+              [
+                -0.9990625381469727,
+                -0.039229366928339005,
+                0.018306314945220947,
+                0.8041911125183105
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.15709834992885577,
+            -0.05517122596502309,
+            0.8033283948898315
+          ],
+          "yaw_rad": -1.8199579943575208,
+          "opening_m": 0.09928621561882633,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.426701811221148,
+            0.4411842149255547,
+            -0.5589584587470177,
+            -0.5575369890834792
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:18:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9689701795578003,
+            0.24677182734012604,
+            -0.014156103134155273
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04324255857660603,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8471875786781311,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.047242558576606024,
+              "centre_offset_m": -0.020021828521110153,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.017403244972229004,
+                0.2465640902519226,
+                -0.9689701795578003,
+                -0.06020133197307587
+              ],
+              [
+                -0.010981999337673187,
+                0.9690113663673401,
+                0.24677182734012604,
+                -0.07984840869903564
+              ],
+              [
+                0.9997881650924683,
+                0.014935865998268127,
+                -0.014156103134155273,
+                0.8047440052032471
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.15709834992885577,
+            -0.05517122596502309,
+            0.8033283948898315
+          ],
+          "yaw_rad": -1.8199579943575208,
+          "opening_m": 0.09928621561882633,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.426701811221148,
+            0.4411842149255547,
+            -0.5589584587470177,
+            -0.5575369890834792
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:18:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9689701795578003,
+            0.24677182734012604,
+            -0.014156103134155273
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04324255857660603,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8471875786781311,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.047242558576606024,
+              "centre_offset_m": -0.020021828521110153,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.017403244972229004,
+                0.2465640902519226,
+                -0.9689701795578003,
+                -0.06020133197307587
+              ],
+              [
+                -0.010981999337673187,
+                0.9690113663673401,
+                0.24677182734012604,
+                -0.07984840869903564
+              ],
+              [
+                0.9997881650924683,
+                0.014935865998268127,
+                -0.014156103134155273,
+                0.8047440052032471
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_left",
+          "position_m": [
+            -0.16496550142765032,
+            -0.0456281572580338,
+            0.8060396194458008
+          ],
+          "yaw_rad": -1.8088801385036855,
+          "opening_m": 0.10464922699132323,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.42881892908581315,
+            0.4452019921000166,
+            -0.5584539559447091,
+            -0.5532076385748647
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:19:panda_left",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9715295433998108,
+            0.23605990409851074,
+            -0.020151257514953613
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04343081934980636,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8356719613075256,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04743081934980636,
+              "centre_offset_m": -0.022609203820758428,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.022797822952270508,
+                0.2358190268278122,
+                -0.9715295433998108,
+                -0.06781254708766937
+              ],
+              [
+                -0.008487001061439514,
+                0.971701443195343,
+                0.23605990409851074,
+                -0.06923414766788483
+              ],
+              [
+                0.9997040629386902,
+                0.013627037405967712,
+                -0.020151257514953613,
+                0.8080547451972961
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      },
+      {
+        "candidate": {
+          "target_id": "visual_0001",
+          "arm": "panda_right",
+          "position_m": [
+            -0.16496550142765032,
+            -0.0456281572580338,
+            0.8060396194458008
+          ],
+          "yaw_rad": -1.8088801385036855,
+          "opening_m": 0.10464922699132323,
+          "uncertainty_m": 0.003,
+          "orientation_wxyz": [
+            0.42881892908581315,
+            0.4452019921000166,
+            -0.5584539559447091,
+            -0.5532076385748647
+          ],
+          "source": "graspgen",
+          "candidate_id": "6aa2caf4733a457ebc63f658b9eaf94e:19:panda_right",
+          "observation_time_s": 3.1999999999999913,
+          "approach_direction": [
+            -0.9715295433998108,
+            0.23605990409851074,
+            -0.020151257514953613
+          ],
+          "pregrasp_distance_m": 0.18,
+          "retreat_direction": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "closing_width_m": 0.04343081934980636,
+          "opening_source": "current visual cuboid orientation + known size; not a model output",
+          "model_score": 0.8356719613075256,
+          "metadata": {
+            "request_id": "6aa2caf4733a457ebc63f658b9eaf94e",
+            "sequence_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "frame": "workcell",
+            "model": {
+              "gripper_name": "franka_panda",
+              "model_name": "diffusion-discriminator",
+              "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+            },
+            "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+            "opening": {
+              "projected_span_m": 0.04743081934980636,
+              "centre_offset_m": -0.022609203820758428,
+              "visual_uncertainty_m": 0.003,
+              "source": "current visual cuboid orientation + known size; not a model output"
+            },
+            "model_gripper_geometry_equivalent": false,
+            "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+            "T_workcell_from_graspgen_base": [
+              [
+                -0.022797822952270508,
+                0.2358190268278122,
+                -0.9715295433998108,
+                -0.06781254708766937
+              ],
+              [
+                -0.008487001061439514,
+                0.971701443195343,
+                0.23605990409851074,
+                -0.06923414766788483
+              ],
+              [
+                0.9997040629386902,
+                0.013627037405967712,
+                -0.020151257514953613,
+                0.8080547451972961
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "supported_skill": "pose_preflight_only"
+          },
+          "rejection_reasons": [
+            "GRIPPER_SPACE_INSUFFICIENT",
+            "GRASP_OFF_CENTRE"
+          ]
+        },
+        "feasible": false,
+        "reasons": [
+          "GRIPPER_SPACE_INSUFFICIENT",
+          "GRASP_OFF_CENTRE"
+        ],
+        "checked_phases": [],
+        "rejection_phase": null
+      }
+    ]
+  }
+}

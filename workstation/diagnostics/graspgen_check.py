@@ -1,4 +1,4 @@
-"""Snapshot candidate evaluation; deliberately no robot execution or TCP claim."""
+"""Snapshot candidate and full-pose preflight evaluation; no robot execution."""
 from dataclasses import asdict
 from concurrent.futures import ThreadPoolExecutor
 import time
@@ -76,13 +76,31 @@ def check(env,args):
         records=proposal_records(result,target.track_id,{n:f.sequence_id for n,f in packet.cameras.items() if f},calibration)
         runs.append(dict(trial=trial,round_trip_s=result['round_trip_s'],timing=result['timing'],candidates=records))
     from workstation.planning.selection import assess
-    geometry=assess(scene,robot.read_states(),robot.feasibility,robot.home)
+    slot_evidence=[robot.observed_workspace.slot(xy) for xy in env.c['conveyor']['slots_xy']]
+    free=[item['xy'] for item in slot_evidence if item['free']]
+    def full_task(candidate,obj,current_scene):
+        env.app.update()
+        if not free:return dict(reasons=('NO_FREE_SLOT_OBSERVED',),joint_cost=0.,path_clearance_m=0.)
+        slot=min(free,key=lambda xy:np.linalg.norm(np.asarray(candidate.position_m[:2])-xy))
+        return robot.feasibility(candidate,obj,current_scene,slot)
+    geometry=assess(scene,robot.read_states(),full_task,robot.home)
+    model_assessments=[]
+    if args.grasp_backend=='graspgen':
+        if calibration is None:raise RuntimeError('GRASPGEN_ASSETS_REQUIRED_FOR_POSE_PREFLIGHT')
+        from workstation.planning.graspgen_candidates import candidates_from_result
+        candidates=candidates_from_result(result,target,robot.read_states(),calibration,
+            {n:f.sequence_id for n,f in packet.cameras.items() if f})
+        model_assessments=assess(scene,robot.read_states(),full_task,robot.home,
+            candidate_provider=lambda obj,states:[c for c in candidates if c.target_id==obj.track_id])
     report=dict(scope='saved_visual_snapshot_candidates_only',success=all(r['candidates'] for r in runs),
         task_execution=False,TCP_calibration_verified=calibration is not None,online_freshness_verified=False,
         gripper_geometry_equivalence_verified=bool(calibration and calibration.get('gripper_geometry_equivalence_verified')),
         trials_are_independent=False,source_points=len(clouds.target_m),model_runs=runs,
         geometry_candidates=[asdict(x) for x in geometry],
-        comparison_scope='same snapshot; geometry approach checks only; model IK, opening and full path not checked')
+        selected_backend=args.grasp_backend,model_candidate_assessments=[asdict(x) for x in model_assessments],
+        slot_evidence=slot_evidence,
+        comparison_scope='same snapshot and destination availability; sampled project-robot full-task preflight; no execution',
+        online_candidate_revalidation_verified=False)
     env._write_json('graspgen_report.json',report)
     show_axes(env,records)
     import omni.ui as ui
