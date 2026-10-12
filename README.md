@@ -377,7 +377,7 @@ powershell -ExecutionPolicy Bypass -File .\launch.ps1 -IsaacRoot D:\Issaccc -Mod
 
 配置统一位于 [config/scene.json](config/scene.json)。当前纸盒为 `100×55×45 mm / 80 g` 刚体，米制 Z-up，四元数 `wxyz`；相机 OpenCV 轴为 +X 右、+Y 下、+Z 前，深度是 `distance_to_image_plane` 光轴深度。反投影为 `p_camera = depth_m × inv(K) × [u,v,1]`，只使用有限正深度。
 
-`conveyor.slots_xy` 定义三格目标中心，`verification` 定义误差与稳定阈值；目标是无可渲染几何的 Xform，不是图像中的格框。配置变化在下次运行生效，本次参数写入 `config_used.json`。胶带朝向当前按 180° 对称轴判定。
+`conveyor.slots_xy` 定义三格目标中心，`verification` 定义误差与稳定阈值；目标是无可渲染几何的 Xform，不是图像中的格框。配置变化在下次运行生效，本次参数写入 `config_used.json`。胶带朝向当前按 180° 对称轴判定；放置预检和执行选择较近的 0°/180° 等价方向，几何 yaw 保持连续，模型原始抓姿保持不变。此方向修正的逻辑检查已通过，物理实测进度见交接第 20 节。
 
 输出默认写入根 `outputs/` 的独立目录。先看 `run_status.json`；基线另看 `task_report.json`，诊断看 `sensor_check_report.json`，异常看 `failure.txt`。报告、控制轨迹、标定及 USD 快照默认保留，图像/数组按 `-SaveImages` 显式开启。文件或录像存在不等于成功。单独打开 USD 只能查看快照，不能重新执行 Python 动作。目录整合时清理了旧重复生成物与文档，保留五份历史 JSON，以及本地、Git 忽略的 `evidence/dual_handover.mp4`；本轮另保存 `evidence/policy_observation_v1.json`。旧录像来自两路调试视角，不能代表当前正式三路输入。本轮失败与成功输出均在独立目录保留。
 

@@ -8,7 +8,8 @@ from dataclasses import asdict, replace
 import math
 import numpy as np
 from workstation.perception.rgbd_cartons import CartonEstimator, axis_error
-from workstation.planning.selection import assess, select_skill, upright_grasp_position
+from workstation.planning.selection import (assess, select_skill, upright_grasp_position,
+    nearest_aligned_yaw, nearest_upright_slot_rotation)
 from workstation.skills.reobserve import Reobserve, ActiveReobserve, GuidedReobserve
 from workstation.perception.held_surface import HeldSurfaceTracker,CuboidHoldingTracker
 from workstation.perception.scene_estimate import PoseHypothesis
@@ -405,20 +406,26 @@ class VisualPickPlace:
             self.event('TRANSFER')
             target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.robot.place_tcp_clearance_m])
             place_attitude=None
+            place_yaw=nearest_aligned_yaw(yaw) if not model else 0.
             if model:
-                if self.holding_measurement() is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
+                measurement=self.holding_measurement()
+                if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
                 relation=self.robot.held_visual_geometry
-                place_rotation=np.asarray(relation['relative_rotation']).T
+                desired_body=nearest_upright_slot_rotation(measurement['rotation'])
+                place_rotation=desired_body@np.asarray(relation['relative_rotation']).T
                 from workstation.planning.selection import UPRIGHT_RELEASE_GAP_M
                 body_target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+UPRIGHT_RELEASE_GAP_M])
                 target=body_target-place_rotation@relation['offset']
                 place_attitude=quaternion_from_matrix(place_rotation)
                 result['model_placement']=dict(target_tcp_m=target.tolist(),orientation_wxyz=place_attitude.tolist(),
+                    desired_body_rotation=desired_body.tolist(),axis_symmetry_rad=math.pi,
                     visual_offset_tcp_m=relation['offset'].tolist(),relative_rotation=relation['relative_rotation'].tolist(),
                     observation_time_s=self.scene.observation_time_s)
-            self.move(target+[0,0,.18],yaw,0.,orientation=place_attitude)
+            else:
+                result['geometry_placement']=dict(yaw_rad=place_yaw,from_yaw_rad=yaw,axis_symmetry_rad=math.pi)
+            self.move(target+[0,0,.18],0. if model else yaw,place_yaw,orientation=place_attitude)
             self.observe('transferred')
-            self.event('LOWER'); self.move(target,0.,0.,.05,True,orientation=place_attitude)
+            self.event('LOWER'); self.move(target,place_yaw,place_yaw,.05,True,orientation=place_attitude)
             self.observe('lowered')
             if self.holding_measurement() is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
             tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
@@ -455,7 +462,7 @@ class VisualPickPlace:
             # proxy for BOTH robot collision and depth-obstacle accounting.
             self.scene=collision_scene
             self.robot.set_observation(self.packet,self.scene,self.priors)
-            self.event('RETREAT'); self.move(target+[0,0,.18],0.,0.,.06,True,collision_scene,orientation=place_attitude)
+            self.event('RETREAT'); self.move(target+[0,0,.18],place_yaw,place_yaw,.06,True,collision_scene,orientation=place_attitude)
             self.event('HOME')
             self.robot.execute_joint(self.arm,self.robot.home,self.scene,self.candidate.target_id)
             for observer in sorted(self.observer_arms):

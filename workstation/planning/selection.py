@@ -19,6 +19,29 @@ def upright_grasp_position(position_m):
     return np.asarray(position_m) + [0., 0., UPRIGHT_TCP_HEIGHT_M]
 
 
+def nearest_aligned_yaw(yaw_rad):
+    """Nearest unwrapped multiple of pi for the task's undirected box axis."""
+    if not math.isfinite(yaw_rad):
+        raise ValueError('Placement yaw must be finite')
+    return math.pi * math.floor(yaw_rad / math.pi + .5)
+
+
+def nearest_upright_slot_rotation(body_rotation):
+    """Choose the closer of the TWO accepted upright slot orientations.
+
+    This selects a placement goal only. It does not alter a grasp, resolve
+    visual top/bottom ambiguity, or authorize a path without its checks.
+    Rotation distance is minimized by maximizing the relative trace.
+    """
+    rotation = np.asarray(body_rotation, float)
+    if (rotation.shape != (3, 3) or not np.isfinite(rotation).all() or
+            not np.allclose(rotation.T @ rotation, np.eye(3), atol=1e-6) or
+            not np.isclose(np.linalg.det(rotation), 1., atol=1e-6)):
+        raise ValueError('Placement requires a proper measured body rotation')
+    goals = (np.eye(3), np.diag([-1., -1., 1.]))
+    return max(goals, key=lambda goal: float(np.trace(rotation.T @ goal)))
+
+
 @dataclass(frozen=True)
 class GraspCandidate:
     target_id: str

@@ -4,7 +4,8 @@ import math
 import numpy as np
 from workstation.observations.observation_packet import PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
 from workstation.planning.collision import AABB, check_spheres, station_obstacles, scene_obstacles, sphere_box_clearance
-from workstation.planning.selection import UPRIGHT_TCP_HEIGHT_M, UPRIGHT_PLACE_TCP_CLEARANCE_M
+from workstation.planning.selection import (UPRIGHT_TCP_HEIGHT_M, UPRIGHT_PLACE_TCP_CLEARANCE_M,
+    nearest_aligned_yaw, nearest_upright_slot_rotation)
 
 
 def smooth(t): return t*t*t*(10.+t*(-15.+6.*t))
@@ -494,12 +495,13 @@ class RobotMotion:
                 place=np.array([*slot_xy,self.place_support_z+obj.size_m[2]/2+self.place_tcp_clearance_m])
                 previous=self.targets[candidate.arm].copy()
                 current=descend[-1]; position=np.asarray(candidate.position_m); yaw=candidate.yaw_rad
+                place_yaw=nearest_aligned_yaw(yaw)
                 try:
                     for phase,destination,new_yaw,held,contact in (
                         ('LIFT',raised,yaw,True,True),
-                        ('TRANSFER',place+[0,0,.18],0.,True,False),
-                        ('LOWER',place,0.,True,True),
-                        ('RETREAT',place+[0,0,.18],0.,False,True)):
+                        ('TRANSFER',place+[0,0,.18],place_yaw,True,False),
+                        ('LOWER',place,place_yaw,True,True),
+                        ('RETREAT',place+[0,0,.18],place_yaw,False,True)):
                         self.targets[candidate.arm][:7]=current
                         path=self.cartesian_knots(candidate.arm,position,destination,yaw,new_yaw,.05,current)
                         released=None
@@ -528,6 +530,7 @@ class RobotMotion:
                         whole_task_check_scope='sampled geometry/collision and currently observed obstacles; future local visibility deferred',
                         pending_observation_phases=['LIFT','TRANSFER','LOWER','RETREAT'] if slot_xy is not None else [],
                         joint_plans=joint_plans,pregrasp_joint_positions_rad=q.tolist(),
+                        placement_yaw_rad=place_yaw if slot_xy is not None else None,
                         pregrasp_hint_used=pregrasp_hint is not None)
         except RuntimeError as exc:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
@@ -574,7 +577,7 @@ class RobotMotion:
             phases.append(phase)
             if slot_xy is not None:
                 self.held_visual_geometry=relation
-                desired_body=np.eye(3)
+                desired_body=nearest_upright_slot_rotation(body_rotation)
                 place_rotation=desired_body@relation['relative_rotation'].T
                 place_orientation=quaternion_from_matrix(place_rotation)
                 place_body=np.array([*slot_xy,self.place_support_z+obj.size_m[2]/2+UPRIGHT_RELEASE_GAP_M])
@@ -613,6 +616,7 @@ class RobotMotion:
                 whole_task_check_scope='full model SE(3); sampled project-robot collisions; future local visibility deferred',
                 pending_observation_phases=['LIFT','TRANSFER','LOWER','OPEN','RETREAT'] if slot_xy is not None else [],
                 joint_plans=joint_plans,pregrasp_joint_positions_rad=q.tolist(),
+                placement_body_rotation=desired_body.tolist() if slot_xy is not None else None,
                 nominal_visual_payload_relation={k:(v.tolist() if isinstance(v,np.ndarray) else v) for k,v in relation.items()},
                 candidate_execution_authorized=False)
         except RuntimeError as exc:

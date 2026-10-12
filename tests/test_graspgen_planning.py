@@ -59,6 +59,8 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertTrue(all('STALE_CANDIDATE' in r.reasons for r in rows))
 
     def test_pose_preflight_uses_original_attitude_and_restores_holding_state(self):
+        self.obj=replace(self.obj,axis_yaw_rad=np.deg2rad(179.))
+        self.pose[:3,:3]=upright_body_rotation(self.obj)@np.diag([1.,-1.,-1.])
         item=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
         driver=RobotMotion.__new__(RobotMotion)
         driver.read_states=lambda:self.states;driver.home=np.zeros(9);driver.place_support_z=.76
@@ -81,6 +83,13 @@ class GraspGenPlanningTests(unittest.TestCase):
         np.testing.assert_allclose(calls[0][0],np.asarray(item.position_m)-np.asarray(item.approach_direction)*.18)
         self.assertFalse(result['candidate_execution_authorized'])
         self.assertIn('NOT a holding measurement',result['nominal_visual_payload_relation']['source'])
+        expected=np.diag([-1.,-1.,1.])
+        np.testing.assert_array_equal(result['placement_body_rotation'],expected)
+        relation=np.asarray(result['nominal_visual_payload_relation']['relative_rotation'])
+        for _,_,call in calls[2:]:
+            actual=pose_matrix([0.,0.,0.],call['orientation1'])[:3,:3]
+            np.testing.assert_allclose(actual@relation,expected,atol=1e-12)
+        np.testing.assert_allclose(pose_matrix(item.position_m,item.orientation_wxyz),self.pose,atol=1e-12)
 
     def test_preflight_collision_is_not_converted_into_success(self):
         item=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]

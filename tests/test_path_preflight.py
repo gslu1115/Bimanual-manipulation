@@ -48,6 +48,20 @@ class PathPreflightTests(unittest.TestCase):
         np.testing.assert_array_equal(checks[0][0],np.zeros(7))
         self.assertTrue(result['pregrasp_hint_used'])
 
+    def test_axis_equivalent_is_used_through_transfer_lower_and_retreat(self):
+        robot=self.driver();robot.solve=lambda *args:np.zeros(7)
+        calls=[]
+        def cartesian(*args):
+            calls.append((args[3],args[4]));return [np.zeros(7),np.ones(7)*.01]
+        robot.cartesian_knots=cartesian;robot.validate_path=lambda *args,**kw:.05
+        yaw=np.deg2rad(179.)
+        candidate=SimpleNamespace(arm='left',position_m=(0.,0.,.7825),yaw_rad=yaw,target_id='observed')
+        result=robot.feasibility(candidate,SimpleNamespace(size_m=(.1,.055,.045),uncertainty_m=.003),
+                                 None,(.2,-.4))
+        self.assertFalse(result['reasons'])
+        self.assertAlmostEqual(result['placement_yaw_rad'],np.pi)
+        np.testing.assert_allclose(calls,[(yaw,yaw),(yaw,yaw),(yaw,np.pi),(np.pi,np.pi),(np.pi,np.pi)])
+
     def test_held_carton_uses_actual_swept_rotation(self):
         robot=self.driver();a=np.pi/4;c,s=np.cos(a),np.sin(a)
         robot.fk=lambda *args:(np.array([0.,0.,1.]),np.array([[c,-s,0],[s,c,0],[0,0,-1.]]))

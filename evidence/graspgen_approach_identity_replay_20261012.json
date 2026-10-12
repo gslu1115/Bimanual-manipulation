@@ -1,0 +1,429 @@
+{
+  "scope": "saved current RGB-D geometry only; no commands or simulator truth",
+  "cases": [
+    {
+      "seed": 412,
+      "time_s": 16.5749999999997,
+      "failure": "STATIC_PATH_BLOCKED:visual_0002",
+      "failure_path_check": {
+        "rejection": "STATIC_PATH_BLOCKED:visual_0002",
+        "arm": "panda_left",
+        "other_arm": "panda_right",
+        "clearance_m": -0.007022674130635563,
+        "candidate_joint_positions_rad": [
+          0.11235629802394406,
+          0.4620067829943633,
+          0.1767713767158626,
+          -2.6538483184247257,
+          -1.1348763295716955,
+          3.0281226488521216,
+          -0.39891041620545153
+        ],
+        "other_arm_joint_positions_rad": [
+          1.666848334025417e-06,
+          -0.5980173349380493,
+          2.8679701813416614e-07,
+          -2.4021267890930176,
+          4.133171955800208e-07,
+          1.799908995628357,
+          0.7853978872299194
+        ],
+        "source": "robot encoder FK, official collision spheres and fixed/visual obstacles"
+      },
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "position_m": [
+            -0.19263719022274017,
+            -0.05938304937444627,
+            0.7824997475401578
+          ],
+          "axis_yaw_rad": 1.018724876352147,
+          "mask_refs": [
+            "left_wrist_camera/573/component_1"
+          ],
+          "failures": [
+            "PARTIAL_OR_MERGED_GEOMETRY"
+          ],
+          "quality": {
+            "footprint_coverage": 0.8931792783769814,
+            "footprint_error_m": 0.009976884153805113,
+            "plane_residual_m": 0.00019933319823699222,
+            "surface_tilt_deg": 0.05568993595105678,
+            "observed_length_m": 0.09002311584619489,
+            "observed_width_m": 0.05499523179965959,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.028709967174693984,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8049997475401578,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.08922030003840214,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0
+          }
+        },
+        {
+          "track_id": "visual_0002",
+          "position_m": [
+            -0.20483055710792542,
+            -0.07949433475732803,
+            0.7550000790383851
+          ],
+          "axis_yaw_rad": 2.5972572626385944,
+          "mask_refs": [
+            "scene_camera/573/component_1"
+          ],
+          "failures": [
+            "INCOMPATIBLE_SIZE_OR_SUPPORT"
+          ],
+          "quality": {
+            "footprint_coverage": 0.8743516597451183,
+            "footprint_error_m": 0.0019861590826939154,
+            "plane_residual_m": 0.00030573387746785026,
+            "surface_tilt_deg": 0.23951080438070954,
+            "observed_length_m": 0.055001651745756816,
+            "observed_width_m": 0.04301384091730608,
+            "observed_height_m": 0.1,
+            "geometric_length_m": 0.055,
+            "geometric_width_m": 0.045,
+            "observed_vertical_span_m": 0.0418872096729449,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8050000790383851,
+            "tape_observed": 0.0,
+            "tape_visible_span_m": 0.0,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "boundary_refined_pixels": 0.0
+          }
+        }
+      ],
+      "hint_replays": [
+        {
+          "prefix": "before_model_pregrasp",
+          "hint_time_s": 3.4249999999999905,
+          "hint_failures": [],
+          "fit": {
+            "status": "GEOMETRY_OBSERVED",
+            "time_s": 16.5749999999997,
+            "position_m": [
+              -0.18992290848646326,
+              -0.05497919883076439,
+              0.7834545974034038
+            ],
+            "orientation_wxyz": [
+              0.8729643286402242,
+              2.7222271270782748e-05,
+              -2.1839748651109048e-05,
+              0.4877840502760377
+            ],
+            "rotation": [
+              [
+                0.5241334396386587,
+                -0.8516361531303164,
+                -1.1573463561236185e-05
+              ],
+              [
+                0.8516361507522061,
+                0.5241334391105038,
+                -6.8834305635915e-05
+              ],
+              [
+                6.468782251393795e-05,
+                2.6221981419928736e-05,
+                0.9999999975639466
+              ]
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mask_refs": [
+              "scene_camera/573/component_1",
+              "left_wrist_camera/573/component_1"
+            ],
+            "surface_inlier_ratio": 1.0,
+            "plane_residual_m": 7.92921762934185e-05,
+            "uncertainty_m": 0.004803407311440692,
+            "observed_face_axes": [
+              0,
+              2
+            ],
+            "coordinate_constraints": [
+              {
+                "axis": 0,
+                "source": "visible_signed_plane",
+                "sign": -1.0,
+                "points": 1026
+              },
+              {
+                "axis": 1,
+                "source": "complete_observed_extent",
+                "span_m": 0.05422992159571813,
+                "aggregation": "union of per-view validated planar quantiles",
+                "mask_refs": [
+                  "left_wrist_camera/573/component_1",
+                  "scene_camera/573/component_1"
+                ]
+              },
+              {
+                "axis": 2,
+                "source": "visible_signed_plane",
+                "sign": 1.0,
+                "points": 52471
+              },
+              {
+                "axis": 2,
+                "source": "complete_observed_extent",
+                "span_m": 0.04171035408229229,
+                "aggregation": "union of per-view validated planar quantiles",
+                "mask_refs": [
+                  "left_wrist_camera/573/component_1",
+                  "scene_camera/573/component_1"
+                ]
+              }
+            ],
+            "translation_difference_from_hint_m": 0.0009561082985998279,
+            "orientation_difference_from_hint_deg": 0.02186363877289463,
+            "geometric_pose_measured": true,
+            "semantic_pose_unique": false,
+            "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes"
+          }
+        },
+        {
+          "prefix": "pregrasp",
+          "hint_time_s": 11.091666666666677,
+          "hint_failures": [],
+          "fit": {
+            "status": "GEOMETRY_OBSERVED",
+            "time_s": 16.5749999999997,
+            "position_m": [
+              -0.18992290848646326,
+              -0.05497919883076439,
+              0.7834545974034038
+            ],
+            "orientation_wxyz": [
+              0.8729643286402242,
+              2.7222271270782748e-05,
+              -2.1839748651109048e-05,
+              0.4877840502760377
+            ],
+            "rotation": [
+              [
+                0.5241334396386587,
+                -0.8516361531303164,
+                -1.1573463561236185e-05
+              ],
+              [
+                0.8516361507522061,
+                0.5241334391105038,
+                -6.8834305635915e-05
+              ],
+              [
+                6.468782251393795e-05,
+                2.6221981419928736e-05,
+                0.9999999975639466
+              ]
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mask_refs": [
+              "scene_camera/573/component_1",
+              "left_wrist_camera/573/component_1"
+            ],
+            "surface_inlier_ratio": 1.0,
+            "plane_residual_m": 7.92921762934185e-05,
+            "uncertainty_m": 0.004803407311440692,
+            "observed_face_axes": [
+              0,
+              2
+            ],
+            "coordinate_constraints": [
+              {
+                "axis": 0,
+                "source": "visible_signed_plane",
+                "sign": -1.0,
+                "points": 1026
+              },
+              {
+                "axis": 1,
+                "source": "complete_observed_extent",
+                "span_m": 0.05422992159571813,
+                "aggregation": "union of per-view validated planar quantiles",
+                "mask_refs": [
+                  "left_wrist_camera/573/component_1",
+                  "scene_camera/573/component_1"
+                ]
+              },
+              {
+                "axis": 2,
+                "source": "visible_signed_plane",
+                "sign": 1.0,
+                "points": 52471
+              },
+              {
+                "axis": 2,
+                "source": "complete_observed_extent",
+                "span_m": 0.04171035408229229,
+                "aggregation": "union of per-view validated planar quantiles",
+                "mask_refs": [
+                  "left_wrist_camera/573/component_1",
+                  "scene_camera/573/component_1"
+                ]
+              }
+            ],
+            "translation_difference_from_hint_m": 0.0009594260600393032,
+            "orientation_difference_from_hint_deg": 0.015122898496300071,
+            "geometric_pose_measured": true,
+            "semantic_pose_unique": false,
+            "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 413,
+      "time_s": 12.899999999999908,
+      "failure": "STATIC_PATH_BLOCKED:visual_0002",
+      "failure_path_check": {
+        "rejection": "STATIC_PATH_BLOCKED:visual_0002",
+        "arm": "panda_left",
+        "other_arm": "panda_right",
+        "clearance_m": -0.01269209192792765,
+        "candidate_joint_positions_rad": [
+          0.08120813242425184,
+          0.4550383408621107,
+          0.3410458334450659,
+          -2.8252831114052315,
+          0.3681308927537642,
+          3.291837676061013,
+          2.1899102597012567
+        ],
+        "other_arm_joint_positions_rad": [
+          1.6668485613990924e-06,
+          -0.5980173349380493,
+          2.867976434117736e-07,
+          -2.4021267890930176,
+          4.133022457608604e-07,
+          1.799907922744751,
+          0.7853978872299194
+        ],
+        "source": "robot encoder FK, official collision spheres and fixed/visual obstacles"
+      },
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "position_m": [
+            -0.19721902906894684,
+            -0.05116730555891991,
+            0.755000134624211
+          ],
+          "axis_yaw_rad": 1.7660030123443882,
+          "mask_refs": [
+            "scene_camera/420/component_1"
+          ],
+          "failures": [
+            "INCOMPATIBLE_SIZE_OR_SUPPORT"
+          ],
+          "quality": {
+            "footprint_coverage": 1.0,
+            "footprint_error_m": 0.003468742424995286,
+            "plane_residual_m": 0.00029434146203921623,
+            "surface_tilt_deg": 0.20751096915443135,
+            "observed_length_m": 0.05501903174808263,
+            "observed_width_m": 0.048468742424995284,
+            "observed_height_m": 0.1,
+            "geometric_length_m": 0.055,
+            "geometric_width_m": 0.045,
+            "observed_vertical_span_m": 0.04120327598595841,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.805000134624211,
+            "tape_observed": 0.0,
+            "tape_visible_span_m": 0.03273875521365938,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "boundary_refined_pixels": 0.0
+          }
+        },
+        {
+          "track_id": "visual_0002",
+          "position_m": [
+            -0.21741586923599243,
+            -0.05515877902507782,
+            0.7826897653676768
+          ],
+          "axis_yaw_rad": 0.2017326474488983,
+          "mask_refs": [
+            "left_wrist_camera/420/component_1"
+          ],
+          "failures": [
+            "PARTIAL_OR_MERGED_GEOMETRY"
+          ],
+          "quality": {
+            "footprint_coverage": 0.8935401913435048,
+            "footprint_error_m": 0.010384118324731823,
+            "plane_residual_m": 0.00010578257042531828,
+            "surface_tilt_deg": 0.01247351264350681,
+            "observed_length_m": 0.08961588167526818,
+            "observed_width_m": 0.05499774584155913,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.00019002243634480553,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8051897653676767,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.08939911398982794,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0
+          }
+        }
+      ],
+      "hint_replays": [
+        {
+          "prefix": "before_model_pregrasp",
+          "hint_time_s": 3.274999999999991,
+          "hint_failures": [],
+          "fit": {
+            "status": "UNKNOWN",
+            "reason": "ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE",
+            "time_s": 12.899999999999908
+          }
+        },
+        {
+          "prefix": "pregrasp",
+          "hint_time_s": 7.950000000000185,
+          "hint_failures": [],
+          "fit": {
+            "status": "UNKNOWN",
+            "reason": "ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE",
+            "time_s": 12.899999999999908
+          }
+        }
+      ]
+    }
+  ]
+}

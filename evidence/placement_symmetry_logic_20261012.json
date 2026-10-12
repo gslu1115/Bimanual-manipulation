@@ -1,0 +1,21 @@
+{
+  "scope": "nearest 180-degree equivalent upright placement goal; logic checks only",
+  "tests_passed": 400,
+  "runtime": "Isaac Sim 6.1 Python",
+  "command": "python.sh -m unittest discover -s tests",
+  "log": "/home/featurize/work/isaac-support/graspgen/reports/20261012-placement-symmetry/tests.log",
+  "physical_regression": "pending",
+  "changes": [
+    "unwrapped nearest geometry yaw for transfer/lower/retreat",
+    "nearest of two upright body rotations for model preflight and current measured runtime pose",
+    "original model grasp and all existing collision/observation/stability checks retained"
+  ],
+  "source_sha256": {
+    "workstation/planning/selection.py": "151f6985ffa9def570845d34bf06d89f07550cc1750e5b19d35bd317207d95b5",
+    "workstation/simulation/robot_driver.py": "b9e8959ae84a36fcdcf89213c42b30872a07d51ccb4cc9829bebf8c2c9e45430",
+    "workstation/skills/visual_pick_place.py": "66462fa57073e24f669282969a650483913c5fc72e86407d90ddffc4a8b9cc5a",
+    "tests/test_placement_symmetry.py": "e4061e35e3fc422bc9c98307547b8a886960410aa663f763ee250e7ecf4c392e",
+    "tests/test_path_preflight.py": "dc137adb7c8122df58e06e006a826c870efe87f131635167f270ad65a932031d",
+    "tests/test_graspgen_planning.py": "cf68b9de78fa8fd6f3fdca08d93d598675b4e61b163adb1a487bd222a580d677"
+  }
+}
