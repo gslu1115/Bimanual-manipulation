@@ -14,6 +14,10 @@ from workstation.perception.scene_estimate import pose_is_observed
 
 
 def upright_body_rotation(obj):
+    """Body geometry reference; SIDE keeps its unresolved top-direction labels."""
+    if obj.posture=='SIDE' or (obj.visibility=='OBSERVED_CUBOID' and pose_is_observed(obj)):
+        if not obj.hypotheses:raise ValueError('Observed cuboid requires orientation hypotheses')
+        return pose_matrix([0.,0.,0.],obj.hypotheses[0].orientation_wxyz)[:3,:3]
     c,s=np.cos(obj.axis_yaw_rad),np.sin(obj.axis_yaw_rad)
     return np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
 
@@ -57,7 +61,8 @@ def candidates_from_result(result,obj,arms,calibration,sequence_ids):
                 opening_source=evidence['source'],model_score=float(score),
                 metadata=dict(request_id=result['request_id'],sequence_ids=sequence_ids,frame='workcell',
                     source_visual_object=dict(track_id=obj.track_id,time_s=obj.time_s,position_m=obj.position_m,
-                        axis_yaw_rad=obj.axis_yaw_rad,size_m=obj.size_m,posture=obj.posture),
+                        axis_yaw_rad=obj.axis_yaw_rad,size_m=obj.size_m,posture=obj.posture,
+                        body_rotation=upright_body_rotation(obj).tolist()),
                     model=result['metadata'],calibration_sha256=digest,opening=evidence,
                     model_gripper_geometry_equivalent=bool(calibration.get('gripper_geometry_equivalence_verified')),
                     geometry_policy='model proposes only; validate with project robot model, not model mesh',
@@ -66,10 +71,11 @@ def candidates_from_result(result,obj,arms,calibration,sequence_ids):
     return output
 
 
-def revalidate_candidate(candidate,obj,scene,sequence_ids):
+def revalidate_candidate(candidate,obj,scene,sequence_ids,accepted_postures=('UPRIGHT',)):
     """Retain the ORIGINAL world pose only when fresh visual geometry agrees."""
     original=candidate.metadata['source_visual_object']
-    if (obj.track_id!=candidate.target_id or obj.failures or obj.posture!='UPRIGHT' or
+    if (obj.track_id!=candidate.target_id or obj.failures or obj.posture not in accepted_postures or
+            obj.posture!=original['posture'] or
             not pose_is_observed(obj,scene) or obj.valid_depth_ratio<.9 or obj.uncertainty_m>.008):
         raise RuntimeError('MODEL_TARGET_UNCERTAIN')
     age=scene.assembled_time_s-obj.time_s
@@ -78,7 +84,14 @@ def revalidate_candidate(candidate,obj,scene,sequence_ids):
         raise RuntimeError('MODEL_TARGET_STALE')
     delta=float(np.linalg.norm(np.asarray(obj.position_m)-original['position_m']))
     angle=abs((obj.axis_yaw_rad-original['axis_yaw_rad']+np.pi/2)%np.pi-np.pi/2)
+    body_angle=None
+    if 'body_rotation' in original:
+        before=np.asarray(original['body_rotation']);current=upright_body_rotation(obj)
+        signs=((1.,1.,1.),(-1.,-1.,1.)) if obj.posture=='UPRIGHT' else (
+            (1.,1.,1.),(-1.,-1.,1.),(1.,-1.,-1.),(-1.,1.,-1.))
+        body_angle=min(float(np.arccos(np.clip((np.trace(before.T@current@np.diag(s))-1)/2,-1.,1.))) for s in signs)
     if (delta>.002 or angle>np.deg2rad(3) or not np.allclose(obj.size_m,original['size_m'],atol=1e-6,rtol=0) or
+            (body_angle is not None and body_angle>np.deg2rad(3)) or
             obj.velocity_m_s is None or np.linalg.norm(obj.velocity_m_s)>.015):
         raise RuntimeError('MODEL_TARGET_CHANGED')
     pose=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
@@ -87,7 +100,8 @@ def revalidate_candidate(candidate,obj,scene,sequence_ids):
     return replace(candidate,validated_time_s=obj.time_s,opening_m=width,closing_width_m=closing,
         uncertainty_m=obj.uncertainty_m,metadata={**candidate.metadata,
             'revalidation':dict(time_s=obj.time_s,sequence_ids=sequence_ids,position_change_m=delta,
-                axis_change_rad=float(angle),original_pose_retained=True,opening=evidence)})
+                axis_change_rad=float(angle),body_rotation_change_rad=body_angle,
+                original_pose_retained=True,opening=evidence)})
 
 
 def finger_preload_target(measured_positions,closing_width_m,preload_m=.004):

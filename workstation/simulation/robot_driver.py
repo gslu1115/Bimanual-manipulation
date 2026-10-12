@@ -5,7 +5,7 @@ import numpy as np
 from workstation.observations.observation_packet import PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
 from workstation.planning.collision import AABB, check_spheres, station_obstacles, scene_obstacles, sphere_box_clearance
 from workstation.planning.selection import (UPRIGHT_TCP_HEIGHT_M, UPRIGHT_PLACE_TCP_CLEARANCE_M,
-    nearest_aligned_yaw, nearest_upright_slot_rotation)
+    nearest_aligned_yaw, nearest_upright_slot_rotation, UPRIGHT_RELEASE_GAP_M)
 
 
 def smooth(t): return t*t*t*(10.+t*(-15.+6.*t))
@@ -472,9 +472,9 @@ class RobotMotion:
             knots.append(q)
         return knots
 
-    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None):
+    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M):
         if getattr(candidate,'orientation_wxyz',None) is not None:
-            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint)
+            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m)
         start=self.read_states()[candidate.arm].joint_positions_rad
         raised=np.asarray(candidate.position_m)+[0,0,.18]
         phase='PREGRASP'; self.last_plan_check={}
@@ -536,11 +536,12 @@ class RobotMotion:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
                         rejection_phase=phase,rejection_details=self.last_plan_check.copy())
 
-    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None):
+    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M):
         """Forecast complete model-pose paths; no commands or holding claims."""
         from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
         from workstation.planning.graspgen_candidates import upright_body_rotation
-        from workstation.planning.selection import UPRIGHT_RELEASE_GAP_M
+        if not np.isfinite(release_gap_m) or not 0<release_gap_m<=.020:
+            return dict(reasons=('INVALID_PLACEMENT_GAP',),joint_cost=0.,path_clearance_m=0.)
         arm=candidate.arm;start=self.read_states()[arm].joint_positions_rad
         orientation=np.asarray(candidate.orientation_wxyz,float)
         pose=pose_matrix(candidate.position_m,orientation)
@@ -580,7 +581,7 @@ class RobotMotion:
                 desired_body=nearest_upright_slot_rotation(body_rotation)
                 place_rotation=desired_body@relation['relative_rotation'].T
                 place_orientation=quaternion_from_matrix(place_rotation)
-                place_body=np.array([*slot_xy,self.place_support_z+obj.size_m[2]/2+UPRIGHT_RELEASE_GAP_M])
+                place_body=np.array([*slot_xy,self.place_support_z+obj.size_m[2]/2+release_gap_m])
                 place=place_body-place_rotation@relation['offset']
                 position=pick;current=descend[-1];old_orientation=orientation
                 released=[AABB(candidate.target_id,(*slot_xy,self.place_support_z+obj.size_m[2]/2),
@@ -617,6 +618,7 @@ class RobotMotion:
                 pending_observation_phases=['LIFT','TRANSFER','LOWER','OPEN','RETREAT'] if slot_xy is not None else [],
                 joint_plans=joint_plans,pregrasp_joint_positions_rad=q.tolist(),
                 placement_body_rotation=desired_body.tolist() if slot_xy is not None else None,
+                placement_release_gap_m=release_gap_m,
                 nominal_visual_payload_relation={k:(v.tolist() if isinstance(v,np.ndarray) else v) for k,v in relation.items()},
                 candidate_execution_authorized=False)
         except RuntimeError as exc:

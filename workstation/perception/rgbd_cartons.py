@@ -185,11 +185,47 @@ class CartonEstimator:
             bounded=replace(next(o for o in scene.objects if o.track_id==anchor.track_id),
                             measured_cuboid=measured)
             bounded=self._resolve_measured_flat_cuboid(packet,scene,bounded,measured,anchor)
+            bounded=self._resolve_measured_side_cuboid(packet,scene,bounded,measured,anchor)
             scene=replace(scene,objects=tuple(bounded if o.track_id==anchor.track_id else o
                                              for o in scene.objects))
             self._tracks[anchor.track_id]=bounded
             if not bounded.failures:self._anchors[anchor.track_id]=bounded
         return scene
+
+    def _resolve_measured_side_cuboid(self,packet,scene,obj,measured,previous):
+        """Current side geometry may recover pose, never its hidden top sign."""
+        recoverable={'PARTIAL_OR_MERGED_GEOMETRY','INCOMPATIBLE_SIZE_OR_SUPPORT',
+                     'INSTANCE_GEOMETRY_INCONSISTENT','VERTICAL_EXTENT_UNRESOLVED'}
+        rotation=np.asarray(measured['rotation']);size=np.asarray(measured['size_m'])
+        vertical=int(np.argmax(np.abs(rotation[2])))
+        if (previous.posture!='SIDE' or not set(obj.failures)<=recoverable or vertical==2 or
+                abs(rotation[2,vertical])<math.cos(math.radians(8))):return obj
+        centre=np.asarray(measured['position_m']);horizontal=[i for i in range(3) if i!=vertical]
+        horizontal.sort(key=lambda i:size[i],reverse=True);top_points=[]
+        for ref in measured['mask_refs']:
+            frame=packet.cameras[ref.split('/')[0]];valid=scene.masks[ref]&frame.valid_depth
+            points=(deproject(frame)[valid]-centre)@rotation
+            top=np.abs(points[:,vertical]-np.sign(rotation[2,vertical])*size[vertical]/2)<.003
+            if top.any():top_points.append(points[top][:,horizontal])
+        if not top_points:return obj
+        import cv2
+        points=np.concatenate(top_points);spans=np.ptp(points,axis=0)
+        hypotheses=tuple(PoseHypothesis('SIDE_UNRESOLVED',tuple(quaternion_from_matrix(rotation@np.diag(sign))),
+            'current measured cuboid; hidden local top direction remains unresolved') for sign in
+            ((1.,1.,1.),(-1.,-1.,1.),(1.,-1.,-1.),(-1.,1.,-1.)))
+        dt=measured['time_s']-previous.time_s
+        velocity=tuple((centre-previous.position_m)/dt) if 1e-6<dt<=self.priors.max_age_s else None
+        quality={**obj.quality,'independent_cuboid_pose':1.,
+            'footprint_coverage':min(1.,float(cv2.contourArea(cv2.convexHull(points.astype(np.float32))))/float(np.prod(size[horizontal]))),
+            'footprint_error_m':float(np.max(np.abs(spans-size[horizontal]))),
+            'observed_length_m':float(spans[0]),'observed_width_m':float(spans[1]),
+            'geometric_length_m':float(size[horizontal[0]]),'geometric_width_m':float(size[horizontal[1]]),
+            'observed_height_m':float(size[vertical]),'geometry_inlier_ratio':measured['surface_inlier_ratio'],
+            'plane_residual_m':measured['plane_residual_m']}
+        return replace(obj,position_m=tuple(centre),posture='SIDE',visibility='OBSERVED_CUBOID',
+            axis_yaw_rad=math.atan2(rotation[1,horizontal[0]],rotation[0,horizontal[0]]),
+            hypotheses=hypotheses,velocity_m_s=velocity,quality=quality,failures=(),
+            uncertainty_m=measured['uncertainty_m'])
 
     def _resolve_measured_flat_cuboid(self,packet,scene,obj,measured,previous):
         """Re-read CURRENT packaging on independent flat-box geometry.

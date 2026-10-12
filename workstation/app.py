@@ -14,7 +14,7 @@ from workstation.observations.camera_config import camera_settings
 from workstation.runtime_paths import isaac_root
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-sort",
+MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-adjust", "visual-sort",
          "model-worker", "model-prepare", "model-eval", "model-capture", "model-train", "graspgen-proxy", "graspgen-check")
 
 
@@ -80,16 +80,18 @@ def build_parser():
 def load_config(args, parser):
     if args.headless and args.keep_open:
         parser.error("--keep-open requires a GUI")
-    if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','visual-pnp'):
+    if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','visual-pnp','visual-adjust'):
         parser.error('--grasp-backend graspgen requires graspgen-check or controlled visual-pnp')
     if args.grasp_backend=='graspgen' and not args.graspgen_assets:
         parser.error('--grasp-backend graspgen requires --graspgen-assets for frame verification')
+    if args.mode=='visual-adjust' and args.grasp_backend!='graspgen':
+        parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
     if args.preposition_observer:
-        if args.mode not in ('visual-pnp','visual-sort'):parser.error('--preposition-observer requires a visual skill')
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort'):parser.error('--preposition-observer requires a visual skill')
         config['diagnostic_preposition_observer']=True
     if args.robot_stow_home:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--robot-stow-home requires a visual diagnostic mode')
         # Initial setup only, shared by the existing scene initializer and HOME
         # contract. Official FK scan found no robot body (+10mm) in the bounded
@@ -98,7 +100,7 @@ def load_config(args, parser):
         config['diagnostic_robot_stow_home']=True
     if args.seed is not None:
         config["seed"] = args.seed
-    if args.mode in ("single-pnp", "dual-handover", "sensor-check", "vision-check", "visual-pnp", "graspgen-check"):
+    if args.mode in ("single-pnp", "dual-handover", "sensor-check", "vision-check", "visual-pnp", "visual-adjust", "graspgen-check"):
         config["boxes"]["count"] = 1
     elif args.mode == "conveyor-check":
         config["boxes"]["count"] = 3
@@ -106,27 +108,27 @@ def load_config(args, parser):
         config['boxes']['count'] = 9 if args.fixture == 'clutter' else 3 if args.fixture == 'separated' else 1
     config["run_mode"] = args.mode
     if args.depth_backboard:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--depth-backboard requires a visual diagnostic mode')
         config['diagnostic_depth_backboard']=True
     if args.optical_depth_margin_mm is not None:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'):
             parser.error('--optical-depth-margin-mm requires a visual diagnostic mode')
         if not 1<=args.optical_depth_margin_mm<=10:parser.error('Optical depth margin must be 1..10mm')
         if args.optical_depth_margin_mm<3 and not args.depth_backboard:
             parser.error('Below3mm requires --depth-backboard and separate saved calibration audit')
         config['diagnostic_optical_depth_error_margin_m']=args.optical_depth_margin_mm/1000.
     if args.visual_fixture:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check'): parser.error('--visual-fixture requires a visual mode')
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'): parser.error('--visual-fixture requires a visual mode')
         config['boxes']['count']=9 if args.visual_fixture == 'clutter' else 3 if args.visual_fixture.startswith('separated') else 1
         config['diagnostic_visual_fixture']=args.visual_fixture
     if args.scene_focal_length_mm is not None:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-focal-length-mm requires a visual diagnostic mode')
         if not 10 <= args.scene_focal_length_mm <= 50:parser.error('Scene focal length must be 10..50mm')
         next(cam for cam in config['cameras'] if cam['name']=='scene_camera')['focal_length_mm']=args.scene_focal_length_mm
     if args.wrist_focal_length_mm is not None:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--wrist-focal-length-mm requires a visual diagnostic mode')
         if not 10<=args.wrist_focal_length_mm<=30:parser.error('Wrist focal length must be 10..30mm')
         for cam in config['cameras']:
@@ -134,7 +136,7 @@ def load_config(args, parser):
                 cam['focal_length_mm']=args.wrist_focal_length_mm
         config['diagnostic_wrist_focal_length_mm']=args.wrist_focal_length_mm
     if args.scene_view!='front':
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-view requires a visual diagnostic mode')
         camera=next(cam for cam in config['cameras'] if cam['name']=='scene_camera')
         camera['position']={'rear':[0.,.60,1.76],'overhead':[0.,.04,2.10],
@@ -142,20 +144,20 @@ def load_config(args, parser):
         camera['look_at']=[0.,-.11,.85]
         config['diagnostic_scene_view']=args.scene_view
     if args.scene_height_m is not None:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-height-m requires a visual diagnostic mode')
         if not 1.1<=args.scene_height_m<=2.5:parser.error('Scene installation height must be 1.1..2.5m')
         next(cam for cam in config['cameras'] if cam['name']=='scene_camera')['position'][2]=args.scene_height_m
         config['diagnostic_scene_height_m']=args.scene_height_m
     if args.scene_look_height_m is not None:
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-look-height-m requires a visual diagnostic mode')
         if not .8<=args.scene_look_height_m<=1.2:parser.error('Scene aim height must be 0.8..1.2m')
         camera=next(cam for cam in config['cameras'] if cam['name']=='scene_camera')
         camera['look_at'][2]=args.scene_look_height_m
         config['diagnostic_scene_look_height_m']=args.scene_look_height_m
     if args.right_wrist_view!='default':
-        if args.mode not in ('visual-pnp','visual-sort','vision-check','model-capture'):
+        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--right-wrist-view requires a visual diagnostic mode')
         camera=next(cam for cam in config['cameras'] if cam['name']=='right_wrist_camera')
         # Nominal fixed hand-eye rotation, chosen using the known home robot
@@ -181,7 +183,7 @@ def load_config(args, parser):
     settings = camera_settings(config)
     if args.record_video and args.mode != "dual-handover":
         parser.error("--record-video requires --mode dual-handover")
-    if (args.mode in ("sensor-check", "vision-check", "visual-pnp", "visual-sort", "model-capture") or args.camera_recording or args.record_video) and (
+    if (args.mode in ("sensor-check", "vision-check", "visual-pnp", "visual-adjust", "visual-sort", "model-capture") or args.camera_recording or args.record_video) and (
             args.no_sensors or not settings["enabled"]):
         parser.error("Requested sensor operation requires enabled cameras")
     if args.record_video and any(not cam.get("enabled", True) for cam in config["cameras"]):
@@ -252,7 +254,7 @@ def main(argv=None):
         env_output=output/('seed_'+str(config['seed'])) if capture_seeds else output
         env = SortingEnvironment(app, config, env_output, args.robot_usd,
             sensors=not args.no_sensors, conveyor_test=args.mode == "conveyor-check",
-            single_pnp=args.mode in ("single-pnp", "sensor-check", "vision-check", "visual-pnp", "graspgen-check"),
+            single_pnp=args.mode in ("single-pnp", "sensor-check", "vision-check", "visual-pnp", "visual-adjust", "graspgen-check"),
             dual_handover=args.mode == "dual-handover",
             visual_fixture=args.fixture if args.mode == 'model-capture' else args.visual_fixture)
         env.record_video = args.record_video
@@ -271,16 +273,16 @@ def main(argv=None):
                                     confidence=args.confidence) as segmenter:
                     check(env,segmenter)
             else: check(env)
-        elif args.mode in ("visual-pnp","visual-sort"):
+        elif args.mode in ("visual-pnp","visual-adjust","visual-sort"):
             from workstation.diagnostics.visual_run import run
             if args.segmenter in ('yoloe','yolo-seg'):
                 from workstation.models.yoloe_client import YOLOESegmenter
                 with YOLOESegmenter('trained' if args.segmenter == 'yolo-seg' else args.prompt_mode,args.weights,args.reference,env.output/'model_worker.log',
                                     confidence=args.confidence) as segmenter:
                     run(env,segmenter,max_items=args.max_items if args.mode=='visual-sort' else None,
-                        graspgen=args if args.grasp_backend=='graspgen' else None)
+                        graspgen=args if args.grasp_backend=='graspgen' else None,side_adjustment=args.mode=='visual-adjust')
             else: run(env,max_items=args.max_items if args.mode=='visual-sort' else None,
-                      graspgen=args if args.grasp_backend=='graspgen' else None)
+                      graspgen=args if args.grasp_backend=='graspgen' else None,side_adjustment=args.mode=='visual-adjust')
         elif args.mode == 'model-capture':
             from workstation.diagnostics.model_capture import capture, teacher_capture
             collect=teacher_capture if args.teacher_capture else capture

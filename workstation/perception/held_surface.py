@@ -11,6 +11,30 @@ from workstation.perception.scene_estimate import pose_is_observed
 
 
 class HeldSurfaceTracker:
+    @classmethod
+    def from_measured_flat_pose(cls,measurement,tcp_position,tcp_rotation,time_s):
+        """Release observer from CURRENT flat geometry, without a top-label claim.
+
+        Used after side rotation. The final RGB check still decides whether
+        the now-flat box is upright or inverted after the fingers leave.
+        """
+        from workstation.perception.cuboid_pose import measured_cuboid_supported
+        if not measured_cuboid_supported(measurement,time_s):
+            raise ValueError('Release observer requires current independently measured geometry')
+        body=np.asarray(measurement['rotation'],float)
+        if body[2,2]<math.cos(math.radians(8)):
+            raise ValueError('Release observer requires the selected geometric body frame to be flat')
+        tcp,r=np.asarray(tcp_position,float),np.asarray(tcp_rotation,float)
+        if (tcp.shape!=(3,) or r.shape!=(3,3) or not np.isfinite(tcp).all() or not np.isfinite(r).all() or
+                not np.allclose(r.T@r,np.eye(3),atol=1e-6) or not np.isclose(np.linalg.det(r),1.,atol=1e-6)):
+            raise ValueError('Release observer requires finite image-time TCP pose')
+        tracker=cls.__new__(cls);centre=np.asarray(measurement['position_m'],float)
+        tracker.size=np.asarray(measurement['size_m'],float)
+        tracker.uncertainty_m=measurement['uncertainty_m']
+        tracker.offset=r.T@(centre-tcp);tracker.relative_rotation=r.T@body
+        tracker.initial_z=float(centre[2])
+        return tracker
+
     def __init__(self, obj, tcp_position, tcp_rotation, size_m):
         if obj.failures or obj.posture != 'UPRIGHT' or not pose_is_observed(obj):
             raise ValueError('Holding hypothesis requires a complete visual upright estimate')

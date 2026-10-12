@@ -9,7 +9,7 @@ import math
 import numpy as np
 from workstation.perception.rgbd_cartons import CartonEstimator, axis_error
 from workstation.planning.selection import (assess, select_skill, upright_grasp_position,
-    nearest_aligned_yaw, nearest_upright_slot_rotation)
+    nearest_aligned_yaw, nearest_upright_slot_rotation, UPRIGHT_RELEASE_GAP_M)
 from workstation.skills.reobserve import Reobserve, ActiveReobserve, GuidedReobserve
 from workstation.perception.held_surface import HeldSurfaceTracker,CuboidHoldingTracker
 from workstation.perception.scene_estimate import PoseHypothesis,pose_is_observed
@@ -17,6 +17,11 @@ from workstation.observations.camera_geometry import quaternion_from_matrix
 
 
 class VisualPickPlace:
+    accepted_postures=('UPRIGHT',)
+    skill_name='DIRECT_PICK_PLACE'
+    run_scope='controlled_upright_single_carton'
+    release_gap_m=UPRIGHT_RELEASE_GAP_M
+
     def __init__(self, robot, read_packet, priors, slots_xy, save_scene=None,trace_scene=None,segmenter=None,
                  estimator=None,failure_history=None,eligible=None,grasp_source=None):
         self.robot,self.read_packet,self.priors=robot,read_packet,priors
@@ -39,6 +44,10 @@ class VisualPickPlace:
         self.observation_anchors=[]
         self.robot.monitor=self.monitor
 
+    def _check_task(self,candidate,obj,scene,slot,**kwargs):
+        if self.release_gap_m!=UPRIGHT_RELEASE_GAP_M:kwargs['release_gap_m']=self.release_gap_m
+        return self.robot.feasibility(candidate,obj,scene,slot,**kwargs)
+
     def _assess(self,feasibility):
         provider=None
         if self.grasp_source is not None:
@@ -48,13 +57,14 @@ class VisualPickPlace:
             rows=self.grasp_source.generate(self.packet,self.scene,self.robot,refresh)
             provider=lambda obj,states:[c for c in rows if c.target_id==obj.track_id]
         return assess(self.scene,self.robot.read_states(),feasibility,self.robot.home,
-            failure_history=self.failure_history,eligible=self.eligible,candidate_provider=provider)
+            failure_history=self.failure_history,eligible=self.eligible,candidate_provider=provider,
+            accepted_postures=self.accepted_postures)
 
     def _refresh_candidate(self,candidate,obj):
         if candidate.source=='graspgen':
             from workstation.planning.graspgen_candidates import revalidate_candidate
             return revalidate_candidate(candidate,obj,self.scene,
-                {n:f.sequence_id for n,f in self.packet.cameras.items() if f})
+                {n:f.sequence_id for n,f in self.packet.cameras.items() if f},self.accepted_postures)
         return replace(candidate,target_id=obj.track_id,position_m=tuple(upright_grasp_position(obj.position_m)),
                        uncertainty_m=obj.uncertainty_m)
 
@@ -138,7 +148,7 @@ class VisualPickPlace:
                 self.events[-1]['last_visual_hold']=measurement
                 return
         reliable=[o for o in scene.objects if not o.failures and pose_is_observed(o,scene)
-                  and o.posture == 'UPRIGHT' and o.uncertainty_m <= .008]
+                  and o.posture in self.accepted_postures and o.uncertainty_m <= .008]
         # A centre inferred from clipped geometry is not a lift measurement.
         # If the target remains visible at its original support while the robot
         # rises, distinguish physical grip failure from an occluded observation.
@@ -193,13 +203,13 @@ class VisualPickPlace:
                     self.robot.last_plan_check=rejected
                     raise
                 current=[o for o in self.scene.objects if o.track_id==self.candidate.target_id and
-                         not o.failures and o.posture=='UPRIGHT']
+                         not o.failures and o.posture in self.accepted_postures]
                 if len(current)!=1 or np.linalg.norm(np.asarray(current[0].position_m)-self.initial_position)>.015:
                     raise RuntimeError('POST_INSPECTION_TARGET_UNCERTAIN')
                 self.candidate=self._refresh_candidate(self.candidate,current[0])
                 updated=np.asarray(self.candidate.position_m)
                 position=updated
-                check=self.robot.feasibility(self.candidate,current[0],self.scene,self.slot_xy)
+                check=self._check_task(self.candidate,current[0],self.scene,self.slot_xy)
                 self.events[-1]['post_inspection_task_check']=check
                 if check['reasons']:raise RuntimeError('POST_INSPECTION_TASK_NOT_FEASIBLE:'+check['reasons'][0])
                 q=check.get('pregrasp_joint_positions_rad')
@@ -209,7 +219,7 @@ class VisualPickPlace:
         self.events[-1]['path_check']=self.robot.last_plan_check.copy()
 
     def run(self):
-        result=dict(success=False,scope='controlled_upright_single_carton',
+        result=dict(success=False,scope=self.run_scope,skill=self.skill_name,
             online_source='RGB-D SceneEstimate + encoder FK',
             box_attachment=False,box_pose_teleport=False,
             acceptance=dict(visual_lift_m=.08,xy_m=.018,z_m=.008,axis_yaw_deg=8,
@@ -231,7 +241,7 @@ class VisualPickPlace:
                 if self.grasp_source is not None:refresh_slots()
                 if not free:return dict(reasons=('NO_FREE_SLOT_OBSERVED',),joint_cost=0.,path_clearance_m=0.)
                 destination=min(free,key=lambda xy:np.linalg.norm(np.asarray(candidate.position_m[:2])-xy))
-                return self.robot.feasibility(candidate,obj,scene,destination)
+                return self._check_task(candidate,obj,scene,destination)
             assessments=self._assess(full_task)
             result['assessments']=[asdict(a) for a in assessments]
             result['decision']=select_skill(assessments)
@@ -280,7 +290,10 @@ class VisualPickPlace:
             if chosen is None:
                 raise RuntimeError('NO_FEASIBLE_DIRECT_GRASP')
             candidate=chosen.candidate; self.candidate=candidate; self.arm=candidate.arm
+            result['decision']['skill']=self.skill_name
             model=candidate.source=='graspgen'
+            if self.skill_name=='SIDE_ADJUST' and not model:
+                raise RuntimeError('SIDE_REQUIRES_MODEL_POSE')
             if model:
                 self.robot.hold(.025);self.observe('before_model_pregrasp')
                 current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
@@ -310,7 +323,7 @@ class VisualPickPlace:
                 if preparation['executed']:self.observer_arms.add(preparation['observer_arm'])
                 if not preparation['success']:raise RuntimeError('OBSERVER_PREPARATION_NOT_VERIFIED')
                 current=[o for o in self.scene.objects if o.track_id==candidate.target_id and
-                    not o.failures and o.posture=='UPRIGHT' and pose_is_observed(o,self.scene) and
+                    not o.failures and o.posture in self.accepted_postures and pose_is_observed(o,self.scene) and
                     o.valid_depth_ratio>=.9 and o.uncertainty_m<=.008 and o.velocity_m_s is not None and
                     np.linalg.norm(o.velocity_m_s)<=.015 and
                     np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
@@ -325,7 +338,7 @@ class VisualPickPlace:
                 # start after millimetre-scale visual updates. The measured
                 # current robot -> new solution and all task phases are STILL
                 # checked against the newly positioned observer and RGB-D.
-                check=self.robot.feasibility(candidate,current[0],self.scene,slot,pregrasp_hint=q)
+                check=self._check_task(candidate,current[0],self.scene,slot,pregrasp_hint=q)
                 result['post_observer_task_check']=check
                 result['prepared_candidate']=asdict(candidate)
                 if check['reasons']:raise RuntimeError('PREPARED_TASK_NOT_FEASIBLE:'+check['reasons'][0])
@@ -344,7 +357,7 @@ class VisualPickPlace:
             self.events[-1]['path_check']=self.robot.last_plan_check.copy()
             # Re-estimate after approach; do not blindly reuse a moved/ambiguous target.
             scene=self.observe('pregrasp')
-            visible=[o for o in scene.objects if not o.failures and o.posture == 'UPRIGHT'
+            visible=[o for o in scene.objects if not o.failures and o.posture in self.accepted_postures
                      and np.linalg.norm(np.asarray(o.position_m)-self.initial_position) < .015]
             if len(visible) != 1: raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
             self.candidate=self._refresh_candidate(candidate,visible[0])
@@ -358,7 +371,7 @@ class VisualPickPlace:
             # Closing encoders do not prove a grip. Require fresh, complete
             # visual geometry before starting the guarded lift experiment.
             closed=self.observe('closed')
-            nearby=[o for o in closed.objects if not o.failures and o.posture == 'UPRIGHT'
+            nearby=[o for o in closed.objects if not o.failures and o.posture in self.accepted_postures
                     and pose_is_observed(o,closed) and o.uncertainty_m <= .008
                     and np.linalg.norm(np.asarray(o.position_m)-(self.initial_position if model else pick)) < .015
                     and (not model or o.track_id==self.candidate.target_id)]
@@ -376,11 +389,12 @@ class VisualPickPlace:
                 self.event('PRELOAD');self.robot.grip(self.arm,preload,self.scene,self.candidate.target_id)
                 closed=self.observe('preloaded')
                 nearby=[o for o in closed.objects if o.track_id==self.candidate.target_id and
-                    not o.failures and o.posture=='UPRIGHT' and pose_is_observed(o,closed) and
+                    not o.failures and o.posture in self.accepted_postures and pose_is_observed(o,closed) and
                     o.uncertainty_m<=.008 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
                 if len(nearby)!=1:raise RuntimeError('PRELOADED_TARGET_UNCERTAIN')
             tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
-            self.release_tracker=HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
+            self.release_tracker=(HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
+                                  if nearby[0].posture=='UPRIGHT' else None)
             self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors)
                                if model else self.release_tracker)
             self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
@@ -413,12 +427,12 @@ class VisualPickPlace:
                 relation=self.robot.held_visual_geometry
                 desired_body=nearest_upright_slot_rotation(measurement['rotation'])
                 place_rotation=desired_body@np.asarray(relation['relative_rotation']).T
-                from workstation.planning.selection import UPRIGHT_RELEASE_GAP_M
-                body_target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+UPRIGHT_RELEASE_GAP_M])
+                body_target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.release_gap_m])
                 target=body_target-place_rotation@relation['offset']
                 place_attitude=quaternion_from_matrix(place_rotation)
                 result['model_placement']=dict(target_tcp_m=target.tolist(),orientation_wxyz=place_attitude.tolist(),
                     desired_body_rotation=desired_body.tolist(),axis_symmetry_rad=math.pi,
+                    release_gap_m=self.release_gap_m,
                     visual_offset_tcp_m=relation['offset'].tolist(),relative_rotation=relation['relative_rotation'].tolist(),
                     observation_time_s=self.scene.observation_time_s)
             else:
@@ -427,8 +441,13 @@ class VisualPickPlace:
             self.observe('transferred')
             self.event('LOWER'); self.move(target,place_yaw,place_yaw,.05,True,orientation=place_attitude)
             self.observe('lowered')
-            if self.holding_measurement() is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
+            release_measurement=self.holding_measurement()
+            if release_measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
             tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
+            if self.release_tracker is None:
+                self.release_tracker=HeldSurfaceTracker.from_measured_flat_pose(
+                    release_measurement,tcp,rotation,self.scene.observation_time_s)
+                result['release_semantics']='unresolved until post-release current RGB verification'
             relation=self.robot.held_visual_geometry if model else dict(offset=self.hold_tracker.offset,relative_rotation=self.hold_tracker.relative_rotation)
             released_centre=tcp+rotation@relation['offset']
             released_rotation=rotation@relation['relative_rotation']

@@ -9,13 +9,16 @@ from workstation.perception.scene_estimate import pose_is_observed
 
 
 class GraspGenSource:
-    def __init__(self,proxy,calibration,num_grasps=256):
+    def __init__(self,proxy,calibration,num_grasps=256,accepted_postures=('UPRIGHT',)):
         self.proxy,self.calibration,self.num_grasps=proxy,calibration,num_grasps
+        self.accepted_postures=tuple(accepted_postures)
+        if not self.accepted_postures or not set(self.accepted_postures)<={'UPRIGHT','SIDE'}:
+            raise ValueError('Only implemented upright and side-adjustment initial postures are supported')
         self.requests=[]
 
     def generate(self,packet,scene,robot,refresh):
         candidates=[]
-        targets=[obj for obj in scene.objects if not obj.failures and obj.posture=='UPRIGHT' and pose_is_observed(obj,scene)]
+        targets=[obj for obj in scene.objects if not obj.failures and obj.posture in self.accepted_postures and pose_is_observed(obj,scene)]
         for obj in targets:
             clouds=visual_clouds(packet,scene,obj.track_id)
             started=time.monotonic();before=robot.read_states()
@@ -32,9 +35,9 @@ class GraspGenSource:
                 tilt=math.degrees(math.acos(max(-1.,min(1.,-row.approach_direction[2]))))
                 # First physical stage supports near-vertical upright grasps,
                 # while still executing the exact (possibly tilted) quaternion.
-                if tilt>10:reasons.append('UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL')
+                if tilt>10:reasons.append('UNSUPPORTED_APPROACH_FOR_'+('SIDE' if obj.posture=='SIDE' else 'UPRIGHT')+'_SKILL')
                 row=replace(row,rejection_reasons=tuple(reasons),
-                    metadata={**row.metadata,'supported_skill':'upright_pick_place',
+                    metadata={**row.metadata,'supported_skill':'side_adjustment' if obj.posture=='SIDE' else 'upright_pick_place',
                               'approach_tilt_deg':tilt,'maximum_supported_tilt_deg':10.})
                 prepared.append(row)
             samples=[]
@@ -52,7 +55,7 @@ class GraspGenSource:
                         try:
                             if len(matches)!=1:raise RuntimeError('MODEL_TARGET_UNCERTAIN')
                             row=revalidate_candidate(row,matches[0],fresh_scene,
-                                {n:f.sequence_id for n,f in fresh_packet.cameras.items() if f})
+                                {n:f.sequence_id for n,f in fresh_packet.cameras.items() if f},self.accepted_postures)
                         except RuntimeError as exc:row=replace(row,rejection_reasons=(str(exc),))
                     checked.append(row)
                 samples.append(dict(time_s=fresh_scene.observation_time_s,

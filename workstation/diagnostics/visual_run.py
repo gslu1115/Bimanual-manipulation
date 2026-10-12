@@ -9,7 +9,7 @@ from workstation.diagnostics.vision_check import save_observation
 from workstation.task_logic import slot_errors
 
 
-def run(env, segmenter=None,max_items=None,graspgen=None):
+def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
     root=Path(__file__).resolve().parents[2]
     sources=[root/'workstation/app.py',root/'workstation/task_logic.py',
              root/'workstation/diagnostics/depth_error_audit.py',
@@ -75,8 +75,13 @@ def run(env, segmenter=None,max_items=None,graspgen=None):
         from workstation.models.graspgen_proxy import GraspGenProxy
         from workstation.models.graspgen_source import GraspGenSource
         calibration=verify(env,robot,isaac_root(),graspgen.graspgen_assets)
-        grasp_source=GraspGenSource(GraspGenProxy(graspgen.graspgen_proxy),calibration,graspgen.num_grasps)
-    if max_items is None:skill=VisualPickPlace(*args,grasp_source=grasp_source)
+        grasp_source=GraspGenSource(GraspGenProxy(graspgen.graspgen_proxy),calibration,graspgen.num_grasps,
+                                   accepted_postures=('SIDE',) if side_adjustment else ('UPRIGHT',))
+    if side_adjustment:
+        from workstation.skills.visual_side_adjustment import VisualSideAdjustment
+        if max_items is not None:raise ValueError('Side adjustment is a controlled single-object skill')
+        skill=VisualSideAdjustment(*args,grasp_source=grasp_source)
+    elif max_items is None:skill=VisualPickPlace(*args,grasp_source=grasp_source)
     else:
         from workstation.skills.visual_sorting import VisualSortingTask
         skill=VisualSortingTask(*args,max_items=max_items)

@@ -93,8 +93,8 @@ def visual_pinch_balance(candidate,obj):
         return dict(offset_m=0.,half_extent_m=None,penalty=0.,applicable=False)
     from workstation.observations.camera_geometry import pose_matrix
     tangent=pose_matrix(candidate.position_m,candidate.orientation_wxyz)[:3,0]
-    c,s=np.cos(obj.axis_yaw_rad),np.sin(obj.axis_yaw_rad)
-    body=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+    from workstation.planning.graspgen_candidates import upright_body_rotation
+    body=upright_body_rotation(obj)
     offset=abs(float(tangent@(np.asarray(obj.position_m)-candidate.position_m)))
     extent=float(np.abs(tangent@body)@(np.asarray(obj.size_m)/2))
     return dict(offset_m=offset,half_extent_m=extent,
@@ -102,7 +102,7 @@ def visual_pinch_balance(candidate,obj):
 
 
 def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history=None,priorities=None,eligible=None,
-           candidate_provider=None):
+           candidate_provider=None,accepted_postures=('UPRIGHT',)):
     """feasibility(candidate, object, scene) must check IK AND whole-path collisions."""
     results = []
     failure_history=failure_history or {}; priorities=priorities or {}
@@ -113,7 +113,7 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
         if failures >= 3: reasons.append('RETRY_LIMIT_REACHED')
         if scene.assembled_time_s-obj.time_s > max_age_s:
             reasons.append('STALE_ESTIMATE')
-        if obj.posture != 'UPRIGHT':
+        if obj.posture not in accepted_postures:
             reasons.append('SIDE_POSTURE' if obj.posture == 'SIDE' else
                            'INVERTED_POSTURE' if obj.posture == 'INVERTED' else 'POSTURE_UNCERTAIN')
         if not pose_is_observed(obj,scene): reasons.append('OCCLUDED')
@@ -129,6 +129,8 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
         if clearance < .008: reasons.append('NEIGHBOUR_SPACE_INSUFFICIENT')
         for candidate in (candidate_provider or geometry_candidates)(obj,robot_states):
             candidate_reasons=reasons+list(candidate.rejection_reasons)
+            if obj.posture=='SIDE' and obj.posture in accepted_postures and candidate.orientation_wxyz is None:
+                candidate_reasons.append('SIDE_REQUIRES_FULL_POSE_CANDIDATE')
             if candidate.target_id!=obj.track_id or candidate.arm not in robot_states:
                 candidate_reasons.append('CANDIDATE_ASSOCIATION_MISMATCH')
             if not np.isfinite(candidate.opening_m) or not 0<candidate.opening_m<=.080:

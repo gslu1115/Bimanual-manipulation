@@ -1,0 +1,280 @@
+{
+  "scope": "one development regression of already-seen seed 412 after current observed flat-cuboid pose and same-frame packaging reconstruction; not independent success rate",
+  "audit_revision": 1,
+  "launch_command": {
+    "entrypoint": [
+      "/bin/bash"
+    ],
+    "command": [
+      "-c",
+      "exec /isaac-sim/python.sh -m workstation --mode visual-pnp --headless --save-images --visual-fixture upright --seed \"$1\" --grasp-backend \"$2\" --output \"$3\" --num-grasps 256 --graspgen-assets /home/featurize/isaac-runtime/graspgen-source",
+      "_",
+      "412",
+      "graspgen",
+      "/output/bimanual-linux/observed-pose-dev1/isaac-observed-pose-dev1-graspgen-412"
+    ]
+  },
+  "backend_evidence": "Exact Docker launch arguments plus executed candidate source; legacy geometry report has no grasp_backend field",
+  "seed": 412,
+  "grasp_backend": "graspgen",
+  "source_commit": "626dfc4b366bf2ca3cc782f6636e75f55cdb304d",
+  "source_run": "isaac-observed-pose-dev1-graspgen-412",
+  "passed": false,
+  "checks": {
+    "actor_passed": false,
+    "run_status_passed": false,
+    "process_exited_cleanly": false,
+    "all_phases_in_order": false,
+    "requested_backend_matches": true,
+    "candidate_source_matches": true,
+    "source_revision_frozen": true,
+    "source_hashes_match": true,
+    "intended_initial_condition": true,
+    "visual_lift_passed": false,
+    "stable_samples_passed": false,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_home_passed": false,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "original_model_pose_retained": true,
+    "full_orientation_commanded": true,
+    "inference_advanced_physics": true,
+    "approach_revalidated": true,
+    "offline_final_pose_agrees": false
+  },
+  "missing_files": [],
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "PRELOAD",
+    "LIFT",
+    "FAILED"
+  ],
+  "maximum_visual_lift_m": 0.006326706646735403,
+  "observed_stable_s": null,
+  "stable_sample_duration_s": 0.0,
+  "visual_verification": null,
+  "offline_final_pose_errors": {
+    "xy_m": 0.34409683721206735,
+    "z_m": 0.007279603481292751,
+    "tilt_deg": 7.57539014621019,
+    "axis_yaw_deg": 60.81234850492128,
+    "linear_speed": 0.0030145069946717227,
+    "angular_speed": 0.16555217589507998
+  },
+  "failure_reason": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+  "holding_geometry_failure": {
+    "status": "UNKNOWN",
+    "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+    "time_s": 17.32499999999966,
+    "unobserved_axis": 0,
+    "observed_span_m": 0.02581617752241,
+    "expected_span_m": 0.1,
+    "visible_face_axes": [
+      1,
+      2
+    ],
+    "face_point_counts": [
+      {
+        "axis": 1,
+        "sign": -1.0,
+        "points": 88
+      },
+      {
+        "axis": 2,
+        "sign": 1.0,
+        "points": 472
+      }
+    ]
+  },
+  "model_requests": [
+    {
+      "request_id": "68355960898744478547978f15c0ce6d",
+      "observation_time_s": 3.1999999999999913,
+      "response_wall_time_s": 1.8505827829976624,
+      "proxy_round_trip_s": 0.3345715819996258,
+      "fresh_observation_time_s": 3.249999999999991,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "revalidation_observations": [
+        {
+          "time_s": 3.249999999999991,
+          "target_posture": "UPRIGHT",
+          "supported_and_revalidated": 10
+        }
+      ],
+      "additional_passive_hold_s": 0.0,
+      "supported_and_revalidated": 10
+    }
+  ],
+  "geometry_placement": null,
+  "model_placement": null,
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.196994555182755,
+      -0.06805948391556738,
+      0.8048240184783937
+    ],
+    "yaw_rad": 1.0657734679645905,
+    "opening_m": 0.07728591437162796,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.037428811937921524,
+      0.8603730419971793,
+      0.5082600199484013,
+      -0.005391174592424058
+    ],
+    "source": "graspgen",
+    "candidate_id": "68355960898744478547978f15c0ce6d:163:panda_left",
+    "observation_time_s": 3.1999999999999913,
+    "validated_time_s": 6.358333333333439,
+    "approach_direction": [
+      0.028770295903086662,
+      -0.0698857232928276,
+      -0.9971401691436768
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.0584614004143678,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.6740162372589111,
+    "metadata": {
+      "request_id": "68355960898744478547978f15c0ce6d",
+      "sequence_ids": {
+        "scene_camera": 21,
+        "left_wrist_camera": 21,
+        "right_wrist_camera": 21
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.1999999999999913,
+        "position_m": [
+          -0.18995210528373718,
+          -0.05502215400338173,
+          0.782499944785532
+        ],
+        "axis_yaw_rad": 1.018724096994601,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT"
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.06246174237131413,
+        "centre_offset_m": -0.0014183588226658191,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          0.8749899864196777,
+          -0.48328539729118347,
+          0.028770295903086662,
+          -0.19987158477306366
+        ],
+        [
+          -0.4805416762828827,
+          -0.874182939529419,
+          -0.0698857232928276,
+          -0.06107091158628464
+        ],
+        [
+          0.05892524868249893,
+          0.047323986887931824,
+          -0.9971401691436768,
+          0.9045380353927612
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 4.33422406480267,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 6.358333333333439,
+        "sequence_ids": {
+          "scene_camera": 156,
+          "left_wrist_camera": 156,
+          "right_wrist_camera": 156
+        },
+        "position_change_m": 5.7567821634055734e-05,
+        "axis_change_rad": 3.5505512090416858e-06,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.062461400414367804,
+          "centre_offset_m": -0.001412256978630073,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "model_preload": {
+    "measured_fingers_m": [
+      0.029230797663331032,
+      0.02923080138862133
+    ],
+    "original_command_m": 0.0292307002071839,
+    "command_m": 0.02523079766333103,
+    "maximum_position_preload_m": 0.004,
+    "holding_proof": false
+  },
+  "release_geometry": null,
+  "candidate_batches": [
+    {
+      "arm_assessments": 512,
+      "feasible": 5,
+      "rejection_counts": {
+        "GRIPPER_SPACE_INSUFFICIENT": 386,
+        "GRASP_OFF_CENTRE": 460,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 492,
+        "ROBOT_UNREACHABLE": 2,
+        "IK_DISCONTINUITY": 3
+      }
+    }
+  ],
+  "docker_state": {
+    "Status": "exited",
+    "ExitCode": 1,
+    "StartedAt": "2026-10-12T09:36:45.780504325Z",
+    "FinishedAt": "2026-10-12T09:44:35.519643184Z"
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-observed-pose/isaac-observed-pose-dev1-graspgen-412",
+  "source_report_sha256": "e13da4d3d7598838044605332c490939bd5fae766abb0ae1856a16b8b7a0d199",
+  "resource_sampling": {
+    "container": "isaac-observed-pose-dev1-graspgen-412",
+    "scope": "whole device, includes concurrent GUI/model containers",
+    "interval_seconds": 2,
+    "started_utc": "2026-10-12T09:36:46.220004+00:00",
+    "samples": 165,
+    "errors": [],
+    "sampled_peak_used_mib": 7817.0,
+    "terminal_state": "exited",
+    "finished_utc": "2026-10-12T09:44:37.563522+00:00",
+    "coverage": "sampling begins immediately after launch; sampled peak is a lower bound, not an exact allocator peak"
+  }
+}

@@ -64,6 +64,10 @@ D:\isaacsim\python.bat -m workstation --mode single-pnp --headless
 
 Python 场景参数为 `--mode`、`--config`、`--output`、`--seed`、`--headless`、`--keep-open`、`--robot-usd`、`--no-sensors`、`--save-images`、`--camera-recording`、`--record-video`、`--validate-only`。模型参数另有 `--segmenter`、`--weights`、`--prompt-mode`、`--reference`、`--confidence`、`--dataset`、`--fixture`、`--capture-seeds`、`--teacher-capture`、`--epochs`。直接调用默认任务结束退出；需要保留 GUI 时加 `--keep-open`。
 
+## 侧放调整开发入口（关机检查点，尚未物理验收）
+
+`visual-adjust` 仅通过同一 Python 入口启用，要求 `--grasp-backend graspgen` 和有效 `--graspgen-assets`；侧放初态实验使用 `--visual-fixture side`。它复用已有全姿态抓放阶段，释放后重新识别顶底语义。该初版仅通过当前 420 项本地既有回归检查，尚缺 SIDE 专项、Isaac SDK 和物理验证，不能当作可用的自动扶正功能。默认 `visual-pnp` 仍是直立路径。准确状态见交接 20.15–20.16。
+
 ## Linux / Featurize（2026-10-10）
 
 仍使用唯一入口 `python -m workstation`，无需在 Linux 安装 PowerShell。云盘代码位于
