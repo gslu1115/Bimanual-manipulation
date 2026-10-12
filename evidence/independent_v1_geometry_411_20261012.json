@@ -1,0 +1,189 @@
+{
+  "scope": "one case in the preregistered three-seed paired upright cohort; not general success rate",
+  "audit_revision": 2,
+  "launch_command": {
+    "entrypoint": [
+      "/bin/bash"
+    ],
+    "command": [
+      "-c",
+      "exec /isaac-sim/python.sh -m workstation --mode visual-pnp --headless --save-images --visual-fixture upright --seed \"$1\" --grasp-backend \"$2\" --output \"$3\" --num-grasps 256 --graspgen-assets /home/featurize/isaac-runtime/graspgen-source",
+      "_",
+      "411",
+      "geometry",
+      "/output/bimanual-linux/independent-v1/isaac-independent-v1-geometry-411"
+    ]
+  },
+  "backend_evidence": "Exact Docker launch arguments plus executed candidate source; legacy geometry report has no grasp_backend field",
+  "seed": 411,
+  "grasp_backend": "geometry",
+  "source_commit": "8cff8404253360697b24b2c3b2c618d09288351d",
+  "source_run": "isaac-independent-v1-geometry-411",
+  "passed": true,
+  "checks": {
+    "actor_passed": true,
+    "run_status_passed": true,
+    "process_exited_cleanly": true,
+    "all_phases_in_order": true,
+    "requested_backend_matches": true,
+    "candidate_source_matches": true,
+    "source_revision_frozen": true,
+    "source_hashes_match": true,
+    "intended_initial_condition": true,
+    "visual_lift_passed": true,
+    "stable_samples_passed": true,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_home_passed": true,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "offline_final_pose_agrees": true
+  },
+  "missing_files": [],
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "HOME",
+    "VERIFY",
+    "DONE"
+  ],
+  "maximum_visual_lift_m": 0.1871020555548043,
+  "observed_stable_s": 0.5999999999999659,
+  "stable_sample_duration_s": 0.5999999999999659,
+  "visual_verification": [
+    {
+      "time_s": 52.9666666666643,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.20029576122760773,
+        -0.397038996219635,
+        0.7824998881368888
+      ],
+      "axis_yaw_error_deg": 0.0,
+      "z_error_m": 1.118631112184687e-07,
+      "visual_speed_m_s": 4.247563423274802e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 53.16666666666429,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.20029501616954803,
+        -0.3970392942428589,
+        0.7824998856269343
+      ],
+      "axis_yaw_error_deg": 0.0,
+      "z_error_m": 1.1437306568495842e-07,
+      "visual_speed_m_s": 4.333241277713772e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 53.36666666666428,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.2002943605184555,
+        -0.3970397114753723,
+        0.7824998856269343
+      ],
+      "axis_yaw_error_deg": 0.0,
+      "z_error_m": 1.1437306568495842e-07,
+      "visual_speed_m_s": 3.906278817388578e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 53.56666666666427,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.2002936452627182,
+        -0.39704006910324097,
+        0.7824998907095285
+      ],
+      "axis_yaw_error_deg": 0.0,
+      "z_error_m": 1.092904714505849e-07,
+      "visual_speed_m_s": 3.760534350269486e-06,
+      "arms_home_and_open": true
+    }
+  ],
+  "offline_final_pose_errors": {
+    "xy_m": 0.0026398091951078595,
+    "z_m": 3.099441525655777e-08,
+    "tilt_deg": 4.00455336570039e-06,
+    "axis_yaw_deg": 0.004920769430362799,
+    "linear_speed": 0.0016016794915565385,
+    "angular_speed": 2.8830305737750773e-05
+  },
+  "failure_reason": null,
+  "holding_geometry_failure": null,
+  "model_requests": null,
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.2191099002957344,
+      -0.018968784250319004,
+      0.7864994321416745
+    ],
+    "yaw_rad": 3.1264470587948683,
+    "opening_m": 0.073,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": null,
+    "source": "geometry",
+    "candidate_id": "",
+    "observation_time_s": null,
+    "validated_time_s": null,
+    "approach_direction": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": null,
+    "opening_source": "known carton width with approach clearance",
+    "model_score": null,
+    "metadata": {},
+    "rejection_reasons": []
+  },
+  "model_preload": null,
+  "release_geometry": {
+    "expected_lowest_corner_m": 0.7667131435483245,
+    "observed_supported_body": true,
+    "drop_bound_m": 0.009713143548324529,
+    "source": "current supported visual body and image-time FK; known fixed support"
+  },
+  "candidate_batches": [],
+  "docker_state": {
+    "Status": "exited",
+    "ExitCode": 0,
+    "StartedAt": "2026-10-12T05:56:13.927886368Z",
+    "FinishedAt": "2026-10-12T06:01:48.683726064Z"
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-independent-upright-v1/isaac-independent-v1-geometry-411",
+  "source_report_sha256": "f39d4b7d08bfdfcda6555a02596c49bf2e6c2fc7b7121e9523e2a658a0ad310a",
+  "resource_sampling": {
+    "container": "isaac-independent-v1-geometry-411",
+    "scope": "whole device, includes concurrent GUI/model containers",
+    "interval_seconds": 2,
+    "started_utc": "2026-10-12T05:56:14.370131+00:00",
+    "samples": 145,
+    "errors": [],
+    "sampled_peak_used_mib": 7791.0,
+    "terminal_state": "exited",
+    "finished_utc": "2026-10-12T06:01:49.009989+00:00",
+    "coverage": "sampling begins immediately after launch; sampled peak is a lower bound, not an exact allocator peak"
+  },
+  "supersedes_audit": {
+    "path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-independent-upright-v1/isaac-independent-v1-geometry-411-audit.json",
+    "sha256": "82dbbe75c0382475a680e8c9cefc1bf63cc83991cf9ec98b2c2c134dda283ed6",
+    "reason": "Initial audit incorrectly required a grasp_backend report field absent in the frozen geometry runner; revision 2 verifies exact launch arguments and candidate source"
+  }
+}
