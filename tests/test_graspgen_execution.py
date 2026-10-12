@@ -4,13 +4,25 @@ from types import SimpleNamespace
 from unittest.mock import patch
 import numpy as np
 from tests import test_visual_planning
-from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate,upright_body_rotation
+from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate,upright_body_rotation,finger_preload_target
 from workstation.models.graspgen_source import GraspGenSource
 from workstation.skills.visual_pick_place import VisualPickPlace
 from workstation.observations.observation_packet import RobotState
 
 
 class GraspGenExecutionTests(unittest.TestCase):
+    def test_preload_depends_on_current_fingers_and_keeps_command_limits(self):
+        self.assertAlmostEqual(finger_preload_target([.0277,.0278],.054),.0237)
+        self.assertAlmostEqual(finger_preload_target([.032,.031],.060),.027)
+        self.assertEqual(finger_preload_target([.002,.002],.004),0.)
+        # An existing smaller closing command must not be opened by preload.
+        self.assertEqual(finger_preload_target([.0277,.0278],.040),.020)
+
+    def test_preload_rejects_bad_feedback_or_unbounded_compression(self):
+        for fingers,width,amount in (([float('nan'),.02],.04,.004),([-.01,.02],.04,.004),
+                                     ([.02,.02],.09,.004),([.02,.02],.04,.02)):
+            with self.assertRaises(ValueError):finger_preload_target(fingers,width,amount)
+
     def setUp(self):
         fixture=test_visual_planning.PlanningTests();fixture.setUp()
         self.scene,self.states=fixture.scene,fixture.states;self.obj=self.scene.objects[0]

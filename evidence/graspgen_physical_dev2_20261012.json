@@ -1,0 +1,505 @@
+{
+  "success": false,
+  "scope": "second controlled upright GraspGen physical development attempt; not accepted",
+  "grasp_backend": "graspgen",
+  "failure_reason": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.18374445773661138,
+      -0.05748725775629282,
+      0.8054916858673097
+    ],
+    "yaw_rad": -2.8033478132558947,
+    "opening_m": 0.07793760628546474,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.027011832983507164,
+      -0.16774970672320955,
+      0.9853259161161476,
+      -0.01622454323004609
+    ],
+    "source": "graspgen",
+    "candidate_id": "307bf5ce1b9146699d8230093654c217:170:panda_left",
+    "observation_time_s": 3.3499999999999908,
+    "validated_time_s": 9.441666666666771,
+    "approach_direction": [
+      0.05867424234747887,
+      -0.02291047014296055,
+      -0.9980142116546631
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.0540731407657936,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.581656813621521,
+    "metadata": {
+      "request_id": "307bf5ce1b9146699d8230093654c217",
+      "sequence_ids": {
+        "scene_camera": 33,
+        "left_wrist_camera": 33,
+        "right_wrist_camera": 33
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.3499999999999908,
+        "position_m": [
+          -0.200093612074852,
+          -0.060034485533833504,
+          0.7824999948726901
+        ],
+        "axis_yaw_rad": 0.34905814041494887,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT"
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.05807248812921943,
+        "centre_offset_m": 0.003931255982491141,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          -0.3296997547149658,
+          0.9422608017921448,
+          0.05867424234747887,
+          -0.18961188197135925
+        ],
+        [
+          0.9431936144828796,
+          0.33145278692245483,
+          -0.02291047014296055,
+          -0.055196210741996765
+        ],
+        [
+          -0.041035380214452744,
+          0.04778759181499481,
+          -0.9980142116546631,
+          0.9052931070327759
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 3.6114034054442734,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 9.441666666666771,
+        "sequence_ids": {
+          "scene_camera": 285,
+          "left_wrist_camera": 285,
+          "right_wrist_camera": 285
+        },
+        "position_change_m": 9.519747462579783e-05,
+        "axis_change_rad": 6.593331495885479e-06,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.0580731407657936,
+          "centre_offset_m": 0.0039322327598355685,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "model_requests": [
+    {
+      "request_id": "47e5131aecea4110bda2f5940d7ac4b9",
+      "observation_time_s": 3.1999999999999913,
+      "response_wall_time_s": 2.125944931999584,
+      "proxy_round_trip_s": 0.2585282639993238,
+      "fresh_observation_time_s": 3.249999999999991,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 0
+    },
+    {
+      "request_id": "307bf5ce1b9146699d8230093654c217",
+      "observation_time_s": 3.3499999999999908,
+      "response_wall_time_s": 1.9087807360001534,
+      "proxy_round_trip_s": 0.2977421369996591,
+      "fresh_observation_time_s": 3.3999999999999906,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 4
+    }
+  ],
+  "max_visual_lift_m": 0.00019869390952642618,
+  "held_on_exit": true,
+  "recovery": {
+    "action": "HOLD_AND_REOBSERVE",
+    "executed": true,
+    "active_camera_motion": false,
+    "hold_verified": false,
+    "reason": "Measured-joint safe hold, retained finger command and fresh images"
+  },
+  "failure_path_check": {
+    "samples": 2,
+    "clearance_m": 0.032918837922997476,
+    "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+    "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+    "whole_arm_unknown_space_verified": false,
+    "finger_shell_visibility_required": false,
+    "approach_corridor_unknown_space_checked": false,
+    "approach_corridor_applicable": false,
+    "empty_motion_unknown_space_verified": false,
+    "local_unknown_space_check_deferred": false,
+    "max_joint_sample_rad": 0.025,
+    "continuous_collision_proof": false
+  },
+  "closed_surface_support": {
+    "status": "GEOMETRY_OBSERVED",
+    "time_s": 17.774999999999633,
+    "position_m": [
+      -0.2014760983493315,
+      -0.06346077023711731,
+      0.7825244592251136
+    ],
+    "orientation_wxyz": [
+      0.9858151127634878,
+      -9.595246213757097e-05,
+      -0.00022123659551487318,
+      0.1678347559196435
+    ],
+    "rotation": [
+      [
+        0.9436628851805164,
+        -0.33090801713153034,
+        -0.0004684050748352202
+      ],
+      [
+        0.33090813819869386,
+        0.9436629773360474,
+        0.00011492039454671906
+      ],
+      [
+        0.0004039884375375657,
+        -0.00026344514684265,
+        0.9999998836949876
+      ]
+    ],
+    "size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "mask_refs": [
+      "scene_camera/624/component_1",
+      "scene_camera/624/component_2",
+      "left_wrist_camera/624/component_1"
+    ],
+    "surface_inlier_ratio": 1.0,
+    "plane_residual_m": 7.932120720980023e-05,
+    "uncertainty_m": 0.005653305383526682,
+    "observed_face_axes": [
+      2
+    ],
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "complete_observed_extent",
+        "span_m": 0.09501067406178584
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05432560728657221
+      },
+      {
+        "axis": 2,
+        "source": "visible_signed_plane",
+        "sign": 1.0,
+        "points": 84505
+      }
+    ],
+    "translation_difference_from_hint_m": 0.0023139888222473153,
+    "orientation_difference_from_hint_deg": 0.05890247810667632,
+    "geometric_pose_measured": true,
+    "semantic_pose_unique": false,
+    "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes",
+    "pose_hypotheses": [
+      {
+        "label": "UPRIGHT",
+        "orientation_wxyz": [
+          0.9858151127634875,
+          -9.595246213756993e-05,
+          -0.00022123659551487318,
+          0.16783475591964342
+        ],
+        "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+      },
+      {
+        "label": "UPRIGHT",
+        "orientation_wxyz": [
+          0.16783475591964353,
+          0.00022123659551483027,
+          -9.595246213767172e-05,
+          -0.9858151127634874
+        ],
+        "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+      }
+    ],
+    "top_bottom_semantics": "UNRESOLVED",
+    "height_gain_m": 6.030364823828016e-06,
+    "full_6d_pose_measured": true
+  },
+  "held_visual_geometry": {
+    "offset_tcp_m": [
+      0.017388251063344677,
+      0.0006167404332334194,
+      0.021828513797681148
+    ],
+    "relative_rotation": [
+      [
+        -0.9987700564021555,
+        -0.0014668597820375784,
+        -0.049560294155852606
+      ],
+      [
+        0.00042566256757993156,
+        0.9992717748940261,
+        -0.03815414409367861
+      ],
+      [
+        0.04958016988487795,
+        -0.03812831261047977,
+        -0.9980421025846877
+      ]
+    ],
+    "observation_time_s": 17.774999999999633,
+    "uncertainty_m": 0.003,
+    "source": "pre-lift current COMPLETE_TOP SceneEstimate and image-time encoder FK",
+    "physical_attachment": false
+  },
+  "source_run": "visual-pnp_20261012_032505_617503",
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage4/visual-pnp_20261012_032505_617503",
+  "full_report_sha256": "a0ffa00d519f2ad1129fc1ce6f31f85732237db45f408f16d0cb3d2a6fe1866a",
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "FAILED"
+  ],
+  "phase_events": [
+    {
+      "phase": "PREGRASP",
+      "time_s": 3.4249999999999905,
+      "measured_fingers_m": [
+        0.03999587893486023,
+        0.03999587893486023
+      ],
+      "commanded_fingers_m": [
+        0.03999587893486023,
+        0.03999587893486023
+      ],
+      "path_check": {
+        "samples": 138,
+        "clearance_m": 0.032486482397889,
+        "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+        "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+        "whole_arm_unknown_space_verified": false,
+        "finger_shell_visibility_required": false,
+        "approach_corridor_unknown_space_checked": false,
+        "approach_corridor_applicable": true,
+        "empty_motion_unknown_space_verified": false,
+        "local_unknown_space_check_deferred": false,
+        "max_joint_sample_rad": 0.025,
+        "continuous_collision_proof": false,
+        "joint_planner": "quintic straight joint path"
+      }
+    },
+    {
+      "phase": "APPROACH",
+      "time_s": 9.441666666666771,
+      "measured_fingers_m": [
+        0.03999922052025795,
+        0.039999838918447495
+      ],
+      "commanded_fingers_m": [
+        0.04,
+        0.04
+      ],
+      "path_check": {
+        "samples": 2,
+        "clearance_m": 0.03294670352388933,
+        "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+        "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+        "whole_arm_unknown_space_verified": false,
+        "finger_shell_visibility_required": false,
+        "approach_corridor_unknown_space_checked": true,
+        "approach_corridor_applicable": true,
+        "empty_motion_unknown_space_verified": false,
+        "local_unknown_space_check_deferred": false,
+        "max_joint_sample_rad": 0.025,
+        "continuous_collision_proof": false,
+        "full_tcp_orientation_requested": true,
+        "requested_orientation_wxyz": [
+          0.027011832983507154,
+          -0.16774970672320946,
+          0.9853259161161472,
+          -0.016224543230046084
+        ],
+        "endpoint_orientation_error_rad": 0.0038061802622161313,
+        "runtime_pose_edges_checked": 202
+      }
+    },
+    {
+      "phase": "CLOSE",
+      "time_s": 16.42499999999971,
+      "measured_fingers_m": [
+        0.03999950736761093,
+        0.03999992087483406
+      ],
+      "commanded_fingers_m": [
+        0.04,
+        0.04
+      ]
+    },
+    {
+      "phase": "LIFT",
+      "time_s": 17.774999999999633,
+      "measured_fingers_m": [
+        0.027743583545088768,
+        0.02776404656469822
+      ],
+      "commanded_fingers_m": [
+        0.0270365703828968,
+        0.0270365703828968
+      ],
+      "last_visual_hold": {
+        "status": "GEOMETRY_OBSERVED",
+        "time_s": 18.824999999999573,
+        "position_m": [
+          -0.19978588073105844,
+          -0.06266690849792246,
+          0.7826148604405201
+        ],
+        "orientation_wxyz": [
+          0.9858493041974259,
+          -0.0017586135418479042,
+          -0.00047740607654711553,
+          0.1676240697969711
+        ],
+        "rotation": [
+          [
+            0.9438038837224251,
+            -0.3305024577427217,
+            -0.0015308728149363647
+          ],
+          [
+            0.33050583256156735,
+            0.9437981599001017,
+            0.003307406374172599
+          ],
+          [
+            0.00035172894683579254,
+            -0.0036275053690794003,
+            0.9999933587236971
+          ]
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "mask_refs": [
+          "scene_camera/666/component_1",
+          "scene_camera/666/component_2",
+          "left_wrist_camera/666/component_2"
+        ],
+        "surface_inlier_ratio": 1.0,
+        "plane_residual_m": 7.985399627842049e-05,
+        "uncertainty_m": 0.003880310629583315,
+        "observed_face_axes": [
+          2
+        ],
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.09855879472594706
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05429597300862389
+          },
+          {
+            "axis": 2,
+            "source": "visible_signed_plane",
+            "sign": 1.0,
+            "points": 78187
+          }
+        ],
+        "translation_difference_from_hint_m": 0.005007727592741107,
+        "orientation_difference_from_hint_deg": 0.20750345924612754,
+        "geometric_pose_measured": true,
+        "semantic_pose_unique": false,
+        "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes",
+        "pose_hypotheses": [
+          {
+            "label": "UPRIGHT",
+            "orientation_wxyz": [
+              0.9858493041974261,
+              -0.001758613541847904,
+              -0.0004774060765473376,
+              0.16762406979697123
+            ],
+            "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+          },
+          {
+            "label": "UPRIGHT",
+            "orientation_wxyz": [
+              0.16762406979697114,
+              0.0004774060765470911,
+              -0.0017586135418478088,
+              -0.985849304197426
+            ],
+            "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+          }
+        ],
+        "top_bottom_semantics": "UNRESOLVED",
+        "height_gain_m": 9.643158023031617e-05,
+        "full_6d_pose_measured": true
+      }
+    },
+    {
+      "phase": "FAILED",
+      "time_s": 19.10833333333289,
+      "measured_fingers_m": [
+        0.02763459086418152,
+        0.027649756520986557
+      ],
+      "commanded_fingers_m": [
+        0.0270365703828968,
+        0.0270365703828968
+      ]
+    }
+  ]
+}

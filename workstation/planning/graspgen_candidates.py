@@ -87,3 +87,14 @@ def revalidate_candidate(candidate,obj,scene,sequence_ids):
         uncertainty_m=obj.uncertainty_m,metadata={**candidate.metadata,
             'revalidation':dict(time_s=obj.time_s,sequence_ids=sequence_ids,position_change_m=delta,
                 axis_change_rad=float(angle),original_pose_retained=True,opening=evidence)})
+
+
+def finger_preload_target(measured_positions,closing_width_m,preload_m=.004):
+    """Bounded position preload after visual closure; NEVER holding evidence."""
+    measured=np.asarray(measured_positions,float)
+    if (measured.shape!=(2,) or not np.isfinite(measured).all() or
+            np.any(measured<0) or np.any(measured>.0405) or
+            not np.isfinite(closing_width_m) or not 0<=closing_width_m<=.08 or
+            not np.isfinite(preload_m) or not 0<preload_m<=.004):
+        raise ValueError('Invalid measured Panda preload request')
+    return max(0.,min(closing_width_m/2,float(measured.min())-preload_m))

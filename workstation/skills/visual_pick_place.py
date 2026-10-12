@@ -351,6 +351,22 @@ class VisualPickPlace:
                     and np.linalg.norm(np.asarray(o.position_m)-(self.initial_position if model else pick)) < .015
                     and (not model or o.track_id==self.candidate.target_id)]
             if len(nearby) != 1: raise RuntimeError('CLOSED_TARGET_UNCERTAIN')
+            if model:
+                # Projecting the entire tilted cuboid can overestimate the
+                # actual pad-contact width. Add bounded position preload from
+                # image-time finger feedback; the existing 30 N limit stays.
+                from workstation.planning.graspgen_candidates import finger_preload_target
+                fingers=self.packet.robot_state[self.arm].finger_positions_m
+                preload=finger_preload_target(fingers,self.candidate.closing_width_m)
+                result['model_preload']=dict(measured_fingers_m=fingers.tolist(),
+                    original_command_m=self.candidate.closing_width_m/2,command_m=preload,
+                    maximum_position_preload_m=.004,holding_proof=False)
+                self.event('PRELOAD');self.robot.grip(self.arm,preload,self.scene,self.candidate.target_id)
+                closed=self.observe('preloaded')
+                nearby=[o for o in closed.objects if o.track_id==self.candidate.target_id and
+                    not o.failures and o.posture=='UPRIGHT' and o.visibility=='COMPLETE_TOP' and
+                    o.uncertainty_m<=.008 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
+                if len(nearby)!=1:raise RuntimeError('PRELOADED_TARGET_UNCERTAIN')
             tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
             self.release_tracker=HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
             self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors)
@@ -465,6 +481,8 @@ class VisualPickPlace:
             self.event('DONE')
         except Exception as exc:
             result['failure_reason']=str(exc)
+            if self.hold_tracker is not None:
+                result['holding_geometry_failure']=getattr(self.hold_tracker,'last_failure',None)
             if hasattr(self.robot,'last_plan_check'):
                 result['failure_path_check']=self.robot.last_plan_check.copy()
             # Stop at measured robot joints and preserve requested finger force.
