@@ -1,0 +1,63 @@
+{
+  "scope": "released original RGB-D identity replay only; full retreat still needs physical regression",
+  "source_run": "isaac-symmetry-dev1-geometry-411",
+  "truth_inputs": false,
+  "robot_commands": 0,
+  "thresholds_changed": false,
+  "correspondence_hint": "same-frame recorded measured released fit",
+  "before_track_ids": [
+    "visual_0001",
+    "visual_0059"
+  ],
+  "after_track_ids": [
+    "visual_0001"
+  ],
+  "fitted_current_surface_proof": {
+    "position_m": [
+      -0.20002902064300282,
+      -0.3996625406504478,
+      0.7824996815969125
+    ],
+    "axis_yaw_rad": 3.140913833173564,
+    "uncertainty_m": 0.003,
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "visible_signed_face",
+        "sign": 1.0,
+        "points": 2173
+      },
+      {
+        "axis": 0,
+        "source": "complete_observed_extent",
+        "span_m": 0.10018676840381893
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05476397475851941
+      }
+    ],
+    "mask_refs": [
+      "scene_camera/564/component_1",
+      "left_wrist_camera/564/component_1"
+    ],
+    "top_bottom_semantics": "UNKNOWN",
+    "time_s": 38.23333333333181,
+    "surface_inlier_ratio": 1.0,
+    "top_coverage": 0.995462467310679,
+    "side_points": 2251,
+    "plane_residual_m": 0.00027635617820361474,
+    "surface_tilt_deg": 0.1305229573966538,
+    "post_release_drop_bound_m": 0.0,
+    "observed_downward_shift_m": 2.4791280139879746e-13,
+    "source": "current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis"
+  },
+  "masks_unchanged": true,
+  "semantics_remain_unknown": true,
+  "passed": true,
+  "source_sha256": {
+    "workstation/perception/held_surface.py": "e74953bf7292993c0c17e1d1317ba0a79dacf8cba5c5060cad73ffc571617400",
+    "workstation/skills/visual_pick_place.py": "a0a9129aec924dac8b87c206ea6b915cf34c08963c34cc2d4eb259f94e1b6763"
+  }
+}

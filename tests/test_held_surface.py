@@ -73,6 +73,36 @@ class HeldSurfaceTests(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertAlmostEqual(result['position_m'][0],.003,places=5)
         self.assertEqual(result['top_bottom_semantics'],'UNKNOWN')
+        self.assertEqual(result['time_s'],self.packet.observation_time_s)
+        self.assertGreaterEqual(result['surface_inlier_ratio'],.95)
+        self.assertGreaterEqual(result['top_coverage'],.3)
+        self.assertGreaterEqual(result['side_points'],20)
+
+    def test_release_fit_reconciles_only_whole_supported_aliases(self):
+        from dataclasses import replace
+        from tests.test_scene_estimate import packet
+        from workstation.perception.rgbd_cartons import CartonEstimator
+        from workstation.perception.scene_estimate import ScenePriors
+        estimator=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)))
+        template=estimator.estimate(packet(yaw=0.));original=template.objects[0]
+        with patch('workstation.perception.held_surface.deproject',return_value=self.xyz):
+            fit=self.tracker.collision_estimate(self.packet,self.scene,self.centre,np.eye(3))
+        ref=fit['mask_refs'][0]
+        # Separate labels refer to the supported current instance. A third
+        # unsupported neighbour must remain a collision object.
+        alias=replace(original,track_id='alias',mask_refs=(ref,),failures=('PARTIAL_OR_MERGED_GEOMETRY',),
+                      visibility='PARTIAL_OR_UNCERTAIN',posture='UNKNOWN',position_m=(0.,-.1,.93))
+        peer=replace(alias,track_id='peer',mask_refs=('scene_camera/1/peer',),position_m=(.2,-.1,.9025))
+        masks=dict(self.scene.masks);masks[peer.mask_refs[0]]=next(iter(masks.values())).copy()
+        scene=replace(template,objects=(alias,peer),masks=masks)
+        result=estimator.associate_supported_target(scene,original.track_id,fit)
+        self.assertEqual([obj.track_id for obj in result.objects],[original.track_id,'peer'])
+        self.assertEqual(result.objects[0].posture,'UNKNOWN')
+        self.assertEqual(result.objects[0].position_m,alias.position_m)
+        self.assertIs(result.objects[1],peer)
+        self.assertIs(result.masks,masks)
+        old=dict(fit,time_s=fit['time_s']-.1)
+        self.assertIs(estimator.associate_supported_target(scene,original.track_id,old),scene)
 
     def test_missing_coordinate_constraint_rejects_retreat(self):
         xyz=self.xyz.copy();xyz[:,:,0]*=.4

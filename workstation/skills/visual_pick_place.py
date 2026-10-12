@@ -446,6 +446,7 @@ class VisualPickPlace:
                 max_drop_m=drop_bound,reference_position_m=released_centre)
             if fitted is None: raise RuntimeError('RELEASED_GEOMETRY_UNCERTAIN')
             result['released_collision_estimate']=fitted
+            self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,fitted)
             measured=next(o for o in self.scene.objects if o.track_id == self.candidate.target_id)
             c,s=math.cos(fitted['axis_yaw_rad']),math.sin(fitted['axis_yaw_rad'])
             rz=np.array([[c,-s,0],[s,c,0],[0,0,1.]])

@@ -1,0 +1,135 @@
+{
+  "scope": "one development regression of already-seen seed 411 after placement symmetry change; not independent success rate",
+  "audit_revision": 1,
+  "launch_command": {
+    "entrypoint": [
+      "/bin/bash"
+    ],
+    "command": [
+      "-c",
+      "exec /isaac-sim/python.sh -m workstation --mode visual-pnp --headless --save-images --visual-fixture upright --seed \"$1\" --grasp-backend \"$2\" --output \"$3\" --num-grasps 256 --graspgen-assets /home/featurize/isaac-runtime/graspgen-source",
+      "_",
+      "411",
+      "geometry",
+      "/output/bimanual-linux/symmetry-dev1/isaac-symmetry-dev1-geometry-411"
+    ]
+  },
+  "backend_evidence": "Exact Docker launch arguments plus executed candidate source; legacy geometry report has no grasp_backend field",
+  "seed": 411,
+  "grasp_backend": "geometry",
+  "source_commit": "1cba00d2216d78f283bddd64d217257852237b49",
+  "source_run": "isaac-symmetry-dev1-geometry-411",
+  "passed": false,
+  "checks": {
+    "actor_passed": false,
+    "run_status_passed": false,
+    "process_exited_cleanly": false,
+    "all_phases_in_order": false,
+    "requested_backend_matches": true,
+    "candidate_source_matches": true,
+    "source_revision_frozen": true,
+    "source_hashes_match": true,
+    "intended_initial_condition": true,
+    "visual_lift_passed": true,
+    "stable_samples_passed": false,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_home_passed": false,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "offline_final_pose_agrees": true
+  },
+  "missing_files": [],
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "FAILED"
+  ],
+  "maximum_visual_lift_m": 0.18866860579032985,
+  "observed_stable_s": null,
+  "stable_sample_duration_s": 0.0,
+  "visual_verification": null,
+  "offline_final_pose_errors": {
+    "xy_m": 0.0003466615331010336,
+    "z_m": 3.099441525655777e-08,
+    "tilt_deg": 4.00455336570039e-06,
+    "axis_yaw_deg": 0.02397525930514388,
+    "linear_speed": 0.0016016500446939257,
+    "angular_speed": 2.8812560959343983e-05
+  },
+  "failure_reason": "STATIC_PATH_BLOCKED:visual_0059",
+  "holding_geometry_failure": null,
+  "model_requests": null,
+  "geometry_placement": {
+    "yaw_rad": 3.141592653589793,
+    "from_yaw_rad": 3.1264474316369353,
+    "axis_symmetry_rad": 3.141592653589793
+  },
+  "model_placement": null,
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.2191161885857582,
+      -0.0189635856077075,
+      0.7864996661386454
+    ],
+    "yaw_rad": 3.1264474316369353,
+    "opening_m": 0.073,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": null,
+    "source": "geometry",
+    "candidate_id": "",
+    "observation_time_s": null,
+    "validated_time_s": null,
+    "approach_direction": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": null,
+    "opening_source": "known carton width with approach clearance",
+    "model_score": null,
+    "metadata": {},
+    "rejection_reasons": []
+  },
+  "model_preload": null,
+  "release_geometry": {
+    "expected_lowest_corner_m": 0.7685090668981445,
+    "observed_supported_body": true,
+    "drop_bound_m": 0.011509066898144456,
+    "source": "current supported visual body and image-time FK; known fixed support"
+  },
+  "candidate_batches": [],
+  "docker_state": {
+    "Status": "exited",
+    "ExitCode": 1,
+    "StartedAt": "2026-10-12T07:45:28.715832161Z",
+    "FinishedAt": "2026-10-12T07:49:49.503484753Z"
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-placement-symmetry/isaac-symmetry-dev1-geometry-411",
+  "source_report_sha256": "773f7dcaca978d995d4315da2d5d57f2af534e515c38275eb0e2d4f7bf48349c",
+  "resource_sampling": {
+    "container": "isaac-symmetry-dev1-geometry-411",
+    "scope": "whole device, includes concurrent GUI/model containers",
+    "interval_seconds": 2,
+    "started_utc": "2026-10-12T07:45:29.164654+00:00",
+    "samples": 116,
+    "errors": [],
+    "sampled_peak_used_mib": 7641.0,
+    "terminal_state": "exited",
+    "finished_utc": "2026-10-12T07:49:49.982768+00:00",
+    "coverage": "sampling begins immediately after launch; sampled peak is a lower bound, not an exact allocator peak"
+  }
+}

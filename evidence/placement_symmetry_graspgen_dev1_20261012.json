@@ -1,0 +1,117 @@
+{
+  "scope": "one development regression of already-seen seed 411 after placement symmetry change; not independent success rate",
+  "audit_revision": 1,
+  "launch_command": {
+    "entrypoint": [
+      "/bin/bash"
+    ],
+    "command": [
+      "-c",
+      "exec /isaac-sim/python.sh -m workstation --mode visual-pnp --headless --save-images --visual-fixture upright --seed \"$1\" --grasp-backend \"$2\" --output \"$3\" --num-grasps 256 --graspgen-assets /home/featurize/isaac-runtime/graspgen-source",
+      "_",
+      "411",
+      "graspgen",
+      "/output/bimanual-linux/symmetry-dev1/isaac-symmetry-dev1-graspgen-411"
+    ]
+  },
+  "backend_evidence": "Exact Docker launch arguments plus executed candidate source; legacy geometry report has no grasp_backend field",
+  "seed": 411,
+  "grasp_backend": "graspgen",
+  "source_commit": "1cba00d2216d78f283bddd64d217257852237b49",
+  "source_run": "isaac-symmetry-dev1-graspgen-411",
+  "passed": false,
+  "checks": {
+    "actor_passed": false,
+    "run_status_passed": false,
+    "process_exited_cleanly": false,
+    "all_phases_in_order": false,
+    "requested_backend_matches": true,
+    "candidate_source_matches": false,
+    "source_revision_frozen": true,
+    "source_hashes_match": true,
+    "intended_initial_condition": true,
+    "visual_lift_passed": false,
+    "stable_samples_passed": false,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_home_passed": false,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "original_model_pose_retained": false,
+    "full_orientation_commanded": false,
+    "inference_advanced_physics": true,
+    "approach_revalidated": false,
+    "offline_final_pose_agrees": false
+  },
+  "missing_files": [],
+  "phases": [
+    "FAILED"
+  ],
+  "maximum_visual_lift_m": 0.0,
+  "observed_stable_s": null,
+  "stable_sample_duration_s": 0.0,
+  "visual_verification": null,
+  "offline_final_pose_errors": null,
+  "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+  "holding_geometry_failure": null,
+  "model_requests": [
+    {
+      "request_id": "37105bea5a264e10937500ace6c5814f",
+      "observation_time_s": 3.299999999999991,
+      "response_wall_time_s": 1.7996556969992525,
+      "proxy_round_trip_s": 0.3083021460006421,
+      "fresh_observation_time_s": 3.3999999999999906,
+      "simulation_advanced_s": 0.09999999999999964,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 0
+    }
+  ],
+  "geometry_placement": null,
+  "model_placement": null,
+  "executed_candidate": {},
+  "model_preload": null,
+  "release_geometry": null,
+  "candidate_batches": [
+    {
+      "arm_assessments": 0,
+      "feasible": 0,
+      "rejection_counts": {}
+    },
+    {
+      "arm_assessments": 512,
+      "feasible": 0,
+      "rejection_counts": {
+        "POSTURE_UNCERTAIN": 512,
+        "GRASP_OFF_CENTRE": 480,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 504,
+        "GRIPPER_SPACE_INSUFFICIENT": 404,
+        "MODEL_TARGET_UNCERTAIN": 4
+      }
+    },
+    {
+      "arm_assessments": 0,
+      "feasible": 0,
+      "rejection_counts": {}
+    }
+  ],
+  "docker_state": {
+    "Status": "exited",
+    "ExitCode": 1,
+    "StartedAt": "2026-10-12T07:50:34.849357239Z",
+    "FinishedAt": "2026-10-12T07:51:22.071821978Z"
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-placement-symmetry/isaac-symmetry-dev1-graspgen-411",
+  "source_report_sha256": "e88f5597e322e74fb65d3bab93b2bac8b85865db02fa26a14ff85011550fc177",
+  "resource_sampling": {
+    "container": "isaac-symmetry-dev1-graspgen-411",
+    "scope": "whole device, includes concurrent GUI/model containers",
+    "interval_seconds": 2,
+    "started_utc": "2026-10-12T07:50:35.209425+00:00",
+    "samples": 23,
+    "errors": [],
+    "sampled_peak_used_mib": 7759.0,
+    "terminal_state": "exited",
+    "finished_utc": "2026-10-12T07:51:22.539396+00:00",
+    "coverage": "sampling begins immediately after launch; sampled peak is a lower bound, not an exact allocator peak"
+  }
+}

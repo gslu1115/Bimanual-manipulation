@@ -169,6 +169,10 @@ class HeldSurfaceTracker:
         return dict(position_m=tuple(float(v) for v in centre),axis_yaw_rad=yaw,
                     uncertainty_m=.003,coordinate_constraints=constraints,
                     mask_refs=evidence['mask_refs'],top_bottom_semantics='UNKNOWN',
+                    # Keep the CURRENT whole-instance proof so identity can be
+                    # reconciled before building the released collision proxy.
+                    **{key:evidence[key] for key in ('time_s','surface_inlier_ratio',
+                        'top_coverage','side_points','plane_residual_m','surface_tilt_deg')},
                     post_release_drop_bound_m=float(max_drop_m),observed_downward_shift_m=float(-delta[2]),
                     source='current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis')
 

@@ -1,0 +1,14 @@
+{
+  "scope": "released identity proof and reconciliation; not physical success",
+  "tests_passed": 401,
+  "runtime": "Isaac Sim 6.1 Python",
+  "command": "python.sh -m unittest discover -s tests",
+  "log": "/home/featurize/work/isaac-support/graspgen/reports/20261012-placement-symmetry/released-identity-tests.log",
+  "replay": "released_identity_replay_20261012.json",
+  "physical_regression": "pending",
+  "source_sha256": {
+    "workstation/perception/held_surface.py": "b9cba84e1087272a77801ffa382a7d16201b811fd8e1502cd66dd7bb0d8cdf17",
+    "workstation/skills/visual_pick_place.py": "c9af81acf8fa9370601226315d176f25df4782a95693a462fee3e90a8f177465",
+    "tests/test_held_surface.py": "794b5f75490cb6d2358d2c801f3d5d196c694d230212aacccfbf3c59b50da816"
+  }
+}
