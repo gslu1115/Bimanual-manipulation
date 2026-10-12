@@ -30,15 +30,18 @@ def deproject(frame):
 
 
 class CartonEstimator:
-    def __init__(self, priors: ScenePriors, segmenter=None):
+    def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None):
         self.priors = priors
         self.segmenter = segmenter
+        self.robot_point_filter=robot_point_filter
+        self.last_robot_filter_counts={}
         self._tracks = {}
         self._next_id = 1
         self._last_time = None
         self._anchors = {}
 
     def estimate(self, packet):
+        self.last_robot_filter_counts={}
         masks, detections, failures, statuses = {}, [], [], {}
         for name, frame in packet.cameras.items():
             statuses[name] = packet.camera_status[name]
@@ -376,6 +379,16 @@ class CartonEstimator:
                     if other_index != index: blocked |= other_mask
                 mask=refine_visible_boundary(frame,mask,xyz,blocked=blocked)
                 refined_pixels=int((mask & ~original).sum())
+            if self.robot_point_filter is not None:
+                # Only measured points inside image-time robot geometry are
+                # removed from perception. Raw RGB-D and obstacle checks stay.
+                active=mask & frame.valid_depth & roi
+                removed=np.asarray(self.robot_point_filter(frame,xyz[active]),bool)
+                if removed.shape!=(int(active.sum()),):
+                    raise ValueError('Robot point filter returned an invalid shape')
+                excluded=np.zeros(mask.shape,bool);excluded[active]=removed
+                mask=mask & ~excluded
+                self.last_robot_filter_counts[frame.name]=self.last_robot_filter_counts.get(frame.name,0)+int(removed.sum())
             good = mask & frame.valid_depth & roi
             if segmentation is None: good &= colour
             points = xyz[good]

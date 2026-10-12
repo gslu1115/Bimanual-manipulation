@@ -21,6 +21,7 @@
 - 模块使用 `workstation.*` package 导入，唯一 Python 入口为 `python -m workstation`，PowerShell 入口为根 `launch.ps1`。新增功能接模式分发，不增第二套启动脚本或平行配置副本。
 - Linux 同样使用上述 Python 入口（经 Isaac 的 `python.sh`）；平台路径统一在 `runtime_paths.py` 解析，模型环境仍隔离。Featurize 的机器启动脚本在仓库外，仅负责图形/挂载/串流基础设施。Stop/Play 只重建采集资源，不更改已固定的三路相机配置。
 - 2026-10-12 继续推进 GraspGen：`graspgen-check` 是不执行机械臂动作的快照诊断，`graspgen-proxy` 是独立模型环境的协议适配入口。官方输出仍是夹爪基座姿态；未有坐标/TCP、开度和路径验证证据时不得接通动作。几何模板保留作对照。
+- `visual-pnp --grasp-backend graspgen` 已接线为受控物理开发入口，当前只接距竖直 ≤10° 的原始完整姿态。原始观测时间与新帧核验时间分别记录；禁止改写旧时间戳冒充新推理。新帧核验只允许几何保持一致时复用原姿态，不能重定中心或恢复模板。运行过不等于抓放已通过，以交接中的实际结果为准。
 
 ## 真机可观测约束
 

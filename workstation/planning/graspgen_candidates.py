@@ -6,8 +6,9 @@ samples. The simulator's robot model must still check every resulting path.
 import hashlib
 import json
 import numpy as np
+from dataclasses import replace
 from workstation.models.graspgen_client import tcp_poses,validate_grasps
-from workstation.observations.camera_geometry import quaternion_from_matrix
+from workstation.observations.camera_geometry import quaternion_from_matrix,pose_matrix
 from workstation.planning.selection import GraspCandidate
 
 
@@ -54,9 +55,35 @@ def candidates_from_result(result,obj,arms,calibration,sequence_ids):
                 approach_direction=tuple(base[:3,2]),closing_width_m=float(closing),
                 opening_source=evidence['source'],model_score=float(score),
                 metadata=dict(request_id=result['request_id'],sequence_ids=sequence_ids,frame='workcell',
+                    source_visual_object=dict(track_id=obj.track_id,time_s=obj.time_s,position_m=obj.position_m,
+                        axis_yaw_rad=obj.axis_yaw_rad,size_m=obj.size_m,posture=obj.posture),
                     model=result['metadata'],calibration_sha256=digest,opening=evidence,
                     model_gripper_geometry_equivalent=bool(calibration.get('gripper_geometry_equivalence_verified')),
                     geometry_policy='model proposes only; validate with project robot model, not model mesh',
                     T_workcell_from_graspgen_base=base.tolist(),supported_skill='pose_preflight_only'),
                 rejection_reasons=reasons))
     return output
+
+
+def revalidate_candidate(candidate,obj,scene,sequence_ids):
+    """Retain the ORIGINAL world pose only when fresh visual geometry agrees."""
+    original=candidate.metadata['source_visual_object']
+    if (obj.track_id!=candidate.target_id or obj.failures or obj.posture!='UPRIGHT' or
+            obj.visibility!='COMPLETE_TOP' or obj.valid_depth_ratio<.9 or obj.uncertainty_m>.008):
+        raise RuntimeError('MODEL_TARGET_UNCERTAIN')
+    age=scene.assembled_time_s-obj.time_s
+    if (not 0<=age<=.15 or abs(scene.observation_time_s-obj.time_s)>1e-6 or
+            obj.time_s<=candidate.observation_time_s):
+        raise RuntimeError('MODEL_TARGET_STALE')
+    delta=float(np.linalg.norm(np.asarray(obj.position_m)-original['position_m']))
+    angle=abs((obj.axis_yaw_rad-original['axis_yaw_rad']+np.pi/2)%np.pi-np.pi/2)
+    if (delta>.002 or angle>np.deg2rad(3) or not np.allclose(obj.size_m,original['size_m'],atol=1e-6,rtol=0) or
+            obj.velocity_m_s is None or np.linalg.norm(obj.velocity_m_s)>.015):
+        raise RuntimeError('MODEL_TARGET_CHANGED')
+    pose=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
+    width,closing,evidence,reasons=opening_from_visual_box(pose,obj)
+    if reasons:raise RuntimeError('MODEL_GRASP_INVALID_ON_NEW_FRAME:'+reasons[0])
+    return replace(candidate,validated_time_s=obj.time_s,opening_m=width,closing_width_m=closing,
+        uncertainty_m=obj.uncertainty_m,metadata={**candidate.metadata,
+            'revalidation':dict(time_s=obj.time_s,sequence_ids=sequence_ids,position_change_m=delta,
+                axis_change_rad=float(angle),original_pose_retained=True,opening=evidence)})

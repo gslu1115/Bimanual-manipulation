@@ -32,6 +32,7 @@ class GraspCandidate:
     source: str = 'geometry'
     candidate_id: str = ''
     observation_time_s: float | None = None
+    validated_time_s: float | None = None
     approach_direction: tuple[float,float,float] = (0.,0.,-1.)
     pregrasp_distance_m: float = .18
     retreat_direction: tuple[float,float,float] = (0.,0.,1.)
@@ -89,7 +90,8 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
                 candidate_reasons.append('CANDIDATE_ASSOCIATION_MISMATCH')
             if not np.isfinite(candidate.opening_m) or not 0<candidate.opening_m<=.080:
                 candidate_reasons.append('GRIPPER_SPACE_INSUFFICIENT')
-            if candidate.observation_time_s is not None and not 0<=scene.assembled_time_s-candidate.observation_time_s<=max_age_s:
+            checked_time=candidate.validated_time_s if candidate.validated_time_s is not None else candidate.observation_time_s
+            if checked_time is not None and not 0<=scene.assembled_time_s-checked_time<=max_age_s:
                 candidate_reasons.append('STALE_CANDIDATE')
             path = dict(reasons=(),joint_cost=0.,path_clearance_m=0.)
             if not candidate_reasons:

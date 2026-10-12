@@ -9,7 +9,7 @@ from workstation.diagnostics.vision_check import save_observation
 from workstation.task_logic import slot_errors
 
 
-def run(env, segmenter=None,max_items=None):
+def run(env, segmenter=None,max_items=None,graspgen=None):
     root=Path(__file__).resolve().parents[2]
     sources=[root/'workstation/app.py',root/'workstation/task_logic.py',
              root/'workstation/diagnostics/depth_error_audit.py',
@@ -45,6 +45,7 @@ def run(env, segmenter=None,max_items=None):
         record=dict(scene=scene.to_dict(),robot_state={name:dict(time_s=state.sample_time_s,
             qpos=state.qpos.tolist(),tcp_fk_m=robot.fk(name,state.joint_positions_rad)[0].tolist(),
             commanded_qpos=robot.targets[name].tolist()) for name,state in packet.robot_state.items()})
+        record['robot_self_filter_counts']=dict(getattr(getattr(skill,'estimator',None),'last_robot_filter_counts',{}))
         with (env.output/'visual_trace.jsonl').open('a',encoding='utf-8') as stream:
             stream.write(json.dumps(record)+'\n')
     margin=float(env.c.get('diagnostic_optical_depth_error_margin_m',.003))
@@ -67,7 +68,15 @@ def run(env, segmenter=None,max_items=None):
             raise RuntimeError('Optical depth margin rejected by current three-camera calibration')
     args=(robot,read_packet,ScenePriors.from_config(env.c),env.c['conveyor']['slots_xy'],
           lambda prefix,packet,scene:save_observation(env.output,prefix,packet,scene),trace_scene,segmenter)
-    if max_items is None:skill=VisualPickPlace(*args)
+    grasp_source=None
+    if graspgen is not None:
+        from workstation.diagnostics.graspgen_calibration import verify
+        from workstation.runtime_paths import isaac_root
+        from workstation.models.graspgen_proxy import GraspGenProxy
+        from workstation.models.graspgen_source import GraspGenSource
+        calibration=verify(env,robot,isaac_root(),graspgen.graspgen_assets)
+        grasp_source=GraspGenSource(GraspGenProxy(graspgen.graspgen_proxy),calibration,graspgen.num_grasps)
+    if max_items is None:skill=VisualPickPlace(*args,grasp_source=grasp_source)
     else:
         from workstation.skills.visual_sorting import VisualSortingTask
         skill=VisualSortingTask(*args,max_items=max_items)

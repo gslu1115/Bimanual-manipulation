@@ -1,0 +1,57 @@
+{
+  "scope": "saved_failed_RGBD_and_image_time_robot_encoders_only",
+  "robot_commands": 0,
+  "source_run": "visual-pnp_20261012_025626_798064",
+  "before": [
+    {
+      "id": "visual_0001",
+      "failures": [],
+      "position": [
+        -0.19992590323090553,
+        -0.059963976964354515,
+        0.7826897838251239
+      ]
+    },
+    {
+      "id": "visual_0002",
+      "failures": [
+        "PARTIAL_OR_MERGED_GEOMETRY",
+        "INCOMPATIBLE_SIZE_OR_SUPPORT",
+        "NON_HORIZONTAL_OR_UNCERTAIN_SURFACE"
+      ],
+      "position": [
+        -0.22097249329090118,
+        -0.020130999386310577,
+        0.7844698612817022
+      ]
+    }
+  ],
+  "after": [
+    {
+      "id": "visual_0001",
+      "failures": [],
+      "position": [
+        -0.19992590323090553,
+        -0.059963976964354515,
+        0.7826897838251239
+      ]
+    }
+  ],
+  "removed_robot_points": {
+    "scene_camera": 18,
+    "left_wrist_camera": 115
+  },
+  "bogus_mask_membership": [
+    {
+      "mask_ref": "left_wrist_camera/405/component_2",
+      "points": 89,
+      "within_image_time_robot_model": 89
+    }
+  ],
+  "workspace_reference_seconds": 6.342108229000587,
+  "workspace_short_circuit_seconds": 1.483386580000115,
+  "unknown_maps_equal": true,
+  "occupied_maps_equal": true,
+  "unknown_cells": 95654,
+  "occupied_cells": 0
+}

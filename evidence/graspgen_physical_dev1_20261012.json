@@ -1,0 +1,236 @@
+{
+  "success": false,
+  "scope": "first controlled upright GraspGen physical development attempt; not accepted",
+  "grasp_backend": "graspgen",
+  "failure_reason": "STATIC_PATH_BLOCKED:visual_0002",
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.21048539699986576,
+      -0.06155715435743331,
+      0.8014796018600465
+    ],
+    "yaw_rad": 0.39433705512372785,
+    "opening_m": 0.07690853875199138,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.019453525782094243,
+      0.9804293190719398,
+      0.1959031606509787,
+      0.0013646559034599887
+    ],
+    "source": "graspgen",
+    "candidate_id": "b57b607b204b47d2a448d54c3af26240:203:panda_left",
+    "observation_time_s": 3.1999999999999913,
+    "validated_time_s": 7.858333333333514,
+    "approach_direction": [
+      0.010297912172973156,
+      -0.03761093318462372,
+      -0.999239444732666
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.05718405933122325,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.4838358163833618,
+    "metadata": {
+      "request_id": "b57b607b204b47d2a448d54c3af26240",
+      "sequence_ids": {
+        "scene_camera": 21,
+        "left_wrist_camera": 21,
+        "right_wrist_camera": 21
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.1999999999999913,
+        "position_m": [
+          -0.200093612074852,
+          -0.06003427458927035,
+          0.7824999869706112
+        ],
+        "axis_yaw_rad": 0.3490612966101514,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT"
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.06118440771899678,
+        "centre_offset_m": 0.0018523578561709321,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          0.3840852975845337,
+          -0.9232401847839355,
+          0.010297912172973156,
+          -0.21151518821716309
+        ],
+        [
+          -0.9224870204925537,
+          -0.38419151306152344,
+          -0.03761093318462372,
+          -0.05779606103897095
+        ],
+        [
+          0.0386802963912487,
+          0.0049461182206869125,
+          -0.999239444732666,
+          0.901403546333313
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 2.234758247382022,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 7.858333333333514,
+        "sequence_ids": {
+          "scene_camera": 216,
+          "left_wrist_camera": 216,
+          "right_wrist_camera": 216
+        },
+        "position_change_m": 0.0001978759739123283,
+        "axis_change_rad": 3.594052876643161e-06,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.061184059331223256,
+          "centre_offset_m": 0.001862239710384057,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "model_requests": [
+    {
+      "request_id": "b57b607b204b47d2a448d54c3af26240",
+      "observation_time_s": 3.1999999999999913,
+      "response_wall_time_s": 1.8313280620004662,
+      "proxy_round_trip_s": 0.2926609249998364,
+      "fresh_observation_time_s": 3.249999999999991,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 2
+    }
+  ],
+  "max_visual_lift_m": 0.0,
+  "held_on_exit": false,
+  "recovery": {
+    "action": "STOP_AND_REOBSERVE",
+    "executed": true,
+    "active_camera_motion": false,
+    "hold_verified": false,
+    "reason": "Measured-joint safe hold, retained finger command and fresh images"
+  },
+  "failure_path_check": {
+    "rejection": "STATIC_PATH_BLOCKED:visual_0002",
+    "arm": "panda_left",
+    "other_arm": "panda_right",
+    "clearance_m": -0.024,
+    "candidate_joint_positions_rad": [
+      0.41253229836101746,
+      0.33393349803952954,
+      -0.09353644546233598,
+      -2.8209427938605454,
+      -0.5527691412046173,
+      3.1989552309036853,
+      2.8381855314724542
+    ],
+    "other_arm_joint_positions_rad": [
+      1.666848334025417e-06,
+      -0.5980173349380493,
+      2.8679701813416614e-07,
+      -2.4021267890930176,
+      4.133171955800208e-07,
+      1.799908995628357,
+      0.7853978872299194
+    ],
+    "source": "robot encoder FK, official collision spheres and fixed/visual obstacles"
+  },
+  "source_run": "visual-pnp_20261012_025626_798064",
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage4/visual-pnp_20261012_025626_798064",
+  "full_report_sha256": "9e363cf8e9db638d381d8491996f5dd9d8f7ba5d1fe44777d0c6ba0e5a26ffa2",
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "FAILED"
+  ],
+  "phase_events": [
+    {
+      "phase": "PREGRASP",
+      "time_s": 3.274999999999991,
+      "measured_fingers_m": [
+        0.03999587893486023,
+        0.03999587893486023
+      ],
+      "commanded_fingers_m": [
+        0.03999587893486023,
+        0.03999587893486023
+      ],
+      "path_check": {
+        "samples": 104,
+        "clearance_m": 0.050373955754684036,
+        "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+        "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+        "whole_arm_unknown_space_verified": false,
+        "finger_shell_visibility_required": false,
+        "approach_corridor_unknown_space_checked": false,
+        "approach_corridor_applicable": true,
+        "empty_motion_unknown_space_verified": false,
+        "local_unknown_space_check_deferred": false,
+        "max_joint_sample_rad": 0.025,
+        "continuous_collision_proof": false,
+        "joint_planner": "quintic straight joint path"
+      }
+    },
+    {
+      "phase": "APPROACH",
+      "time_s": 7.858333333333514,
+      "measured_fingers_m": [
+        0.03999990224838257,
+        0.03999990224838257
+      ],
+      "commanded_fingers_m": [
+        0.04,
+        0.04
+      ]
+    },
+    {
+      "phase": "FAILED",
+      "time_s": 12.658333333333255,
+      "measured_fingers_m": [
+        0.039999932050704956,
+        0.03999999165534973
+      ],
+      "commanded_fingers_m": [
+        0.04,
+        0.04
+      ]
+    }
+  ]
+}

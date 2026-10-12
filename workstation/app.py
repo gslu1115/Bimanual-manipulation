@@ -34,7 +34,7 @@ def build_parser():
     parser.add_argument('--num-grasps',type=int,default=64)
     parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
     parser.add_argument('--grasp-backend',choices=('geometry','graspgen'),default='geometry',
-                        help='Candidate comparison backend for graspgen-check; physical integration is staged')
+                        help='Candidate backend for graspgen-check or controlled visual-pnp')
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
     parser.add_argument("--camera-recording", action="store_true")
@@ -80,8 +80,8 @@ def build_parser():
 def load_config(args, parser):
     if args.headless and args.keep_open:
         parser.error("--keep-open requires a GUI")
-    if args.grasp_backend=='graspgen' and args.mode!='graspgen-check':
-        parser.error('--grasp-backend graspgen currently requires graspgen-check; physical execution is not wired')
+    if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','visual-pnp'):
+        parser.error('--grasp-backend graspgen requires graspgen-check or controlled visual-pnp')
     if args.grasp_backend=='graspgen' and not args.graspgen_assets:
         parser.error('--grasp-backend graspgen requires --graspgen-assets for frame verification')
     config = json.loads(args.config.read_text(encoding="utf-8"))
@@ -277,8 +277,10 @@ def main(argv=None):
                 from workstation.models.yoloe_client import YOLOESegmenter
                 with YOLOESegmenter('trained' if args.segmenter == 'yolo-seg' else args.prompt_mode,args.weights,args.reference,env.output/'model_worker.log',
                                     confidence=args.confidence) as segmenter:
-                    run(env,segmenter,max_items=args.max_items if args.mode=='visual-sort' else None)
-            else: run(env,max_items=args.max_items if args.mode=='visual-sort' else None)
+                    run(env,segmenter,max_items=args.max_items if args.mode=='visual-sort' else None,
+                        graspgen=args if args.grasp_backend=='graspgen' else None)
+            else: run(env,max_items=args.max_items if args.mode=='visual-sort' else None,
+                      graspgen=args if args.grasp_backend=='graspgen' else None)
         elif args.mode == 'model-capture':
             from workstation.diagnostics.model_capture import capture, teacher_capture
             collect=teacher_capture if args.teacher_capture else capture

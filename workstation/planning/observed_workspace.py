@@ -120,7 +120,9 @@ class ObservedWorkspace:
             for _,centre,radius in self.robots:
                 result |= np.sum((points-centre)**2,axis=1) <= (radius+.002)**2
         for model,position,rotation in self.robot_links:
-            result |= model.contains(points,position,rotation)
+            pending=np.flatnonzero(~result)
+            if not len(pending):break
+            result[pending] |= model.contains(points[pending],position,rotation)
         return result
 
     def _frames(self):
@@ -212,10 +214,20 @@ class ObservedWorkspace:
         centres=self.lower+(indices+.5)*self.resolution
         known=np.ones(len(centres),bool)
         for corner in product((-.5,.5),repeat=3):
-            points=centres+np.asarray(corner)*self.resolution
-            cleared=self._modelled(points)
-            for frame in frames: cleared |= self._ray_free(points,frame)
-            known &= cleared
+            # The predicate is unchanged: ALL corners need ANY valid source.
+            # Once a cell has failed one corner, later corners cannot rescue
+            # it. Once a ray proves a corner, robot modelling is unnecessary.
+            pending=np.flatnonzero(known)
+            if not len(pending):break
+            points=centres[pending]+np.asarray(corner)*self.resolution
+            cleared=np.zeros(len(points),bool)
+            for frame in frames:
+                remaining=np.flatnonzero(~cleared)
+                if not len(remaining):break
+                cleared[remaining] |= self._ray_free(points[remaining],frame)
+            remaining=np.flatnonzero(~cleared)
+            if len(remaining):cleared[remaining] |= self._modelled(points[remaining])
+            known[pending]=cleared
         self.unknown=(~known).reshape(self.shape)
         self.occupied=np.zeros(self.shape,bool)
         for frame in frames:

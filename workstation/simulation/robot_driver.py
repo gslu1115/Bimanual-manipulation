@@ -130,6 +130,19 @@ class RobotMotion:
                 model=model.extruded([0.,-.04,0.]);opening=.04
             yield 'finger'+str(index),model,p+r@np.array([0.,sign*opening,.0584]),r if sign>0 else r@np.diag([-1.,-1.,1.])
 
+    def observed_robot_points(self,frame,points):
+        """Self-filter RGB-D proposals using only IMAGE-TIME encoders and assets."""
+        points=np.asarray(points,float);inside=np.zeros(len(points),bool)
+        for arm,state in frame.robot_state_at_frame.items():
+            if abs(state.sample_time_s-frame.sample_time_s)>.02:
+                raise RuntimeError('ROBOT_SELF_FILTER_STATE_UNSYNCED')
+            for _,model,position,rotation in self.collision_poses(
+                    arm,state.joint_positions_rad,state.finger_positions_m):
+                pending=np.flatnonzero(~inside)
+                if not len(pending):break
+                inside[pending] |= model.contains(points[pending],position,rotation)
+        return inside
+
     def unknown_body_diagnostic(self,arm,q,point):
         if point is None or not hasattr(self,'collision_links'):return {}
         margins={};bounds={}
@@ -552,10 +565,10 @@ class RobotMotion:
             descend=self.cartesian_knots(arm,raised,pick,0.,0.,.05,q,
                                          orientation0=orientation,orientation1=orientation)
             minimum=min(minimum,self.validate_path(arm,descend,scene,candidate.target_id,
-                target_contact=True,finger_positions=np.full(2,candidate.opening_m/2)))
+                target_contact=True,finger_positions=np.full(2,.04)))
             phases.append(phase);phase='CLOSE'
-            count=max(1,math.ceil((candidate.opening_m-candidate.closing_width_m)/.002))
-            for width in np.linspace(candidate.opening_m,candidate.closing_width_m,count+1):
+            count=max(1,math.ceil((.08-candidate.closing_width_m)/.002))
+            for width in np.linspace(.08,candidate.closing_width_m,count+1):
                 minimum=min(minimum,self.validate_path(arm,[descend[-1],descend[-1]],scene,
                     candidate.target_id,target_contact=True,finger_positions=np.full(2,width/2)))
             phases.append(phase)
@@ -579,14 +592,14 @@ class RobotMotion:
                     minimum=min(minimum,self.validate_path(arm,path,scene,candidate.target_id,
                         held_size=obj.size_m if held else None,support_contact=contact,target_contact=not held,
                         target_boxes_override=released if not held else None,
-                        finger_positions=np.full(2,candidate.closing_width_m/2 if held else candidate.opening_m/2),
+                        finger_positions=np.full(2,candidate.closing_width_m/2 if held else .04),
                         check_local_unknown=False,check_approach_corridor=phase!='RETREAT'))
                     if phase=='LOWER':
                         phase='OPEN'
-                        for width in np.linspace(candidate.closing_width_m,candidate.opening_m,count+1):
-                            self.validate_path(arm,[path[-1],path[-1]],scene,candidate.target_id,
+                        for width in np.linspace(candidate.closing_width_m,.08,count+1):
+                            minimum=min(minimum,self.validate_path(arm,[path[-1],path[-1]],scene,candidate.target_id,
                                 held_size=obj.size_m,support_contact=True,target_contact=True,
-                                finger_positions=np.full(2,width/2),check_local_unknown=False)
+                                finger_positions=np.full(2,width/2),check_local_unknown=False))
                         phases.extend(['LOWER','OPEN'])
                     else:phases.append(phase)
                     current=path[-1];position=destination;old_orientation=new_orientation
