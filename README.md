@@ -365,6 +365,8 @@ powershell -ExecutionPolicy Bypass -File .\launch.ps1 -IsaacRoot D:\Issaccc -Mod
 
 持盒监测只用可靠的当前几何支持抬升证明，部分轮廓推断的中心不累计抬升量。机器人抬起而纸箱仍在原支撑位置时报告 `VISUAL_GRIP_FAILED`；缺少可靠观测时报告不可观测。项目微调模型驱动的固定直立单盒视觉抓放已通过两次同版本完整复测，均完成松爪、撤臂、回 home 和 0.6 s 视觉稳定检查；默认规则分割模式不继承该模型结果。随机初态、调整技能与连续多盒尚未验收，精选结果见 `evidence/model_progress_20261008.json`。
 
+`ObjectEstimate.measured_cuboid` 是可选的当前 RGB-D 独立几何证明；碰撞消费者核验时间、三轴约束、完整掩码和误差后才使用其三维范围。它不会把部分观测或 UNKNOWN 顶面语义改成确定状态，失效时仍用原保守碰撞范围。模型复核遇到完整几何但语义暂时 UNKNOWN 时最多再取两帧（额外保持 ≤0.05 s），每帧仍须原几何/时效检查，且不增加模型请求。当前实测边界见交接第 20 节。
+
 新运行关闭真值输送监控，不调用真值沉降验收。`diagnostics/vision_check.py` 与 `visual_run.py` 独立写离线评价，不把纸盒真值、渲染实例标签或真实接触数据回送在线技能。视觉阶段图像、RGB-D NPZ、`*_scene.json` 默认保留在独立输出目录，便于复查；大型生成物不提交。首看 `vision_report.json` 或 `visual_task_report.json`，再看 `run_status.json`。失败结果亦保留；`HOLD_AND_REOBSERVE` 暂为停止后的恢复建议，不能算已实现恢复动作。
 
 ## 编辑器的 NumPy 与 Python 配置

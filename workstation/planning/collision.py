@@ -51,6 +51,19 @@ def scene_obstacles(scene,target_id,extra_margin=.004):
     boxes=[]
     for obj in scene.objects:
         if obj.track_id == target_id: continue
+        measured=getattr(obj,'measured_cuboid',None)
+        if measured is not None:
+            from workstation.perception.cuboid_pose import measured_cuboid_supported
+            now=scene.observation_time_s
+            refs=set(measured.get('mask_refs',()))
+            if (0<=scene.assembled_time_s-now<=.15 and abs(obj.time_s-now)<=1e-6 and
+                    measured_cuboid_supported(measured,now) and refs==set(obj.mask_refs) and
+                    all(ref in scene.masks and scene.camera_status.get(ref.split('/')[0])=='OK' for ref in refs) and
+                    np.allclose(measured['size_m'],obj.size_m,atol=1e-6,rtol=0)):
+                extent=np.abs(np.asarray(measured['rotation']))@np.asarray(measured['size_m'])
+                margin=measured['uncertainty_m']+extra_margin
+                boxes.append(AABB(obj.track_id,tuple(measured['position_m']),tuple(extent+2*margin)))
+                continue
         sx,sy,sz=(obj.quality.get('geometric_length_m',obj.size_m[0]),
                   obj.quality.get('geometric_width_m',obj.size_m[1]),
                   obj.quality.get('observed_height_m',obj.size_m[2]))

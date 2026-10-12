@@ -1,7 +1,7 @@
 import unittest
 from dataclasses import replace
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import numpy as np
 from tests import test_visual_planning
 from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate,upright_body_rotation,finger_preload_target
@@ -128,3 +128,61 @@ class GraspGenExecutionTests(unittest.TestCase):
         for _ in range(30):skill.monitor()
         self.assertGreater(len(calls),2)
         self.assertLess(max(np.diff([0]+calls))*skill.robot.dt,skill.priors.max_age_s)
+
+    def generate_with_fresh_changes(self,changes):
+        clock=[self.obj.time_s];observations=[];holds=[]
+        def hold(seconds):holds.append(seconds);clock[0]+=seconds
+        robot=SimpleNamespace(hold=hold,read_states=lambda:{name:
+            RobotState(clock[0],state.joint_positions_rad,state.finger_positions_m)
+            for name,state in self.states.items()})
+        def refresh():
+            change=dict(changes[len(observations)]);age=change.pop('assembled_age_s',0.)
+            obj=replace(self.obj,time_s=clock[0],**change);observations.append(obj)
+            return SimpleNamespace(cameras={'cam':SimpleNamespace(sequence_id=10+len(observations))}),replace(
+                self.scene,objects=(obj,),observation_time_s=obj.time_s,assembled_time_s=obj.time_s+age)
+        pool=MagicMock()
+        pool.__enter__.return_value.submit.return_value=SimpleNamespace(done=lambda:True,result=lambda:self.result)
+        source=GraspGenSource(SimpleNamespace(infer=None),self.calibration)
+        with patch('workstation.models.graspgen_source.ThreadPoolExecutor',return_value=pool),patch(
+                'workstation.models.graspgen_source.visual_clouds',return_value=SimpleNamespace(time_s=self.obj.time_s)):
+            rows=source.generate(SimpleNamespace(cameras={'cam':SimpleNamespace(sequence_id=1)}),self.scene,robot,refresh)
+        self.assertEqual(pool.__enter__.return_value.submit.call_count,1)
+        self.assertEqual(len(source.requests),1)
+        return source,rows,observations,holds
+
+    def test_transient_packaging_ambiguity_uses_new_positive_frame_and_original_pose(self):
+        source,rows,frames,holds=self.generate_with_fresh_changes([{'posture':'UNKNOWN'},{}])
+        self.assertEqual(len(frames),2);self.assertEqual(holds,[.025,.025])
+        self.assertTrue(all(not row.rejection_reasons for row in rows))
+        for row in rows:
+            self.assertEqual(row.position_m,self.candidate.position_m)
+            self.assertEqual(row.orientation_wxyz,self.candidate.orientation_wxyz)
+            self.assertEqual(row.observation_time_s,self.obj.time_s)
+            self.assertEqual(row.validated_time_s,frames[-1].time_s)
+        self.assertEqual(source.requests[0]['additional_passive_hold_s'],.025)
+
+    def test_persistent_unknown_stops_after_two_extra_samples_without_old_label(self):
+        source,rows,frames,holds=self.generate_with_fresh_changes([{'posture':'UNKNOWN'}]*3)
+        self.assertEqual(len(frames),3);self.assertEqual(holds,[.025]*3)
+        self.assertTrue(all(row.rejection_reasons==('MODEL_TARGET_UNCERTAIN',) for row in rows))
+        self.assertTrue(all(row.validated_time_s is None for row in rows))
+        self.assertEqual(source.requests[0]['additional_passive_hold_s'],.05)
+
+    def test_later_positive_semantics_cannot_rescue_changed_geometry(self):
+        _,rows,frames,_=self.generate_with_fresh_changes([{'posture':'UNKNOWN'},
+            {'position_m':tuple(np.asarray(self.obj.position_m)+[.01,0,0])}])
+        self.assertEqual(len(frames),2)
+        self.assertTrue(all(row.rejection_reasons==('MODEL_TARGET_CHANGED',) for row in rows))
+
+    def test_stale_unknown_frame_does_not_enter_passive_retry(self):
+        _,rows,frames,_=self.generate_with_fresh_changes([{'posture':'UNKNOWN','assembled_age_s':.2}])
+        self.assertEqual(len(frames),1)
+        self.assertTrue(all(row.rejection_reasons for row in rows))
+
+    def test_partial_geometry_or_positive_inversion_is_not_transient_packaging(self):
+        for change in ({'posture':'UNKNOWN','failures':('PARTIAL_OR_MERGED_GEOMETRY',)},
+                       {'posture':'INVERTED'}):
+            with self.subTest(change=change):
+                _,rows,frames,_=self.generate_with_fresh_changes([change])
+                self.assertEqual(len(frames),1)
+                self.assertTrue(all(row.rejection_reasons for row in rows))

@@ -1,0 +1,151 @@
+{
+  "scope": "only the recorded blocking sphere at the original failed frame; not full path or physical pass",
+  "source_run": "isaac-approach-identity-dev1-graspgen-412",
+  "truth_inputs": false,
+  "robot_commands": 0,
+  "passed": true,
+  "time_s": 16.42499999999971,
+  "anchor_age_s": 0.07499999999999574,
+  "recorded_collision": {
+    "rejection": "TARGET_BODY_COLLISION",
+    "link_index": 8,
+    "sphere_centre_m": [
+      -0.26462468720543253,
+      -0.03436928609226139,
+      0.8682188837759672
+    ],
+    "sphere_radius_m": 0.024,
+    "target_centre_m": [
+      -0.19257180392742157,
+      -0.05927445716224611,
+      0.7824998084845182
+    ],
+    "target_size_m": [
+      0.1570353066114553,
+      0.1570353066114553,
+      0.11944655724202219
+    ]
+  },
+  "old_bound": {
+    "centre": [
+      -0.19257180392742157,
+      -0.05927445716224611,
+      0.7824998084845182
+    ],
+    "size": [
+      0.1570353066114553,
+      0.1570353066114553,
+      0.11944655724202219
+    ],
+    "clearance_m": 0.00199579667043797
+  },
+  "current_bound": {
+    "centre": [
+      -0.18992665997822553,
+      -0.05497045539988632,
+      0.7831252706377263
+    ],
+    "size": [
+      0.10756465781762406,
+      0.12228040399970938,
+      0.053295578652922324
+    ],
+    "clearance_m": 0.03807560516969378
+  },
+  "required_clearance_m": 0.002,
+  "current_measurement": {
+    "status": "GEOMETRY_OBSERVED",
+    "time_s": 16.42499999999971,
+    "position_m": [
+      -0.18992665997822553,
+      -0.05497045539988632,
+      0.7831252706377263
+    ],
+    "orientation_wxyz": [
+      0.8730565114267823,
+      1.9145461291835148e-05,
+      -2.3513223123439175e-05,
+      0.4876190387340065
+    ],
+    "rotation": [
+      [
+        0.5244553450225037,
+        -0.8514379546251285,
+        -2.238536224263428e-05
+      ],
+      [
+        0.8514379528244425,
+        0.5244553453951497,
+        -5.6361129804204364e-05
+      ],
+      [
+        5.972812796760937e-05,
+        1.0499148776220014e-05,
+        0.9999999981611594
+      ]
+    ],
+    "size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "mask_refs": [
+      "scene_camera/567/component_1",
+      "left_wrist_camera/567/component_1"
+    ],
+    "surface_inlier_ratio": 1.0,
+    "plane_residual_m": 7.902094491036724e-05,
+    "uncertainty_m": 0.00414451423484535,
+    "observed_face_axes": [
+      0,
+      2
+    ],
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "visible_signed_plane",
+        "sign": -1.0,
+        "points": 5384
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05410155891612713,
+        "aggregation": "union of per-view validated planar quantiles",
+        "mask_refs": [
+          "left_wrist_camera/567/component_1",
+          "scene_camera/567/component_1"
+        ]
+      },
+      {
+        "axis": 2,
+        "source": "visible_signed_plane",
+        "sign": 1.0,
+        "points": 31206
+      },
+      {
+        "axis": 2,
+        "source": "complete_observed_extent",
+        "span_m": 0.04302705530995077,
+        "aggregation": "union of per-view validated planar quantiles",
+        "mask_refs": [
+          "left_wrist_camera/567/component_1",
+          "scene_camera/567/component_1"
+        ]
+      }
+    ],
+    "translation_difference_from_hint_m": 0.003445149587311644,
+    "orientation_difference_from_hint_deg": 0.0035302341671037385,
+    "geometric_pose_measured": true,
+    "semantic_pose_unique": false,
+    "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes"
+  },
+  "unknown_semantics_preserved": true,
+  "original_masks_unchanged": true,
+  "thresholds_changed": false,
+  "source_sha256": {
+    "workstation/perception/rgbd_cartons.py": "49260f1b7ff3788cf872d2aad6f09ee7aafc6cc6ffeaf431ae8afdf53bebe771",
+    "workstation/perception/scene_estimate.py": "d98a789996237e14ac7f64a85dfb83b91afe3cb738ae957b58473cdb215493dc",
+    "workstation/planning/collision.py": "0689c43cdbcee1bb6a9236303a0e9aae69ea956b72f8c793fd0c728e4d621283"
+  }
+}

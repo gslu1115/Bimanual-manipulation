@@ -40,6 +40,40 @@ class MeasuredFragmentIdentityTests(unittest.TestCase):
         self.assertEqual(set(obj.mask_refs),set(self.scene.masks))
         self.assertIs(self.est._anchors[self.anchor.track_id],self.anchor)
         self.assertEqual(self.anchor.time_s,.925)
+        self.assertEqual(obj.measured_cuboid['time_s'],self.packet.observation_time_s)
+        np.testing.assert_allclose(obj.measured_cuboid['position_m'],CENTRE,atol=.002)
+
+    def test_collision_bound_uses_measured_cuboid_without_asserting_upright(self):
+        from workstation.planning.collision import scene_obstacles,sphere_box_clearance
+        result=self.associate();obj=result.objects[0]
+        old=scene_obstacles(self.scene,None,extra_margin=0.)[0]
+        box=scene_obstacles(result,None,extra_margin=0.)[0]
+        self.assertLess(box.size[2],old.size[2])
+        np.testing.assert_allclose(box.centre,CENTRE,atol=.002)
+        # A probe actually inside the carton stays colliding; a probe above
+        # its measured top is not blocked by the unrelated inflated proxy.
+        self.assertLess(sphere_box_clearance(CENTRE,.01,box),0.)
+        self.assertGreater(sphere_box_clearance(CENTRE+[0,0,.045],.01,box),.002)
+        self.assertEqual(obj.posture,'UNKNOWN');self.assertTrue(obj.failures)
+
+    def test_missing_or_stale_proof_retains_conservative_collision_bound(self):
+        from workstation.planning.collision import scene_obstacles
+        result=self.associate();obj=result.objects[0];proof=obj.measured_cuboid
+        for invalid in (dict(proof,time_s=.9),dict(proof,coordinate_constraints=[]),
+                        dict(proof,mask_refs=proof['mask_refs'][:-1]),dict(proof,size_m=[.05,.055,.045])):
+            with self.subTest(invalid=invalid):
+                scene=replace(result,objects=(replace(obj,measured_cuboid=invalid),))
+                self.assertGreater(scene_obstacles(scene,None)[0].size[2],.1)
+        old=replace(result,assembled_time_s=1.2)
+        self.assertGreater(scene_obstacles(old,None)[0].size[2],.1)
+
+    def test_single_partial_instance_also_gets_only_current_measured_bounds(self):
+        original=replace(self.scene.objects[0],mask_refs=tuple(self.scene.masks))
+        scene=replace(self.scene,objects=(original,))
+        result=self.associate(scene=scene)
+        self.assertEqual(len(result.objects),1)
+        self.assertIsNotNone(result.objects[0].measured_cuboid)
+        self.assertEqual(result.objects[0].posture,'UNKNOWN')
 
     def test_unobserved_axis_does_not_inherit_previous_box_extent(self):
         # Hide BOTH signed end faces as well as the full long-axis span.

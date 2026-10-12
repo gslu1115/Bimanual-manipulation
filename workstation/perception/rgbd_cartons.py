@@ -157,7 +157,7 @@ class CartonEstimator:
         gate stay in force. Partial geometry and semantic UNKNOWN are kept.
         """
         partial={o.track_id:o for o in scene.objects if o.failures}
-        if len(partial)<2:return scene
+        if not partial:return scene
         from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported
         from workstation.observations.camera_geometry import pose_matrix
         recent=[o for o in anchors if not o.failures and o.hypotheses and
@@ -175,9 +175,18 @@ class CartonEstimator:
             if not measured_cuboid_supported(measured,scene.observation_time_s):continue
             refs=set(measured['mask_refs'])
             members=[o for o in scene.objects if o.mask_refs and set(o.mask_refs)<=refs]
-            if (len(members)<2 or any(not o.failures for o in members) or
+            if (not members or any(not o.failures for o in members) or
                     not original.mask_refs or not set(original.mask_refs)<=refs):continue
+            if {ref for o in members for ref in o.mask_refs}!=refs:continue
             scene=self.associate_supported_target(scene,anchor.track_id,measured)
+            # Keep partial top/semantic uncertainty, but expose independently
+            # measured current geometry for collision bounds. Never substitute
+            # the old anchor or its clipped fit for these measured coordinates.
+            bounded=replace(next(o for o in scene.objects if o.track_id==anchor.track_id),
+                            measured_cuboid=measured)
+            scene=replace(scene,objects=tuple(bounded if o.track_id==anchor.track_id else o
+                                             for o in scene.objects))
+            self._tracks[anchor.track_id]=bounded
         return scene
 
     def associate_supported_target(self,scene,target_id,measurement):

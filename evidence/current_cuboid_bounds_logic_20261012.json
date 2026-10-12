@@ -1,0 +1,24 @@
+{
+  "scope": "current cuboid collision bounds and bounded passive semantic revalidation; no full physical pass yet",
+  "tests_passed": 415,
+  "runtime": "Isaac Sim 6.1 Python",
+  "command": "python.sh -m unittest discover -s tests",
+  "log": "/home/featurize/work/isaac-support/graspgen/reports/20261012-current-cuboid-bounds/tests.log",
+  "local_revalidation_tests_passed": 21,
+  "local_full_suite_before_collision_addition": 412,
+  "maximum_additional_passive_samples": 2,
+  "maximum_additional_passive_hold_s": 0.05,
+  "model_request_limit_changed": false,
+  "current_frame_age_limit_changed": false,
+  "collision_clearance_changed": false,
+  "physical_regression": "pending",
+  "replay": "current_cuboid_collision_replay_20261012.json",
+  "source_sha256": {
+    "workstation/models/graspgen_source.py": "cff70e13303bf47e5ca5e7358b67c8b31c927405fe3130eafa10db3904256d0d",
+    "workstation/perception/rgbd_cartons.py": "43fba9228f32e57569b07a9cc482ad9278a7bd506da672737e2a33efb17e7ea2",
+    "workstation/perception/scene_estimate.py": "6985ef83a8fe95d76fff385254ca593d3ac1e27b17b2d9c74bc2c317f77ebef8",
+    "workstation/planning/collision.py": "d2c350008b6395123af853a181a93aa7ab31d636a23500ba071ccd07e28c5990",
+    "tests/test_graspgen_execution.py": "767dbd71326b2b9d43501f2f6ebdb7a8a9d2d63c2b7ea37b1acc05aec60fb094",
+    "tests/test_measured_fragment_identity.py": "55111bfff2b156033a014b1ab1cf7ff8a2e57ad101adf68c55fc1fa1893f3165"
+  }
+}

@@ -53,6 +53,9 @@ class ObjectEstimate:
     failures: tuple[str, ...]
     velocity_m_s: tuple[float, float, float] | None = None
     uncertainty_m: float = .005
+    # Optional CURRENT independent cuboid fit. Semantic/partial-view fields
+    # above remain separate; consumers must validate this proof and its masks.
+    measured_cuboid: Mapping | None = None
 
 
 @dataclass(frozen=True)
