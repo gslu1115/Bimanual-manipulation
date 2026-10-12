@@ -1,0 +1,203 @@
+{
+  "scope": "one fixed development run; not independent generalization acceptance",
+  "source_run": "visual-pnp_20261012_042704_599712",
+  "passed": false,
+  "checks": {
+    "actor_passed": false,
+    "run_status_passed": false,
+    "all_phases_in_order": false,
+    "source_is_graspgen": true,
+    "original_model_pose_retained": true,
+    "full_orientation_commanded": true,
+    "inference_advanced_physics": true,
+    "approach_revalidated": true,
+    "visual_lift_passed": false,
+    "stability_samples_independently_checked": false,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_stability_passed": false,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "offline_final_pose_agrees": false
+  },
+  "source_report_sha256": "c14cb005b580408832a7da43c29bdb4801bb4e71a3807ebbaf1ed9b9f64d571f",
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "PRELOAD",
+    "LIFT",
+    "FAILED"
+  ],
+  "model_requests": [
+    {
+      "request_id": "7c8e7ef645c2442cae1661c264da51ec",
+      "observation_time_s": 3.1999999999999913,
+      "response_wall_time_s": 1.7923115660014446,
+      "proxy_round_trip_s": 0.3667337709994172,
+      "fresh_observation_time_s": 3.249999999999991,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 4
+    }
+  ],
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.17324163764715195,
+      -0.05356237143278122,
+      0.809199607372284
+    ],
+    "yaw_rad": 0.35531708995621286,
+    "opening_m": 0.07557287859428044,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.0018046657612715998,
+      0.9836709555854397,
+      0.17632905312735864,
+      0.0360036017965841
+    ],
+    "source": "graspgen",
+    "candidate_id": "7c8e7ef645c2442cae1661c264da51ec:181:panda_left",
+    "observation_time_s": 3.1999999999999913,
+    "validated_time_s": 7.8333333333335124,
+    "approach_direction": [
+      0.07146783173084259,
+      0.009146571159362793,
+      -0.9974011182785034
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.05223384655218129,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.5154337882995605,
+    "metadata": {
+      "request_id": "7c8e7ef645c2442cae1661c264da51ec",
+      "sequence_ids": {
+        "scene_camera": 21,
+        "left_wrist_camera": 21,
+        "right_wrist_camera": 21
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.1999999999999913,
+        "position_m": [
+          -0.200093612074852,
+          -0.06003427458927035,
+          0.782499986971787
+        ],
+        "axis_yaw_rad": 0.3490612966101514,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT"
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.05623431200751408,
+        "centre_offset_m": -0.003675832362055674,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          0.3467695713043213,
+          -0.9352236986160278,
+          0.07146783173084259,
+          -0.1803884208202362
+        ],
+        [
+          -0.9378097057342529,
+          -0.34702956676483154,
+          0.009146571159362793,
+          -0.0544770285487175
+        ],
+        [
+          0.016247358173131943,
+          -0.07019497454166412,
+          -0.9974011182785034,
+          0.9089397192001343
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 4.131663933340612,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 7.8333333333335124,
+        "sequence_ids": {
+          "scene_camera": 216,
+          "left_wrist_camera": 216,
+          "right_wrist_camera": 216
+        },
+        "position_change_m": 9.505148783017976e-05,
+        "axis_change_rad": 4.670232901293758e-06,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.05623384655218129,
+          "centre_offset_m": -0.003669516021049566,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "maximum_visual_lift_m": 0.006644729770784119,
+  "observed_stable_s": null,
+  "model_preload": {
+    "measured_fingers_m": [
+      0.02762916311621666,
+      0.02767369896173477
+    ],
+    "original_command_m": 0.026116923276090644,
+    "command_m": 0.02362916311621666,
+    "maximum_position_preload_m": 0.004,
+    "holding_proof": false
+  },
+  "model_placement": null,
+  "normal_stage_observation_anchors": [
+    {
+      "phase": "pregrasp",
+      "time_s": 7.8333333333335124,
+      "current_payload_supported": false
+    }
+  ],
+  "release_geometry": null,
+  "visual_verification": null,
+  "offline_final_pose_errors": {
+    "xy_m": 0.34098862388351814,
+    "z_m": 0.007178990840911892,
+    "tilt_deg": 8.51788240534138,
+    "axis_yaw_deg": 20.351467038465252,
+    "linear_speed": 0.010141811871913603,
+    "angular_speed": 0.28424088694714233
+  },
+  "failure_reason": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+  "holding_geometry_failure": {
+    "status": "UNKNOWN",
+    "reason": "VISIBLE_PLANES_UNRESOLVED",
+    "time_s": 18.824999999999573
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage4/visual-pnp_20261012_042704_599712"
+}

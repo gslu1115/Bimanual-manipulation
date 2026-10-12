@@ -67,13 +67,13 @@ Python 场景参数为 `--mode`、`--config`、`--output`、`--seed`、`--headle
 ## Linux / Featurize（2026-10-10）
 
 仍使用唯一入口 `python -m workstation`，无需在 Linux 安装 PowerShell。云盘代码位于
-`/home/featurize/work/isaac-support/projects/Bimanual-manipulation`，容器内对应
-`/project/Bimanual-manipulation`。代码、必要权重和最终证据保存在云盘；SDK、依赖环境、着色器缓存及大量运行输出使用临时盘。
+`/home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux`，容器内对应
+`/project/Bimanual-manipulation-linux`。同级旧 `Bimanual-manipulation` 工作树保留，不覆盖。代码、必要权重和最终证据保存在云盘；SDK、依赖环境、着色器缓存及大量运行输出使用临时盘。
 
 在已配置 NVIDIA 图形环境的 Isaac Sim 6.1 容器内：
 
 ```bash
-cd /project/Bimanual-manipulation
+cd /project/Bimanual-manipulation-linux
 export ISAAC_PATH=/isaac-sim
 export WORKSTATION_OUTPUT_ROOT=/output/bimanual-linux
 /isaac-sim/python.sh -m workstation --mode sensor-check --headless
@@ -89,7 +89,8 @@ TCP 49100 / UDP 47998。需要其他地址时显式传 `--stream-host`。同一�
 本次 Featurize 云盘另有机器恢复材料，按其 `README.txt` 完成 Docker、匹配驱动用户态库、虚拟显示和 SSH 视频中继检查后，可在服务器使用：
 
 ```bash
-bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation --mode sensor-check
+ISAAC_WORKSTATION_PROJECT=Bimanual-manipulation-linux \
+  bash /home/featurize/work/isaac-support/scripts/start-isaac.sh --workstation --mode sensor-check
 ```
 
 该基础设施入口仍调用本仓库 CLI，不复制业务配置。先确认历史名为 `isaac-acceptance` 的容器是否占用端口；切换前保存所需场景及文件。
@@ -138,7 +139,7 @@ Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgp
 
 诊断冻结同一份观测并做三次推理，报告冷/热请求耗时、完整姿态、来源与拒绝原因；重复推理不是三个独立物理试验，也不证明在线时效性。启用模型后端时，两种来源使用同一观测和可见空槽位做完整任务预检，不能用候选数量推断抓取成功率。输出为 `graspgen_report.json`、源 RGB-D/掩码和 `graspgen_cloud.npz`。基础设施构建文件及权重在云盘 `isaac-support/graspgen`，不上传模型到源码仓库。
 
-已实测的推理构建定义另纳入 `workstation/models/graspgen_inference.dockerfile`；构建上下文必须是官方 `NVlabs/GraspGen` 的 `2dd8852e1be60f5f9d277fafcc621835cdf59110` 源码根目录。2026-10-12 已通过官方 Panda 样例、项目代理及原三路相机的受控单盒快照推理；静态基座/TCP 变换也有网格与双臂 FK 核验。模型与 SDK 夹指网格并不等同，开度、模型候选完整路径及物理抓放仍未验收，详见交接第 20 节。上游代码许可限定研究或评价用途，继续保留官方许可和资产声明。
+已实测的推理构建定义另纳入 `workstation/models/graspgen_inference.dockerfile`；构建上下文必须是官方 `NVlabs/GraspGen` 的 `2dd8852e1be60f5f9d277fafcc621835cdf59110` 源码根目录。2026-10-12 已通过官方 Panda 样例、项目代理及原三路相机的受控单盒快照推理；静态基座/TCP 变换也有网格与双臂 FK 核验。模型与 SDK 夹指网格并不等同，项目按自身模型独立检查开度与路径；受控原始姿态抓取、抬升与转移已有开发证据，完整落位尚未验收，详见交接第 20 节。上游代码许可限定研究或评价用途，继续保留官方许可和资产声明。
 
 `graspgen_tcp_calibration.json` 区分固定坐标变换、夹爪几何一致性和执行授权。当前固定变换为 `Rz(-90°), z=+0.1 m`（从项目 TCP 到 GraspGen 基座的坐标变换）；它不是抓取偏移调参，也不是真机标定。即使固定变换通过，夹指差异、未知开度或未检查路径仍使候选不可执行。界面彩色坐标轴始终表示原始模型基座，不表示已经可达的机器人姿态。
 
@@ -158,7 +159,7 @@ Isaac 只通过标准库 HTTP 与回环 `127.0.0.1:5558/infer` 通信，ZMQ/msgp
 
 初闭与视觉复核后，以图像时刻的实际指关节位置计算最多 4 mm 的位置预紧，保留原 30 N 指关节力上限。它用于补偿整体投影宽度与实际指垫接触宽度的差异，不能当作接触力测量或持盒证明；预紧后仍重新观察，并通过原视觉抬升及持续持盒要求。
 
-预抓完成、抬升完成时保存正常任务运动取得的新射线观测；持盒阶段需要当前几何支持。历史仍限制为原来的 30 秒、最多四份保留观测，普通短期记录仍为 5 秒；不延长旧帧寿命，也不执行专门补看的腕部运动。首次模型试验已实现约 18.7 cm 的真实抬升和转移，完整落位仍在复测，见交接记录。
+预抓完成、抬升完成时保存正常任务运动取得的新射线观测；持盒阶段需要当前几何支持。历史仍限制为原来的 30 秒、最多四份保留观测，普通短期记录仍为 5 秒；不延长旧帧寿命，也不执行专门补看的腕部运动。第三次有效模型开发试验已实现约 18.7 cm 的真实抬升和转移；第四次在抬升中因当前几何证据不足停止，完整落位尚未通过，见交接记录。
 
 以下 Windows 命令仍使用唯一 `python -m workstation` 入口。首次创建独立环境，禁止把模型依赖安装到 Isaac 的核心环境：
 
@@ -182,7 +183,7 @@ D:\Issaccc\python.bat -m workstation --mode visual-pnp --segmenter yolo-seg --we
 
 `model-capture --fixture separated --capture-seeds 1,2` 可在独立初始场景采集三路同步 RGB-D；监督标签单独存入 `evaluation_labels/`。`--teacher-capture --fixture upright` 仅用于读取真值的旧基线生成运动/遮挡监督数据，不是视觉技能。`model-train --dataset <采集目录或分组JSON> --output <唯一目录> --epochs 80` 在独立环境微调 YOLO11n-seg；训练、验证和测试按整个场景种子划分，不自动把训练结果投入控制。模型、环境和大数据均由 Git 忽略，具体权重哈希与结果见交接记录。
 
-GraspGen 客户端已实现官方 Panda ZMQ 协议及米制观测点云接口；服务、CUDA 扩展和项目 TCP 标定未就绪时显式拒绝接入执行。当前几何抓取模板是实际可用的候选来源。
+GraspGen 客户端已接通官方 Panda ZMQ 协议及米制观测点云接口；服务或项目 TCP 标定缺失时显式拒绝接入执行。`geometry` 与 `graspgen` 是可切换的候选来源；两者的实际验收范围分别记录，模型后端不会在失败后暗中回退到几何模板。
 
 **相机约束（用户 2026-10-08 更新）**：正式开发及后续回归使用 `config/scene.json` 中你已设置的三路安装位置、朝向、焦距。上表相机安装参数只保留历史诊断的可复现入口，后续未经确认不使用。专门为补看移动腕部的自动回退已停用；正常抓放时腕相机随臂运动，仍使用图像同期 FK。
 
