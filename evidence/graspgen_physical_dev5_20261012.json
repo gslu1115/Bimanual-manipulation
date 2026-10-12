@@ -1,0 +1,102 @@
+{
+  "scope": "one fixed development run; not independent generalization acceptance",
+  "source_run": "visual-pnp_20261012_044630_289610",
+  "passed": false,
+  "checks": {
+    "actor_passed": false,
+    "run_status_passed": false,
+    "all_phases_in_order": false,
+    "source_is_graspgen": false,
+    "original_model_pose_retained": false,
+    "full_orientation_commanded": false,
+    "inference_advanced_physics": true,
+    "approach_revalidated": false,
+    "visual_lift_passed": false,
+    "stability_samples_independently_checked": false,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_stability_passed": false,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "offline_final_pose_agrees": false
+  },
+  "source_report_sha256": "071ca9f4bcf995213661012a9521191d5cb30fc637ca7616960ecb8f2b48b55f",
+  "phases": [
+    "FAILED"
+  ],
+  "model_requests": [
+    {
+      "request_id": "1d48e18608a34f34bdf7a980e8956ef4",
+      "observation_time_s": 3.1999999999999913,
+      "response_wall_time_s": 1.8623718519993417,
+      "proxy_round_trip_s": 0.31007950399907713,
+      "fresh_observation_time_s": 3.249999999999991,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 0
+    },
+    {
+      "request_id": "c8b4b7ce403b46238815f483eef4fc39",
+      "observation_time_s": 3.3499999999999908,
+      "response_wall_time_s": 1.725286150998727,
+      "proxy_round_trip_s": 0.2692054869985441,
+      "fresh_observation_time_s": 3.3999999999999906,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 0
+    },
+    {
+      "request_id": "8896d05935ab421093ed7b9b71dad117",
+      "observation_time_s": 3.4999999999999902,
+      "response_wall_time_s": 1.9419589649987756,
+      "proxy_round_trip_s": 0.29268606400000863,
+      "fresh_observation_time_s": 3.54999999999999,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 0
+    }
+  ],
+  "executed_candidate": {},
+  "maximum_visual_lift_m": 0.0,
+  "observed_stable_s": null,
+  "model_preload": null,
+  "model_placement": null,
+  "normal_stage_observation_anchors": [],
+  "release_geometry": null,
+  "visual_verification": null,
+  "offline_final_pose_errors": null,
+  "failure_reason": "NO_FEASIBLE_DIRECT_GRASP",
+  "holding_geometry_failure": null,
+  "candidate_batches": [
+    {
+      "arm_assessments": 512,
+      "feasible": 0,
+      "rejection_counts": {
+        "GRIPPER_SPACE_INSUFFICIENT": 496,
+        "GRASP_OFF_CENTRE": 490,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 506
+      }
+    },
+    {
+      "arm_assessments": 512,
+      "feasible": 0,
+      "rejection_counts": {
+        "GRIPPER_SPACE_INSUFFICIENT": 494,
+        "GRASP_OFF_CENTRE": 500,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 498
+      }
+    },
+    {
+      "arm_assessments": 512,
+      "feasible": 0,
+      "rejection_counts": {
+        "GRIPPER_SPACE_INSUFFICIENT": 510,
+        "GRASP_OFF_CENTRE": 506,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 502
+      }
+    }
+  ],
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage4/visual-pnp_20261012_044630_289610"
+}
