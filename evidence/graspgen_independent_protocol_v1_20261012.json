@@ -1,0 +1,84 @@
+{
+  "id": "controlled-upright-independent-v1",
+  "status": "activated",
+  "activation": "After one complete controlled development model trial passes its independent audit; freeze source revision before first run",
+  "scope": "Three different upright initial scenes, paired geometry/GraspGen comparison; not clutter, size, or general success-rate validation",
+  "fixture": "upright",
+  "seeds": [
+    411,
+    412,
+    413
+  ],
+  "order": [
+    {
+      "seed": 411,
+      "grasp_backend": "geometry"
+    },
+    {
+      "seed": 411,
+      "grasp_backend": "graspgen"
+    },
+    {
+      "seed": 412,
+      "grasp_backend": "geometry"
+    },
+    {
+      "seed": 412,
+      "grasp_backend": "graspgen"
+    },
+    {
+      "seed": 413,
+      "grasp_backend": "geometry"
+    },
+    {
+      "seed": 413,
+      "grasp_backend": "graspgen"
+    }
+  ],
+  "initial_conditions": "Existing --visual-fixture upright and --seed generator, no preview or rejection sampling of seeds",
+  "segmenter": "geometry for both backends; no claim of project-finetuned segmenter evaluation",
+  "original_cameras_sha256": "81b51e18e97d575ec1306ff6b28a14e1bf19259d0585edf458c9050e17446edb",
+  "original_physics_sha256": "1065803b79cbf5840f22dc12660b3aef802ab3503d8bef10e472bd1facd5ad1e",
+  "carton_size_m": [
+    0.1,
+    0.055,
+    0.045
+  ],
+  "attempts_per_case": 1,
+  "graspgen_candidates_per_batch": 256,
+  "maximum_graspgen_batches_per_run": 3,
+  "development_changes_during_cohort": false,
+  "retry_failed_cases_inside_cohort": false,
+  "criteria": {
+    "complete_release_retreat_home": true,
+    "visual_lift_m": 0.08,
+    "placement_xy_m": 0.018,
+    "placement_z_m": 0.008,
+    "axis_error_deg": 8.0,
+    "visual_speed_m_s": 0.015,
+    "stable_duration_s": 0.5,
+    "current_rgbd_holding_geometry": true,
+    "no_attachment_or_runtime_object_pose_writes": true,
+    "exact_model_pose_and_fresh_revalidation_for_graspgen": true,
+    "independent_post_actor_pose_check": true
+  },
+  "metrics": [
+    "online/offline pass and failure stage",
+    "all request counts and rejection reasons",
+    "maximum visual lift",
+    "visual stable interval",
+    "final independent XY/Z/tilt/axis errors",
+    "wall runtime and simulation duration",
+    "model request workflow and proxy latency",
+    "sampled whole-GPU peak memory and sampling coverage/errors"
+  ],
+  "records": "All run outputs, raw phase RGB-D, source snapshots, config and logs persist to cloud; selected new JSON and summary pushed to linux-based",
+  "interpretation": "Report each case and each backend numerator/3; no independence claim for candidate batches or adjacent frames",
+  "failure_policy": "Keep every failure. Finish or explicitly report an externally interrupted cohort; any later fix starts a new versioned cohort.",
+  "source_commit": "8cff8404253360697b24b2c3b2c618d09288351d",
+  "activated_at_utc": "2026-10-12T05:51:07.381838+00:00",
+  "pilot_run": "visual-pnp_20261012_051020_174687",
+  "pilot_audit_sha256": "c1997fdc5f12744f5ff8fa8a141699f308786d0d7ad311781cd68e50cf52bf85",
+  "gpu_memory_measurement": "2-second sampled whole-device usage, including persistent GUI/model services; lower bound on true peak, not isolated model allocator usage",
+  "model_service_state": "already warm; official sample cold/warm measurements remain separately scoped evidence"
+}
