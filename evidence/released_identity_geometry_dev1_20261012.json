@@ -1,0 +1,190 @@
+{
+  "scope": "one development regression of already-seen seed 411 after released identity correction; not independent success rate",
+  "audit_revision": 1,
+  "launch_command": {
+    "entrypoint": [
+      "/bin/bash"
+    ],
+    "command": [
+      "-c",
+      "exec /isaac-sim/python.sh -m workstation --mode visual-pnp --headless --save-images --visual-fixture upright --seed \"$1\" --grasp-backend \"$2\" --output \"$3\" --num-grasps 256 --graspgen-assets /home/featurize/isaac-runtime/graspgen-source",
+      "_",
+      "411",
+      "geometry",
+      "/output/bimanual-linux/release-identity-dev1/isaac-release-identity-dev1-geometry-411"
+    ]
+  },
+  "backend_evidence": "Exact Docker launch arguments plus executed candidate source; legacy geometry report has no grasp_backend field",
+  "seed": 411,
+  "grasp_backend": "geometry",
+  "source_commit": "95898e54f6f58259e79182ea1b245bef464bc642",
+  "source_run": "isaac-release-identity-dev1-geometry-411",
+  "passed": true,
+  "checks": {
+    "actor_passed": true,
+    "run_status_passed": true,
+    "process_exited_cleanly": true,
+    "all_phases_in_order": true,
+    "requested_backend_matches": true,
+    "candidate_source_matches": true,
+    "source_revision_frozen": true,
+    "source_hashes_match": true,
+    "intended_initial_condition": true,
+    "visual_lift_passed": true,
+    "stable_samples_passed": true,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_home_passed": true,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "offline_final_pose_agrees": true
+  },
+  "missing_files": [],
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "HOME",
+    "VERIFY",
+    "DONE"
+  ],
+  "maximum_visual_lift_m": 0.1887702171119392,
+  "observed_stable_s": 0.5999999999999659,
+  "stable_sample_duration_s": 0.5999999999999659,
+  "visual_verification": [
+    {
+      "time_s": 48.79999999999787,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.20003656297922134,
+        -0.39952409267425537,
+        0.7824998856269343
+      ],
+      "axis_yaw_error_deg": 0.03368145685500027,
+      "z_error_m": 1.1437306568495842e-07,
+      "visual_speed_m_s": 1.5196262340525015e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 48.99999999999786,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.2000369429588318,
+        -0.39952394366264343,
+        0.7824999070349974
+      ],
+      "axis_yaw_error_deg": 0.03368143185538247,
+      "z_error_m": 9.296500258493268e-08,
+      "visual_speed_m_s": 2.0432624334599867e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 49.19999999999785,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.20003731548786163,
+        -0.39952343702316284,
+        0.7824999194201163
+      ],
+      "axis_yaw_error_deg": 0.033749485156404475,
+      "z_error_m": 8.057988365450797e-08,
+      "visual_speed_m_s": 3.1448959940769367e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 49.39999999999784,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.20003774762153625,
+        -0.3995231091976166,
+        0.7824998856269343
+      ],
+      "axis_yaw_error_deg": 0.033579317086113815,
+      "z_error_m": 1.1437306568495842e-07,
+      "visual_speed_m_s": 2.717310622092381e-06,
+      "arms_home_and_open": true
+    }
+  ],
+  "offline_final_pose_errors": {
+    "xy_m": 0.0003828776038519876,
+    "z_m": 3.099441525655777e-08,
+    "tilt_deg": 4.676310850554341e-06,
+    "axis_yaw_deg": 0.03383079976017151,
+    "linear_speed": 0.0016016526054312564,
+    "angular_speed": 2.897592358480326e-05
+  },
+  "failure_reason": null,
+  "holding_geometry_failure": null,
+  "model_requests": null,
+  "geometry_placement": {
+    "yaw_rad": 3.141592653589793,
+    "from_yaw_rad": 3.1264470587948683,
+    "axis_symmetry_rad": 3.141592653589793
+  },
+  "model_placement": null,
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.2191099002957344,
+      -0.018968784250319004,
+      0.7864994321416745
+    ],
+    "yaw_rad": 3.1264470587948683,
+    "opening_m": 0.073,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": null,
+    "source": "geometry",
+    "candidate_id": "",
+    "observation_time_s": null,
+    "validated_time_s": null,
+    "approach_direction": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": null,
+    "opening_source": "known carton width with approach clearance",
+    "model_score": null,
+    "metadata": {},
+    "rejection_reasons": []
+  },
+  "model_preload": null,
+  "release_geometry": {
+    "expected_lowest_corner_m": 0.7686010392368505,
+    "observed_supported_body": true,
+    "drop_bound_m": 0.011601039236850515,
+    "source": "current supported visual body and image-time FK; known fixed support"
+  },
+  "candidate_batches": [],
+  "docker_state": {
+    "Status": "exited",
+    "ExitCode": 0,
+    "StartedAt": "2026-10-12T07:59:53.656003509Z",
+    "FinishedAt": "2026-10-12T08:05:07.573821436Z"
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-placement-symmetry/isaac-release-identity-dev1-geometry-411",
+  "source_report_sha256": "fdd94066b3817eb521e49e2b273e74ccf82863aab5d03270cc3df025bf8b66d3",
+  "resource_sampling": {
+    "container": "isaac-release-identity-dev1-geometry-411",
+    "scope": "whole device, includes concurrent GUI/model containers",
+    "interval_seconds": 2,
+    "started_utc": "2026-10-12T07:59:53.965156+00:00",
+    "samples": 119,
+    "errors": [],
+    "sampled_peak_used_mib": 7817.0,
+    "terminal_state": "exited",
+    "finished_utc": "2026-10-12T08:05:07.714682+00:00",
+    "coverage": "sampling begins immediately after launch; sampled peak is a lower bound, not an exact allocator peak"
+  }
+}
