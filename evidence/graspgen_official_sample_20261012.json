@@ -1,0 +1,66 @@
+{
+  "scope": "official_Panda_model_saved_sample_only",
+  "success": true,
+  "sample_sha256": "e812cef94653098fb744d9b4ea443a4e75047f803699c0ab8bf19fd5e606e032",
+  "source_commit": "2dd8852e1be60f5f9d277fafcc621835cdf59110",
+  "weights": {
+    "repository": "https://huggingface.co/adithyamurali/GraspGenModels",
+    "commit": "ec1ccbb5eec0680db669246ac312a3636f16ee43",
+    "files": {
+      "checkpoints/graspgen_franka_panda.yml": {
+        "bytes": 4868,
+        "sha256": "3b666d28ffb91001ddb6ba24a2e0c11458478a986b808b493cf6fa9a987c2abd",
+        "official_lfs_sha256": null
+      },
+      "checkpoints/graspgen_franka_panda_dis.pth": {
+        "bytes": 165853892,
+        "sha256": "e47d703c63b54c2d11fbc1effd43898f251b4147250888541e3b16e9c0d19e1c",
+        "official_lfs_sha256": "e47d703c63b54c2d11fbc1effd43898f251b4147250888541e3b16e9c0d19e1c"
+      },
+      "checkpoints/graspgen_franka_panda_gen.pth": {
+        "bytes": 907408223,
+        "sha256": "0597583b89b322d42ceb4e596967d6ed68d1b56cba4039895909ccd5bdc66eff",
+        "official_lfs_sha256": "0597583b89b322d42ceb4e596967d6ed68d1b56cba4039895909ccd5bdc66eff"
+      },
+      "sample_data/real_object_pc/1740787710_319213.json": {
+        "bytes": 645583,
+        "sha256": "e812cef94653098fb744d9b4ea443a4e75047f803699c0ab8bf19fd5e606e032",
+        "official_lfs_sha256": "e812cef94653098fb744d9b4ea443a4e75047f803699c0ab8bf19fd5e606e032"
+      }
+    }
+  },
+  "input_points": 7674,
+  "load_seconds": 7.51386571099988,
+  "runs": [
+    {
+      "repeat": 0,
+      "candidates": 20,
+      "seconds": 0.8301910150000822,
+      "score_min": 0.7396222949028015,
+      "score_max": 0.8362733125686646
+    },
+    {
+      "repeat": 1,
+      "candidates": 20,
+      "seconds": 0.14476733800006514,
+      "score_min": 0.729455292224884,
+      "score_max": 0.8391321897506714
+    },
+    {
+      "repeat": 2,
+      "candidates": 20,
+      "seconds": 0.1450043199999982,
+      "score_min": 0.7312710881233215,
+      "score_max": 0.8311032056808472
+    }
+  ],
+  "peak_cuda_allocated_bytes": 781986304,
+  "peak_cuda_reserved_bytes": 805306368,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "python": "3.10.13",
+  "torch": "2.1.0",
+  "cuda": "12.1",
+  "physical_execution": false,
+  "project_TCP_verified": false,
+  "repeats_are_independent_trials": false
+}

@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "gripper_name": "franka_panda",
+    "model_name": "diffusion-discriminator",
+    "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+  },
+  "timing": {
+    "infer_ms": 1186.5683280000212
+  },
+  "request_id": "dac4350aa8e3442281897331125097eb",
+  "observation_time_s": 1.0,
+  "round_trip_s": 1.2157288150001477,
+  "TCP_calibration_verified": false,
+  "robot_path_checked": false,
+  "executable": false,
+  "scores_are_success_probability": false,
+  "candidate_count": 20,
+  "scope": "official_sample_through_project_proxy_and_official_ZMQ_service",
+  "success": true
+}
