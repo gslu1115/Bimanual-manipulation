@@ -1,0 +1,335 @@
+{
+  "scope": "one fixed development run; not independent generalization acceptance",
+  "source_run": "visual-pnp_20261012_051020_174687",
+  "passed": true,
+  "checks": {
+    "actor_passed": true,
+    "run_status_passed": true,
+    "all_phases_in_order": true,
+    "source_is_graspgen": true,
+    "original_model_pose_retained": true,
+    "full_orientation_commanded": true,
+    "inference_advanced_physics": true,
+    "approach_revalidated": true,
+    "visual_lift_passed": true,
+    "stability_samples_independently_checked": true,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_stability_passed": true,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "offline_final_pose_agrees": true
+  },
+  "source_report_sha256": "d8cff6366483c918a037b489879292e3c20f5b181c65d1046a6a5a1704ac96ef",
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "PRELOAD",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "HOME",
+    "VERIFY",
+    "DONE"
+  ],
+  "model_requests": [
+    {
+      "request_id": "6fed73ef75854f699a2555716f980b1f",
+      "observation_time_s": 3.1999999999999913,
+      "response_wall_time_s": 1.81798116400023,
+      "proxy_round_trip_s": 0.27811450800072635,
+      "fresh_observation_time_s": 3.249999999999991,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 0
+    },
+    {
+      "request_id": "1f52219d71ca44b1bec48572c571d7bb",
+      "observation_time_s": 3.3499999999999908,
+      "response_wall_time_s": 1.8378369199999725,
+      "proxy_round_trip_s": 0.26539671899990935,
+      "fresh_observation_time_s": 3.3999999999999906,
+      "simulation_advanced_s": 0.04999999999999982,
+      "raw_grasps": 256,
+      "arm_candidates": 512,
+      "supported_and_revalidated": 4
+    }
+  ],
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.19102231711149217,
+      -0.06180316787213088,
+      0.8036112546920777
+    ],
+    "yaw_rad": -2.806853196676018,
+    "opening_m": 0.07785477033697176,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.013550260849837605,
+      0.16635622614641624,
+      -0.9858323628481407,
+      -0.016629756897659807
+    ],
+    "source": "graspgen",
+    "candidate_id": "1f52219d71ca44b1bec48572c571d7bb:225:panda_left",
+    "observation_time_s": 3.3499999999999908,
+    "validated_time_s": 8.916666666666801,
+    "approach_direction": [
+      -0.03224949538707733,
+      0.02827996201813221,
+      -0.9990795850753784
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.054144379538955345,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.3022176921367645,
+    "metadata": {
+      "request_id": "1f52219d71ca44b1bec48572c571d7bb",
+      "sequence_ids": {
+        "scene_camera": 33,
+        "left_wrist_camera": 33,
+        "right_wrist_camera": 33
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.3499999999999908,
+        "position_m": [
+          -0.200093612074852,
+          -0.060034485533833504,
+          0.7824999948608611
+        ],
+        "axis_yaw_rad": 0.34905814041494887,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT"
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.05814364896340804,
+        "centre_offset_m": 0.00385371525884189,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          -0.3275480270385742,
+          0.9442839622497559,
+          -0.03224949538707733,
+          -0.18779736757278442
+        ],
+        [
+          0.9440981149673462,
+          0.3284493684768677,
+          0.02827996201813221,
+          -0.06463116407394409
+        ],
+        [
+          0.03729664534330368,
+          -0.021183643490076065,
+          -0.9990795850753784,
+          0.9035192131996155
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 2.458457884671827,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 8.916666666666801,
+        "sequence_ids": {
+          "scene_camera": 264,
+          "left_wrist_camera": 264,
+          "right_wrist_camera": 264
+        },
+        "position_change_m": 0.0001859593990930058,
+        "axis_change_rad": 7.373988993197855e-06,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.05814437953895535,
+          "centre_offset_m": 0.0038551953990082,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "maximum_visual_lift_m": 0.18623064510628484,
+  "observed_stable_s": 0.5999999999999659,
+  "model_preload": {
+    "measured_fingers_m": [
+      0.02778199501335621,
+      0.027802104130387306
+    ],
+    "original_command_m": 0.027072189769477673,
+    "command_m": 0.02378199501335621,
+    "maximum_position_preload_m": 0.004,
+    "holding_proof": false
+  },
+  "model_placement": {
+    "target_tcp_m": [
+      -0.19137590583720487,
+      -0.40016758921905615,
+      0.8119133277411773
+    ],
+    "orientation_wxyz": [
+      0.009978366271886203,
+      0.0013393870011187052,
+      -0.9997773443821001,
+      -0.018544538529734225
+    ],
+    "visual_offset_tcp_m": [
+      0.008235459061560261,
+      -0.0005330024774769342,
+      0.019574818074910266
+    ],
+    "relative_rotation": [
+      [
+        -0.9997972764980106,
+        -0.0030482659537422346,
+        0.019902612437459843
+      ],
+      [
+        -0.002308089162571223,
+        0.999308612266361,
+        0.03710754875625209
+      ],
+      [
+        -0.02000196569285373,
+        0.03705408917994423,
+        -0.999113064594527
+      ]
+    ],
+    "observation_time_s": 24.483333333332585
+  },
+  "normal_stage_observation_anchors": [
+    {
+      "phase": "pregrasp",
+      "time_s": 8.916666666666801,
+      "current_payload_supported": false
+    },
+    {
+      "phase": "lifted",
+      "time_s": 24.483333333332585,
+      "current_payload_supported": true
+    }
+  ],
+  "release_geometry": {
+    "expected_lowest_corner_m": 0.7664790539343506,
+    "observed_supported_body": true,
+    "drop_bound_m": 0.009479053934350553,
+    "source": "current supported visual body and image-time FK; known fixed support"
+  },
+  "visual_verification": [
+    {
+      "time_s": 51.53333333333105,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.19970393180847168,
+        -0.39879900217056274,
+        0.7824999351152646
+      ],
+      "axis_yaw_error_deg": 0.03159129594845451,
+      "z_error_m": 6.488473536236938e-08,
+      "visual_speed_m_s": 0.00014043611641737446,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 51.73333333333104,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.19970472157001495,
+        -0.39882194995880127,
+        0.7824998837935188
+      ],
+      "axis_yaw_error_deg": 0.017005324618619966,
+      "z_error_m": 1.1620648121546395e-07,
+      "visual_speed_m_s": 0.00013642461141216323,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 51.93333333333103,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.19970430433750153,
+        -0.39882445335388184,
+        0.7824998989886446
+      ],
+      "axis_yaw_error_deg": 0.017346004336076304,
+      "z_error_m": 1.0101135539120065e-07,
+      "visual_speed_m_s": 2.9628777521921875e-05,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 52.13333333333102,
+      "track_id": "visual_0001",
+      "position_m": [
+        -0.19970397651195526,
+        -0.3988122344017029,
+        0.7824998859451072
+      ],
+      "axis_yaw_error_deg": 0.017345875373031523,
+      "z_error_m": 1.1405489275251313e-07,
+      "visual_speed_m_s": 7.923991042120108e-05,
+      "arms_home_and_open": true
+    }
+  ],
+  "offline_final_pose_errors": {
+    "xy_m": 0.0010183393167693185,
+    "z_m": 3.099441525655777e-08,
+    "tilt_deg": 3.818191820832846e-06,
+    "axis_yaw_deg": 0.017405666413777745,
+    "linear_speed": 0.0016016003483215456,
+    "angular_speed": 2.8824297997313858e-05
+  },
+  "failure_reason": null,
+  "holding_geometry_failure": null,
+  "candidate_batches": [
+    {
+      "arm_assessments": 512,
+      "feasible": 0,
+      "rejection_counts": {
+        "GRIPPER_SPACE_INSUFFICIENT": 500,
+        "GRASP_OFF_CENTRE": 494,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 496
+      }
+    },
+    {
+      "arm_assessments": 512,
+      "feasible": 2,
+      "rejection_counts": {
+        "GRIPPER_SPACE_INSUFFICIENT": 494,
+        "GRASP_OFF_CENTRE": 492,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 494,
+        "IK_DISCONTINUITY": 2
+      }
+    }
+  ],
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261012-stage4/visual-pnp_20261012_051020_174687"
+}
