@@ -1,0 +1,32 @@
+{
+  "status": "VERIFIED",
+  "utc": "2026-10-12T10:04:55.588536+00:00",
+  "isaac_backup": "/home/featurize/work/isaac-support/backups/20261012T100433.232827Z",
+  "isaac_receipt": {
+    "backup": "/home/featurize/work/isaac-support/backups/20261012T100433.232827Z",
+    "status": "VERIFIED",
+    "utc": "20261012T100433.232827Z",
+    "files_and_links": 1820,
+    "bytes": 502672738,
+    "source_copy_sha256_verified": true,
+    "restore_sha256_verified": true,
+    "container_stopped": true,
+    "sources": [
+      "output",
+      "isaac-data/logs",
+      "isaac-data/config",
+      "isaac-data/data"
+    ],
+    "excluded": [
+      "Docker images",
+      "shader/package caches",
+      "driver extraction",
+      "runtime sockets"
+    ],
+    "note": "Cloud projects/scripts/downloads already persist; no Git commit or push performed."
+  },
+  "model_files": 6,
+  "model_source_copy_sha256_verified": true,
+  "project_containers_running": [],
+  "container_logs": 29
+}
