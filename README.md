@@ -173,12 +173,31 @@ export WORKSTATION_OUTPUT_ROOT=/output/bimanual-linux
 
 ### 独立 GraspGen 服务
 
-先恢复图形环境。镜像不存在时用云盘官方 NVlabs/GraspGen@2dd8852e1be60f5f9d277fafcc621835cdf59110 源码构建：
+先恢复图形环境。模型镜像优先从云盘缓存恢复，避免每次归还机器后重新下载。缓存位于 `isaac-support/graspgen/image-cache/<image-id>/`；只有 `receipt.json` 为 `ARCHIVE_VERIFIED`、压缩包 SHA-256 校验通过才可使用。恢复脚本核对镜像 ID，已有不同版本时停止，不覆盖正在使用的环境。权重和项目代码仍分别从云盘读取，不包含在这个镜像缓存中。
+
+~~~bash
+# 仅在 image-cache/latest.json 和对应已校验归档存在时使用：
+bash /home/featurize/work/isaac-support/graspgen/restore-image-cache.sh
+~~~
+
+没有有效缓存且镜像不存在时，用云盘官方 NVlabs/GraspGen@2dd8852e1be60f5f9d277fafcc621835cdf59110 源码构建：
 
 ~~~bash
 docker build -t project-graspgen:2dd8852 \
+  --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
   -f /home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux/workstation/models/graspgen_inference.dockerfile \
   /home/featurize/work/isaac-support/graspgen/source
+~~~
+
+上述构建参数仅为本次构建选择[清华 PyPI 镜像](https://mirrors.tuna.tsinghua.edu.cn/help/pypi/)，省略时使用原 PyPI 源，不更改依赖版本要求，也不改宿主机或 Isaac 的 pip 配置。
+
+基础 PyTorch 镜像的压缩层合计约 8.85 GB。2026-10-13 原站大文件连接失败，服务器自带代理同样失败；[DaoCloud 镜像](https://github.com/DaoCloud/public-image-mirror) 在核对清单与官方一致后可由服务器直接下载，无需操作者 VPN。可用性会变化，不能把第三方标签未经核对直接当作官方版本。首次环境构建成功后，在云盘余量足够时执行 `bash /home/featurize/work/isaac-support/graspgen/cache-image.sh`；压缩归档和校验完成后才更新 `image-cache/latest.json`，未完成的 `.partial` 不可用于恢复。
+
+2026-10-13 已生成约 **9.30 GB** 的模型镜像缓存，gzip、SHA-256 和归档清单均通过检查，模型服务实际响应；[环境收据](evidence/model_environment_restore_20261013.json) 记录完整镜像摘要和依赖版本。恢复入口已验证能识别本机的同一镜像，尚未在另一台空白机器上演练加载。此缓存不包括 Isaac 镜像、模型权重或实验结果。
+
+镜像就绪后启动服务：
+
+~~~bash
 bash /home/featurize/work/isaac-support/graspgen/start-service.sh
 test -d /home/featurize/isaac-runtime/graspgen-source || \
   cp -a /home/featurize/work/isaac-support/graspgen/source /home/featurize/isaac-runtime/graspgen-source

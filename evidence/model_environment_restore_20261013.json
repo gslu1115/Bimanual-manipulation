@@ -1,0 +1,63 @@
+{
+  "scope": "new Featurize RTX 4090 model environment restoration and cloud archive; not physical task acceptance",
+  "date": "2026-10-13",
+  "recorded_utc": "2026-10-13T14:01:53.271950+00:00",
+  "base_image": {
+    "status": "VERIFIED",
+    "utc": "2026-10-13T13:27:35.894878+00:00",
+    "source": "official Docker Hub manifest compared with domestic mirror",
+    "manifest_digest": "sha256:fe174e1e257d29976c99ebe9832d9bb20bd9706ea8eff1482cc9af261998c48d",
+    "config_digest": "sha256:6f873147bf83cd8d6aeed92612c93cf1fb6a006958249a42296cdf8be5794a7a",
+    "local_image_id": "sha256:fe174e1e257d29976c99ebe9832d9bb20bd9706ea8eff1482cc9af261998c48d",
+    "compressed_layer_bytes": 8851573182,
+    "repo_digests": [
+      "m.daocloud.io/docker.io/pytorch/pytorch@sha256:fe174e1e257d29976c99ebe9832d9bb20bd9706ea8eff1482cc9af261998c48d"
+    ],
+    "local_vpn_forward_closed": true,
+    "daemon_proxy_restored": true
+  },
+  "model_image_cache": {
+    "cache_directory": "/home/featurize/work/isaac-support/graspgen/image-cache/5a1dbbf934bf071e609f6e2f3c25ed5d11f2ec8f0c7ab67215c3d109c3c362a5",
+    "status": "ARCHIVE_VERIFIED",
+    "created_utc": "2026-10-13T14:00:46.951649+00:00",
+    "image_id": "sha256:5a1dbbf934bf071e609f6e2f3c25ed5d11f2ec8f0c7ab67215c3d109c3c362a5",
+    "image_tag": "project-graspgen:2dd8852",
+    "archive_bytes": 9296311103,
+    "archive_sha256": "6b8e4094cec9a17f2ca62972dd16fbabef89f146cb741d34f0ed3c03cfd021d3",
+    "gzip_integrity_verified": true,
+    "archive_manifest_verified": true,
+    "restore_load_tested": false,
+    "includes_weights": false,
+    "scope": "model environment image only; weights and project source remain separate",
+    "image_config_digest": "sha256:27dd50e860af377050351f0849a8773f05f02e3638ed0854f14ff5dcae21d3bb"
+  },
+  "model_source_commit": "2dd8852e1be60f5f9d277fafcc621835cdf59110",
+  "model_source_tracked_changes": [],
+  "built_dockerfile_sha256": "5dcaf796ff50342d63dce874d59c7af03fd063a0703e7159e1becb6317a744bc",
+  "pypi_index": "https://pypi.tuna.tsinghua.edu.cn/simple",
+  "installed_versions": {
+    "torch": "2.1.0",
+    "torchvision": "0.16.0",
+    "numpy": "1.26.4",
+    "opencv-python-headless": "4.11.0.86",
+    "torch-cluster": "1.6.3+pt21cu121",
+    "torch-scatter": "2.1.2+pt21cu121",
+    "spconv-cu120": "2.3.6",
+    "pointnet2-ops": "3.0.0"
+  },
+  "service_metadata": {
+    "gripper_name": "franka_panda",
+    "model_name": "diffusion-discriminator",
+    "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+  },
+  "checks": {
+    "base_official_manifest_match": true,
+    "cloud_archive_verified": true,
+    "model_service_metadata_responded": true,
+    "local_vpn_download_forward_closed": true,
+    "docker_original_proxy_restored": true
+  },
+  "fresh_machine_restore_tested": false,
+  "physical_case": "isaac-single-arm-dev1-graspgen-412",
+  "physical_case_status_at_receipt": "running; no final result yet"
+}
