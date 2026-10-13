@@ -1,0 +1,127 @@
+{
+  "scope": "archived failure frame with image-time FK and fixed wrist calibration; not a physical success",
+  "source_run": "isaac-observed-pose-dev1-graspgen-412",
+  "time_s": 17.32499999999966,
+  "robot_commands": 0,
+  "truth_inputs": false,
+  "tcp_rotation_reconstruction": "same-arm wrist image rotation delta applied to recorded preloaded FK relation",
+  "strict": {
+    "status": "UNKNOWN",
+    "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+    "time_s": 17.32499999999966,
+    "unobserved_axis": 0,
+    "observed_span_m": 0.02581617752241,
+    "expected_span_m": 0.1,
+    "visible_face_axes": [
+      1,
+      2
+    ],
+    "face_point_counts": [
+      {
+        "axis": 1,
+        "sign": -1.0,
+        "points": 88
+      },
+      {
+        "axis": 2,
+        "sign": 1.0,
+        "points": 472
+      }
+    ]
+  },
+  "grasp_constrained": {
+    "status": "GRASP_CONSTRAINED",
+    "time_s": 17.32499999999966,
+    "position_m": [
+      -0.1898169526225796,
+      -0.05451280038537985,
+      0.7900609518244066
+    ],
+    "orientation_wxyz": [
+      0.8600987937440018,
+      -0.052650819738791335,
+      0.037508238507101055,
+      0.5060149090936357
+    ],
+    "rotation": [
+      [
+        0.4850840876381078,
+        -0.874395304864548,
+        0.011237381863180485
+      ],
+      [
+        0.8664959468471201,
+        0.48235360591158555,
+        0.1285292688908011
+      ],
+      [
+        -0.11780578091850005,
+        -0.05261035729706804,
+        0.9916420464498554
+      ]
+    ],
+    "size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "mask_refs": [
+      "scene_camera/603/component_2"
+    ],
+    "surface_inlier_ratio": 1.0,
+    "plane_residual_m": 8.184664485874949e-05,
+    "uncertainty_m": 0.003975164879407578,
+    "observed_face_axes": [
+      1,
+      2
+    ],
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "grasp_relation_prediction",
+        "observed_span_m": 0.02581617752241,
+        "expected_span_m": 0.1
+      },
+      {
+        "axis": 1,
+        "source": "visible_signed_plane",
+        "sign": -1.0,
+        "points": 88
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05337705682061984,
+        "aggregation": "union of per-view validated planar quantiles",
+        "mask_refs": [
+          "scene_camera/603/component_2"
+        ]
+      },
+      {
+        "axis": 2,
+        "source": "visible_signed_plane",
+        "sign": 1.0,
+        "points": 472
+      }
+    ],
+    "translation_difference_from_hint_m": 0.0021500354936163195,
+    "orientation_difference_from_hint_deg": 7.688065212825114,
+    "geometric_pose_measured": false,
+    "semantic_pose_unique": false,
+    "grasp_constrained": true,
+    "predicted_translation_axes": [
+      0
+    ],
+    "evidence": "current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip"
+  },
+  "checks": {
+    "original_failure_reproduced": true,
+    "carry_support_accepted": true,
+    "not_claimed_as_full_measurement": true
+  },
+  "passed": true,
+  "source_sha256": {
+    "workstation/perception/cuboid_pose.py": "fa4530afca3106be4a6256a8ba5621985a1652d802d5ef7deb4fb1136cc13030",
+    "workstation/perception/held_surface.py": "de4d3c54b6295ae54386628912cf1be2c5d6b439dfebcb3b29559283b1173de0"
+  }
+}
