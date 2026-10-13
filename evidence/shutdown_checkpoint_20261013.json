@@ -1,0 +1,64 @@
+{
+  "status": "VERIFIED",
+  "utc": "2026-10-13T15:07:54.725403+00:00",
+  "shutdown_root": "/home/featurize/work/isaac-support/backups/shutdown-20261013T150557Z",
+  "isaac_backup": "/home/featurize/work/isaac-support/backups/20261013T150753.461268Z",
+  "isaac_receipt": {
+    "backup": "/home/featurize/work/isaac-support/backups/20261013T150753.461268Z",
+    "status": "VERIFIED",
+    "utc": "20261013T150753.461268Z",
+    "files_and_links": 113,
+    "bytes": 38364598,
+    "source_copy_sha256_verified": true,
+    "restore_sha256_verified": true,
+    "container_stopped": true,
+    "sources": [
+      "output",
+      "isaac-data/logs",
+      "isaac-data/config",
+      "isaac-data/data"
+    ],
+    "excluded": [
+      "Docker images",
+      "shader/package caches",
+      "driver extraction",
+      "runtime sockets"
+    ],
+    "note": "Cloud projects/scripts/downloads already persist; no Git commit or push performed."
+  },
+  "extra_backups": {
+    "graspgen-results": {
+      "source": "/home/featurize/graspgen-runtime/results",
+      "files_and_links": 0,
+      "bytes": 0,
+      "source_copy_sha256_verified": true
+    },
+    "case-runtime": {
+      "source": "/home/featurize/isaac-runtime/isaac-single-arm-dev1-graspgen-412",
+      "files_and_links": 5,
+      "bytes": 97291,
+      "source_copy_sha256_verified": true
+    },
+    "replay-runtime": {
+      "source": "/home/featurize/isaac-runtime/single-arm-lower-replay",
+      "files_and_links": 5,
+      "bytes": 90075,
+      "source_copy_sha256_verified": true
+    }
+  },
+  "project_containers_running": [],
+  "display_stopped": true,
+  "container_logs": 4,
+  "model_image_cache": "/home/featurize/work/isaac-support/graspgen/image-cache/5a1dbbf934bf071e609f6e2f3c25ed5d11f2ec8f0c7ab67215c3d109c3c362a5",
+  "model_image_archive_previously_sha256_verified": true,
+  "model_image_size_rechecked": 9296311103,
+  "model_image_fresh_machine_restore_tested": false,
+  "code_checkpoint": "2e7e7b4435a30c1cb49d3349685a014274ed0b06",
+  "code_checkpoint_ci": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38417419246",
+  "code_checkpoint_ci_conclusion": "success",
+  "physical_dev2_started": false,
+  "latest_sdk_check": {
+    "status": "not_run",
+    "reason": "Read-only parent mount presented an empty repository working directory; unittest could not discover tests."
+  }
+}
