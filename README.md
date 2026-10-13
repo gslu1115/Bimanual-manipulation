@@ -213,6 +213,8 @@ ISAAC_WORKSTATION_PROJECT=Bimanual-manipulation-linux \
 
 graspgen-check 只诊断；visual-pnp 是物理开发入口，visual-adjust 是未验收侧放原型；具体进展见交接，恢复环境不自动启动研究实验。
 
+直立 GraspGen 路径目前以盒底距支撑面 **15 mm** 为释放目标，候选预检与实际执行共用同一间隙；几何模板仍为 10 mm。该开发调整为视觉位姿余量与支撑面附近的深度误差带留出空间，原碰撞、未知空间、最大 20 mm 下落及释放后的视觉稳定检查仍执行。10/15 mm 原帧路径对照与物理验证进度见交接 20.20。
+
 ### 网页与操作者本地连接
 
 服务器 8210 尚无服务时启动，start-viewer.sh 本身为前台服务：

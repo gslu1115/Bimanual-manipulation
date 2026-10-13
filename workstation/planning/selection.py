@@ -9,10 +9,13 @@ from workstation.perception.scene_estimate import pose_is_observed
 # contact on the 45 mm tall side. Shared by ranking, refreshed targets and
 # nominal held preflight; runtime uses the measured visual TCP relation.
 UPRIGHT_TCP_HEIGHT_M = .004
-# Controlled placement releases the BODY 10 mm above the known support.
+# Geometry-template placement releases the BODY 10 mm above the known support.
 # TCP/body offset is additional, not the release gap. Gravity/contact settles
 # the released carton; independent visual verification is still mandatory.
 UPRIGHT_RELEASE_GAP_M = .010
+# Full-pose model carry needs room for its visual pose padding near the
+# support's optical uncertainty band. Path and released-box checks still apply.
+GRASPGEN_UPRIGHT_RELEASE_GAP_M = .015
 UPRIGHT_PLACE_TCP_CLEARANCE_M = UPRIGHT_TCP_HEIGHT_M + UPRIGHT_RELEASE_GAP_M
 
 

@@ -1,0 +1,347 @@
+{
+  "scope": "saved exact failure-trigger RGB-D/FK lower-path replay; not physical release success",
+  "source_commit": "082df142d24cf2796e44a4ab85bc922d7f4a5472",
+  "source_run": "isaac-single-arm-dev1-graspgen-412",
+  "report_sha256": "c382209b3028f61848de50e1f62623092d5adf6c605beba6644fcb11f6c089a7",
+  "replay_script_sha256": "abe3869189923f8709fab22e7ca1ac210e5e67b574ffaf497609a242f00ca919",
+  "physical_execution": false,
+  "truth_inputs": false,
+  "all_live_history_available": false,
+  "original_failure": {
+    "reason": "UNOBSERVED_PATH_SPACE",
+    "workspace": {
+      "resolution_m": 0.01,
+      "query_refinement_m": 0.0025,
+      "lower_m": [
+        -0.38,
+        -0.51,
+        0.76
+      ],
+      "upper_m": [
+        0.38,
+        0.16,
+        1.3599999999999999
+      ],
+      "unknown_cells": 111770,
+      "unmodelled_occupied_cells": 0,
+      "observation_time_s": 33.79166666666539,
+      "optical_depth_error_margin_m": 0.003,
+      "last_unknown_subcell_centre_m": [
+        -0.23875,
+        -0.42125,
+        0.76375
+      ],
+      "last_unknown_sample_m": [
+        -0.24000335834424535,
+        -0.420000044787736,
+        0.7637621913116631
+      ],
+      "unknown_point_views": [
+        {
+          "camera": "scene_camera",
+          "uv": [
+            157.45639629141183,
+            446.5737498307654
+          ],
+          "camera_z_m": 0.9479062784640887,
+          "inside_valid_image_border": true,
+          "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+          "min_depth_3x3_m": 0.5869845747947693
+        },
+        {
+          "camera": "left_wrist_camera",
+          "uv": [
+            341.3739713373861,
+            414.7120638666117
+          ],
+          "camera_z_m": 0.27503972436351737,
+          "inside_valid_image_border": true,
+          "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+          "min_depth_3x3_m": 0.27796080708503723
+        },
+        {
+          "camera": "right_wrist_camera",
+          "uv": [
+            954.5207607097161,
+            -290.7030540082526
+          ],
+          "camera_z_m": 0.33594976214412836,
+          "inside_valid_image_border": false,
+          "reason": "OUTSIDE_FIELD_OF_VIEW"
+        }
+      ],
+      "occlusion_memory": {
+        "max_age_s": 5.0,
+        "snapshots": 1,
+        "reused_sample_evaluations": 126747,
+        "oldest_reused_age_s": 6.799999999999617,
+        "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground, farther background or measured fixed surface just behind query in optical band; other foreground/motion envelopes veto",
+        "anchor_max_age_s": 30.0,
+        "anchors": 2,
+        "anchor_reused_sample_evaluations": 126747,
+        "anchor_requires_current_payload_surface_support": true,
+        "uncertainty_growth_m_s": 0.02,
+        "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+      },
+      "payload_history_support": {
+        "target_id": "visual_0001",
+        "time_s": 33.79166666666539,
+        "mask_refs": [
+          "scene_camera/1272/component_1",
+          "left_wrist_camera/1272/component_2"
+        ],
+        "support_mask_refs": [
+          "scene_camera/1272/component_1",
+          "left_wrist_camera/1272/component_2"
+        ],
+        "physical_attachment": false
+      },
+      "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+      "continuous_collision_proof": false
+    },
+    "self_shadow": true,
+    "ray_checks": [
+      {
+        "time_s": 11.424999999999992,
+        "views": [
+          {
+            "name": "scene_camera",
+            "free": false,
+            "uv": [
+              160,
+              440
+            ],
+            "valid": true,
+            "optical_clearance_m": 0.0029610145212743966
+          },
+          {
+            "name": "left_wrist_camera",
+            "free": false,
+            "uv": [
+              778,
+              1493
+            ]
+          },
+          {
+            "name": "right_wrist_camera",
+            "free": false,
+            "uv": [
+              942,
+              -273
+            ]
+          }
+        ]
+      },
+      {
+        "time_s": 26.991666666665775,
+        "views": [
+          {
+            "name": "scene_camera",
+            "free": false,
+            "uv": [
+              160,
+              440
+            ],
+            "valid": true,
+            "optical_clearance_m": 0.0029610145212743966
+          },
+          {
+            "name": "left_wrist_camera",
+            "free": false,
+            "uv": [
+              749,
+              1474
+            ]
+          },
+          {
+            "name": "right_wrist_camera",
+            "free": false,
+            "uv": [
+              942,
+              -273
+            ]
+          }
+        ]
+      },
+      {
+        "time_s": 33.79166666666539,
+        "views": [
+          {
+            "name": "scene_camera",
+            "free": false,
+            "uv": [
+              160,
+              440
+            ],
+            "valid": true,
+            "optical_clearance_m": -0.3609739196179773
+          },
+          {
+            "name": "left_wrist_camera",
+            "free": false,
+            "uv": [
+              328,
+              411
+            ],
+            "valid": true,
+            "optical_clearance_m": -0.17323816113977697
+          },
+          {
+            "name": "right_wrist_camera",
+            "free": false,
+            "uv": [
+              942,
+              -273
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "release_gap_comparisons": {
+    "0.01": {
+      "passed": false,
+      "reason": "UNOBSERVED_PATH_SPACE",
+      "path_check": {
+        "rejection": "UNOBSERVED_PATH_SPACE",
+        "held_centre_m": [
+          -0.20027733401703535,
+          -0.399895693086022,
+          0.7913559844989726
+        ],
+        "held_rotation": [
+          [
+            0.9999962832731596,
+            -0.0005950053278555449,
+            -0.002660715792169828
+          ],
+          [
+            0.000594913020518521,
+            0.9999998224096768,
+            -3.5483984862388446e-05
+          ],
+          [
+            0.0026607364328125145,
+            3.3900958509448276e-05,
+            0.9999964596599132
+          ]
+        ],
+        "held_local_size_m": [
+          0.10997456490619653,
+          0.06497456490619653,
+          0.05497456490619653
+        ],
+        "held_space_query": "oriented cuboid; enclosing AABB corners excluded",
+        "workspace": {
+          "resolution_m": 0.01,
+          "query_refinement_m": 0.0025,
+          "lower_m": [
+            -0.38,
+            -0.51,
+            0.76
+          ],
+          "upper_m": [
+            0.38,
+            0.16,
+            1.3599999999999999
+          ],
+          "unknown_cells": 111770,
+          "unmodelled_occupied_cells": 0,
+          "observation_time_s": 33.79166666666539,
+          "optical_depth_error_margin_m": 0.003,
+          "last_unknown_subcell_centre_m": [
+            -0.23875,
+            -0.42125,
+            0.76375
+          ],
+          "last_unknown_sample_m": [
+            -0.24000335834424535,
+            -0.420000044787736,
+            0.7637621913116631
+          ],
+          "unknown_point_views": [
+            {
+              "camera": "scene_camera",
+              "uv": [
+                157.45639629141183,
+                446.5737498307654
+              ],
+              "camera_z_m": 0.9479062784640887,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.5869845747947693
+            },
+            {
+              "camera": "left_wrist_camera",
+              "uv": [
+                341.3739713373861,
+                414.7120638666117
+              ],
+              "camera_z_m": 0.27503972436351737,
+              "inside_valid_image_border": true,
+              "reason": "BEHIND_OR_TOO_CLOSE_TO_SURFACE",
+              "min_depth_3x3_m": 0.27796080708503723
+            },
+            {
+              "camera": "right_wrist_camera",
+              "uv": [
+                954.5207607097161,
+                -290.7030540082526
+              ],
+              "camera_z_m": 0.33594976214412836,
+              "inside_valid_image_border": false,
+              "reason": "OUTSIDE_FIELD_OF_VIEW"
+            }
+          ],
+          "occlusion_memory": {
+            "max_age_s": 5.0,
+            "snapshots": 1,
+            "reused_sample_evaluations": 565570,
+            "oldest_reused_age_s": 6.799999999999617,
+            "criterion": "previous valid optical ray; all9 current valid pixels support robot/payload foreground, farther background or measured fixed surface just behind query in optical band; other foreground/motion envelopes veto",
+            "anchor_max_age_s": 30.0,
+            "anchors": 2,
+            "anchor_reused_sample_evaluations": 565570,
+            "anchor_requires_current_payload_surface_support": true,
+            "uncertainty_growth_m_s": 0.02,
+            "scope": "bounded observation-memory heuristic; not guaranteed against unseen moving objects"
+          },
+          "payload_history_support": {
+            "target_id": "visual_0001",
+            "time_s": 33.79166666666539,
+            "mask_refs": [
+              "scene_camera/1272/component_1",
+              "left_wrist_camera/1272/component_2"
+            ],
+            "support_mask_refs": [
+              "scene_camera/1272/component_1",
+              "left_wrist_camera/1272/component_2"
+            ],
+            "physical_attachment": false
+          },
+          "source": "optical depth + calibration + image-time robot models + fixed/visual collision models",
+          "continuous_collision_proof": false
+        }
+      }
+    },
+    "0.015": {
+      "passed": true,
+      "clearance_m": 0.032486229425615354,
+      "path_check": {
+        "samples": 390,
+        "clearance_m": 0.032486229425615354,
+        "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+        "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+        "whole_arm_unknown_space_verified": false,
+        "finger_shell_visibility_required": false,
+        "approach_corridor_unknown_space_checked": false,
+        "approach_corridor_applicable": true,
+        "empty_motion_unknown_space_verified": false,
+        "local_unknown_space_check_deferred": false,
+        "max_joint_sample_rad": 0.025,
+        "continuous_collision_proof": false
+      }
+    }
+  },
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261013-single-arm/lower-replay"
+}

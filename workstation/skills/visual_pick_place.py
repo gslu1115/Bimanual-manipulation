@@ -9,7 +9,8 @@ import math
 import numpy as np
 from workstation.perception.rgbd_cartons import CartonEstimator, axis_error
 from workstation.planning.selection import (assess, select_skill, upright_grasp_position,
-    nearest_aligned_yaw, nearest_upright_slot_rotation, UPRIGHT_RELEASE_GAP_M)
+    nearest_aligned_yaw, nearest_upright_slot_rotation, UPRIGHT_RELEASE_GAP_M,
+    GRASPGEN_UPRIGHT_RELEASE_GAP_M)
 from workstation.skills.reobserve import Reobserve, ActiveReobserve, GuidedReobserve
 from workstation.perception.held_surface import HeldSurfaceTracker,CuboidHoldingTracker
 from workstation.perception.scene_estimate import PoseHypothesis,pose_is_observed
@@ -40,6 +41,8 @@ class VisualPickPlace:
         self.observer_arms=set();self.slot_xy=None
         self.releasing=False
         self.grasp_source=grasp_source
+        if grasp_source is not None and self.accepted_postures==('UPRIGHT',):
+            self.release_gap_m=GRASPGEN_UPRIGHT_RELEASE_GAP_M
         self.release_tracker=None
         self.observation_anchors=[]
         self.robot.monitor=self.monitor
