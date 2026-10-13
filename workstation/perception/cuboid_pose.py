@@ -1,7 +1,9 @@
 """Observed cuboid planes/extents, with a pose hint for correspondence only.
 
-No renderer labels or object state. Returned translation and axes come from
-current RGB-D. Axis signs use the supplied visual hypothesis; geometrically
+No renderer labels or object state. Default translation and axes come from
+current RGB-D. An explicit carry opt-in may predict one hidden in-plane
+coordinate from an already latched grasp; this is separately labelled and
+never accepted by the independent measured-pose validator. Axis signs use the supplied visual hypothesis; geometrically
 equivalent top/bottom and 180-degree hypotheses are not resolved by this fit.
 """
 import math
@@ -22,7 +24,7 @@ def _plane_patch(points,expected_normal):
     return normal,residual
 
 
-def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
+def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,allow_grasp_translation=False):
     import cv2
     centre,r,size=map(lambda value:np.asarray(value,float),(position_hint,rotation_hint,size_m))
     if (centre.shape!=(3,) or r.shape!=(3,3) or size.shape!=(3,) or np.any(size<=0) or
@@ -126,7 +128,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
     extent_patches=[dict(mask_ref=patch['mask_ref'],
         bounds=np.quantile(patch['points']@measured,[.002,.998],axis=0))
         for face in faces for patch in face['extent_patches']]
-    coordinates=[];constraints=[];extent_errors=[]
+    coordinates=[];constraints=[];extent_errors=[];predicted_axes=[]
     for axis in range(3):
         values=[]
         for face in faces:
@@ -143,9 +145,18 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
             constraints.append(dict(axis=axis,source='complete_observed_extent',span_m=span,
                 aggregation='union of per-view validated planar quantiles',
                 mask_refs=sorted({patch['mask_ref'] for patch in extent_patches})))
-        if not values:return unknown('TRANSLATION_AXIS_UNOBSERVED:'+str(axis),
-            unobserved_axis=axis,observed_span_m=span,expected_span_m=float(size[axis]),
-            visible_face_axes=sorted(axes),face_point_counts=[dict(axis=f['axis'],sign=f['sign'],points=len(f['points'])) for f in faces])
+        if not values:
+            # A latched grasp can carry one hidden in-plane coordinate. Keep
+            # current planes/rotation and label the coordinate as predicted,
+            # never as an independently measured pose or a fabricated edge.
+            if allow_grasp_translation and axis in (0,1) and len(axes)>=2 and not predicted_axes:
+                values.append(float(centre@measured[:,axis]));predicted_axes.append(axis)
+                constraints.append(dict(axis=axis,source='grasp_relation_prediction',
+                    observed_span_m=span,expected_span_m=float(size[axis])))
+            else:
+                return unknown('TRANSLATION_AXIS_UNOBSERVED:'+str(axis),
+                    unobserved_axis=axis,observed_span_m=span,expected_span_m=float(size[axis]),
+                    visible_face_axes=sorted(axes),face_point_counts=[dict(axis=f['axis'],sign=f['sign'],points=len(f['points'])) for f in faces])
         if np.ptp(values)>.004:return unknown('MEASURED_COORDINATE_CONFLICT:'+str(axis))
         coordinates.append(float(np.mean(values)))
     fitted=measured@coordinates
@@ -157,14 +168,16 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors):
     residual=max(face['residual'] for face in faces)
     uncertainty=max(.003,priors.optical_depth_error_margin_m)+2*residual+max(extent_errors,default=0.)/2
     if uncertainty>.008:return unknown('POSE_UNCERTAINTY_UNBOUNDED')
-    return dict(status='GEOMETRY_OBSERVED',time_s=packet.observation_time_s,
+    return dict(status='GRASP_CONSTRAINED' if predicted_axes else 'GEOMETRY_OBSERVED',time_s=packet.observation_time_s,
         position_m=fitted.tolist(),orientation_wxyz=quaternion_from_matrix(measured).tolist(),
         rotation=measured.tolist(),size_m=size.tolist(),mask_refs=refs,
         surface_inlier_ratio=min(ratios),plane_residual_m=residual,uncertainty_m=uncertainty,
         observed_face_axes=sorted(axes),coordinate_constraints=constraints,
         translation_difference_from_hint_m=float(np.linalg.norm(fitted-centre)),
-        orientation_difference_from_hint_deg=angle,geometric_pose_measured=True,semantic_pose_unique=False,
-        evidence='current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes')
+        orientation_difference_from_hint_deg=angle,geometric_pose_measured=not predicted_axes,semantic_pose_unique=False,
+        grasp_constrained=bool(predicted_axes),predicted_translation_axes=predicted_axes,
+        evidence=('current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip'
+                  if predicted_axes else 'current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes'))
 
 
 def measured_cuboid_supported(measurement,time_s):
@@ -174,8 +187,18 @@ def measured_cuboid_supported(measurement,time_s):
     score. Consumers additionally check current mask/frame membership and pose
     agreement. Every translation axis needs a measured constraint.
     """
-    if (measurement.get('status')!='GEOMETRY_OBSERVED' or
-            measurement.get('geometric_pose_measured') is not True or
+    return _cuboid_supported(measurement,time_s,False)
+
+
+def grasp_constrained_cuboid_supported(measurement,time_s):
+    """Partial current geometry plus a grasp assumption, not full measurement."""
+    return _cuboid_supported(measurement,time_s,True)
+
+
+def _cuboid_supported(measurement,time_s,grasp_constrained):
+    expected='GRASP_CONSTRAINED' if grasp_constrained else 'GEOMETRY_OBSERVED'
+    if (measurement.get('status')!=expected or
+            measurement.get('geometric_pose_measured') is not (not grasp_constrained) or
             not measurement.get('mask_refs')):return False
     values=np.asarray([measurement.get(key,float('nan')) for key in
         ('time_s','surface_inlier_ratio','plane_residual_m','uncertainty_m',
@@ -192,5 +215,13 @@ def measured_cuboid_supported(measurement,time_s):
             not np.isclose(np.linalg.det(r),1.,atol=1e-6)):return False
     constraints=measurement.get('coordinate_constraints',())
     sources={'visible_signed_plane','complete_observed_extent'}
+    if grasp_constrained:
+        predicted=measurement.get('predicted_translation_axes',())
+        if (measurement.get('grasp_constrained') is not True or len(predicted)!=1 or predicted[0] not in (0,1) or
+                len(measurement.get('observed_face_axes',()))<2):return False
+        measured_axes={item.get('axis') for item in constraints if item.get('source') in sources}
+        prediction_axes={item.get('axis') for item in constraints if item.get('source')=='grasp_relation_prediction'}
+        return (prediction_axes==set(predicted) and measured_axes=={0,1,2}-prediction_axes and
+                all(item.get('source') in sources|{'grasp_relation_prediction'} for item in constraints))
     return (bool(measurement.get('observed_face_axes')) and
             {item.get('axis') for item in constraints if item.get('source') in sources}=={0,1,2})

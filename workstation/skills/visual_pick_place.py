@@ -144,7 +144,8 @@ class VisualPickPlace:
             measurement=self.holding_measurement()
             if measurement is not None:
                 self._missing=0
-                self.max_visual_lift=max(self.max_visual_lift,measurement['height_gain_m'])
+                if not measurement.get('grasp_constrained',False):
+                    self.max_visual_lift=max(self.max_visual_lift,measurement['height_gain_m'])
                 self.events[-1]['last_visual_hold']=measurement
                 return
         reliable=[o for o in scene.objects if not o.failures and pose_is_observed(o,scene)
@@ -395,9 +396,11 @@ class VisualPickPlace:
             tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
             self.release_tracker=(HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
                                   if nearby[0].posture=='UPRIGHT' else None)
-            self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors)
+            self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors,
+                              allow_grasp_translation=self.accepted_postures==('UPRIGHT',))
                                if model else self.release_tracker)
             self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
+                allow_grasp_translation=bool(model and self.accepted_postures==('UPRIGHT',)),
                 offset=self.hold_tracker.offset.copy(),relative_rotation=self.hold_tracker.relative_rotation.copy(),
                 uncertainty_m=self.hold_tracker.uncertainty_m,
                 source='pre-lift current observed visual pose and image-time encoder FK')

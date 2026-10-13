@@ -95,7 +95,9 @@ class RobotMotion:
         if visual is None or visual['target_id']!=target_id:return False
         tcp,rotation=self.fk(visual['arm'],packet.robot_state[visual['arm']].joint_positions_rad)
         measured=bool(measurement.get('geometric_pose_measured'))
-        if measured:
+        constrained=bool(measurement.get('grasp_constrained'))
+        if constrained and not visual.get('allow_grasp_translation',False):return False
+        if measured or constrained:
             # Workspace validates the proof and revokes previous same-frame
             # confirmation on failure, including incomplete measured geometry.
             centre=np.asarray(measurement.get('position_m'),float)
@@ -106,12 +108,14 @@ class RobotMotion:
             body_rotation=np.asarray(rotation)@tracker.relative_rotation
             uncertainty=getattr(tracker,'uncertainty_m',.003)
         confirmed=self.observed_workspace.confirm_payload(target_id,centre,body_rotation,tracker.size,measurement,uncertainty)
-        if confirmed and measured:
+        if confirmed and (measured or constrained):
             # Planning predicts future sweep from the CURRENT measured body/TCP
             # relation. The observer keeps its original latch to detect drift.
             visual.update(offset=np.asarray(rotation).T@(centre-np.asarray(tcp)),
                 relative_rotation=np.asarray(rotation).T@body_rotation,uncertainty_m=uncertainty,
-                measured_pose_time_s=packet.observation_time_s)
+                measured_pose_time_s=packet.observation_time_s if measured else None,
+                carry_support_time_s=packet.observation_time_s,
+                grasp_constrained=constrained)
         return confirmed
 
     def fk(self,arm,q=None,frame='right_gripper'):
@@ -672,7 +676,9 @@ class RobotMotion:
         payload=None if ws is None else ws.payload_observation
         if (payload is None or visual is None or payload['target_id']!=target_id or
                 visual['arm']!=arm or visual['target_id']!=target_id or
-                not payload.get('geometric_pose_measured',False) or self.monitor is None or
+                not (payload.get('geometric_pose_measured',False) or
+                     (payload.get('grasp_constrained',False) and visual.get('allow_grasp_translation',False))) or
+                self.monitor is None or
                 abs(payload['time_s']-ws.packet.observation_time_s)>1e-6 or
                 not 0<=ws.packet.assembled_time_s-payload['time_s']<=ws.priors.max_age_s or
                 not np.allclose(payload['size'],held_size,atol=1e-8,rtol=0)):

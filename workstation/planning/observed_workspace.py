@@ -42,9 +42,11 @@ class ObservedWorkspace:
         if not np.isfinite(uncertainty_m) or not .003<=uncertainty_m<=.008:return False
         refs=tuple(measurement.get('mask_refs',()))
         measured=bool(measurement.get('geometric_pose_measured'))
-        if measured:
-            from workstation.perception.cuboid_pose import measured_cuboid_supported
-            if not measured_cuboid_supported(measurement,self.packet.observation_time_s):return False
+        constrained=bool(measurement.get('grasp_constrained'))
+        if measured or constrained:
+            from workstation.perception.cuboid_pose import measured_cuboid_supported,grasp_constrained_cuboid_supported
+            validator=grasp_constrained_cuboid_supported if constrained else measured_cuboid_supported
+            if not validator(measurement,self.packet.observation_time_s):return False
             if uncertainty_m<measurement['uncertainty_m']:return False
         else:
             values=[measurement.get(key,float('nan')) for key in ('time_s','surface_inlier_ratio',
@@ -65,7 +67,7 @@ class ObservedWorkspace:
                 not np.allclose(rotation.T@rotation,np.eye(3),atol=1e-6) or
                 not np.isclose(np.linalg.det(rotation),1.,atol=1e-6)):
             return False
-        if measured and not all(np.allclose(value,measurement[key],atol=1e-8,rtol=0)
+        if (measured or constrained) and not all(np.allclose(value,measurement[key],atol=1e-8,rtol=0)
                                 for value,key in ((centre,'position_m'),(rotation,'rotation'),(size,'size_m'))):
             return False
         frames={name for name,frame in self.packet.cameras.items() if frame is not None and
@@ -83,8 +85,10 @@ class ObservedWorkspace:
             size=size.copy(),mask_refs=tuple(dict.fromkeys(refs+associated)),support_mask_refs=refs,
             uncertainty_m=float(uncertainty_m),
             geometric_pose_measured=measured,
+            grasp_constrained=constrained,
             time_s=self.packet.observation_time_s,
-            source='current RGB-D supported holding geometry; planning model only')
+            source='partial RGB-D + latched grasp; conditional planning model' if constrained else
+                   'current RGB-D supported holding geometry; planning model only')
         return True
 
     def _robot_arrays(self):

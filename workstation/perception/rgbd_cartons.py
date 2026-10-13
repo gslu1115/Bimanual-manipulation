@@ -295,6 +295,9 @@ class CartonEstimator:
         if measurement.get('geometric_pose_measured'):
             from workstation.perception.cuboid_pose import measured_cuboid_supported
             supported=measured_cuboid_supported(measurement,scene.observation_time_s)
+        elif measurement.get('grasp_constrained'):
+            from workstation.perception.cuboid_pose import grasp_constrained_cuboid_supported
+            supported=grasp_constrained_cuboid_supported(measurement,scene.observation_time_s)
         else:
             values=np.asarray([measurement.get(key,float('nan')) for key in
                 ('time_s','surface_inlier_ratio','top_coverage','side_points','plane_residual_m','surface_tilt_deg')],float)

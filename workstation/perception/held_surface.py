@@ -210,11 +210,12 @@ class CuboidHoldingTracker:
     Symmetric semantic alternatives remain alternatives throughout rotation.
     This supplements the accepted upright observer; it does not replace it.
     """
-    def __init__(self,obj,tcp_position,tcp_rotation,size_m,priors):
+    def __init__(self,obj,tcp_position,tcp_rotation,size_m,priors,*,allow_grasp_translation=False):
         from workstation.observations.camera_geometry import pose_matrix
         if obj.failures or not pose_is_observed(obj) or not obj.hypotheses:
             raise ValueError('Cuboid holding requires a complete visual geometry with pose hypotheses')
         self.size=np.asarray(size_m,float);self.priors=priors
+        self.allow_grasp_translation=bool(allow_grasp_translation)
         self.uncertainty_m=max(.003,float(obj.uncertainty_m))
         if not np.isfinite(obj.uncertainty_m) or not 0<=obj.uncertainty_m<=.008:
             raise ValueError('Cuboid holding requires bounded visual pose uncertainty')
@@ -236,8 +237,9 @@ class CuboidHoldingTracker:
         from workstation.observations.camera_geometry import quaternion_from_matrix
         tcp,r=np.asarray(tcp_position),np.asarray(tcp_rotation)
         hint=tcp+r@self.offset;body_hint=r@self.relative_rotation
-        measured=fit_cuboid_pose(packet,scene,hint,body_hint,self.size,self.priors)
-        if measured['status']!='GEOMETRY_OBSERVED':
+        measured=fit_cuboid_pose(packet,scene,hint,body_hint,self.size,self.priors,
+                                allow_grasp_translation=self.allow_grasp_translation)
+        if measured['status'] not in ('GEOMETRY_OBSERVED','GRASP_CONSTRAINED'):
             self.last_failure=measured;return None
         self.last_failure=None
         correction=np.asarray(measured['rotation'])@body_hint.T
@@ -247,6 +249,6 @@ class CuboidHoldingTracker:
             for label,relative,evidence in self.hypotheses]
         measured['top_bottom_semantics']='UNRESOLVED' if len(self.hypotheses)>1 else self.hypotheses[0][0]
         measured['height_gain_m']=measured['position_m'][2]-self.initial_z
-        measured['full_6d_pose_measured']=True  # Geometry only; semantic symmetry remains.
+        measured['full_6d_pose_measured']=measured['geometric_pose_measured']
         measured['uncertainty_m']=max(self.uncertainty_m,measured['uncertainty_m'])
         return measured
