@@ -5,6 +5,7 @@ scope. Inside it, unknown and unmodelled occupied cells block motion. This is a
 voxel/sampled check, not a continuous collision or unseen-object guarantee.
 """
 from itertools import product
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from workstation.perception.rgbd_cartons import deproject
 from workstation.planning.collision import scene_obstacles
@@ -261,21 +262,29 @@ class ObservedWorkspace:
         self.unknown[tuple(indices.T)]=~known
         self._unknown_evaluated[tuple(indices.T)]=True
 
+    def _occupied_indices(self,frame):
+        # Each camera reads the same immutable observation snapshot. Its
+        # points and geometric membership arrays are private to this worker.
+        points=deproject(frame)[frame.valid_depth]
+        inside=np.all((points>=self.lower)&(points<self.upper),axis=1)
+        points=points[inside]
+        if len(points):points=points[~self._modelled(points)]
+        return np.floor((points-self.lower)/self.resolution).astype(int)
+
     def _build_occupied(self):
         # Measured obstacles remain global: a local free-space query cannot
         # hide unsegmented depth obstacles elsewhere in the workspace.
         if self.occupied is not None:return
         frames=list(self._frames())
-        self.occupied=np.zeros(self.shape,bool)
-        for frame in frames:
-            points=deproject(frame)[frame.valid_depth]
-            inside=np.all((points>=self.lower)&(points<self.upper),axis=1)
-            points=points[inside]
-            if not len(points): continue
-            points=points[~self._modelled(points)]
-            if not len(points): continue
-            grid=np.floor((points-self.lower)/self.resolution).astype(int)
-            self.occupied[tuple(grid.T)]=True
+        if len(frames)>1 and sum(frame.depth_m.size for frame in frames)>=100000:
+            # NumPy releases the GIL for these large independent operations.
+            # Publish no partial map: all workers must finish successfully.
+            with ThreadPoolExecutor(max_workers=min(3,len(frames))) as pool:
+                grids=list(pool.map(self._occupied_indices,frames))
+        else:grids=[self._occupied_indices(frame) for frame in frames]
+        occupied=np.zeros(self.shape,bool)
+        for grid in grids:occupied[tuple(grid.T)]=True
+        self.occupied=occupied
         self.has_unmodelled_occupied=bool(self.occupied.any())
         if self.unknown is None:
             self.unknown=np.ones(self.shape,bool)
