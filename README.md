@@ -21,6 +21,7 @@ linux-based 持续开发，环境、实验和开发检查点分别用固定附�
 | env-linux-isaac6.1-20261010 | 91a4e83 | GraspGen 接入前 Linux 适配，不含云盘基础设施快照 |
 | exp-graspgen-upright-independent-v1 | 8cff840 | 六次固定条件对照源码：geometry 3/3，GraspGen 1/3 |
 | checkpoint-research-20261012 | c968129 | 关机检查点，含未物理验收的侧放原型，不是稳定环境版 |
+| exp-graspgen-performance-dev2-20261014 | ada6ead | 15 mm 单臂抓放完整成功的性能开发案例；15 分 49 秒，非独立成功率 |
 
 完整 SHA/范围见 [冻结版本索引](evidence/frozen_versions_20261012.json)。标签是对已有提交补建的定位标记；是否事前冻结看原协议/审计，不把补建标签冒充事前注册。环境操作在 README，研究结果在交接。新提交用 env / research / docs / ci 前缀，环境修复与算法修改分开提交。
 
@@ -193,7 +194,9 @@ docker build -t project-graspgen:2dd8852 \
 
 基础 PyTorch 镜像的压缩层合计约 8.85 GB。2026-10-13 原站大文件连接失败，服务器自带代理同样失败；[DaoCloud 镜像](https://github.com/DaoCloud/public-image-mirror) 在核对清单与官方一致后可由服务器直接下载，无需操作者 VPN。可用性会变化，不能把第三方标签未经核对直接当作官方版本。首次环境构建成功后，在云盘余量足够时执行 `bash /home/featurize/work/isaac-support/graspgen/cache-image.sh`；压缩归档和校验完成后才更新 `image-cache/latest.json`，未完成的 `.partial` 不可用于恢复。
 
-2026-10-13 已生成约 **9.30 GB** 的模型镜像缓存，gzip、SHA-256 和归档清单均通过检查，模型服务实际响应；[环境收据](evidence/model_environment_restore_20261013.json) 记录完整镜像摘要和依赖版本。恢复入口已验证能识别本机的同一镜像，尚未在另一台空白机器上演练加载。此缓存不包括 Isaac 镜像、模型权重或实验结果。
+2026-10-13 已生成约 **9.30 GB** 的模型镜像缓存，gzip、SHA-256 和归档清单均通过检查；[原环境收据](evidence/model_environment_restore_20261013.json) 记录完整镜像摘要和依赖版本。2026-10-14 已在新机实际离线加载，出现 MODEL_IMAGE_RESTORED_OFFLINE，模型服务及物理开发运行可用，见 [新机与性能记录](evidence/performance_20261014.json)。此缓存不包括 Isaac 镜像、模型权重或实验结果。
+
+本次 Isaac 6.1.0 原站下载失败后，经服务器直接从镜像站获取，摘要与本节的官方清单一致；未通过操作者本机中转。换源时须核对摘要，不能只比较标签。SDK 检查应直接把实际仓库绑定到容器工作目录，并先确认 app.py 可见；不要沿用曾导致空目录的只读父目录挂载。
 
 镜像就绪后启动服务：
 
@@ -213,7 +216,15 @@ ISAAC_WORKSTATION_PROJECT=Bimanual-manipulation-linux \
 
 graspgen-check 只诊断；visual-pnp 是物理开发入口，visual-adjust 是未验收侧放原型；具体进展见交接，恢复环境不自动启动研究实验。
 
-直立 GraspGen 路径目前以盒底距支撑面 **15 mm** 为释放目标，候选预检与实际执行共用同一间隙；几何模板仍为 10 mm。该开发调整为视觉位姿余量与支撑面附近的深度误差带留出空间，原碰撞、未知空间、最大 20 mm 下落及释放后的视觉稳定检查仍执行。10/15 mm 原帧路径对照与物理验证进度见交接 20.20。
+直立 GraspGen 路径目前以盒底距支撑面 **15 mm** 为释放目标，候选预检与实际执行共用同一间隙；几何模板仍为 10 mm。该开发调整为视觉位姿余量与支撑面附近的深度误差带留出空间，原碰撞、未知空间、最大 20 mm 下落及释放后的视觉稳定检查仍执行。10/15 mm 原帧路径对照见交接 20.20；15 mm 已有完整开发单例通过，全部性能试验及后续失败见 20.22，不能据此视为稳定批量抓放。
+
+### 检查运行耗时
+
+visual-pnp / visual-sort / visual-adjust 复用的视觉 runner 会在输出目录保存 performance.json，运行中约每 10 秒随下一次观测更新，正常返回或异常退出时再保存一次。wall_s 从视觉 runner 入口开始，不含 SimulationApp/场景启动；完整进程耗时另取容器 StartedAt 到 FinishedAt。强制结束时文件可能只是最后一个快照，不能当作完整任务时间。
+
+categories 记录渲染、场景估计、深度障碍建图、空闲空间查询、路径验证、物理步进等的调用次数及耗时。inclusive_s 包含嵌套调用，不能相加；exclusive_s 扣除了已记录的子调用，用于找主要耗时。grasp_generation 还含点云准备、等待时的物理/观测等工作，纯模型请求时间查看 visual_task_report.json 的 model_requests。诊断时钟不参与控制决策或仿真时间。
+
+当前保留 75 ms 的直立模型观测周期、原三机位及渲染设置；优化集中在重复渲染、按需空间计算、点云预筛与 CPU 并行。完整成功的 15 分 49 秒记录属于 ada6ead；当前并行版本的逻辑/原帧对照通过，但其完整物理复测失败，不能把该耗时写成当前版本保证值。详细边界及剩余问题见交接 20.22。
 
 ### 网页与操作者本地连接
 
