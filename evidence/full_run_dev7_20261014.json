@@ -1,0 +1,215 @@
+{
+  "scope": "one performance development run on already-seen seed 412, 15 mm release gap; one manipulation arm, unchanged sensors and acceptance; not independent success rate",
+  "source_commit": "29bc1b99192c9d2a2999ab7d76ab1874b71fc4d7",
+  "source_run": "isaac-perf-dev7-graspgen-412",
+  "passed": false,
+  "physical_complete": false,
+  "process_wall_s": 233.197704,
+  "simulation_time_s_at_end": 22.89999999999934,
+  "failure_reason": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+  "holding_geometry_failure": {
+    "status": "UNKNOWN",
+    "reason": "ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE",
+    "time_s": 22.699999999999353
+  },
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "PRELOAD",
+    "LIFT",
+    "FAILED"
+  ],
+  "maximum_visual_lift_m": 0.021456629832884322,
+  "observed_stable_s": null,
+  "checks": {
+    "actor_passed": false,
+    "run_status_passed": false,
+    "process_exited_cleanly": false,
+    "all_phases_in_order": false,
+    "requested_backend_matches": true,
+    "candidate_source_matches": true,
+    "source_revision_frozen": true,
+    "source_hashes_match": true,
+    "intended_initial_condition": true,
+    "visual_lift_passed": false,
+    "stable_samples_passed": false,
+    "no_attachment_or_teleport_reported": true,
+    "release_and_home_passed": false,
+    "original_cameras_unchanged": true,
+    "original_physics_unchanged": true,
+    "original_model_pose_retained": true,
+    "full_orientation_commanded": true,
+    "inference_advanced_physics": true,
+    "approach_revalidated": true,
+    "offline_final_pose_agrees": false,
+    "single_manipulation_arm": true,
+    "no_preposition_observer": true,
+    "no_camera_parameter_override": true
+  },
+  "docker_state": {
+    "Status": "exited",
+    "ExitCode": 1,
+    "StartedAt": "2026-10-14T09:13:36.164642203Z",
+    "FinishedAt": "2026-10-14T09:17:29.362346702Z"
+  },
+  "observation_refresh": {
+    "initial_render_passes": 12,
+    "subsequent_render_passes": 3,
+    "physics_frozen_during_refresh": true,
+    "strict_annotator_exposure_ids_verified": false,
+    "reads": 204,
+    "monitor_period_steps": 12,
+    "monitor_period_sim_s": 0.1,
+    "maximum_frame_age_s": 0.15,
+    "motion_feedback_max_age_s": 0.15,
+    "inter_observation_pose": "encoder FK with last visually supported grasp; not a fresh visual measurement",
+    "immediate_phase_observations": true,
+    "policy": "adaptive_phase_and_motion",
+    "fast_period_sim_s": 0.09999999999999999,
+    "stable_translation_period_sim_s": 1.0,
+    "stable_translation_max_rotation_deg": 5.0,
+    "periodic_observations": {
+      "fast": 196,
+      "stable_transfer": 0
+    },
+    "monitor_period_fields_scope": "final state only; not a fixed whole-task interval"
+  },
+  "performance": {
+    "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+    "wall_s": 188.42656138000166,
+    "categories": {
+      "path_validation": {
+        "calls": 493,
+        "failed_calls": 0,
+        "inclusive_s": 79.64138852596079,
+        "exclusive_s": 52.07298499592798,
+        "max_s": 6.79173927300144
+      },
+      "scene_estimation": {
+        "calls": 204,
+        "failed_calls": 0,
+        "inclusive_s": 43.710188925033435,
+        "exclusive_s": 43.710188925033435,
+        "max_s": 0.3843048689996067
+      },
+      "camera_render": {
+        "calls": 621,
+        "failed_calls": 0,
+        "inclusive_s": 33.71134628004074,
+        "exclusive_s": 33.71134628004074,
+        "max_s": 0.14339674700022442
+      },
+      "depth_obstacle_mapping": {
+        "calls": 1049230,
+        "failed_calls": 0,
+        "inclusive_s": 27.016466655892145,
+        "exclusive_s": 27.016466655892145,
+        "max_s": 0.31904230000145617
+      },
+      "physics_step": {
+        "calls": 2748,
+        "failed_calls": 0,
+        "inclusive_s": 14.090431224947679,
+        "exclusive_s": 14.090431224947679,
+        "max_s": 0.13965995000035036
+      },
+      "sensor_read": {
+        "calls": 204,
+        "failed_calls": 0,
+        "inclusive_s": 38.788120813987916,
+        "exclusive_s": 5.076774533947173,
+        "max_s": 0.6826592159995926
+      },
+      "save_observation": {
+        "calls": 9,
+        "failed_calls": 0,
+        "inclusive_s": 4.489725506995455,
+        "exclusive_s": 4.489725506995455,
+        "max_s": 0.5387727419984003
+      },
+      "free_space_mapping": {
+        "calls": 4941,
+        "failed_calls": 0,
+        "inclusive_s": 1.40043913412228,
+        "exclusive_s": 1.40043913412228,
+        "max_s": 0.04312360199764953
+      },
+      "holding_estimation": {
+        "calls": 205,
+        "failed_calls": 0,
+        "inclusive_s": 1.2028049250002368,
+        "exclusive_s": 1.2028049250002368,
+        "max_s": 0.06557203199918149
+      },
+      "cartesian_ik": {
+        "calls": 34,
+        "failed_calls": 4,
+        "inclusive_s": 0.9743796210095752,
+        "exclusive_s": 0.9743796210095752,
+        "max_s": 0.048350610999477794
+      },
+      "workspace_setup": {
+        "calls": 204,
+        "failed_calls": 0,
+        "inclusive_s": 0.26681826100320905,
+        "exclusive_s": 0.26681826100320905,
+        "max_s": 0.0034289670002181083
+      },
+      "trace_write": {
+        "calls": 204,
+        "failed_calls": 0,
+        "inclusive_s": 0.16906297601599363,
+        "exclusive_s": 0.16906297601599363,
+        "max_s": 0.0016349940015061293
+      },
+      "grasp_generation": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 1.6843328479990305,
+        "exclusive_s": 0.1442081020140904,
+        "max_s": 1.6843328479990305
+      },
+      "joint_planning": {
+        "calls": 13,
+        "failed_calls": 0,
+        "inclusive_s": 3.698594270994363,
+        "exclusive_s": 0.002162423999834573,
+        "max_s": 0.39928493600018555
+      }
+    }
+  },
+  "archive_source_copy_sha256_verified": true,
+  "cloud_path": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/isaac-perf-dev7-graspgen-412",
+  "source_report_sha256": "4cbd894309c8824b7d894941984f1691126cc4c7c6ece2b1db222c9a8294dcfb",
+  "model_preload": {
+    "measured_fingers_m": [
+      0.027497341856360435,
+      0.027537275105714798
+    ],
+    "original_command_m": 0.026131847543300273,
+    "command_m": 0.023497341856360435,
+    "maximum_position_preload_m": 0.004,
+    "holding_proof": false
+  },
+  "candidate_batches": [
+    {
+      "arm_assessments": 512,
+      "feasible": 4,
+      "rejection_counts": {
+        "GRASP_OFF_CENTRE": 412,
+        "UNSUPPORTED_APPROACH_FOR_UPRIGHT_SKILL": 496,
+        "STALE_CANDIDATE": 504,
+        "GRIPPER_SPACE_INSUFFICIENT": 302,
+        "IK_DISCONTINUITY": 3,
+        "ROBOT_UNREACHABLE": 1
+      }
+    }
+  ],
+  "date": "2026-10-14",
+  "requested": "One complete run of the current optimized branch; no automatic retry",
+  "outcome": "FAILED_DURING_LIFT",
+  "complete_cycle_timing_available": false,
+  "conclusion": "Partial visible face could not establish orientation; motion rejected unsupported payload. Stable-transfer slow interval never ran.",
+  "cloud_receipt": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/isaac-perf-dev7-graspgen-412-final-state.json"
+}
