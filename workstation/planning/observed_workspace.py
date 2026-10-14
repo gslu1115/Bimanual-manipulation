@@ -24,6 +24,7 @@ class ObservedWorkspace:
         self.shape = tuple(np.ceil((self.upper-self.lower)/resolution-1e-9).astype(int))
         self.objects = tuple(scene_obstacles(scene,None,extra_margin=0.))
         self.unknown = self.occupied = None
+        self._unknown_evaluated=None
         self._fine_cache={}
         self._depth_footprints={}
         self.last_unknown_point=None
@@ -39,6 +40,7 @@ class ObservedWorkspace:
         """
         self.payload_observation=None;self._fine_cache.clear()
         self.unknown=self.occupied=None
+        self._unknown_evaluated=None
         if not np.isfinite(uncertainty_m) or not .003<=uncertainty_m<=.008:return False
         refs=tuple(measurement.get('mask_refs',()))
         measured=bool(measurement.get('geometric_pose_measured'))
@@ -212,9 +214,25 @@ class ObservedWorkspace:
         return False
 
     def build(self):
-        if self.unknown is not None: return self
+        """Materialise the full diagnostic grid with the original predicate."""
+        self._build_occupied()
+        self._evaluate_unknown()
+        return self
+
+    def _evaluate_unknown(self,slices=None):
+        # A query only needs its own cells. Unqueried cells remain UNKNOWN;
+        # they are never treated as free or reused across camera observations.
+        # Every evaluated cell still checks ALL eight corners and the same
+        # current optical/modelled evidence as a full-volume build.
+        if self.unknown is None:
+            self.unknown=np.ones(self.shape,bool)
+            self._unknown_evaluated=np.zeros(self.shape,bool)
+        if slices is None:slices=tuple(slice(0,n) for n in self.shape)
+        pending=~self._unknown_evaluated[slices]
+        if not pending.any():return
+        lower=np.array([s.start for s in slices])
+        indices=np.argwhere(pending)+lower
         frames=list(self._frames())
-        indices=np.indices(self.shape).reshape(3,-1).T
         centres=self.lower+(indices+.5)*self.resolution
         known=np.ones(len(centres),bool)
         for corner in product((-.5,.5),repeat=3):
@@ -232,7 +250,14 @@ class ObservedWorkspace:
             remaining=np.flatnonzero(~cleared)
             if len(remaining):cleared[remaining] |= self._modelled(points[remaining])
             known[pending]=cleared
-        self.unknown=(~known).reshape(self.shape)
+        self.unknown[tuple(indices.T)]=~known
+        self._unknown_evaluated[tuple(indices.T)]=True
+
+    def _build_occupied(self):
+        # Measured obstacles remain global: a local free-space query cannot
+        # hide unsegmented depth obstacles elsewhere in the workspace.
+        if self.occupied is not None:return
+        frames=list(self._frames())
         self.occupied=np.zeros(self.shape,bool)
         for frame in frames:
             points=deproject(frame)[frame.valid_depth]
@@ -244,7 +269,9 @@ class ObservedWorkspace:
             grid=np.floor((points-self.lower)/self.resolution).astype(int)
             self.occupied[tuple(grid.T)]=True
         self.has_unmodelled_occupied=bool(self.occupied.any())
-        return self
+        if self.unknown is None:
+            self.unknown=np.ones(self.shape,bool)
+            self._unknown_evaluated=np.zeros(self.shape,bool)
 
     def check_observed_sphere_obstacles(self,centre,radius):
         """Measured obstacle test; unknown arm space is explicitly unproven.
@@ -252,7 +279,7 @@ class ObservedWorkspace:
         This never relabels unknown cells as empty. Local TCP/held-object
         checks retain the separate unknown-space gate.
         """
-        self.build()
+        self._build_occupied()
         if not self.has_unmodelled_occupied:return None
         centre=np.asarray(centre)
         region=self._region(centre-radius,centre+radius)
@@ -266,7 +293,7 @@ class ObservedWorkspace:
 
     def check_observed_box_obstacles(self,centre,size):
         """Observed obstacle veto for a future stage, not a free-space claim."""
-        self.build()
+        self._build_occupied()
         if not self.has_unmodelled_occupied:return None
         centre,size=np.asarray(centre),np.asarray(size)
         region=self._region(centre-size/2,centre+size/2)
@@ -274,7 +301,7 @@ class ObservedWorkspace:
         return 'OBSERVED_PATH_OBSTACLE' if self.occupied[region[0]].any() else None
 
     def _region(self, lower, upper):
-        self.build()
+        self._build_occupied()
         lo=np.maximum(np.floor((np.asarray(lower)-self.lower)/self.resolution).astype(int),0)
         hi=np.minimum(np.ceil((np.asarray(upper)-self.lower)/self.resolution).astype(int),self.shape)
         if np.any(hi<=lo): return None
@@ -286,6 +313,7 @@ class ObservedWorkspace:
         if region is None: return None
         slices,lo=region
         if self.occupied[slices].any(): return 'OBSERVED_PATH_OBSTACLE'
+        self._evaluate_unknown(slices)
         indices=np.argwhere(self.unknown[slices])+lo
         if len(indices) and self._fine_unknown(indices,lambda p,r:
                 np.all(np.abs(p-centre)<=size/2+r,axis=1),
@@ -321,6 +349,7 @@ class ObservedWorkspace:
             points=self.lower+(occupied+.5)*self.resolution
             if overlaps(points,self.resolution/2).any():return 'OBSERVED_PATH_OBSTACLE'
         if check_unknown:
+            self._evaluate_unknown(slices)
             indices=np.argwhere(self.unknown[slices])+lo
             if len(indices):
                 points=self.lower+(indices+.5)*self.resolution
@@ -346,6 +375,7 @@ class ObservedWorkspace:
             if np.any(bounds<=(old_radii+.002)**2):return None
         if region is None: return None
         slices,lo=region
+        self._evaluate_unknown(slices)
         shape=self.unknown[slices].shape
         cells=self.lower+(np.indices(shape).reshape(3,-1).T+lo+.5)*self.resolution
         # Sphere intersects closed cell AABB, including the cell's full extent.

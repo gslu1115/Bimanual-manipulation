@@ -11,9 +11,12 @@ from workstation.task_logic import slot_errors
 
 def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
     from workstation.diagnostics.wall_timing import WallTiming
+    from workstation.planning.observed_workspace import ObservedWorkspace
     timing=WallTiming()
     timing.wrap(env,'step','physics_step')
     timing.wrap(env.camera_system,'render','camera_render')
+    timing.wrap(ObservedWorkspace,'_build_occupied','depth_obstacle_mapping')
+    timing.wrap(ObservedWorkspace,'_evaluate_unknown','free_space_mapping')
     try:
         return _run(env,segmenter,max_items,graspgen,side_adjustment,timing)
     finally:

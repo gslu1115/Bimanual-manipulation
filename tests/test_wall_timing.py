@@ -34,3 +34,14 @@ class WallTimingTests(unittest.TestCase):
         timing.restore()
         self.assertNotIn('value',vars(a));self.assertIn('value',vars(b))
         self.assertEqual(a.value(4),5);self.assertEqual(b.value(4),6)
+
+    def test_class_wrapper_keeps_instance_binding_and_restores_descriptor(self):
+        class Subject:
+            def value(self,x):return x+self.offset
+        subject=Subject();subject.offset=3
+        original=Subject.value;timing=WallTiming()
+        timing.wrap(Subject,'value','shared_method')
+        self.assertEqual(subject.value(4),7)
+        timing.restore()
+        self.assertIs(Subject.value,original)
+        self.assertEqual(timing.report()['categories']['shared_method']['calls'],1)
