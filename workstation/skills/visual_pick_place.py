@@ -36,9 +36,7 @@ class VisualPickPlace:
             raise ValueError('Observation interval override requires upright GraspGen')
         # Receiving an old frame is different from continuing between planned
         # captures. Image freshness stays strict; motion uses encoder prediction.
-        self.robot.visual_feedback_max_age_s=(priors.max_age_s if
-            self.observation_period_s is None or self.observation_period_s<=priors.max_age_s else
-            max(priors.max_age_s,self.observation_period_s+priors.max_age_s+4*getattr(robot,'dt',1/120)))
+        self.robot.visual_feedback_max_age_s=priors.max_age_s
         self.slots=tuple(tuple(xy) for xy in slots_xy)
         self.estimator=estimator or CartonEstimator(priors,segmenter,
             robot_point_filter=getattr(robot,'observed_robot_points',None),
@@ -49,6 +47,8 @@ class VisualPickPlace:
         self.trace_scene=trace_scene or (lambda packet,scene:None)
         self.scene=None; self.packet=None; self.events=[]; self.arm=None; self.held=False
         self._monitor_ticks=0; self._missing=0; self.max_visual_lift=0.
+        self._translation_only=False
+        self.periodic_observations={'fast':0,'stable_transfer':0}
         self.initial_position=None; self.candidate=None
         self.hold_tracker=None
         self._hold_observation=None
@@ -154,19 +154,48 @@ class VisualPickPlace:
             if hasattr(self.robot,'targets'):
                 event['commanded_fingers_m']=self.robot.targets[self.arm][7:].tolist()
         self.events.append(event)
+        self._set_feedback_deadline(self._monitor_period_steps())
         print('[visual-pnp] '+phase,flush=True)
+
+    def _stable_transfer(self):
+        # Read only the cached support for THIS packet. Do not run perception
+        # or native FK on every physics tick just to choose a capture interval.
+        events=getattr(self,'events',())
+        cached=getattr(self,'_hold_observation',None)
+        return bool(events and events[-1]['phase']=='TRANSFER' and
+            getattr(self,'_translation_only',False) and self.held and not self.releasing and
+            self.max_visual_lift>=.08 and self._missing==0 and cached is not None and
+            all(a is b for a,b in zip(cached[:3],(self.packet,self.scene,self.hold_tracker))) and
+            cached[3] is not None)
 
     def _monitor_period_steps(self):
         if getattr(self,'grasp_source',None) is None:return 24
-        period_s=(getattr(self,'observation_period_s',None) or min(.1,self.priors.max_age_s*2/3)
-                  if self.accepted_postures==('UPRIGHT',) else self.priors.max_age_s*.5)
+        period_s=self.priors.max_age_s*.5
+        if self.accepted_postures==('UPRIGHT',):
+            period_s=min(.1,self.priors.max_age_s*2/3)
+            if self._stable_transfer():
+                period_s=getattr(self,'observation_period_s',None) or period_s
         return max(1,int(period_s/self.robot.dt+1e-9))
+
+    def _set_feedback_deadline(self,steps):
+        if getattr(self,'observation_period_s',None) is None:return
+        period=steps*self.robot.dt
+        self.robot.visual_feedback_max_age_s=(self.priors.max_age_s if period<=self.priors.max_age_s
+            else period+self.priors.max_age_s+4*self.robot.dt)
 
     def monitor(self):
         self._monitor_ticks+=1
         period=self._monitor_period_steps()
-        if self._monitor_ticks % period: return
+        self._set_feedback_deadline(period)
+        # A shorter interval takes effect on the next tick if already overdue;
+        # modulo scheduling could otherwise miss that deadline.
+        if self._monitor_ticks < period: return
         scene=self.observe()
+        self._monitor_ticks=0
+        if getattr(self,'observation_period_s',None) is not None:
+            key='stable_transfer' if period*self.robot.dt>.1+1e-9 else 'fast'
+            self.periodic_observations[key]+=1
+        self._set_feedback_deadline(self._monitor_period_steps())
         if not self.held or self.releasing: return
         # Compare against encoder FK at the IMAGE time, not execution's latest q.
         tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
@@ -207,6 +236,30 @@ class VisualPickPlace:
             visibility=obj.visibility,failures=obj.failures)
 
     def move(self,position,yaw0,yaw1,speed=None,contact=False,planning_scene=None,orientation=None):
+        previous=getattr(self,'_translation_only',False)
+        self._translation_only=False
+        try:
+            if (getattr(self,'observation_period_s',None) is not None and self.held and
+                    self.events[-1]['phase']=='TRANSFER'):
+                angle=abs(math.remainder(yaw1-yaw0,2*math.pi))
+                if orientation is not None:
+                    # Encoder FK, not object truth. Quaternion signs are equivalent.
+                    _,rotation=self.robot.fk(self.arm,self.robot.read_states()[self.arm].joint_positions_rad)
+                    current=quaternion_from_matrix(rotation)
+                    target=np.asarray(orientation,dtype=float)
+                    norm=np.linalg.norm(target)
+                    angle=(2*math.acos(float(np.clip(abs(current@(target/norm)),0.,1.)))
+                           if target.shape==(4,) and np.isfinite(target).all() and norm>0 else math.inf)
+                self._translation_only=angle<=math.radians(5)
+            period=self._monitor_period_steps()
+            if getattr(self,'_monitor_ticks',0)>=period:self.observe()
+            self._set_feedback_deadline(self._monitor_period_steps())
+            return self._move(position,yaw0,yaw1,speed,contact,planning_scene,orientation)
+        finally:
+            self._translation_only=previous
+            self._set_feedback_deadline(self._monitor_period_steps())
+
+    def _move(self,position,yaw0,yaw1,speed=None,contact=False,planning_scene=None,orientation=None):
         if self.held and self.hold_tracker is not None and self.holding_measurement() is None:
             raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
         for attempt in range(3):

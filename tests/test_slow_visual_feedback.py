@@ -3,6 +3,7 @@ import io
 import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock
+import numpy as np
 from workstation.app import build_parser,load_config
 from workstation.perception.rgbd_cartons import CartonEstimator
 from workstation.perception.scene_estimate import ScenePriors
@@ -17,18 +18,34 @@ class SlowVisualFeedbackTests(unittest.TestCase):
         return VisualPickPlace(SimpleNamespace(dt=1/120),lambda:None,priors,[],
             grasp_source=object(),observation_period_s=period)
 
+    def stable_transfer(self,period=None):
+        skill=self.skill(period)
+        skill.held=True;skill.arm='left';skill.hold_tracker=object()
+        skill.events=[dict(phase='TRANSFER')];skill._translation_only=True
+        skill.max_visual_lift=.12
+        state=SimpleNamespace(joint_positions_rad=np.zeros(7))
+        skill.packet=SimpleNamespace(robot_state={'left':state})
+        skill.scene=SimpleNamespace(objects=())
+        skill.robot.fk=lambda *args:(np.zeros(3),np.eye(3))
+        skill.robot.read_states=lambda:{'left':state}
+        skill._hold_observation=(skill.packet,skill.scene,skill.hold_tracker,
+                                 dict(height_gain_m=.12,grasp_constrained=False))
+        skill.observe=Mock(return_value=skill.scene)
+        skill._set_feedback_deadline(skill._monitor_period_steps())
+        return skill
+
     def test_default_one_second_and_explicit_two_second_schedule(self):
         self.assertEqual(self.skill().observation_period_s,1.)
         self.assertEqual(self.skill(.1).robot.visual_feedback_max_age_s,.15)
         for period,count in ((.1,600),(1.,60),(2.,30)):
-            skill=self.skill(period);skill.observe=Mock()
+            skill=self.stable_transfer(period)
             for _ in range(7200):skill.monitor()
             self.assertEqual(skill.observe.call_count,count)
             self.assertEqual(skill.priors.max_age_s,.15)
 
     def test_motion_may_use_old_support_until_deadline_without_rewriting_time(self):
         for period in (1.,2.):
-            skill=self.skill(period)
+            skill=self.stable_transfer(period)
             driver,_,_,_,clock=test_robot_driver.FullPoseDriveTests.driver()
             driver.visual_feedback_max_age_s=skill.robot.visual_feedback_max_age_s
             clock[0]=1.+period
@@ -40,7 +57,7 @@ class SlowVisualFeedbackTests(unittest.TestCase):
                 driver._require_rotating_payload('left','v',(.1,.055,.045))
 
     def test_late_received_image_and_revoked_geometry_still_reject(self):
-        skill=self.skill(2.)
+        skill=self.stable_transfer(2.)
         for revoke in (False,True):
             driver,_,_,_,clock=test_robot_driver.FullPoseDriveTests.driver()
             driver.visual_feedback_max_age_s=skill.robot.visual_feedback_max_age_s

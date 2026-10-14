@@ -125,6 +125,13 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
             motion_feedback_max_age_s=getattr(robot,'visual_feedback_max_age_s',skill.priors.max_age_s),
             inter_observation_pose='encoder FK with last visually supported grasp; not a fresh visual measurement',
             immediate_phase_observations=True)
+        if getattr(skill,'observation_period_s',None) is not None:
+            result['observation_refresh'].update(policy='adaptive_phase_and_motion',
+                fast_period_sim_s=min(.1,skill.priors.max_age_s*2/3),
+                stable_translation_period_sim_s=skill.observation_period_s,
+                stable_translation_max_rotation_deg=5.,
+                periodic_observations=skill.periodic_observations,
+                monitor_period_fields_scope='final state only; not a fixed whole-task interval')
     env._write_json('visual_task_report.json',result)
     # AFTER actor has returned. Never feed these states or errors back to the skill.
     evaluation=dict(scope='offline_final_pose_only',actor_success=result['success'],
