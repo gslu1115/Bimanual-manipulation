@@ -6,9 +6,16 @@ voxel/sampled check, not a continuous collision or unseen-object guarantee.
 """
 from itertools import product
 from concurrent.futures import ThreadPoolExecutor
+import os
 import numpy as np
 from workstation.perception.rgbd_cartons import deproject
 from workstation.planning.collision import scene_obstacles
+
+
+def _occupancy_workers():
+    try:cpus=len(os.sched_getaffinity(0))
+    except (AttributeError,OSError):cpus=os.cpu_count() or 1
+    return max(1,min(8,cpus))
 
 
 class ObservedWorkspace:
@@ -263,9 +270,12 @@ class ObservedWorkspace:
         self._unknown_evaluated[tuple(indices.T)]=True
 
     def _occupied_indices(self,frame):
-        # Each camera reads the same immutable observation snapshot. Its
-        # points and geometric membership arrays are private to this worker.
-        points=deproject(frame)[frame.valid_depth]
+        return self._occupied_chunk((deproject(frame).reshape(-1,3),frame.valid_depth.ravel()))
+
+    def _occupied_chunk(self,chunk):
+        # Workers read one snapshot; temporary membership arrays are private.
+        xyz,valid=chunk
+        points=xyz[valid]
         inside=np.all((points>=self.lower)&(points<self.upper),axis=1)
         points=points[inside]
         if len(points):points=points[~self._modelled(points)]
@@ -276,11 +286,19 @@ class ObservedWorkspace:
         # hide unsegmented depth obstacles elsewhere in the workspace.
         if self.occupied is not None:return
         frames=list(self._frames())
-        if len(frames)>1 and sum(frame.depth_m.size for frame in frames)>=100000:
-            # NumPy releases the GIL for these large independent operations.
-            # Publish no partial map: all workers must finish successfully.
-            with ThreadPoolExecutor(max_workers=min(3,len(frames))) as pool:
-                grids=list(pool.map(self._occupied_indices,frames))
+        workers=_occupancy_workers()
+        if workers>1 and sum(frame.depth_m.size for frame in frames)>=100000:
+            # Split within cameras to balance uneven views. Eight workers won
+            # the 4/8/16 short replay; more workers increased memory/GIL overhead.
+            # Resolve cached deprojection on the caller before sharing a frame.
+            chunks=[]
+            for frame in frames:
+                xyz=deproject(frame).reshape(-1,3);valid=frame.valid_depth.ravel()
+                for start in range(0,len(xyz),32768):
+                    chunks.append((xyz[start:start+32768],valid[start:start+32768]))
+            # Publish no partial map when any worker fails.
+            with ThreadPoolExecutor(max_workers=min(workers,len(chunks))) as pool:
+                grids=list(pool.map(self._occupied_chunk,chunks))
         else:grids=[self._occupied_indices(frame) for frame in frames]
         occupied=np.zeros(self.shape,bool)
         for grid in grids:occupied[tuple(grid.T)]=True
