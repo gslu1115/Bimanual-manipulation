@@ -15,6 +15,20 @@ def deproject_depth(frame):
     return camera @ t[:3, :3].T + t[:3, 3]
 
 
+def visible_surface_normals(xyz, visible):
+    """Original five-pixel normal test, computed only on eligible measured pixels."""
+    interior=(visible[1:-1,1:-1] & visible[1:-1,2:] & visible[1:-1,:-2] &
+              visible[2:,1:-1] & visible[:-2,1:-1])
+    rows,cols=np.nonzero(interior)
+    rows,cols=rows+1,cols+1
+    du=xyz[rows,cols+1]-xyz[rows,cols-1]
+    dv=xyz[rows+1,cols]-xyz[rows-1,cols]
+    cross=np.cross(du,dv);length=np.linalg.norm(cross,axis=-1)
+    good=(length>1e-12)&(np.linalg.norm(du,axis=-1)<.008)&(np.linalg.norm(dv,axis=-1)<.008)
+    rows,cols=rows[good],cols[good]
+    return rows,cols,xyz[rows,cols],cross[good]/length[good,None]
+
+
 def quaternion_from_matrix(matrix):
     m = np.asarray(matrix)[:3, :3]
     # Symmetric eigenproblem handles 180-degree rotations without dividing by w.

@@ -155,12 +155,8 @@ class HeldSurfaceTracker:
         for ref in evidence['mask_refs']:
             frame=packet.cameras[ref.split('/')[0]];mask=scene.masks[ref] & frame.valid_depth
             xyz=deproject(frame);points.append(xyz[mask])
-            du=xyz[1:-1,2:]-xyz[1:-1,:-2];dv=xyz[2:,1:-1]-xyz[:-2,1:-1]
-            cross=np.cross(du,dv);length=np.linalg.norm(cross,axis=-1)
-            interior=(mask[1:-1,1:-1] & mask[1:-1,2:] & mask[1:-1,:-2] &
-                      mask[2:,1:-1] & mask[:-2,1:-1] & (length > 1e-12) &
-                      (np.linalg.norm(du,axis=-1) < .008) & (np.linalg.norm(dv,axis=-1) < .008))
-            pts=xyz[1:-1,1:-1][interior];ns=cross[interior]/length[interior,None]
+            from workstation.observations.camera_geometry import visible_surface_normals
+            _,_,pts,ns=visible_surface_normals(xyz,mask)
             towards=frame.T_workcell_from_camera_cv[:3,3]-pts
             ns*=np.where(np.sum(ns*towards,axis=1) >= 0,1.,-1.)[:,None]
             normal_points.append(pts);normals.append(ns)

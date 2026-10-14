@@ -9,7 +9,7 @@ equivalent top/bottom and 180-degree hypotheses are not resolved by this fit.
 import math
 import numpy as np
 from workstation.perception.rgbd_cartons import deproject
-from workstation.observations.camera_geometry import quaternion_from_matrix
+from workstation.observations.camera_geometry import quaternion_from_matrix,visible_surface_normals
 
 
 def _plane_patch(points,expected_normal):
@@ -53,11 +53,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         ratio=float(supported.mean())
         if ratio<.95:continue  # Whole instance; never crop a merged mask into good evidence.
         instances.append(points);refs.append(ref);ratios.append(ratio)
-        du=xyz[1:-1,2:]-xyz[1:-1,:-2];dv=xyz[2:,1:-1]-xyz[:-2,1:-1]
-        cross=np.cross(du,dv);length=np.linalg.norm(cross,axis=-1)
-        interior=(valid[1:-1,1:-1]&valid[1:-1,2:]&valid[1:-1,:-2]&valid[2:,1:-1]&valid[:-2,1:-1]&
-            (length>1e-12)&(np.linalg.norm(du,axis=-1)<.008)&(np.linalg.norm(dv,axis=-1)<.008))
-        pts=xyz[1:-1,1:-1][interior];ns=cross[interior]/length[interior,None]
+        _,_,pts,ns=visible_surface_normals(xyz,valid)
         ns*=np.where(np.sum(ns*(frame.T_workcell_from_camera_cv[:3,3]-pts),axis=1)>=0,1.,-1.)[:,None]
         normal_points.append(pts);normals.append(ns)
     if not instances:return unknown('NO_SUPPORTED_CURRENT_INSTANCE')

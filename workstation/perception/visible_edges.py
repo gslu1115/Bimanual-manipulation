@@ -5,25 +5,17 @@ the carton mask. Hidden edges and a complete cuboid wireframe are not produced.
 """
 import numpy as np
 from workstation.perception.scene_estimate import ObservedEdge
+from workstation.observations.camera_geometry import visible_surface_normals
 
 
 def observed_face_edges(frame, mask, xyz, mask_ref):
     import cv2
-    # Centred metric differences; do not use wrapped/border samples.
-    du=xyz[1:-1,2:]-xyz[1:-1,:-2]
-    dv=xyz[2:,1:-1]-xyz[:-2,1:-1]
-    cross=np.cross(du,dv)
-    length=np.linalg.norm(cross,axis=-1)
-    vertical_component=np.abs(cross[...,2])/np.maximum(length,1e-12)
     visible=mask & frame.valid_depth
-    interior=(visible[1:-1,1:-1] & visible[1:-1,2:] & visible[1:-1,:-2] &
-              visible[2:,1:-1] & visible[:-2,1:-1] & (length > 1e-12))
-    # Reject depth jumps/near-background derivatives instead of manufacturing a
-    # surface normal across the silhouette or an occluding robot finger.
-    interior &= (np.linalg.norm(du,axis=-1) < .008) & (np.linalg.norm(dv,axis=-1) < .008)
+    rows,cols,_,normals=visible_surface_normals(xyz,visible)
+    vertical_component=np.abs(normals[:,2])
     horizontal=np.zeros(mask.shape,np.uint8); vertical=np.zeros(mask.shape,np.uint8)
-    horizontal[1:-1,1:-1]=interior & (vertical_component > .94)
-    vertical[1:-1,1:-1]=interior & (vertical_component < .35)
+    horizontal[rows,cols]=vertical_component > .94
+    vertical[rows,cols]=vertical_component < .35
     junction=horizontal & cv2.dilate(vertical,np.ones((5,5),np.uint8))
     # A one-pixel band absorbs sampling jitter and the small tape thickness.
     # It stays inside measured mask/depth; no long occlusion gap is bridged.
