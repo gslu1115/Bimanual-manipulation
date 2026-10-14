@@ -20,11 +20,32 @@ class ConvexLink:
                           np.maximum(self.upper,self.upper+delta),self.sha256)
 
     def contains(self,points,position,rotation,margin=.003):
-        local=(np.asarray(points)-position)@rotation
+        points=np.asarray(points)
+        candidates=None
+        if len(points)>=256:
+            # Depth images contain many points nowhere near this link. Reject
+            # only points outside its enclosing WORLD box before transforming
+            # the remaining points. The original local/halfspace tests below
+            # still decide membership, with exactly the original allowances.
+            # This accelerates depth self filtering, not a path boundary gate.
+            try:inverse=np.linalg.inv(np.asarray(rotation,float))
+            except np.linalg.LinAlgError:inverse=None
+            if inverse is not None:
+                centre=(self.lower+self.upper)/2@inverse+position
+                half=((self.upper-self.lower)/2+margin+1e-8)@np.abs(inverse)
+                # Broad-phase-only roundoff allowance; never used for the
+                # final geometric membership decision.
+                half+=1e-6*np.maximum(1.,np.abs(centre)+half)
+                broad=np.ones(len(points),bool)
+                for axis in range(3):
+                    broad&=(points[:,axis]>=centre[axis]-half[axis])&(points[:,axis]<=centre[axis]+half[axis])
+                candidates=np.flatnonzero(broad)
+        local=((points if candidates is None else points[candidates])-position)@rotation
         broad=np.all((local>=self.lower-margin-1e-8)&(local<=self.upper+margin+1e-8),axis=1)
-        indices=np.flatnonzero(broad);result=np.zeros(len(local),bool)
+        indices=np.flatnonzero(broad);result=np.zeros(len(points),bool)
         if len(indices):
-            result[indices]=np.all(local[indices]@self.planes[:,:3].T+self.planes[:,3]<=margin+1e-8,axis=1)
+            selected=indices if candidates is None else candidates[indices]
+            result[selected]=np.all(local[indices]@self.planes[:,:3].T+self.planes[:,3]<=margin+1e-8,axis=1)
         return result
 
 
