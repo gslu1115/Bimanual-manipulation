@@ -87,6 +87,8 @@ class VisualPickPlace:
         self._anchor_normal_stage(label,measurement)
         self.trace_scene(packet,self.scene)
         if label is not None: self.save_scene(label,packet,self.scene)
+        # A phase-triggered exposure also satisfies the periodic observer.
+        self._monitor_ticks=0
         return self.scene
 
     def _anchor_normal_stage(self,label,measurement):
@@ -137,8 +139,11 @@ class VisualPickPlace:
 
     def _monitor_period_steps(self):
         if getattr(self,'grasp_source',None) is None:return 24
-        # Retain the validated half-age reserve for moving-payload feedback.
-        return max(1,int(self.priors.max_age_s*.5/self.robot.dt))
+        # Upright engineering default: 10 Hz, with 50 ms left in the default
+        # 150 ms age budget (one Cartesian edge advances four 120 Hz ticks).
+        period_s=(min(.1,self.priors.max_age_s*2/3) if self.accepted_postures==('UPRIGHT',)
+                  else self.priors.max_age_s*.5)
+        return max(1,int(period_s/self.robot.dt+1e-9))
 
     def monitor(self):
         self._monitor_ticks+=1

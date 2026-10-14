@@ -130,7 +130,7 @@ class GraspGenExecutionTests(unittest.TestCase):
         self.assertLess(max(np.diff([0]+calls))*skill.robot.dt,skill.priors.max_age_s)
         self.assertGreaterEqual(skill.priors.max_age_s-max(np.diff([0]+calls))*skill.robot.dt,
                                 2*skill.robot.dt-1e-9)
-        self.assertEqual(skill._monitor_period_steps(),9)
+        self.assertEqual(skill._monitor_period_steps(),12)
 
     def test_upright_refresh_budget_keeps_side_and_geometry_schedules(self):
         skill=VisualPickPlace.__new__(VisualPickPlace)
