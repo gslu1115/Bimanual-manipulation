@@ -137,16 +137,25 @@ class RobotMotion:
 
     def observed_robot_points(self,frame,points):
         """Self-filter RGB-D proposals using only IMAGE-TIME encoders and assets."""
-        points=np.asarray(points,float);inside=np.zeros(len(points),bool)
+        return self.prepare_observed_robot_filter(frame)(points)
+
+    def prepare_observed_robot_filter(self,frame):
+        """Snapshot native FK on the caller, then expose a pure array filter."""
+        bodies=[]
         for arm,state in frame.robot_state_at_frame.items():
             if abs(state.sample_time_s-frame.sample_time_s)>.02:
                 raise RuntimeError('ROBOT_SELF_FILTER_STATE_UNSYNCED')
             for _,model,position,rotation in self.collision_poses(
                     arm,state.joint_positions_rad,state.finger_positions_m):
+                bodies.append((model,np.asarray(position).copy(),np.asarray(rotation).copy()))
+        def filter_points(points):
+            points=np.asarray(points,float);inside=np.zeros(len(points),bool)
+            for model,position,rotation in bodies:
                 pending=np.flatnonzero(~inside)
                 if not len(pending):break
                 inside[pending] |= model.contains(points[pending],position,rotation)
-        return inside
+            return inside
+        return filter_points
 
     def unknown_body_diagnostic(self,arm,q,point):
         if point is None or not hasattr(self,'collision_links'):return {}

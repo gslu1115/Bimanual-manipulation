@@ -6,6 +6,7 @@ cartons. Hidden top/bottom and 180-degree symmetry remain hypotheses.
 """
 from __future__ import annotations
 from dataclasses import replace
+from concurrent.futures import ThreadPoolExecutor
 import math
 import numpy as np
 from workstation.observations.camera_geometry import quaternion_from_matrix
@@ -29,10 +30,14 @@ def deproject(frame):
 
 
 class CartonEstimator:
-    def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None):
+    def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None,
+                 robot_filter_factory=None,camera_workers=3):
         self.priors = priors
         self.segmenter = segmenter
         self.robot_point_filter=robot_point_filter
+        self.robot_filter_factory=robot_filter_factory
+        if camera_workers not in (1,2,3):raise ValueError('camera_workers must be 1, 2 or 3')
+        self.camera_workers=camera_workers
         self.last_robot_filter_counts={}
         self._tracks = {}
         self._next_id = 1
@@ -43,6 +48,7 @@ class CartonEstimator:
         self.last_robot_filter_counts={}
         previous_anchors=tuple(self._anchors.values())
         masks, detections, failures, statuses = {}, [], [], {}
+        jobs=[]
         for name, frame in packet.cameras.items():
             statuses[name] = packet.camera_status[name]
             if frame is None:
@@ -59,14 +65,31 @@ class CartonEstimator:
                 statuses[name] = 'UNSYNCED'
                 failures.append(name+':UNSYNCED')
                 continue
+            jobs.append((name,frame))
+        # Native FK preparation and model segmentation stay on the caller.
+        # Workers only process independent RGB-D arrays; fusion keeps input order.
+        parallel=(self.camera_workers>1 and self.segmenter is None and len(jobs)>1 and
+                  (self.robot_point_filter is None or self.robot_filter_factory is not None) and
+                  sum(frame.depth_m.size for _,frame in jobs)>=100000)
+        prepared={name:self.robot_filter_factory(frame) for name,frame in jobs} if parallel and self.robot_filter_factory else {}
+        def detect(job):
+            name,frame=job
             try:
                 segmentation = self.segmenter.segment(frame).validate_for(frame) if self.segmenter else None
-                objects, frame_masks = self._detect(frame, segmentation)
+                return self._detect(frame,segmentation,prepared.get(name)),None
             except Exception as exc:
                 if self.segmenter is None: raise
-                statuses[name] = 'SEGMENTATION_FAILED'
-                failures.append(name+':SEGMENTATION_FAILED:'+type(exc).__name__+':'+str(exc))
+                return None,type(exc).__name__+':'+str(exc)
+        if parallel:
+            with ThreadPoolExecutor(max_workers=min(self.camera_workers,len(jobs))) as pool:
+                results=list(pool.map(detect,jobs))
+        else:results=[detect(job) for job in jobs]
+        for (name,_),(result,error) in zip(jobs,results):
+            if error is not None:
+                statuses[name]='SEGMENTATION_FAILED'
+                failures.append(name+':SEGMENTATION_FAILED:'+error)
                 continue
+            objects,frame_masks=result
             detections.extend(objects)
             masks.update(frame_masks)
         detections = self._join_visible_fragments(detections,masks,packet)
@@ -482,7 +505,7 @@ class CartonEstimator:
             used.update(members)
         return [o for i,o in enumerate(detections) if i not in used]+joined
 
-    def _detect(self, frame, segmentation=None):
+    def _detect(self, frame, segmentation=None,prepared_robot_filter=None):
         import cv2  # Pure offline tests need no Isaac and no learned model.
         p = self.priors
         xyz = deproject(frame)
@@ -520,11 +543,12 @@ class CartonEstimator:
                     if other_index != index: blocked |= other_mask
                 mask=refine_visible_boundary(frame,mask,xyz,blocked=blocked)
                 refined_pixels=int((mask & ~original).sum())
-            if self.robot_point_filter is not None:
+            if self.robot_point_filter is not None or prepared_robot_filter is not None:
                 # Only measured points inside image-time robot geometry are
                 # removed from perception. Raw RGB-D and obstacle checks stay.
                 active=mask & frame.valid_depth & roi
-                removed=np.asarray(self.robot_point_filter(frame,xyz[active]),bool)
+                removed=np.asarray(prepared_robot_filter(xyz[active]) if prepared_robot_filter is not None else
+                                   self.robot_point_filter(frame,xyz[active]),bool)
                 if removed.shape!=(int(active.sum()),):
                     raise ValueError('Robot point filter returned an invalid shape')
                 excluded=np.zeros(mask.shape,bool);excluded[active]=removed

@@ -28,7 +28,8 @@ class VisualPickPlace:
         self.robot,self.read_packet,self.priors=robot,read_packet,priors
         self.slots=tuple(tuple(xy) for xy in slots_xy)
         self.estimator=estimator or CartonEstimator(priors,segmenter,
-            robot_point_filter=getattr(robot,'observed_robot_points',None))
+            robot_point_filter=getattr(robot,'observed_robot_points',None),
+            robot_filter_factory=getattr(robot,'prepare_observed_robot_filter',None))
         self.failure_history=failure_history or {};self.eligible=eligible
         self.save_scene=save_scene or (lambda prefix,packet,scene:None)
         self.trace_scene=trace_scene or (lambda packet,scene:None)
