@@ -140,8 +140,9 @@ class CameraSystem:
         sampled_tick, sampled_time = self.env.ticks, self.env.time
         sampled_states = self.env.observe_robot_states()
         started = time.perf_counter()
+        # Isaac 6.1 RenderingManager.render already performs one app.update
+        # with physics disabled. A second update here duplicated every render.
         RenderingManager.render()
-        self.env.app.update()
         self.metrics['render_wall_s'] += time.perf_counter()-started
         self.metrics['render_calls'] += 1
         self.render_frame_index += 1
