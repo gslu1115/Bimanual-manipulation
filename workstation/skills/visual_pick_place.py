@@ -136,13 +136,8 @@ class VisualPickPlace:
 
     def _monitor_period_steps(self):
         if getattr(self,'grasp_source',None) is None:return 24
-        if self.accepted_postures!=('UPRIGHT',):
-            return max(1,int(self.priors.max_age_s*.5/self.robot.dt))
-        # Reuse a still-current frame within the EXISTING age contract, with
-        # two physics ticks of headroom. Path edges still revalidate every
-        # four ticks; phase observations, stale rejection and final verification
-        # keep their original rules. At 120 Hz / 150 ms this is 16 ticks.
-        return max(1,math.floor(self.priors.max_age_s/self.robot.dt+1e-9)-2)
+        # Retain the validated half-age reserve for moving-payload feedback.
+        return max(1,int(self.priors.max_age_s*.5/self.robot.dt))
 
     def monitor(self):
         self._monitor_ticks+=1
