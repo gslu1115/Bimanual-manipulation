@@ -125,9 +125,23 @@ class GraspGenExecutionTests(unittest.TestCase):
         skill._monitor_ticks=0;skill.grasp_source=object();skill.held=False
         skill.priors=SimpleNamespace(max_age_s=.15);skill.robot=SimpleNamespace(dt=1/120)
         calls=[];skill.observe=lambda:calls.append(skill._monitor_ticks)
-        for _ in range(30):skill.monitor()
+        for _ in range(120):skill.monitor()
         self.assertGreater(len(calls),2)
         self.assertLess(max(np.diff([0]+calls))*skill.robot.dt,skill.priors.max_age_s)
+        self.assertGreaterEqual(skill.priors.max_age_s-max(np.diff([0]+calls))*skill.robot.dt,
+                                2*skill.robot.dt-1e-9)
+        self.assertLessEqual(len(calls),10)
+
+    def test_upright_refresh_budget_keeps_side_and_geometry_schedules(self):
+        skill=VisualPickPlace.__new__(VisualPickPlace)
+        skill.grasp_source=object();skill.priors=SimpleNamespace(max_age_s=.15)
+        for dt in (1/120,1/240):
+            skill.robot=SimpleNamespace(dt=dt)
+            self.assertLessEqual(skill._monitor_period_steps()*dt+2*dt,.15+1e-9)
+        skill.robot=SimpleNamespace(dt=1/120);skill.accepted_postures=('SIDE',)
+        self.assertEqual(skill._monitor_period_steps(),9)
+        skill.grasp_source=None
+        self.assertEqual(skill._monitor_period_steps(),24)
 
     def generate_with_fresh_changes(self,changes):
         clock=[self.obj.time_s];observations=[];holds=[]

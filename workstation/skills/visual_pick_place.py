@@ -134,10 +134,19 @@ class VisualPickPlace:
         self.events.append(event)
         print('[visual-pnp] '+phase,flush=True)
 
+    def _monitor_period_steps(self):
+        if getattr(self,'grasp_source',None) is None:return 24
+        if self.accepted_postures!=('UPRIGHT',):
+            return max(1,int(self.priors.max_age_s*.5/self.robot.dt))
+        # Reuse a still-current frame within the EXISTING age contract, with
+        # two physics ticks of headroom. Path edges still revalidate every
+        # four ticks; phase observations, stale rejection and final verification
+        # keep their original rules. At 120 Hz / 150 ms this is 16 ticks.
+        return max(1,math.floor(self.priors.max_age_s/self.robot.dt+1e-9)-2)
+
     def monitor(self):
         self._monitor_ticks+=1
-        period=(max(1,int(self.priors.max_age_s*.5/self.robot.dt))
-                if getattr(self,'grasp_source',None) is not None else 24)
+        period=self._monitor_period_steps()
         if self._monitor_ticks % period: return
         scene=self.observe()
         if not self.held or self.releasing: return

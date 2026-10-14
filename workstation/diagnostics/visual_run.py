@@ -117,6 +117,10 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
     result['observation_refresh']=dict(initial_render_passes=env.camera_system.settings['warmup_render_frames'],
         subsequent_render_passes=3,physics_frozen_during_refresh=True,
         strict_annotator_exposure_ids_verified=False,reads=reads)
+    if hasattr(skill,'_monitor_period_steps'):
+        result['observation_refresh'].update(monitor_period_steps=skill._monitor_period_steps(),
+            monitor_period_sim_s=skill._monitor_period_steps()*robot.dt,
+            maximum_frame_age_s=skill.priors.max_age_s)
     env._write_json('visual_task_report.json',result)
     # AFTER actor has returned. Never feed these states or errors back to the skill.
     evaluation=dict(scope='offline_final_pose_only',actor_success=result['success'],
