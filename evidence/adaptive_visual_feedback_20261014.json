@@ -1,0 +1,57 @@
+{
+  "source_commit": "b892ca3e2ea8ee2dd504fbb06276745a24c24369",
+  "utc": "2026-10-14T16:41:06.350742+08:00",
+  "scope": "Isaac SDK Python scheduler with mocked captures; no rendering or physical action",
+  "policy": "adaptive_phase_and_motion",
+  "rows": [
+    {
+      "stable_translation_period_s": 1.0,
+      "critical_phase_period_s": 0.1,
+      "simulated_duration_s": 60,
+      "critical_duration_s": 30,
+      "stable_translation_duration_s": 30,
+      "periodic_observations": {
+        "fast": 300,
+        "stable_transfer": 30
+      },
+      "total_periodic_calls": 330,
+      "uniform_100ms_calls": 600,
+      "call_reduction_fraction": 0.44999999999999996,
+      "received_image_max_age_s": 0.15,
+      "fast_motion_prediction_max_age_s": 0.15,
+      "slow_motion_prediction_max_age_s": 1.1833333333333333
+    },
+    {
+      "stable_translation_period_s": 2.0,
+      "critical_phase_period_s": 0.1,
+      "simulated_duration_s": 60,
+      "critical_duration_s": 30,
+      "stable_translation_duration_s": 30,
+      "periodic_observations": {
+        "fast": 300,
+        "stable_transfer": 15
+      },
+      "total_periodic_calls": 315,
+      "uniform_100ms_calls": 600,
+      "call_reduction_fraction": 0.475,
+      "received_image_max_age_s": 0.15,
+      "fast_motion_prediction_max_age_s": 0.15,
+      "slow_motion_prediction_max_age_s": 2.183333333333333
+    }
+  ],
+  "full_physical_run": false,
+  "orientation_threshold_deg": 5.0,
+  "support": "existing independent lift proof plus current packet holding support",
+  "timing_unit": "simulation seconds, not wall-clock seconds",
+  "limitation": "Only a supported translation uses the long interval; simultaneous rotation stays fast. No new flipping skill.",
+  "validation": {
+    "local_tests": 466,
+    "local_elapsed_s": 7.108,
+    "isaac_sdk_tests": 466,
+    "cpu_ci_conclusion": "success",
+    "isaac_sdk_elapsed_s": 7.594,
+    "scene_config": "passed",
+    "cpu_ci": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38536964292",
+    "command": "python -m unittest discover -s tests -q"
+  }
+}
