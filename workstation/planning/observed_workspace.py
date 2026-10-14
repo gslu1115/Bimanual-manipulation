@@ -111,7 +111,9 @@ class ObservedWorkspace:
             # Current independently supported holding geometry supersedes
             # this track's clipped single-view proxy, not neighbouring objects.
             if payload is not None and box.name==payload['target_id']:continue
-            result |= np.all(np.abs(points-box.centre) <= np.asarray(box.size)/2+.002,axis=1)
+            pending=np.flatnonzero(~result)
+            if not len(pending):break
+            result[pending] |= np.all(np.abs(points[pending]-box.centre) <= np.asarray(box.size)/2+.002,axis=1)
         if payload is not None:
             local=(points-payload['centre'])@payload['rotation']
             # Retain the visual pose uncertainty AND the existing 2 mm mapping

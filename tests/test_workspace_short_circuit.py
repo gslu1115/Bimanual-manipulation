@@ -29,6 +29,19 @@ def exhaustive_reference(ws):
 
 
 class WorkspaceShortCircuitTests(unittest.TestCase):
+    def test_modelled_union_short_circuit_preserves_overlapping_boxes_and_links(self):
+        from workstation.planning.collision import AABB
+        fixture=test_observed_workspace.WorkspaceTests();ws=fixture.workspace()
+        ws.static=(*ws.static,AABB('overlap',(0,0,.82),(.04,.04,.04)),AABB('small',(.03,0,.93),(.02,.03,.03)))
+        ws.robot_links=((fixture.cube(),np.array([0.,0.,.95]),np.eye(3)),)
+        rng=np.random.default_rng(208)
+        points=rng.uniform([-.08,-.08,.73],[.08,.08,1.05],(4000,3))
+        expected=np.zeros(len(points),bool)
+        for box in ws.static+ws.objects:
+            expected|=np.all(np.abs(points-box.centre)<=np.asarray(box.size)/2+.002,axis=1)
+        for model,p,r in ws.robot_links:expected|=model.contains(points,p,r)
+        np.testing.assert_array_equal(ws._modelled(points),expected)
+
     def test_exact_unknown_and_occupied_maps_for_occlusion_missing_depth_and_robot(self):
         fixture=test_observed_workspace.WorkspaceTests()
         for index in range(8):
