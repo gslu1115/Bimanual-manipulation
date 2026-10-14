@@ -122,12 +122,19 @@ class OcclusionMemory:
         if key not in current._fixed_surface_depth_masks:
             mask=np.zeros(frame.depth_m.shape,bool)
             if current.static:
-                xyz=deproject(frame)
+                xyz=deproject(frame).reshape(-1,3)
+                flat=mask.reshape(-1)
                 for box in current.static:
-                    distance=np.abs(xyz-np.asarray(box.centre))-np.asarray(box.size)/2
+                    centre=np.asarray(box.centre);half=np.asarray(box.size)/2
+                    broad=np.ones(len(xyz),bool)
+                    for axis in range(3):
+                        broad&=np.abs(xyz[:,axis]-centre[axis])<=half[axis]+.002+1e-9
+                    indices=np.flatnonzero(broad)
+                    if not len(indices):continue
+                    distance=np.abs(xyz[indices]-centre)-half
                     # Same 2 mm model allowance as ObservedWorkspace._modelled;
                     # require the measured surface, never the whole AABB.
-                    mask|=(np.max(distance,axis=-1)<=.002)&(np.min(np.abs(distance),axis=-1)<=.002)
+                    flat[indices]|=(np.max(distance,axis=-1)<=.002)&(np.min(np.abs(distance),axis=-1)<=.002)
             current._fixed_surface_depth_masks[key]=mask&frame.valid_depth
         return current._fixed_surface_depth_masks[key]
 
