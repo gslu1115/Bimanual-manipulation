@@ -76,7 +76,9 @@ class CartonEstimator:
             name,frame=job
             try:
                 segmentation = self.segmenter.segment(frame).validate_for(frame) if self.segmenter else None
-                return self._detect(frame,segmentation,prepared.get(name)),None
+                result=(self._detect(frame,segmentation,prepared[name]) if name in prepared else
+                        self._detect(frame,segmentation))
+                return result,None
             except Exception as exc:
                 if self.segmenter is None: raise
                 return None,type(exc).__name__+':'+str(exc)
