@@ -19,6 +19,7 @@ class SlowVisualFeedbackTests(unittest.TestCase):
 
     def test_default_one_second_and_explicit_two_second_schedule(self):
         self.assertEqual(self.skill().observation_period_s,1.)
+        self.assertEqual(self.skill(.1).robot.visual_feedback_max_age_s,.15)
         for period,count in ((.1,600),(1.,60),(2.,30)):
             skill=self.skill(period);skill.observe=Mock()
             for _ in range(7200):skill.monitor()

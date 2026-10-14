@@ -36,7 +36,8 @@ class VisualPickPlace:
             raise ValueError('Observation interval override requires upright GraspGen')
         # Receiving an old frame is different from continuing between planned
         # captures. Image freshness stays strict; motion uses encoder prediction.
-        self.robot.visual_feedback_max_age_s=(priors.max_age_s if self.observation_period_s is None else
+        self.robot.visual_feedback_max_age_s=(priors.max_age_s if
+            self.observation_period_s is None or self.observation_period_s<=priors.max_age_s else
             max(priors.max_age_s,self.observation_period_s+priors.max_age_s+4*getattr(robot,'dt',1/120)))
         self.slots=tuple(tuple(xy) for xy in slots_xy)
         self.estimator=estimator or CartonEstimator(priors,segmenter,
