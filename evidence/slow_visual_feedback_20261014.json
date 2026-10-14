@@ -1,0 +1,51 @@
+{
+  "source_commit": "ad4b6d192227204e260e17a892271e5285e9f81a",
+  "scope": "SDK Python scheduling, expiry, current-frame identity and phase-observation regression checks; no physical action or new rendering",
+  "periods": [
+    {
+      "period_s": 0.1,
+      "periodic_calls_per_simulated_minute": 600,
+      "incoming_frame_max_age_s": 0.15,
+      "motion_prediction_max_age_s": 0.15,
+      "track_identity_retention_s": 0.6,
+      "relative_to_100ms_call_reduction": 0.0
+    },
+    {
+      "period_s": 1.0,
+      "periodic_calls_per_simulated_minute": 60,
+      "incoming_frame_max_age_s": 0.15,
+      "motion_prediction_max_age_s": 1.1833333333333333,
+      "track_identity_retention_s": 1.15,
+      "relative_to_100ms_call_reduction": 0.9
+    },
+    {
+      "period_s": 2.0,
+      "periodic_calls_per_simulated_minute": 30,
+      "incoming_frame_max_age_s": 0.15,
+      "motion_prediction_max_age_s": 2.183333333333333,
+      "track_identity_retention_s": 2.15,
+      "relative_to_100ms_call_reduction": 0.95
+    }
+  ],
+  "default_period_s": 1.0,
+  "received_frame_expiry_unchanged": true,
+  "old_measurement_timestamps_preserved": true,
+  "revoked_support_rejected": true,
+  "motion_deadline_enforced": true,
+  "phase_lift_proof": true,
+  "full_physical_run": false,
+  "isaac_sdk_unittest_count": 461,
+  "isaac_sdk_unittest_seconds": 7.029,
+  "ci_result": "success",
+  "ci_url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38534269057",
+  "local_full_suite_before_final_fast_deadline_fix": {
+    "count": 461,
+    "seconds": 7.118
+  },
+  "local_final_targeted_checks": {
+    "count": 6,
+    "seconds": 0.154
+  },
+  "limitations": "Logic and scheduling verified; no full physical action, slip/dynamic-obstacle detection may wait until the next visual update.",
+  "raw_cloud_report": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/slow-feedback-check.json"
+}

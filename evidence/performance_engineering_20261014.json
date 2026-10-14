@@ -1,0 +1,417 @@
+{
+  "date": "2026-10-14",
+  "scope": "Engineering optimization with short CPU/SDK replay and scheduling tests, per user request. No full physical validation required for each small change.",
+  "source_commit": "bbd121d9986af69190ed55479f342e67f89bdf90",
+  "changes": {
+    "frame_point_reuse": "2ae038497f1699aea1e2aa425ce470f625fba99e",
+    "mask_first_normals": "0925f2d755d4eee5212e0c3f1528935a38513760",
+    "parallel_detection": "5131b3ff45d863e3621546e3a6b1cb2bb30880b8",
+    "serial_callback_fix": "47a304fb9f52dc7ea2ffbf5e5aa729c112c07463",
+    "upright_10hz": "bbd121d9986af69190ed55479f342e67f89bdf90"
+  },
+  "cpu_checks": {
+    "count": 455,
+    "local_seconds": 6.131,
+    "isaac_sdk_seconds": 7.102,
+    "result": "passed",
+    "ci_url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38531667794",
+    "ci_result": "success",
+    "intermediate_ci_failure": "5131b3f changed the legacy detector callback arity; repaired in 47a304f, whose CI also passed"
+  },
+  "benchmarks": {
+    "frame_reuse": {
+      "scope": "seven archived RGB-D/FK snapshots processed in time order; fresh immutable frames each repetition; no robot actuation or object truth",
+      "phases": [
+        "initial",
+        "tracked",
+        "pregrasp",
+        "preloaded",
+        "lifted",
+        "transferred",
+        "failure_trigger"
+      ],
+      "seconds": {
+        "uncached": [
+          {
+            "scene_estimation": 1.8443795620005403,
+            "depth_obstacle_mapping": 2.925779799998054,
+            "combined": 4.770159361998594
+          },
+          {
+            "scene_estimation": 1.6606939719986258,
+            "depth_obstacle_mapping": 2.80497635899701,
+            "combined": 4.465670330995636
+          },
+          {
+            "scene_estimation": 1.7437497649989382,
+            "depth_obstacle_mapping": 2.7666960419992392,
+            "combined": 4.510445806998177
+          }
+        ],
+        "cached": [
+          {
+            "scene_estimation": 1.7172068080017198,
+            "depth_obstacle_mapping": 2.9571011190018908,
+            "combined": 4.6743079270036105
+          },
+          {
+            "scene_estimation": 1.5486456109993014,
+            "depth_obstacle_mapping": 2.8266204910032684,
+            "combined": 4.37526610200257
+          },
+          {
+            "scene_estimation": 1.6053948900025716,
+            "depth_obstacle_mapping": 2.8944103920002817,
+            "combined": 4.499805282002853
+          }
+        ]
+      },
+      "median_s": {
+        "uncached": {
+          "scene_estimation": 1.7437497649989382,
+          "depth_obstacle_mapping": 2.80497635899701,
+          "combined": 4.510445806998177
+        },
+        "cached": {
+          "scene_estimation": 1.6053948900025716,
+          "depth_obstacle_mapping": 2.8944103920002817,
+          "combined": 4.499805282002853
+        }
+      },
+      "speedup": {
+        "scene_estimation": 1.0861812105282986,
+        "depth_obstacle_mapping": 0.9691011222007583,
+        "combined": 1.0023646634306336
+      },
+      "scenes_masks_occupied_exact": true,
+      "full_grid_hashes": {
+        "unknown": "b8801b50f686c8d3bc98f1379763505b3ae86b5977be8b7adbf0d50345045187",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      "extra_memory_per_three_640x480_float64_clouds_bytes": 22118400,
+      "cloud_raw_report": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/frame_reuse/report.json",
+      "local_download_sha256": "91a9be7abb97a1b89f427287189749b9f19f3b1d66907cf052ca51edbe1bacdd"
+    },
+    "mask_normals": {
+      "scope": "paired dense vs mask-first surface normals; same seven saved frames, frame-cloud reuse enabled in both; original normal thresholds, no robot actuation",
+      "phases": [
+        "initial",
+        "tracked",
+        "pregrasp",
+        "preloaded",
+        "lifted",
+        "transferred",
+        "failure_trigger"
+      ],
+      "seconds": {
+        "dense": [
+          {
+            "scene_estimation": 1.6872305949982547,
+            "depth_obstacle_mapping": 2.6576097729976027,
+            "combined": 4.344840367995857
+          },
+          {
+            "scene_estimation": 1.6378827570006251,
+            "depth_obstacle_mapping": 2.753356586003065,
+            "combined": 4.39123934300369
+          },
+          {
+            "scene_estimation": 1.6552809469994827,
+            "depth_obstacle_mapping": 2.767540368999107,
+            "combined": 4.42282131599859
+          }
+        ],
+        "sparse": [
+          {
+            "scene_estimation": 1.275302116999228,
+            "depth_obstacle_mapping": 2.7630827730008605,
+            "combined": 4.0383848900000885
+          },
+          {
+            "scene_estimation": 1.3509419589991012,
+            "depth_obstacle_mapping": 2.6717550339999434,
+            "combined": 4.022696992999045
+          },
+          {
+            "scene_estimation": 1.2385599300014292,
+            "depth_obstacle_mapping": 2.8130149350035936,
+            "combined": 4.051574865005023
+          }
+        ]
+      },
+      "median_s": {
+        "dense": {
+          "scene_estimation": 1.6552809469994827,
+          "depth_obstacle_mapping": 2.753356586003065,
+          "combined": 4.39123934300369
+        },
+        "sparse": {
+          "scene_estimation": 1.275302116999228,
+          "depth_obstacle_mapping": 2.7630827730008605,
+          "combined": 4.0383848900000885
+        }
+      },
+      "speedup": {
+        "scene_estimation": 1.2979520106924474,
+        "depth_obstacle_mapping": 0.9964799509110498,
+        "combined": 1.0873751419477984
+      },
+      "scenes_masks_occupied_exact": true,
+      "full_grid_hashes": {
+        "unknown": "b8801b50f686c8d3bc98f1379763505b3ae86b5977be8b7adbf0d50345045187",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      "cloud_raw_report": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/mask_normals/report.json",
+      "local_download_sha256": "04343b62a7b6aac5105b309cf01875c527dac9c0de37b4ac0cad2f4be76ce777"
+    },
+    "parallel_vision": {
+      "scope": "engineering CPU comparison on seven saved RGB-D/FK snapshots; two timed serial/parallel passes after warmup; no complete physical trial",
+      "seconds": {
+        "serial": [
+          {
+            "scene_estimation": 1.4461833819987078,
+            "depth_obstacle_mapping": 2.9228421230018284,
+            "scene_cpu_s": 3.6874634589999573,
+            "combined": 4.369025505000536
+          },
+          {
+            "scene_estimation": 1.4079041219993087,
+            "depth_obstacle_mapping": 2.859713666999596,
+            "scene_cpu_s": 3.6158808460000103,
+            "combined": 4.267617788998905
+          }
+        ],
+        "parallel": [
+          {
+            "scene_estimation": 1.1824204179993103,
+            "depth_obstacle_mapping": 2.711417058002553,
+            "scene_cpu_s": 3.7299063980000113,
+            "combined": 3.8938374760018633
+          },
+          {
+            "scene_estimation": 1.1195686649989511,
+            "depth_obstacle_mapping": 2.9056389430006675,
+            "scene_cpu_s": 3.966571525000006,
+            "combined": 4.025207607999619
+          }
+        ]
+      },
+      "median_s": {
+        "serial": {
+          "scene_estimation": 1.4270437519990082,
+          "depth_obstacle_mapping": 2.8912778950007123,
+          "scene_cpu_s": 3.651672152499984,
+          "combined": 4.3183216469997205
+        },
+        "parallel": {
+          "scene_estimation": 1.1509945414991307,
+          "depth_obstacle_mapping": 2.8085280005016102,
+          "scene_cpu_s": 3.8482389615000088,
+          "combined": 3.959522542000741
+        }
+      },
+      "speedup": {
+        "scene_estimation": 1.23983537762076,
+        "combined": 1.090616760276778
+      },
+      "scene_process_cpu_to_wall": {
+        "serial": 2.558906934272133,
+        "parallel": 3.3434033114421293
+      },
+      "scenes_masks_occupied_exact": true,
+      "observer_schedule": {
+        "simulated_duration_s": 60,
+        "old_periodic_calls": 800,
+        "new_periodic_calls": 600,
+        "new_period_s": 0.1,
+        "maximum_frame_age_s": 0.15,
+        "continuous_motion_call_reduction": 0.25,
+        "full_physical_run": false
+      },
+      "cloud_raw_report": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/parallel_vision/report.json",
+      "local_download_sha256": "aa1f12f36d501f73300e1c1b11393c14fdaa5a510ffe12afeca24ebdad98234b"
+    }
+  },
+  "observer_schedule": {
+    "simulated_duration_s": 60,
+    "old_periodic_calls": 800,
+    "new_periodic_calls": 600,
+    "new_period_s": 0.1,
+    "maximum_frame_age_s": 0.15,
+    "continuous_motion_call_reduction": 0.25,
+    "full_physical_run": false
+  },
+  "full_trial": {
+    "case": "isaac-perf-dev6-graspgen-412",
+    "source_commit": "0925f2d755d4eee5212e0c3f1528935a38513760",
+    "outcome": "INTERRUPTED_BY_USER",
+    "reason": "User explicitly requested no full run and to prioritize observation frequency and CPU utilization.",
+    "stopped_utc": "2026-10-14T07:47:03.165709+00:00",
+    "container_wall_s_until_stop": 171.231085,
+    "last_logged_phase": "APPROACH",
+    "cloud_audit": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/isaac-perf-dev6-graspgen-412-audit.json",
+    "archive_source_copy_sha256_verified": true,
+    "interpretation": "Not a complete success or an autonomous task failure; do not use elapsed time as a full-cycle speed result."
+  },
+  "limits": [
+    "CPU-only replay gain is not measured end-to-end cycle time.",
+    "Observer period grows from 75 to 100 ms; original 150 ms frame-age budget, phase observations and per-edge collision checks remain.",
+    "Immutable frame-cloud storage is about 21.1 MiB per three 640x480 exposures, retained only with their bounded snapshot lifetime.",
+    "Learned segmentation and unknown custom filter callbacks remain serial."
+  ],
+  "shutdown": {
+    "status": "VERIFIED",
+    "utc": "2026-10-14T08:03:21.528139+00:00",
+    "shutdown_root": "/home/featurize/work/isaac-support/backups/shutdown-20261014T080249Z",
+    "isaac_backup": "/home/featurize/work/isaac-support/backups/20261014T080251.555971Z",
+    "isaac_receipt": {
+      "backup": "/home/featurize/work/isaac-support/backups/20261014T080251.555971Z",
+      "status": "VERIFIED",
+      "utc": "20261014T080251.555971Z",
+      "files_and_links": 555,
+      "bytes": 135678935,
+      "source_copy_sha256_verified": true,
+      "restore_sha256_verified": true,
+      "container_stopped": true,
+      "sources": [
+        "output",
+        "isaac-data/logs",
+        "isaac-data/config",
+        "isaac-data/data"
+      ],
+      "excluded": [
+        "Docker images",
+        "shader/package caches",
+        "driver extraction",
+        "runtime sockets"
+      ],
+      "note": "Cloud projects/scripts/downloads already persist; no Git commit or push performed."
+    },
+    "extra_backups": {
+      "graspgen-results": {
+        "source": "/home/featurize/graspgen-runtime/results",
+        "files_and_links": 0,
+        "bytes": 0,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-dev1-graspgen-412": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-dev1-graspgen-412",
+        "files_and_links": 5,
+        "bytes": 95744,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-dev2-graspgen-412": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-dev2-graspgen-412",
+        "files_and_links": 5,
+        "bytes": 96762,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-dev3-graspgen-412": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-dev3-graspgen-412",
+        "files_and_links": 5,
+        "bytes": 95588,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-dev4-graspgen-411": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-dev4-graspgen-411",
+        "files_and_links": 5,
+        "bytes": 95290,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-dev5-graspgen-412": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-dev5-graspgen-412",
+        "files_and_links": 5,
+        "bytes": 94884,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-dev6-graspgen-412": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-dev6-graspgen-412",
+        "files_and_links": 5,
+        "bytes": 95148,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-sensor-check": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-sensor-check",
+        "files_and_links": 5,
+        "bytes": 95874,
+        "source_copy_sha256_verified": true
+      },
+      "isaac-perf-sensor-check2": {
+        "source": "/home/featurize/isaac-runtime/isaac-perf-sensor-check2",
+        "files_and_links": 5,
+        "bytes": 95877,
+        "source_copy_sha256_verified": true
+      },
+      "perf-baseline": {
+        "source": "/home/featurize/isaac-runtime/perf-baseline",
+        "files_and_links": 5,
+        "bytes": 90244,
+        "source_copy_sha256_verified": true
+      },
+      "perf-baseline_warm": {
+        "source": "/home/featurize/isaac-runtime/perf-baseline_warm",
+        "files_and_links": 5,
+        "bytes": 90049,
+        "source_copy_sha256_verified": true
+      },
+      "perf-frame_reuse": {
+        "source": "/home/featurize/isaac-runtime/perf-frame_reuse",
+        "files_and_links": 5,
+        "bytes": 90050,
+        "source_copy_sha256_verified": true
+      },
+      "perf-mask_normals": {
+        "source": "/home/featurize/isaac-runtime/perf-mask_normals",
+        "files_and_links": 5,
+        "bytes": 90243,
+        "source_copy_sha256_verified": true
+      },
+      "perf-optimized": {
+        "source": "/home/featurize/isaac-runtime/perf-optimized",
+        "files_and_links": 5,
+        "bytes": 90242,
+        "source_copy_sha256_verified": true
+      },
+      "perf-optimized2": {
+        "source": "/home/featurize/isaac-runtime/perf-optimized2",
+        "files_and_links": 5,
+        "bytes": 90052,
+        "source_copy_sha256_verified": true
+      },
+      "perf-optimized3": {
+        "source": "/home/featurize/isaac-runtime/perf-optimized3",
+        "files_and_links": 5,
+        "bytes": 90241,
+        "source_copy_sha256_verified": true
+      },
+      "perf-optimized4": {
+        "source": "/home/featurize/isaac-runtime/perf-optimized4",
+        "files_and_links": 5,
+        "bytes": 90048,
+        "source_copy_sha256_verified": true
+      },
+      "perf-parallel_check": {
+        "source": "/home/featurize/isaac-runtime/perf-parallel_check",
+        "files_and_links": 5,
+        "bytes": 90242,
+        "source_copy_sha256_verified": true
+      },
+      "perf-parallel_vision": {
+        "source": "/home/featurize/isaac-runtime/perf-parallel_vision",
+        "files_and_links": 5,
+        "bytes": 90054,
+        "source_copy_sha256_verified": true
+      }
+    },
+    "project_containers_running": [],
+    "display_stopped": true,
+    "container_logs": 20,
+    "model_image_cache": "/home/featurize/work/isaac-support/graspgen/image-cache/5a1dbbf934bf071e609f6e2f3c25ed5d11f2ec8f0c7ab67215c3d109c3c362a5",
+    "model_image_archive_previously_sha256_verified": true,
+    "model_image_size_rechecked": 9296311103,
+    "model_image_fresh_machine_restore_tested": true,
+    "code_checkpoint": "bbd121d9986af69190ed55479f342e67f89bdf90"
+  },
+  "cloud_report_root": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance",
+  "benchmark_source_binding": "frame_reuse used 2ae0384, mask_normals used 0925f2d, parallel_vision used bbd121d. Repository HEAD was fixed during each run; engineering-code.commit binds the last report whose optional SOURCE_COMMIT environment field was unset."
+}
