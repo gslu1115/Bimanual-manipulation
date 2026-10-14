@@ -1,0 +1,218 @@
+{
+  "date": "2026-10-14",
+  "source_commit": "bf0dac0a654bd3d018f525acc75347b392cb1cc0",
+  "base_commit": "c9769dce362e7e25d403ff7c40c6ffb661a75d7a",
+  "scope": "CPU engineering short replay only; no complete physical action",
+  "cpu_logical_available": 16,
+  "configuration": {
+    "chunk_points": 32768,
+    "max_workers": 8,
+    "min_total_pixels": 100000,
+    "respect_process_cpu_affinity": true,
+    "openblas_threads": 1
+  },
+  "worker_sweep": {
+    "scope": "Seven archived RGB-D snapshots with saved scene geometry and image-time robot FK; occupied-map only, no physics",
+    "base_commit": "c9769dce362e7e25d403ff7c40c6ffb661a75d7a",
+    "cpus": 16,
+    "chunk_points": 32768,
+    "samples": {
+      "3": [
+        {
+          "wall_s": 2.4237227409957995,
+          "cpu_s": 5.4768600420000055
+        },
+        {
+          "wall_s": 2.481919817999369,
+          "cpu_s": 5.5693522430000115
+        }
+      ],
+      "4": [
+        {
+          "wall_s": 1.9367829589991743,
+          "cpu_s": 6.112824899999993
+        },
+        {
+          "wall_s": 1.9384455620001972,
+          "cpu_s": 6.137585986000019
+        }
+      ],
+      "8": [
+        {
+          "wall_s": 1.6836321010014217,
+          "cpu_s": 7.175300997999997
+        },
+        {
+          "wall_s": 1.6953858979995857,
+          "cpu_s": 7.406465744000002
+        }
+      ],
+      "16": [
+        {
+          "wall_s": 2.728406759999416,
+          "cpu_s": 12.468406297000001
+        },
+        {
+          "wall_s": 2.8993719639966002,
+          "cpu_s": 12.651652662999979
+        }
+      ]
+    },
+    "median": {
+      "3": {
+        "wall_s": 2.4528212794975843,
+        "cpu_s": 5.5231061425000085
+      },
+      "4": {
+        "wall_s": 1.9376142604996858,
+        "cpu_s": 6.125205443000006
+      },
+      "8": {
+        "wall_s": 1.6895089995005037,
+        "cpu_s": 7.290883371
+      },
+      "16": {
+        "wall_s": 2.813889361998008,
+        "cpu_s": 12.56002947999999
+      }
+    },
+    "exact_maps": true,
+    "hashes": {
+      "initial": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "tracked": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "pregrasp": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "preloaded": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "lifted": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "transferred": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "failure_trigger": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+    }
+  },
+  "integrated": {
+    "scope": "Seven archived RGB-D/FK snapshots, current scene estimation plus occupied map, no robot motion; one warmup and two timed samples per setting",
+    "base_commit": "c9769dce362e7e25d403ff7c40c6ffb661a75d7a",
+    "candidate_sha256": "212ec236b0a8dda03afc533406d4b871f71c8f1321fe52aacd00958d506c0b8d",
+    "samples": {
+      "previous": [
+        {
+          "scene_s": 1.2376009709969367,
+          "mapping_s": 2.201550142995984,
+          "cpu_s": 7.621918876999999,
+          "combined_s": 3.4391511139929207
+        },
+        {
+          "scene_s": 1.2733185760043852,
+          "mapping_s": 2.282645114999468,
+          "cpu_s": 7.636521357000007,
+          "combined_s": 3.5559636910038535
+        }
+      ],
+      "chunks8": [
+        {
+          "scene_s": 1.2659138920062105,
+          "mapping_s": 1.760917747998974,
+          "cpu_s": 10.108378693000006,
+          "combined_s": 3.0268316400051845
+        },
+        {
+          "scene_s": 1.3628450609994616,
+          "mapping_s": 1.8083820980009477,
+          "cpu_s": 10.50472211399996,
+          "combined_s": 3.1712271590004093
+        }
+      ],
+      "chunks8_axis": [
+        {
+          "scene_s": 1.3234202790026757,
+          "mapping_s": 1.8396967410008074,
+          "cpu_s": 9.208246571000007,
+          "combined_s": 3.163117020003483
+        },
+        {
+          "scene_s": 1.3370163340005092,
+          "mapping_s": 1.833246940999743,
+          "cpu_s": 9.112983204000017,
+          "combined_s": 3.170263275000252
+        }
+      ]
+    },
+    "median": {
+      "previous": {
+        "scene_s": 1.255459773500661,
+        "mapping_s": 2.242097628997726,
+        "cpu_s": 7.629220117000003,
+        "combined_s": 3.497557402498387
+      },
+      "chunks8": {
+        "scene_s": 1.314379476502836,
+        "mapping_s": 1.7846499229999608,
+        "cpu_s": 10.306550403499983,
+        "combined_s": 3.099029399502797
+      },
+      "chunks8_axis": {
+        "scene_s": 1.3302183065015925,
+        "mapping_s": 1.8364718410002752,
+        "cpu_s": 9.160614887500012,
+        "combined_s": 3.1666901475018676
+      }
+    },
+    "scenes_masks_maps_exact": true,
+    "hashes": [
+      {
+        "phase": "initial",
+        "scene": "37df3c071c67631be4bda6a43c24bae5a1107ca620ccf6ba309a575b41a09b28",
+        "masks": "585f062ce1b30668f068c3b9def2fb8909645c14ad028e10c813ffe11892aa8a",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "tracked",
+        "scene": "229d15d97570454b10be0026e0a769a71b6c1a4490444b4a7eacbb1d88338244",
+        "masks": "bb8b74ac81502c024ee72534afd37b35b29dc04ec27ed55b426939f89a20ad06",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "pregrasp",
+        "scene": "25707ffe9f4230dbc5d361dccabfcf2e6740954d95802a13d4943c4ac206d672",
+        "masks": "70488344d335d545b3b539f46661b34dab587fe4e1216ccfd325ac390cb9507c",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "preloaded",
+        "scene": "82fae8b5364eb3c4b4f5473531b154f48db23af77cae1ac804378fcfdf379fd5",
+        "masks": "b4d3601c8e156b5793c72b28f402cc93a6003510bc9391d6716c6b09c804229e",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "lifted",
+        "scene": "06f4589822227ee46e7deabdaab2f92bd53b2009b8a61208b7e8dbc9a2e99059",
+        "masks": "42cfdf61cec670fcf6a333c36fe44d1552f5ac7c652db301d3c90987fce59a3a",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "transferred",
+        "scene": "68c53277b87306a3e4e60f794202773b365b8d2231d7b8da91b167dccd37b352",
+        "masks": "27726b78c24b722e9adf4967b60b7dd13e02ad8a0aaba959d46fc27f031eeb30",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "failure_trigger",
+        "scene": "68c53277b87306a3e4e60f794202773b365b8d2231d7b8da91b167dccd37b352",
+        "masks": "27726b78c24b722e9adf4967b60b7dd13e02ad8a0aaba959d46fc27f031eeb30",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      }
+    ]
+  },
+  "selected": "chunks8",
+  "rejected": "16 workers and extra axis-comparison rewrite did not improve elapsed time",
+  "benchmark_binding": "Archived candidate-workspace SHA in integrated report; final source only extracts CPU affinity discovery with portable fallback; Linux worker count and chunk algorithm unchanged.",
+  "validation": {
+    "local_tests": 469,
+    "local_elapsed_s": 6.303,
+    "isaac_sdk_tests": 469,
+    "isaac_sdk_elapsed_s": 7.649,
+    "scene_configuration": "passed",
+    "ci_result": "success",
+    "ci_url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38539590771"
+  },
+  "cloud_root": "/home/featurize/work/isaac-support/graspgen/reports/20261014-performance/cpu16",
+  "full_physical_run": false
+}
