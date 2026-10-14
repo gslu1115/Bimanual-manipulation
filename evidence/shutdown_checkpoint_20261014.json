@@ -1,0 +1,134 @@
+{
+  "status": "VERIFIED",
+  "utc": "2026-10-14T07:17:09.591285+00:00",
+  "shutdown_root": "/home/featurize/work/isaac-support/backups/shutdown-20261014T071601Z",
+  "isaac_backup": "/home/featurize/work/isaac-support/backups/20261014T071703.812498Z",
+  "isaac_receipt": {
+    "backup": "/home/featurize/work/isaac-support/backups/20261014T071703.812498Z",
+    "status": "VERIFIED",
+    "utc": "20261014T071703.812498Z",
+    "files_and_links": 502,
+    "bytes": 125263791,
+    "source_copy_sha256_verified": true,
+    "restore_sha256_verified": true,
+    "container_stopped": true,
+    "sources": [
+      "output",
+      "isaac-data/logs",
+      "isaac-data/config",
+      "isaac-data/data"
+    ],
+    "excluded": [
+      "Docker images",
+      "shader/package caches",
+      "driver extraction",
+      "runtime sockets"
+    ],
+    "note": "Cloud projects/scripts/downloads already persist; no Git commit or push performed."
+  },
+  "extra_backups": {
+    "graspgen-results": {
+      "source": "/home/featurize/graspgen-runtime/results",
+      "files_and_links": 0,
+      "bytes": 0,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-dev1-graspgen-412": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-dev1-graspgen-412",
+      "files_and_links": 5,
+      "bytes": 95744,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-dev2-graspgen-412": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-dev2-graspgen-412",
+      "files_and_links": 5,
+      "bytes": 96762,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-dev3-graspgen-412": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-dev3-graspgen-412",
+      "files_and_links": 5,
+      "bytes": 95588,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-dev4-graspgen-411": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-dev4-graspgen-411",
+      "files_and_links": 5,
+      "bytes": 95290,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-dev5-graspgen-412": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-dev5-graspgen-412",
+      "files_and_links": 5,
+      "bytes": 94884,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-sensor-check": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-sensor-check",
+      "files_and_links": 5,
+      "bytes": 95874,
+      "source_copy_sha256_verified": true
+    },
+    "isaac-perf-sensor-check2": {
+      "source": "/home/featurize/isaac-runtime/isaac-perf-sensor-check2",
+      "files_and_links": 5,
+      "bytes": 95877,
+      "source_copy_sha256_verified": true
+    },
+    "perf-baseline": {
+      "source": "/home/featurize/isaac-runtime/perf-baseline",
+      "files_and_links": 5,
+      "bytes": 90244,
+      "source_copy_sha256_verified": true
+    },
+    "perf-baseline_warm": {
+      "source": "/home/featurize/isaac-runtime/perf-baseline_warm",
+      "files_and_links": 5,
+      "bytes": 90049,
+      "source_copy_sha256_verified": true
+    },
+    "perf-optimized": {
+      "source": "/home/featurize/isaac-runtime/perf-optimized",
+      "files_and_links": 5,
+      "bytes": 90242,
+      "source_copy_sha256_verified": true
+    },
+    "perf-optimized2": {
+      "source": "/home/featurize/isaac-runtime/perf-optimized2",
+      "files_and_links": 5,
+      "bytes": 90052,
+      "source_copy_sha256_verified": true
+    },
+    "perf-optimized3": {
+      "source": "/home/featurize/isaac-runtime/perf-optimized3",
+      "files_and_links": 5,
+      "bytes": 90241,
+      "source_copy_sha256_verified": true
+    },
+    "perf-optimized4": {
+      "source": "/home/featurize/isaac-runtime/perf-optimized4",
+      "files_and_links": 5,
+      "bytes": 90048,
+      "source_copy_sha256_verified": true
+    },
+    "perf-parallel_check": {
+      "source": "/home/featurize/isaac-runtime/perf-parallel_check",
+      "files_and_links": 5,
+      "bytes": 90242,
+      "source_copy_sha256_verified": true
+    }
+  },
+  "project_containers_running": [],
+  "display_stopped": true,
+  "container_logs": 16,
+  "model_image_cache": "/home/featurize/work/isaac-support/graspgen/image-cache/5a1dbbf934bf071e609f6e2f3c25ed5d11f2ec8f0c7ab67215c3d109c3c362a5",
+  "model_image_archive_previously_sha256_verified": true,
+  "model_image_size_rechecked": 9296311103,
+  "model_image_fresh_machine_restore_tested": true,
+  "code_checkpoint": "a3ce33465f2bc42141286ad8550f44b4ebcd8078",
+  "source_execution_commit": "cba2919876cca73298339e64fdd20035cded03fb",
+  "performance_evidence": "evidence/performance_20261014.json",
+  "source_code_ci": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38522420111",
+  "source_code_ci_conclusion": "success",
+  "main_unchanged": true
+}
