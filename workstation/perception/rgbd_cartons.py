@@ -21,12 +21,11 @@ def axis_error(a, b):
 
 
 def deproject(frame):
-    v, u = np.indices(frame.depth_m.shape)
-    z = np.where(frame.valid_depth, frame.depth_m, 0.)
-    camera = np.stack(((u-frame.K[0, 2])*z/frame.K[0, 0],
-                       (v-frame.K[1, 2])*z/frame.K[1, 1], z), axis=-1)
-    t = frame.T_workcell_from_camera_cv
-    return camera @ t[:3, :3].T + t[:3, 3]
+    from workstation.observations.observation_packet import CameraFrame
+    from workstation.observations.camera_geometry import deproject_depth
+    # Only the validated immutable contract can own a reusable cloud.
+    # Mutable legacy/offline fixtures must reflect their current array values.
+    return frame.points_workcell_m if isinstance(frame, CameraFrame) else deproject_depth(frame)
 
 
 class CartonEstimator:

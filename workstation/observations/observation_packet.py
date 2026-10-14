@@ -8,6 +8,7 @@ All timestamps in one packet must use the same clock.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cached_property
 import math
 from types import MappingProxyType
 from typing import Mapping, Iterator
@@ -232,6 +233,14 @@ class CameraFrame:
                                 rel_tol=0, abs_tol=1e-6) for state in states.values()):
             raise ValueError("robot_state_at_frame must be aligned to the exposure time")
         object.__setattr__(self, "robot_state_at_frame", states)
+
+    @cached_property
+    def points_workcell_m(self):
+        """One read-only derived cloud per immutable exposure; no cross-frame reuse."""
+        from workstation.observations.camera_geometry import deproject_depth
+        points = deproject_depth(self)
+        points.setflags(write=False)
+        return points
 
     @property
     def timestamp(self):

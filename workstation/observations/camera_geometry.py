@@ -5,6 +5,16 @@ from workstation.task_logic import rotation
 USD_FROM_OPENCV = np.diag([1., -1., -1., 1.])
 
 
+def deproject_depth(frame):
+    """Project the measured optical depth with its own image-time calibration."""
+    v, u = np.indices(frame.depth_m.shape)
+    z = np.where(frame.valid_depth, frame.depth_m, 0.)
+    camera = np.stack(((u-frame.K[0, 2])*z/frame.K[0, 0],
+                       (v-frame.K[1, 2])*z/frame.K[1, 1], z), axis=-1)
+    t = frame.T_workcell_from_camera_cv
+    return camera @ t[:3, :3].T + t[:3, 3]
+
+
 def quaternion_from_matrix(matrix):
     m = np.asarray(matrix)[:3, :3]
     # Symmetric eigenproblem handles 180-degree rotations without dividing by w.

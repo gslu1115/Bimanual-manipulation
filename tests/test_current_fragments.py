@@ -46,7 +46,7 @@ class CurrentFragmentTests(unittest.TestCase):
         self.assertEqual(result,[self.fragment])
 
     def test_foreground_outliers_are_not_cropped_to_force_association(self):
-        frame=self.packet.cameras['left_wrist_camera'];xyz=deproject(frame)
+        frame=self.packet.cameras['left_wrist_camera'];xyz=deproject(frame).copy()
         xyz[self.masks[self.fragment.mask_refs[0]]]+=np.array([.1,0,0])
         with patch('workstation.perception.rgbd_cartons.deproject',return_value=xyz):
             self.assertEqual(len(self.associate()),2)
