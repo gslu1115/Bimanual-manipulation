@@ -25,7 +25,7 @@ class ObservedWorkspace:
         self.objects = tuple(scene_obstacles(scene,None,extra_margin=0.))
         self.unknown = self.occupied = None
         self._unknown_evaluated=None
-        self._fine_cache={}
+        self._fine_cache=None
         self._depth_footprints={}
         self.last_unknown_point=None
         self.last_unknown_sample=None
@@ -38,7 +38,7 @@ class ObservedWorkspace:
         No past-frame pose, commanded fingers or simulator target data suffices.
         Missing/stale/conflicting evidence leaves normal obstacle vetoes active.
         """
-        self.payload_observation=None;self._fine_cache.clear()
+        self.payload_observation=None;self._fine_cache=None
         self.unknown=self.occupied=None
         self._unknown_evaluated=None
         if not np.isfinite(uncertainty_m) or not .003<=uncertainty_m<=.008:return False
@@ -174,9 +174,15 @@ class ObservedWorkspace:
         centres=self.lower+(indices+.5)*spacing
         include=predicate(centres,spacing/2)
         indices,centres=indices[include],centres[include]
-        keys=[tuple(i) for i in indices]
-        missing=[i for i,k in enumerate(keys) if k not in self._fine_cache]
-        if missing:
+        # Integer-indexed same-frame cache avoids millions of Python tuple /
+        # dictionary operations along dense paths. 0=not evaluated, 1=unknown,
+        # 2=proved free. The clipped-volume checks below remain query-specific.
+        fine_shape=np.asarray(self.shape)*4
+        if self._fine_cache is None:
+            self._fine_cache=np.zeros(int(np.prod(fine_shape)),dtype=np.uint8)
+        keys=(indices[:,0]*fine_shape[1]+indices[:,1])*fine_shape[2]+indices[:,2]
+        missing=np.flatnonzero(self._fine_cache[keys]==0)
+        if len(missing):
             centres=centres[missing];known=np.ones(len(centres),bool)
             frames=list(self._frames())
             for corner in product((-.5,.5),repeat=3):
@@ -187,10 +193,10 @@ class ObservedWorkspace:
                     pending=np.flatnonzero(~cleared)
                     cleared[pending] |= self.occlusion_memory.free(points[pending],self)
                 known &= cleared
-            for index,value in zip(missing,known):self._fine_cache[keys[index]]=bool(value)
-        unsafe=[k for k in keys if not self._fine_cache[k]]
-        if unsafe:
-            centres=self.lower+(np.asarray(unsafe)+.5)*spacing
+            self._fine_cache[keys[missing]]=1+known.astype(np.uint8)
+        unsafe=indices[self._fine_cache[keys]==1]
+        if len(unsafe):
+            centres=self.lower+(unsafe+.5)*spacing
             known=np.ones(len(centres),bool);frames=list(self._frames())
             first_unknown=centres.copy()
             for corner in product((-.5,.5),repeat=3):
