@@ -242,6 +242,7 @@ def main(argv=None):
             '--/exts/omni.kit.livestream.app/primaryStream/signalPort=49100',
             '--/exts/omni.kit.livestream.app/primaryStream/streamPort=47998']
     app = SimulationApp({"headless": args.headless or args.livestream,
+        "disable_viewport_updates": bool(args.headless and not args.livestream),
         "hide_ui": False if args.livestream else None, "width": 960, "height": 600,
         "renderer": "RaytracedLighting", "anti_aliasing": 2, "multi_gpu": False,
         "sync_loads": True, "extra_args": extra_args},
