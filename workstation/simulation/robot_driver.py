@@ -695,7 +695,11 @@ class RobotMotion:
         # The cached packet's assembly time does not advance with physics.
         # Execution's encoder timestamp provides the current common clock.
         age=self.read_states()[arm].sample_time_s-payload['time_s']
-        if not 0<=age<=ws.priors.max_age_s:
+        horizon=getattr(self,'visual_feedback_max_age_s',ws.priors.max_age_s)
+        maximum=2.+ws.priors.max_age_s+4*getattr(self,'dt',1/120)
+        if not np.isfinite(horizon) or not 0<horizon<=maximum+1e-9:
+            raise RuntimeError('INVALID_VISUAL_FEEDBACK_HORIZON')
+        if not 0<=age<=horizon:
             raise RuntimeError('CURRENT_ROTATING_PAYLOAD_GEOMETRY_STALE')
 
     def execute_cartesian(self,arm,target,yaw0,yaw1,scene,target_id,speed=None,held_size=None,support_contact=False,check_approach_corridor=True,

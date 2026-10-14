@@ -107,7 +107,8 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
         from workstation.skills.visual_side_adjustment import VisualSideAdjustment
         if max_items is not None:raise ValueError('Side adjustment is a controlled single-object skill')
         skill=VisualSideAdjustment(*args,grasp_source=grasp_source)
-    elif max_items is None:skill=VisualPickPlace(*args,grasp_source=grasp_source)
+    elif max_items is None:skill=VisualPickPlace(*args,grasp_source=grasp_source,
+        observation_period_s=env.c.get('visual_observation_period_s') if grasp_source is not None else None)
     else:
         from workstation.skills.visual_sorting import VisualSortingTask
         skill=VisualSortingTask(*args,max_items=max_items)
@@ -120,7 +121,10 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
     if hasattr(skill,'_monitor_period_steps'):
         result['observation_refresh'].update(monitor_period_steps=skill._monitor_period_steps(),
             monitor_period_sim_s=skill._monitor_period_steps()*robot.dt,
-            maximum_frame_age_s=skill.priors.max_age_s)
+            maximum_frame_age_s=skill.priors.max_age_s,
+            motion_feedback_max_age_s=getattr(robot,'visual_feedback_max_age_s',skill.priors.max_age_s),
+            inter_observation_pose='encoder FK with last visually supported grasp; not a fresh visual measurement',
+            immediate_phase_observations=True)
     env._write_json('visual_task_report.json',result)
     # AFTER actor has returned. Never feed these states or errors back to the skill.
     evaluation=dict(scope='offline_final_pose_only',actor_success=result['success'],

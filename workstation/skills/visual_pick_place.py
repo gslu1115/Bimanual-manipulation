@@ -24,12 +24,25 @@ class VisualPickPlace:
     release_gap_m=UPRIGHT_RELEASE_GAP_M
 
     def __init__(self, robot, read_packet, priors, slots_xy, save_scene=None,trace_scene=None,segmenter=None,
-                 estimator=None,failure_history=None,eligible=None,grasp_source=None):
+                 estimator=None,failure_history=None,eligible=None,grasp_source=None,observation_period_s=None):
         self.robot,self.read_packet,self.priors=robot,read_packet,priors
+        self.observation_period_s=None
+        if grasp_source is not None and self.accepted_postures==('UPRIGHT',):
+            period=1. if observation_period_s is None else float(observation_period_s)
+            if not np.isfinite(period) or not .1<=period<=2.:
+                raise ValueError('Upright observation period must be 0.1..2 seconds')
+            self.observation_period_s=period
+        elif observation_period_s is not None:
+            raise ValueError('Observation interval override requires upright GraspGen')
+        # Receiving an old frame is different from continuing between planned
+        # captures. Image freshness stays strict; motion uses encoder prediction.
+        self.robot.visual_feedback_max_age_s=(priors.max_age_s if self.observation_period_s is None else
+            max(priors.max_age_s,self.observation_period_s+priors.max_age_s+4*getattr(robot,'dt',1/120)))
         self.slots=tuple(tuple(xy) for xy in slots_xy)
         self.estimator=estimator or CartonEstimator(priors,segmenter,
             robot_point_filter=getattr(robot,'observed_robot_points',None),
-            robot_filter_factory=getattr(robot,'prepare_observed_robot_filter',None))
+            robot_filter_factory=getattr(robot,'prepare_observed_robot_filter',None),
+            track_retention_s=max(.6,(self.observation_period_s or 0.)+priors.max_age_s))
         self.failure_history=failure_history or {};self.eligible=eligible
         self.save_scene=save_scene or (lambda prefix,packet,scene:None)
         self.trace_scene=trace_scene or (lambda packet,scene:None)
@@ -83,6 +96,11 @@ class VisualPickPlace:
             self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,measurement)
         self.robot.set_observation(packet,self.scene,self.priors)
         measurement=self._register_holding_surface(measurement)
+        if (measurement is not None and 'height_gain_m' in measurement and
+                not measurement.get('grasp_constrained',False)):
+            # Phase-triggered captures count too: a short lift may finish before
+            # the next periodic exposure, but still has fresh independent proof.
+            self.max_visual_lift=max(self.max_visual_lift,measurement['height_gain_m'])
         self._hold_observation=(packet,self.scene,self.hold_tracker,measurement) if self.hold_tracker is not None and not self.releasing else None
         self._anchor_normal_stage(label,measurement)
         self.trace_scene(packet,self.scene)
@@ -139,10 +157,8 @@ class VisualPickPlace:
 
     def _monitor_period_steps(self):
         if getattr(self,'grasp_source',None) is None:return 24
-        # Upright engineering default: 10 Hz, with 50 ms left in the default
-        # 150 ms age budget (one Cartesian edge advances four 120 Hz ticks).
-        period_s=(min(.1,self.priors.max_age_s*2/3) if self.accepted_postures==('UPRIGHT',)
-                  else self.priors.max_age_s*.5)
+        period_s=(getattr(self,'observation_period_s',None) or min(.1,self.priors.max_age_s*2/3)
+                  if self.accepted_postures==('UPRIGHT',) else self.priors.max_age_s*.5)
         return max(1,int(period_s/self.robot.dt+1e-9))
 
     def monitor(self):

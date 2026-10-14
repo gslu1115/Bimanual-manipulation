@@ -31,13 +31,16 @@ def deproject(frame):
 
 class CartonEstimator:
     def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None,
-                 robot_filter_factory=None,camera_workers=3):
+                 robot_filter_factory=None,camera_workers=3,track_retention_s=.6):
         self.priors = priors
         self.segmenter = segmenter
         self.robot_point_filter=robot_point_filter
         self.robot_filter_factory=robot_filter_factory
         if camera_workers not in (1,2,3):raise ValueError('camera_workers must be 1, 2 or 3')
         self.camera_workers=camera_workers
+        if not np.isfinite(track_retention_s) or not .6<=track_retention_s<=3.:
+            raise ValueError('track_retention_s must be 0.6..3 seconds')
+        self.track_retention_s=float(track_retention_s)
         self.last_robot_filter_counts={}
         self._tracks = {}
         self._next_id = 1
@@ -130,7 +133,7 @@ class CartonEstimator:
         now = packet.observation_time_s
         if self._last_time is not None and now < self._last_time:
             raise ValueError('Observation time moved backwards')
-        available = {k:v for k,v in self._tracks.items() if 0 <= now-v.time_s <= .6}
+        available = {k:v for k,v in self._tracks.items() if 0 <= now-v.time_s <= self.track_retention_s}
         tracked = []
         for obj in fused:
             # Mutual nearest association is sufficient only for separated cartons.

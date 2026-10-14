@@ -32,6 +32,8 @@ def build_parser():
     parser.add_argument('--graspgen-proxy-port',type=int,default=5558)
     parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')
     parser.add_argument('--num-grasps',type=int,default=64)
+    parser.add_argument('--visual-observation-period-s',type=float,
+                        help='Upright GraspGen periodic vision interval, 0.1..2 seconds; default 1; phase observations remain immediate')
     parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
     parser.add_argument('--grasp-backend',choices=('geometry','graspgen'),default='geometry',
                         help='Candidate backend for graspgen-check or controlled visual-pnp')
@@ -87,6 +89,13 @@ def load_config(args, parser):
     if args.mode=='visual-adjust' and args.grasp_backend!='graspgen':
         parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
+    period=getattr(args,'visual_observation_period_s',None)
+    if period is not None and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
+        parser.error('--visual-observation-period-s requires visual-pnp --grasp-backend graspgen')
+    if args.mode=='visual-pnp' and args.grasp_backend=='graspgen':
+        period=float(config.get('visual_observation_period_s',1.) if period is None else period)
+        if not .1<=period<=2.:parser.error('visual observation period must be 0.1..2 seconds')
+        config['visual_observation_period_s']=period
     if args.preposition_observer:
         if args.mode not in ('visual-pnp','visual-adjust','visual-sort'):parser.error('--preposition-observer requires a visual skill')
         config['diagnostic_preposition_observer']=True
