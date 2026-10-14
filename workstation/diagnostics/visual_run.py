@@ -10,6 +10,18 @@ from workstation.task_logic import slot_errors
 
 
 def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
+    from workstation.diagnostics.wall_timing import WallTiming
+    timing=WallTiming()
+    timing.wrap(env,'step','physics_step')
+    timing.wrap(env.camera_system,'render','camera_render')
+    try:
+        return _run(env,segmenter,max_items,graspgen,side_adjustment,timing)
+    finally:
+        timing.restore()
+        env._write_json('performance.json',timing.report())
+
+
+def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
     root=Path(__file__).resolve().parents[2]
     sources=[root/'workstation/app.py',root/'workstation/task_logic.py',
              root/'workstation/diagnostics/depth_error_audit.py',
@@ -26,9 +38,14 @@ def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
     for _ in range(round(3./env.c['physics']['dt'])):
         env.step(monitor_conveyor=False,render=False)
     robot=from_environment(env)
+    for method,label in (('validate_path','path_validation'),('cartesian_knots','cartesian_ik'),
+                         ('checked_joint_plan','joint_planning'),('set_observation','workspace_setup')):
+        timing.wrap(robot,method,label)
     env._write_json('robot_model_manifest.json',{name:dict(sha256=model.sha256,
         lower_m=model.lower.tolist(),upper_m=model.upper.tolist()) for name,model in robot.collision_links.items()})
     reads=0
+    last_timing_write=timing.clock()
+    @timing.timed('sensor_read')
     def read_packet():
         nonlocal reads
         if not reads:
@@ -40,7 +57,9 @@ def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
             packet=env.get_observation_packet(refresh=False)
         reads+=1
         return packet
+    @timing.timed('trace_write')
     def trace_scene(packet,scene):
+        nonlocal last_timing_write
         # Encoder/visual diagnostics only. Never feed a privileged record back.
         record=dict(scene=scene.to_dict(),robot_state={name:dict(time_s=state.sample_time_s,
             qpos=state.qpos.tolist(),tcp_fk_m=robot.fk(name,state.joint_positions_rad)[0].tolist(),
@@ -48,6 +67,9 @@ def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
         record['robot_self_filter_counts']=dict(getattr(getattr(skill,'estimator',None),'last_robot_filter_counts',{}))
         with (env.output/'visual_trace.jsonl').open('a',encoding='utf-8') as stream:
             stream.write(json.dumps(record)+'\n')
+        if timing.clock()-last_timing_write>=10.:
+            env._write_json('performance.json',timing.report())
+            last_timing_write=timing.clock()
     margin=float(env.c.get('diagnostic_optical_depth_error_margin_m',.003))
     if margin<.003:
         from workstation.diagnostics.depth_error_audit import audit_frame,margin_audit_accepted
@@ -67,7 +89,7 @@ def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
                 max_visual_lift_m=0.,calibration_gate=gate))
             raise RuntimeError('Optical depth margin rejected by current three-camera calibration')
     args=(robot,read_packet,ScenePriors.from_config(env.c),env.c['conveyor']['slots_xy'],
-          lambda prefix,packet,scene:save_observation(env.output,prefix,packet,scene),trace_scene,segmenter)
+          timing.timed('save_observation',lambda prefix,packet,scene:save_observation(env.output,prefix,packet,scene)),trace_scene,segmenter)
     grasp_source=None
     if graspgen is not None:
         from workstation.diagnostics.graspgen_calibration import verify
@@ -77,6 +99,7 @@ def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
         calibration=verify(env,robot,isaac_root(),graspgen.graspgen_assets)
         grasp_source=GraspGenSource(GraspGenProxy(graspgen.graspgen_proxy),calibration,graspgen.num_grasps,
                                    accepted_postures=('SIDE',) if side_adjustment else ('UPRIGHT',))
+        timing.wrap(grasp_source,'generate','grasp_generation')
     if side_adjustment:
         from workstation.skills.visual_side_adjustment import VisualSideAdjustment
         if max_items is not None:raise ValueError('Side adjustment is a controlled single-object skill')
@@ -85,6 +108,8 @@ def run(env, segmenter=None,max_items=None,graspgen=None,side_adjustment=False):
     else:
         from workstation.skills.visual_sorting import VisualSortingTask
         skill=VisualSortingTask(*args,max_items=max_items)
+    if hasattr(skill,'estimator'):timing.wrap(skill.estimator,'estimate','scene_estimation')
+    if hasattr(skill,'_read_holding_surface'):timing.wrap(skill,'_read_holding_surface','holding_estimation')
     result=skill.run()
     result['observation_refresh']=dict(initial_render_passes=env.camera_system.settings['warmup_render_frames'],
         subsequent_render_passes=3,physics_frozen_during_refresh=True,
