@@ -141,6 +141,24 @@ bash /home/featurize/work/isaac-support/scripts/run-host.sh /home/featurize/isaa
 
 prepare-host 应出现 HOST_PREPARED；若需刷新 docker 用户组，重新登录，已有其他任务时协调重启。bootstrap 应出现 HOST_VULKAN_OK / DOCKER_VULKAN_OK，识别 NVIDIA GPU，不能只有 llvmpipe。镜像曾有全零 glcore/glsi；脚本从匹配驱动的官方包提取配套 GL/EGL/Vulkan/NGX 用户态库，不重装内核驱动、不混用版本。start-display.sh 配置 Xvfb、DISPLAY=:99、Xauthority 与 X11 socket，解决 GLFW 初始化。
 
+### Docker 下载失败时：官方 6.1 独立安装包
+
+Docker 镜像站返回 502 或 NVIDIA 镜像层下载 EOF 时，先检查网络和磁盘，不必换 Isaac 版本。官方另提供 [6.1.0 Linux x86_64 ZIP](https://docs.isaacsim.omniverse.nvidia.com/6.1.0/installation/download.html)，与 Docker 使用不同下载入口。本项目通过 `ISAAC_PATH` 选择 SDK，项目 Python 入口不变，GraspGen 仍使用独立容器。
+
+云盘 `isaac-support/downloads/isaac-sim-6.1.0/` 保存安装 ZIP 和 `receipt.json`；解压目标是临时盘 `isaac-runtime/isaac-sim-6.1.0`。安装包约 13.34 GB，保留这一份即可；不要把 SDK 解压到云盘。恢复前仍执行上面的驱动修复和 Vulkan 检查，然后：
+
+~~~bash
+bash /home/featurize/work/isaac-support/scripts/restore-standalone.sh
+bash /home/featurize/work/isaac-support/scripts/start-display.sh
+cd /home/featurize/work/isaac-support/projects/Bimanual-manipulation-linux
+bash /home/featurize/work/isaac-support/scripts/run-standalone.sh \
+  -m workstation --mode sensor-check --headless
+~~~
+
+恢复脚本先核对 NVIDIA 公布的 MD5 `b471383a51f259e0af22541f05c34b0e`，记录 SHA-256，再解压到临时盘；下载未结束的 `.aria2` 文件不可用于恢复。已有带校验标记的安装直接复用，无校验标记的目标目录会停止并要求检查，不覆盖。运行包装脚本复用匹配驱动库和 Xvfb，输出默认写临时盘 `isaac-runtime/output/bimanual-linux`。此路径直接运行主机进程，`docker ps` 不会列出 Isaac；停止和关机前须同时检查主机 Isaac 进程并归档输出。
+
+基础检查结束后，可通过同一个包装脚本运行 `-m workstation --mode scene --livestream`；仍需下面的 TCP/UDP 转发和浏览器客户端，不能把 SDK/相机检查通过当作网页验收通过。独立安装路线与下面的容器路线二选一，避免同时启动两份 Isaac 占用 GPU 和串流端口。本次具体恢复与检查范围见交接 20.30。
+
 ### 同步代码和启动
 
 先查看工作树并保留他人变更；确认 linux-based 且干净时更新：

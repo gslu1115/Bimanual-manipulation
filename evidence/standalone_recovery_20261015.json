@@ -1,0 +1,226 @@
+{
+  "status": "OFFICIAL_STANDALONE_RESTORED_GPU_SENSOR_VERIFIED",
+  "date": "2026-10-15",
+  "utc": "2026-10-15T03:54:07.093508+00:00",
+  "source_commit": "83c28b5d50e90e0cae47aa516bc046aee8208255",
+  "route": "Official 6.1.0 Linux x86_64 ZIP downloaded directly by Featurize; Docker image pull still unavailable",
+  "package": {
+    "status": "OFFICIAL_CHECKSUM_VERIFIED",
+    "utc": "2026-10-15T03:45:05.289058+00:00",
+    "version": "6.1.0",
+    "source": "https://downloads.isaacsim.nvidia.com/isaac-sim-standalone-6.1.0-linux-x86_64.zip",
+    "checksum_source": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/installation/download.html",
+    "bytes": 13344634770,
+    "md5": "b471383a51f259e0af22541f05c34b0e",
+    "sha256": "959e746b0b7046404739afe068b6b2c2fbac6fe095351a4cda792496f459647f",
+    "unpacked_bytes": 27342091711,
+    "local_vpn_relay": false
+  },
+  "runtime": "/home/featurize/isaac-runtime/isaac-sim-6.1.0",
+  "sdk_tests": {
+    "count": 475,
+    "seconds": 28.423,
+    "passed": true
+  },
+  "sensor_check": {
+    "success": true,
+    "scope": "camera_robot_policy_interface_only",
+    "frames": {
+      "home": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.482534153247273e-16,
+          "rotation_error_deg": 0.0,
+          "sample_time_s": 0.5000000000000007,
+          "sequence_id": 12
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 5.467281384990009e-06,
+          "rotation_error_deg": 0.0008122210353221314,
+          "sample_time_s": 0.5000000000000007,
+          "sequence_id": 12
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 7.309161634852193e-06,
+          "rotation_error_deg": 0.0008122210353221314,
+          "sample_time_s": 0.5000000000000007,
+          "sequence_id": 12
+        }
+      },
+      "left_moved": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.482534153247273e-16,
+          "rotation_error_deg": 0.0,
+          "sample_time_s": 1.3249999999999977,
+          "sequence_id": 24
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.633196919408413e-07,
+          "rotation_error_deg": 1.4688877218970437e-05,
+          "sample_time_s": 1.3249999999999977,
+          "sequence_id": 24
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 7.309161634852193e-06,
+          "rotation_error_deg": 0.0008122210353221314,
+          "sample_time_s": 1.3249999999999977,
+          "sequence_id": 24
+        }
+      },
+      "both_moved": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.482534153247273e-16,
+          "rotation_error_deg": 0.0,
+          "sample_time_s": 2.149999999999995,
+          "sequence_id": 36
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 1.127159863758307e-06,
+          "rotation_error_deg": 0.00021816882112273234,
+          "sample_time_s": 2.149999999999995,
+          "sequence_id": 36
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 0.99955078125,
+          "translation_error_m": 2.2440139479384634e-07,
+          "rotation_error_deg": 1.6108968939569464e-05,
+          "sample_time_s": 2.149999999999995,
+          "sequence_id": 36
+        }
+      }
+    },
+    "motion_checks": {
+      "panda_left": {
+        "wrist_transform_change": 0.14706889365354248,
+        "other_wrist_transform_change": 0.0,
+        "scene_transform_change": 0.0
+      },
+      "panda_right": {
+        "wrist_transform_change": 0.1470687959428902,
+        "other_wrist_transform_change": 0.0022824312517326084,
+        "scene_transform_change": 0.0
+      }
+    },
+    "timestamp_skew_fault_injection": {
+      "success": true,
+      "injected_offset_s": 0.03,
+      "sync_ok": false
+    },
+    "low_frequency_no_image_save": {
+      "success": true,
+      "physics_steps": 48,
+      "render_calls": 4,
+      "periodic_captures": 2,
+      "image_files": []
+    }
+  },
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "gpu_identified_in_log": true,
+  "driver": "580.95.05",
+  "renderer": "RaytracedLighting / Vulkan (unchanged project config)",
+  "full_pick_place_run": false,
+  "webrtc_browser_retested": false,
+  "graspgen_service_restored": false,
+  "recovery_reuse_check": "STANDALONE_ALREADY_READY",
+  "recovery_scripts_sha256": {
+    "restore-standalone.sh": "0cd17752b8412a485f02f025e72bc851f8d17040d278a57369fa28d7d44ad9a2",
+    "run-standalone.sh": "70f32f89cbed37ca08c5a2da05600fd86bc4b3b0c00af5995a82fffa84583112"
+  },
+  "cloud_report_root": "/home/featurize/work/isaac-support/graspgen/reports/20261015-image-recovery",
+  "docker_proxy_restored": true,
+  "raw_log_sha256": {
+    "standalone-check.log": "f0de6e1a7469da24ed1ec939e916eb17a2c1a06d85ea65b0e406a607a77b78c2",
+    "standalone-sdk-tests.log": "706603bc2a1326509da56376bcfa66171a22a02821de1f9e37577a6dd97a198b",
+    "sensor-check.log": "8a1f55aad9b005ec37786b62e624e987f3f334d7d765d5b4f36d1cfe281fc4cc"
+  },
+  "cloud_free_bytes": 74503421952,
+  "temporary_free_bytes": 690223321088
+}
