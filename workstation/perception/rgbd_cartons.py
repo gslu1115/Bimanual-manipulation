@@ -370,6 +370,9 @@ class CartonEstimator:
         elif measurement.get('grasp_constrained'):
             from workstation.perception.cuboid_pose import grasp_constrained_cuboid_supported
             supported=grasp_constrained_cuboid_supported(measurement,scene.observation_time_s)
+        elif measurement.get('reference_constrained'):
+            from workstation.perception.cuboid_pose import reference_constrained_cuboid_supported
+            supported=reference_constrained_cuboid_supported(measurement,scene.observation_time_s)
         else:
             values=np.asarray([measurement.get(key,float('nan')) for key in
                 ('time_s','surface_inlier_ratio','top_coverage','side_points','plane_residual_m','surface_tilt_deg')],float)
@@ -402,7 +405,8 @@ class CartonEstimator:
                       if obj is best or obj.track_id not in ids)
         for alias in ids-{target_id}:self._tracks.pop(alias,None);self._anchors.pop(alias,None)
         self._tracks[target_id]=joined
-        if not joined.failures:self._anchors[target_id]=joined
+        if not joined.failures and not measurement.get('reference_constrained'):
+            self._anchors[target_id]=joined
         return replace(scene,objects=objects)
 
     def _associate_current_fragments(self,detections,masks,packet):

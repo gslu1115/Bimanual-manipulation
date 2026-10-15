@@ -24,8 +24,11 @@ def _plane_patch(points,expected_normal):
     return normal,residual
 
 
-def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,allow_grasp_translation=False):
+def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,allow_grasp_translation=False,
+                    allow_reference_translation=False):
     import cv2
+    if allow_grasp_translation and allow_reference_translation:
+        raise ValueError('Choose one translation prior: a latched grasp or a stationary target reference')
     centre,r,size=map(lambda value:np.asarray(value,float),(position_hint,rotation_hint,size_m))
     if (centre.shape!=(3,) or r.shape!=(3,3) or size.shape!=(3,) or np.any(size<=0) or
             not all(np.isfinite(value).all() for value in (centre,r,size)) or
@@ -157,9 +160,9 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             # A latched grasp can carry one hidden in-plane coordinate. Keep
             # current planes/rotation and label the coordinate as predicted,
             # never as an independently measured pose or a fabricated edge.
-            if allow_grasp_translation and axis in (0,1) and (len(axes)>=2 or tape_direction is not None) and not predicted_axes:
+            if (allow_grasp_translation or allow_reference_translation) and axis in (0,1) and (len(axes)>=2 or tape_direction is not None) and not predicted_axes:
                 values.append(float(centre@measured[:,axis]));predicted_axes.append(axis)
-                constraints.append(dict(axis=axis,source='grasp_relation_prediction',
+                constraints.append(dict(axis=axis,source='stationary_reference_prediction' if allow_reference_translation else 'grasp_relation_prediction',
                     observed_span_m=span,expected_span_m=float(size[axis])))
             else:
                 return unknown('TRANSLATION_AXIS_UNOBSERVED:'+str(axis),
@@ -177,16 +180,19 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
     uncertainty=max(.003,priors.optical_depth_error_margin_m)+2*residual+max(extent_errors,default=0.)/2
     if uncertainty>.008:return unknown('POSE_UNCERTAINTY_UNBOUNDED')
     height_bound=max(float(np.median(face['points'][:,2])) for face in faces)-float(np.abs(measured[2])@half)-max(.003,priors.optical_depth_error_margin_m)
-    return dict(status='GRASP_CONSTRAINED' if predicted_axes else 'GEOMETRY_OBSERVED',time_s=packet.observation_time_s,
+    reference_constrained=bool(predicted_axes and allow_reference_translation)
+    return dict(status=('REFERENCE_CONSTRAINED' if reference_constrained else 'GRASP_CONSTRAINED') if predicted_axes else 'GEOMETRY_OBSERVED',time_s=packet.observation_time_s,
         position_m=fitted.tolist(),orientation_wxyz=quaternion_from_matrix(measured).tolist(),
         rotation=measured.tolist(),size_m=size.tolist(),mask_refs=refs,
         surface_inlier_ratio=min(ratios),plane_residual_m=residual,uncertainty_m=uncertainty,
         observed_face_axes=sorted(axes),coordinate_constraints=constraints,
         translation_difference_from_hint_m=float(np.linalg.norm(fitted-centre)),
         orientation_difference_from_hint_deg=angle,geometric_pose_measured=not predicted_axes,semantic_pose_unique=False,
-        grasp_constrained=bool(predicted_axes),predicted_translation_axes=predicted_axes,
+        grasp_constrained=bool(predicted_axes and allow_grasp_translation),reference_constrained=reference_constrained,
+        predicted_translation_axes=predicted_axes,
         tape_direction=tape_direction,visual_height_lower_bound_m=min(height_bound,float(fitted[2])),
-        evidence=('current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip'
+        evidence=('current RGB-D planes/rotation plus stationary visual reference for one hidden in-plane coordinate; conditional on stationary target'
+                  if reference_constrained else 'current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip'
                   if predicted_axes else 'current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes'))
 
 
@@ -205,8 +211,17 @@ def grasp_constrained_cuboid_supported(measurement,time_s):
     return _cuboid_supported(measurement,time_s,True)
 
 
-def _cuboid_supported(measurement,time_s,grasp_constrained):
-    expected='GRASP_CONSTRAINED' if grasp_constrained else 'GEOMETRY_OBSERVED'
+def reference_constrained_cuboid_supported(measurement,time_s):
+    """Partial current geometry; neither a measured full pose nor a grasp proof.
+
+    The caller must separately bound the age of its confirmed stationary
+    reference and check visible motion/semantic conflicts before authorizing close.
+    """
+    return _cuboid_supported(measurement,time_s,True,reference=True)
+
+
+def _cuboid_supported(measurement,time_s,grasp_constrained,reference=False):
+    expected='REFERENCE_CONSTRAINED' if reference else 'GRASP_CONSTRAINED' if grasp_constrained else 'GEOMETRY_OBSERVED'
     if (measurement.get('status')!=expected or
             measurement.get('geometric_pose_measured') is not (not grasp_constrained) or
             not measurement.get('mask_refs')):return False
@@ -229,14 +244,17 @@ def _cuboid_supported(measurement,time_s,grasp_constrained):
     sources={'visible_signed_plane','complete_observed_extent'}
     if grasp_constrained:
         predicted=measurement.get('predicted_translation_axes',())
-        if measurement.get('grasp_constrained') is not True or len(predicted)!=1 or predicted[0] not in (0,1):return False
+        flag='reference_constrained' if reference else 'grasp_constrained'
+        if measurement.get(flag) is not True or len(predicted)!=1 or predicted[0] not in (0,1):return False
+        if reference and measurement.get('grasp_constrained') is not False:return False
         if len(measurement.get('observed_face_axes',()))<2:
             from workstation.perception.packaging_evidence import tape_axis_supported
             if (measurement.get('observed_face_axes')!=[2] or
                     not tape_axis_supported(measurement.get('tape_direction'),r)):return False
         measured_axes={item.get('axis') for item in constraints if item.get('source') in sources}
-        prediction_axes={item.get('axis') for item in constraints if item.get('source')=='grasp_relation_prediction'}
+        prediction_source='stationary_reference_prediction' if reference else 'grasp_relation_prediction'
+        prediction_axes={item.get('axis') for item in constraints if item.get('source')==prediction_source}
         return (prediction_axes==set(predicted) and measured_axes=={0,1,2}-prediction_axes and
-                all(item.get('source') in sources|{'grasp_relation_prediction'} for item in constraints))
+                all(item.get('source') in sources|{prediction_source} for item in constraints))
     return (bool(measurement.get('observed_face_axes')) and
             {item.get('axis') for item in constraints if item.get('source') in sources}=={0,1,2})

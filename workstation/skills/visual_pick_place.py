@@ -90,6 +90,7 @@ class VisualPickPlace:
         packet=self.read_packet()
         self.packet=packet
         self.scene=self.estimator.estimate(packet)
+        self.scene=self.reconcile_observation(packet,self.scene,label)
         # Identity must be reconciled BEFORE building this frame's workspace
         # and adding it to measured history. No second model inference is needed.
         measurement=self._read_holding_surface()
@@ -105,6 +106,10 @@ class VisualPickPlace:
         # A phase-triggered exposure also satisfies the periodic observer.
         self._monitor_ticks=0
         return self.scene
+
+    def reconcile_observation(self,packet,scene,label):
+        """Optional task-specific association before workspace construction."""
+        return scene
 
     def _record_visual_lift(self,measurement):
         if measurement is None:return

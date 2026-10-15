@@ -12,6 +12,28 @@ from workstation.perception.scene_estimate import pose_is_observed
 
 class HeldSurfaceTracker:
     @classmethod
+    def from_preclose_support(cls,proof,tcp_position,tcp_rotation,time_s):
+        """Seed a release observer from a bounded post-close continuity proof.
+
+        This is a conditional geometry hypothesis; collision_estimate still
+        requires independent current planes/extents after releasing.
+        """
+        from workstation.perception.preclose_target import preclose_supported
+        if not preclose_supported(proof,time_s) or proof.get('phase')!='closed':
+            raise ValueError('Release hypothesis requires current post-close surface support')
+        m=proof['surface'];body=np.asarray(m['rotation']);tcp=np.asarray(tcp_position);r=np.asarray(tcp_rotation)
+        if (tcp.shape!=(3,) or r.shape!=(3,3) or not np.isfinite(tcp).all() or
+                not np.isfinite(r).all() or not np.allclose(r.T@r,np.eye(3),atol=1e-6) or
+                not np.isclose(np.linalg.det(r),1.,atol=1e-6)):
+            raise ValueError('Release hypothesis requires a measured finite TCP pose')
+        if body[2,2]<math.cos(math.radians(8)):
+            raise ValueError('Release hypothesis requires supported flat geometry')
+        tracker=cls.__new__(cls);centre=np.asarray(m['position_m'])
+        tracker.size=np.asarray(m['size_m']);tracker.uncertainty_m=m['uncertainty_m']
+        tracker.offset=r.T@(centre-tcp);tracker.relative_rotation=r.T@body;tracker.initial_z=float(centre[2])
+        return tracker
+
+    @classmethod
     def from_measured_flat_pose(cls,measurement,tcp_position,tcp_rotation,time_s):
         """Release observer from CURRENT flat geometry, without a top-label claim.
 
@@ -206,6 +228,29 @@ class CuboidHoldingTracker:
     Symmetric semantic alternatives remain alternatives throughout rotation.
     This supplements the accepted upright observer; it does not replace it.
     """
+    @classmethod
+    def from_preclose_support(cls,reference,proof,tcp_position,tcp_rotation,priors):
+        """Latch only after physical close, retaining the stationary-axis assumption."""
+        from workstation.perception.preclose_target import preclose_supported
+        from workstation.planning.graspgen_candidates import upright_body_rotation
+        from workstation.observations.camera_geometry import pose_matrix
+        if (not preclose_supported(proof,proof.get('time_s',float('nan'))) or
+                proof.get('phase')!='closed' or proof['target_id']!=reference.track_id or
+                abs(proof['reference_time_s']-reference.time_s)>1e-6):
+            raise ValueError('Holding initialization requires a matching post-close continuity proof')
+        m=proof['surface']
+        if not np.allclose(m['size_m'],reference.size_m,atol=1e-6,rtol=0):
+            raise ValueError('Post-close size differs from confirmed reference')
+        tracker=cls(reference,tcp_position,tcp_rotation,reference.size_m,priors,allow_grasp_translation=True)
+        r=np.asarray(tcp_rotation);centre=np.asarray(m['position_m']);body=np.asarray(m['rotation'])
+        correction=body@upright_body_rotation(reference).T
+        tracker.offset=r.T@(centre-np.asarray(tcp_position))
+        tracker.hypotheses=tuple((hyp.label,r.T@correction@pose_matrix([0.,0.,0.],hyp.orientation_wxyz)[:3,:3],
+            'pregrasp semantic hypothesis; current close surfaces support geometry') for hyp in reference.hypotheses)
+        tracker.relative_rotation=r.T@body;tracker.initial_z=float(centre[2])
+        tracker.uncertainty_m=max(tracker.uncertainty_m,m['uncertainty_m'])
+        return tracker
+
     def __init__(self,obj,tcp_position,tcp_rotation,size_m,priors,*,allow_grasp_translation=False):
         from workstation.observations.camera_geometry import pose_matrix
         if obj.failures or not pose_is_observed(obj) or not obj.hypotheses:

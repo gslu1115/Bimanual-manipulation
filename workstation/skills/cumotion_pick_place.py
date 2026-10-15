@@ -30,6 +30,9 @@ class CuMotionPickPlace(VisualPickPlace):
         # not in every physics tick. Encoders and proposed commands are checked
         # continuously; intervening payload poses are explicitly predictions.
         self.robot.monitor = None
+        self.preclose_reference=None
+        self.preclose_proof=None
+        self.preclose_checks=[]
         self.watchdog_period_s = 2.
         self.estimator.track_retention_s=max(self.estimator.track_retention_s,
                                              self.watchdog_period_s+self.priors.max_age_s)
@@ -37,8 +40,51 @@ class CuMotionPickPlace(VisualPickPlace):
     def _monitor_period_steps(self):
         return max(1,math.ceil(getattr(self,'watchdog_period_s',2.)/self.robot.dt))
 
+    def reconcile_observation(self,packet,scene,label):
+        if (self.preclose_reference is None or self.hold_tracker is not None or label=='failed'):
+            return scene
+        from workstation.perception.preclose_target import reconcile_preclose_target
+        proof=self.preclose_reference.confirm(packet,scene,closed=self.held)
+        self.preclose_checks.append(proof);self.preclose_proof=proof
+        if not proof['supported']:
+            raise RuntimeError('PRECLOSE_SURFACE_CHECK:'+proof['reason'])
+        return reconcile_preclose_target(self.estimator,scene,proof)
+
+    def latch_closed_payload(self,result,model,preload=True):
+        """Reuse current visible geometry without requiring the full top again."""
+        from workstation.perception.preclose_target import preclose_supported
+        from workstation.perception.held_surface import HeldSurfaceTracker,CuboidHoldingTracker
+        self.held=True
+        self.observe('closed')
+        proof=self.preclose_proof
+        if proof is None or not preclose_supported(proof,self.packet.observation_time_s):
+            raise RuntimeError('CLOSED_TARGET_SURFACES_UNSUPPORTED')
+        tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
+        self.hold_tracker=CuboidHoldingTracker.from_preclose_support(self.preclose_reference.obj,proof,
+            tcp,rotation,self.priors)
+        self.release_tracker=HeldSurfaceTracker.from_preclose_support(proof,tcp,rotation,self.packet.observation_time_s)
+        self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
+            allow_grasp_translation=True,offset=self.hold_tracker.offset.copy(),
+            relative_rotation=self.hold_tracker.relative_rotation.copy(),uncertainty_m=self.hold_tracker.uncertainty_m,
+            source='current post-close RGB-D surfaces plus bounded pregrasp reference for one hidden coordinate')
+        result['held_visual_geometry']=dict(offset_tcp_m=self.hold_tracker.offset.tolist(),
+            relative_rotation=self.hold_tracker.relative_rotation.tolist(),observation_time_s=self.packet.observation_time_s,
+            uncertainty_m=self.hold_tracker.uncertainty_m,source=self.robot.held_visual_geometry['source'],
+            reference_time_s=proof['reference_time_s'],reference_constrained=proof['surface'].get('reference_constrained',False),
+            physical_attachment=False,grasp_proven=False)
+        # Now that close has completed, the existing live holding observer must
+        # confirm current support. A reference proof alone never authorizes lift.
+        measurement=self.hold_tracker.observe(self.packet,self.scene,tcp,rotation)
+        if measurement is None:raise RuntimeError('CLOSED_PAYLOAD_SURFACE_UNSUPPORTED')
+        if not self.robot.confirm_payload_observation(self.candidate.target_id,self.hold_tracker,measurement,self.packet):
+            raise RuntimeError('CLOSED_PAYLOAD_HISTORY_UNSUPPORTED')
+        self._hold_observation=(self.packet,self.scene,self.hold_tracker,measurement)
+        result['closed_surface_support']=measurement
+        return tcp,rotation
+
     def execute_selected(self, result, chosen, prepared_q, obj, slot):
         candidate = self.candidate
+        result['preclose_checks']=self.preclose_checks
         self.robot.monitor = None
         pick = np.asarray(candidate.position_m)
         pick_rotation = pose_matrix([0., 0., 0.], candidate.orientation_wxyz)[:3, :3]
@@ -105,12 +151,14 @@ class CuMotionPickPlace(VisualPickPlace):
                         current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
                         if len(current)!=1:raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
                         self.candidate=self._refresh_candidate(candidate,current[0])
+                        from workstation.perception.preclose_target import PreCloseTarget
+                        self.preclose_reference=PreCloseTarget(current[0],self.scene,self.priors)
                         self.event('APPROACH')
                         self._cartesian_segment(driver,pick,pick_rotation,contact=True,approach=True)
                         self.observe('approached')
-                        current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
-                        if len(current)!=1:raise RuntimeError('APPROACHED_TARGET_UNCERTAIN')
-                        self.candidate=self._refresh_candidate(candidate,current[0])
+                        # reconcile_observation has checked CURRENT surfaces and
+                        # merged only supported fragments. The original model
+                        # pose and its timestamp stay unchanged under occlusion.
                         used_cartesian=True
                     elif driver.phase=='GRASP':
                         self.event('CLOSE')
