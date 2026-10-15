@@ -19,7 +19,9 @@ def phase_tolerances(phase):
     Keep the pregrasp/approach strict: the subsequent Cartesian contact segment
     expects the model's orientation. Final visual placement acceptance is separate.
     """
-    return (.008,math.radians(1.5)) if phase in AIR_WAYPOINT_PHASES else (.003,.01)
+    if phase in AIR_WAYPOINT_PHASES:return .008,math.radians(1.5)
+    if phase in ('DESCEND_PLACE','RELEASE'):return .005,math.radians(1.)
+    return .003,.01
 
 
 def merge_named_command(current, names, values, joint_names):

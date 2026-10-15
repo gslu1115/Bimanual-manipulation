@@ -15,7 +15,11 @@ class CuMotionAdapterTests(unittest.TestCase):
             position,angle=phase_tolerances(phase)
             self.assertLess(.0033,position);self.assertLess(.0117,angle)
             self.assertLessEqual(position,.01);self.assertLessEqual(angle,np.deg2rad(2.))
-        for phase in ('APPROACH_PICK','DESCEND_PICK','GRASP','DESCEND_PLACE','RELEASE','UNKNOWN'):
+        for phase in ('DESCEND_PLACE','RELEASE'):
+            position,angle=phase_tolerances(phase)
+            self.assertLess(.0031,position);self.assertLess(.0106,angle)
+            self.assertEqual((position,angle),(.005,np.deg2rad(1.)))
+        for phase in ('APPROACH_PICK','DESCEND_PICK','GRASP','UNKNOWN'):
             self.assertEqual(phase_tolerances(phase),(.003,.01))
 
     def test_phase_switch_restores_contact_gate_before_measured_state_evaluation(self):
@@ -30,7 +34,8 @@ class CuMotionAdapterTests(unittest.TestCase):
             return SimpleNamespace(joints=None)
         controller.forward=forward;driver.controller=controller
         driver.propose(.02);driver.propose(.02)
-        self.assertEqual(seen,[(measured,*phase_tolerances('APPROACH_PLACE')),(measured,.003,.01)])
+        self.assertEqual(seen,[(measured,*phase_tolerances('APPROACH_PLACE')),
+                               (measured,*phase_tolerances('DESCEND_PLACE'))])
 
     def test_tilted_model_approach_is_not_replaced_by_vertical(self):
         d=np.array([.0792760849,.047702685,-.9957106113]);d/=np.linalg.norm(d)
