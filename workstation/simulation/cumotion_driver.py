@@ -10,6 +10,18 @@ from workstation.observations.observation_packet import PANDA_ARM_JOINT_NAMES, P
 from workstation.planning.collision import scene_obstacles
 
 
+AIR_WAYPOINT_PHASES=frozenset(('LIFT','APPROACH_PLACE','RETREAT'))
+
+
+def phase_tolerances(phase):
+    """Intermediate air waypoints need not satisfy contact-pose precision.
+
+    Keep the pregrasp/approach strict: the subsequent Cartesian contact segment
+    expects the model's orientation. Final visual placement acceptance is separate.
+    """
+    return (.008,math.radians(1.5)) if phase in AIR_WAYPOINT_PHASES else (.003,.01)
+
+
 def merge_named_command(current, names, values, joint_names):
     """Copy SDK's mutable output immediately, resolving joints by name."""
     result = np.asarray(current, float).copy()
@@ -162,6 +174,10 @@ class CuMotionPickPlaceDriver:
 
     def propose(self, duration):
         previous_phase=self.phase
+        # The pinned 6.1 example has only global tolerance constructor options.
+        # Select them for the phase being evaluated, retaining its original
+        # measured convergence, stability dwell, gripper and timeout logic.
+        self.controller._position_tolerance,self.controller._orientation_tolerance=phase_tolerances(previous_phase)
         self.time_s += duration
         started = time.perf_counter()
         desired = self.controller.forward(self.read_state(), None, self.time_s)

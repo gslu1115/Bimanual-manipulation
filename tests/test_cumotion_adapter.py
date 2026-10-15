@@ -4,12 +4,34 @@ import unittest
 from types import SimpleNamespace
 import numpy as np
 
-from workstation.simulation.cumotion_driver import merge_named_command,CuMotionPickPlaceDriver,model_pregrasp_offset
+from workstation.simulation.cumotion_driver import merge_named_command,CuMotionPickPlaceDriver,model_pregrasp_offset,phase_tolerances
 from workstation.skills.cumotion_pick_place import placement_goal
 from workstation.app import build_parser,load_config
 
 
 class CuMotionAdapterTests(unittest.TestCase):
+    def test_dev15_error_fits_air_waypoint_but_contact_phases_remain_precise(self):
+        for phase in ('LIFT','APPROACH_PLACE','RETREAT'):
+            position,angle=phase_tolerances(phase)
+            self.assertLess(.0033,position);self.assertLess(.0117,angle)
+            self.assertLessEqual(position,.01);self.assertLessEqual(angle,np.deg2rad(2.))
+        for phase in ('APPROACH_PICK','DESCEND_PICK','GRASP','DESCEND_PLACE','RELEASE','UNKNOWN'):
+            self.assertEqual(phase_tolerances(phase),(.003,.01))
+
+    def test_phase_switch_restores_contact_gate_before_measured_state_evaluation(self):
+        driver=object.__new__(CuMotionPickPlaceDriver);driver.time_s=0.;driver.controller_wall_s=0.;driver.calls=0
+        driver.contact_hold_q=None;driver.arm='left';driver.robot=SimpleNamespace(targets={'left':np.zeros(9)})
+        measured=object();driver.read_state=lambda:measured;seen=[]
+        controller=SimpleNamespace(phase=SimpleNamespace(name='APPROACH_PLACE'),failed=False)
+        def forward(state,goal,time_s):
+            seen.append((state,controller._position_tolerance,controller._orientation_tolerance))
+            # SDK advances after checking the current phase, not before.
+            controller.phase.name='DESCEND_PLACE'
+            return SimpleNamespace(joints=None)
+        controller.forward=forward;driver.controller=controller
+        driver.propose(.02);driver.propose(.02)
+        self.assertEqual(seen,[(measured,*phase_tolerances('APPROACH_PLACE')),(measured,.003,.01)])
+
     def test_tilted_model_approach_is_not_replaced_by_vertical(self):
         d=np.array([.0792760849,.047702685,-.9957106113]);d/=np.linalg.norm(d)
         pick=np.array([.1,.2,.8]);distance=.18

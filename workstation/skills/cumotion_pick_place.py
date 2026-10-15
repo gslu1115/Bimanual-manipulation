@@ -110,6 +110,11 @@ class CuMotionPickPlace(VisualPickPlace):
             surface_gripper=False, whole_arm_unknown_space_verified=False,
             continuous_collision_proof=False, closing_position_m=close_position)
         result['controller_policy']['contact_motion']='model-direction approach and fixed-attitude Cartesian contact segments; RMPflow for free travel'
+        from workstation.simulation.cumotion_driver import AIR_WAYPOINT_PHASES,phase_tolerances
+        result['controller_policy']['phase_tolerances']={phase:dict(position_m=phase_tolerances(phase)[0],
+            orientation_rad=phase_tolerances(phase)[1]) for phase in
+            ('APPROACH_PICK','DESCEND_PICK','GRASP','LIFT','APPROACH_PLACE','DESCEND_PLACE','RELEASE','RETREAT')}
+        result['controller_policy']['air_waypoint_phases']=sorted(AIR_WAYPOINT_PHASES)
         control_trace=[]
         result['controller_trace']=control_trace
         last_sample=-float('inf')
