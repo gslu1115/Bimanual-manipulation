@@ -39,6 +39,8 @@ python -m venv .venv-cpu
 
 CI 仅验证当前提交逻辑，不能替代 RTX/Vulkan、模型服务、物理抓放和 WebRTC 验收。依据 [GitHub Python CI 文档](https://docs.github.com/en/actions/tutorials/build-and-test-code/python) 配置。
 
+当前开发重点是**正面朝上的单盒，在桌面内不同转角下的速度与可靠性**。先用当前尺寸和固定名义位置隔离转角影响，再补轻微位置扰动；其他单盒姿态随后推进，多尺寸、约九盒、多目标位置和双臂协作仍为最终目标。代表角度筛查与完整物理结果分开记录，当前不能宣称任意角度都已通过；最新顺序见交接 1.0、20.35。
+
 ## 运行
 
 在仓库根目录打开 PowerShell，统一使用根目录的 `launch.ps1`：
