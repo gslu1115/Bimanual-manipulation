@@ -1,0 +1,32 @@
+{
+  "scope": "Saved current RGB-D and prior visual identity replay; no simulator truth and no robot drive",
+  "case_id": "isaac-live-dev8-graspgen-412",
+  "checks": {
+    "current_surface_identity_joined": true,
+    "target_id_retained": true,
+    "partial_geometry_stays_unknown": true,
+    "mask_pixels_unchanged": true,
+    "false_neighbour_removed": true
+  },
+  "passed": true,
+  "time_s": 17.44999999999965,
+  "old_track_ids": [
+    "visual_0001",
+    "visual_0002"
+  ],
+  "new_track_ids": [
+    "visual_0001"
+  ],
+  "old_neighbours": [
+    "visual_0002"
+  ],
+  "new_neighbours": [],
+  "current_partial_surface_overlap": 0.7565649396735273,
+  "current_partial_body_support": 1.0,
+  "full_pose_claimed": false,
+  "failure_reason": "STATIC_PATH_BLOCKED:visual_0002",
+  "source_sha256": {
+    "workstation/perception/rgbd_cartons.py": "c6798a7f024ef9b0121a97f8ef2d311c96bbeb5c3a64a461eea2135b2e90c5cc",
+    "tests/test_partial_surface_identity.py": "5edda3c79a33819b1c4ff8ffd1e14181e307413638d77e479207a2c0b12e1980"
+  }
+}

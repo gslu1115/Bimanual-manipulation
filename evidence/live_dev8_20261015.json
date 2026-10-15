@@ -1,0 +1,25 @@
+{
+  "case_id": "isaac-live-dev8-graspgen-412",
+  "source_commit": "6084930f95fc3c0fcfeefd9b66663e4701a371a4",
+  "utc": "2026-10-15T04:20:09.714598+00:00",
+  "status": "FAILED_DURING_APPROACH",
+  "reason": "STATIC_PATH_BLOCKED:visual_0002",
+  "task_wall_s": 165.2129876613617,
+  "runner_wall_s": 120.46831122599997,
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "FAILED"
+  ],
+  "max_visual_lift_m": 0.0,
+  "held_on_exit": false,
+  "seed": 412,
+  "streaming": true,
+  "browser_scene_observed": true,
+  "failed_scene_preserved_in_gui": true,
+  "archive_sha256_verified": true,
+  "archive_files": 73,
+  "archive_bytes": 20319969,
+  "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-live-pnp/isaac-live-dev8-graspgen-412",
+  "interpretation": "Same carton split into scene-camera visual_0001 and wrist-camera visual_0002; target alias treated as a neighbouring obstacle. No grasp or lift completed."
+}

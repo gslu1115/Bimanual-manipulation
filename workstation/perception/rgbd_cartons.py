@@ -99,6 +99,7 @@ class CartonEstimator:
             masks.update(frame_masks)
         detections = self._join_visible_fragments(detections,masks,packet)
         detections = self._associate_current_fragments(detections,masks,packet)
+        detections = self._associate_overlapping_partial_views(detections,masks,packet)
         # Fuse unambiguous spatially matching components, prefer complete geometry.
         groups = []
         for obj in sorted(detections, key=lambda d: (bool(d.failures), -d.quality['footprint_coverage'])):
@@ -425,6 +426,96 @@ class CartonEstimator:
                 obj=replace(obj,mask_refs=refs,cameras=cameras,quality=quality)
             result.append(obj)
         return result
+
+    def _associate_overlapping_partial_views(self,detections,masks,packet):
+        """Current shared surfaces prove identity without proving a complete pose.
+
+        Two clipped fits can disagree about centre/height despite observing the
+        same physical surface. Require mutual 3-D overlap and one compatible
+        bounded body for every entire view. Keep partial geometry partial;
+        neither historical poses nor missing pixels supply this association.
+        """
+        recoverable={'PARTIAL_OR_MERGED_GEOMETRY','INCOMPATIBLE_SIZE_OR_SUPPORT',
+                     'INSTANCE_GEOMETRY_INCONSISTENT','VERTICAL_EXTENT_UNRESOLVED'}
+        candidates=[i for i,o in enumerate(detections) if o.failures and
+                    set(o.failures)<=recoverable and o.posture=='UNKNOWN']
+        if len(candidates)<2:return detections
+        from scipy.spatial import cKDTree
+        from workstation.observations.camera_geometry import pose_matrix
+        clouds={};points={}
+        for i in candidates:
+            obj=detections[i];views=[]
+            if not obj.mask_refs:continue
+            for ref in obj.mask_refs:
+                name=ref.split('/')[0];frame=packet.cameras.get(name);mask=masks.get(ref)
+                if (frame is None or packet.camera_status.get(name)!='OK' or mask is None or
+                        frame.sample_time_s!=packet.observation_time_s or
+                        not 0<=packet.assembled_time_s-frame.sample_time_s<=self.priors.max_age_s or
+                        mask.shape!=frame.depth_m.shape or not mask.any() or
+                        frame.valid_depth[mask].mean()<.9):break
+                if name not in clouds:clouds[name]=deproject(frame)
+                sample=clouds[name][mask&frame.valid_depth]
+                if len(sample)<60:break
+                views.append(sample)
+            else:
+                if views:points[i]=views
+
+        def body_support(index,members):
+            obj=detections[index]
+            if not obj.hypotheses:return None
+            rotation=pose_matrix([0.,0.,0.],obj.hypotheses[0].orientation_wxyz)[:3,:3]
+            size=np.asarray(obj.size_m);local=[];ratios=[]
+            for member in members:
+                for sample in points[member]:
+                    xyz=(sample-obj.position_m)@rotation;local.append(xyz)
+                    inside=np.all(np.abs(xyz)<=size/2+.006,axis=1)
+                    surface=np.min(np.abs(np.abs(xyz)-size/2),axis=1)<=.006
+                    ratios.append(float((inside&surface).mean()))
+            if min(ratios)<.95 or np.any(np.ptp(np.concatenate(local),axis=0)>size+.012):
+                return None
+            return min(ratios)
+
+        if len(points)<2:return detections
+        samples={i:np.concatenate(views) for i,views in points.items()}
+        trees={i:cKDTree(sample) for i,sample in samples.items()}
+        links={i:set() for i in points};overlaps={}
+        for i in points:
+            for j in points:
+                if j<=i or set(detections[i].cameras)&set(detections[j].cameras):continue
+                if not any(body_support(k,(i,j)) is not None for k in (i,j)):continue
+                ratios=[]
+                for source,target in ((i,j),(j,i)):
+                    sample=samples[source]
+                    query=sample[np.linspace(0,len(sample)-1,min(4096,len(sample)),dtype=int)]
+                    matched=trees[target].query(query,workers=1)[0]<=.003
+                    if matched.sum()<60 or matched.mean()<.7:break
+                    ratios.append(float(matched.mean()))
+                else:
+                    links[i].add(j);links[j].add(i);overlaps[i,j]=min(ratios)
+        used=set();joined=[]
+        for i in links:
+            if i in used or not links[i]:continue
+            component={i};pending=[i]
+            while pending:
+                for j in links[pending.pop()]-component:component.add(j);pending.append(j)
+            used.update(component)
+            # A chain of overlapping fragments or two detections from the same
+            # camera is ambiguous. Do not absorb an adjacent carton through it.
+            if any(links[j]&component!=component-{j} for j in component):continue
+            supported=[(body_support(j,component),j) for j in component]
+            supported=[(ratio,j) for ratio,j in supported if ratio is not None]
+            if not supported:continue
+            ratio,best=max(supported,key=lambda item:(item[0],-detections[item[1]].uncertainty_m))
+            obj=detections[best];members=sorted(component)
+            refs=tuple(dict.fromkeys(ref for j in members for ref in detections[j].mask_refs))
+            quality=dict(obj.quality,current_partial_surface_views_joined=float(len(members)),
+                current_partial_surface_overlap=min(v for (a,b),v in overlaps.items()
+                    if a in component and b in component),current_partial_body_support=ratio)
+            joined.append((component,replace(obj,mask_refs=refs,
+                cameras=tuple(dict.fromkeys(ref.split('/')[0] for ref in refs)),quality=quality,
+                velocity_m_s=None,measured_cuboid=None)))
+        absorbed=set().union(*(members for members,_ in joined)) if joined else set()
+        return [obj for i,obj in enumerate(detections) if i not in absorbed]+[obj for _,obj in joined]
 
     def _join_visible_fragments(self,detections,masks,packet):
         """Associate partial visible surfaces to a RECENT visual box, never a USD ID.

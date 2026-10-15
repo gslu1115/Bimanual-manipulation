@@ -1,0 +1,7 @@
+{
+  "platform": "nt",
+  "test": "Real closed local UDP peer followed by a live peer through actual udp_send_loop",
+  "passed": true,
+  "forwarded_payload": "live-peer",
+  "relay_errors": []
+}
