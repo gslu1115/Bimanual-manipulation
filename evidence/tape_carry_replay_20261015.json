@@ -1,0 +1,173 @@
+{
+  "scope": "Original failure RGB-D and image-time FK replay through holding tracker, identity, payload registration and motion support gate; no path or physical execution",
+  "source_run": "isaac-perf-dev7-graspgen-412",
+  "source_commit": "6431cd3bd6a4864509cbb3e65c4454ed05ade25a",
+  "time_s": 22.699999999999353,
+  "robot_commands": 0,
+  "truth_inputs": false,
+  "strict": {
+    "status": "UNKNOWN",
+    "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+    "time_s": 22.699999999999353,
+    "unobserved_axis": 0,
+    "observed_span_m": 0.08256834776416318,
+    "expected_span_m": 0.1,
+    "visible_face_axes": [
+      2
+    ],
+    "face_point_counts": [
+      {
+        "axis": 2,
+        "sign": 1.0,
+        "points": 61326
+      }
+    ]
+  },
+  "grasp_constrained": {
+    "status": "GRASP_CONSTRAINED",
+    "time_s": 22.699999999999353,
+    "position_m": [
+      -0.18943208465208305,
+      -0.054953218329443845,
+      0.8054055890969614
+    ],
+    "orientation_wxyz": [
+      0.8691911255983454,
+      -0.0034945731363872617,
+      -0.002626354685093757,
+      0.49445695201983286
+    ],
+    "rotation": [
+      [
+        0.5110108497206496,
+        -0.8595368333950333,
+        -0.008021440333171365
+      ],
+      [
+        0.8595735453491499,
+        0.5110002211157023,
+        0.003477665250775306
+      ],
+      [
+        0.0011097764066576293,
+        -0.008672142580833441,
+        0.999961780439325
+      ]
+    ],
+    "size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "mask_refs": [
+      "scene_camera/618/component_1",
+      "left_wrist_camera/618/component_1"
+    ],
+    "surface_inlier_ratio": 1.0,
+    "plane_residual_m": 7.97617022940661e-05,
+    "uncertainty_m": 0.005107381466009628,
+    "observed_face_axes": [
+      2
+    ],
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "grasp_relation_prediction",
+        "observed_span_m": 0.08256834776416318,
+        "expected_span_m": 0.1
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05426837082239361,
+        "aggregation": "union of per-view validated planar quantiles",
+        "mask_refs": [
+          "left_wrist_camera/618/component_1",
+          "scene_camera/618/component_1"
+        ]
+      },
+      {
+        "axis": 2,
+        "source": "visible_signed_plane",
+        "sign": 1.0,
+        "points": 61326
+      }
+    ],
+    "translation_difference_from_hint_m": 0.001094985191620514,
+    "orientation_difference_from_hint_deg": 0.09992774956600305,
+    "geometric_pose_measured": false,
+    "semantic_pose_unique": false,
+    "grasp_constrained": true,
+    "predicted_translation_axes": [
+      0
+    ],
+    "tape_direction": {
+      "source": "current_rgbd_central_tape",
+      "axis_workcell": [
+        0.5110108497206496,
+        0.8595735453491499,
+        0.0011097764066576293
+      ],
+      "span_m": 0.06316521927352846,
+      "width_m": 0.010980936635183455,
+      "line_residual_m": 0.0002068326788326859,
+      "paired_bins": 17,
+      "camera_count": 2
+    },
+    "visual_height_lower_bound_m": 0.8021894757836807,
+    "evidence": "current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip",
+    "pose_hypotheses": [
+      {
+        "label": "UPRIGHT",
+        "orientation_wxyz": [
+          0.8691911255983457,
+          -0.0034945731363872647,
+          -0.002626354685093535,
+          0.4944569520198327
+        ],
+        "evidence": "current measured cuboid geometry; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+      },
+      {
+        "label": "UPRIGHT",
+        "orientation_wxyz": [
+          0.49445695201983286,
+          0.0026263546850935687,
+          -0.0034945731363872357,
+          -0.8691911255983458
+        ],
+        "evidence": "current measured cuboid geometry; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+      }
+    ],
+    "top_bottom_semantics": "UNRESOLVED",
+    "height_gain_m": 0.021499708091347047,
+    "height_gain_lower_bound_m": 0.018283594778066403,
+    "full_6d_pose_measured": false
+  },
+  "checks": {
+    "baseline_orientation_failure_reproduced": true,
+    "strict_pose_remains_unknown_without_grasp_prediction": true,
+    "current_tape_direction_measured": true,
+    "carry_support_accepted": true,
+    "not_claimed_as_full_measurement": true,
+    "payload_registered": true,
+    "motion_support_gate_passed": true
+  },
+  "passed": true,
+  "source_sha256": {
+    "workstation/perception/cuboid_pose.py": "210f954cbf807e10994c4824a5d47434bd5686aa8323a4e9279a67cc6262c636",
+    "workstation/perception/held_surface.py": "0cda59064b3b7c8d811b0c3ca28de586886b506f7dec06ff353ae4164cb61055",
+    "workstation/perception/packaging_evidence.py": "2208554106e896f8ed07d48c90287fbbca407ade52b74c1ee2662648e71bb0d6",
+    "workstation/skills/visual_pick_place.py": "f3dbf26bcae6be471ba99a0223260ad35e2032f66c10829e15d5663e3b3c8d63"
+  },
+  "date": "2026-10-15",
+  "validation": {
+    "remote_cpu_tests": 475,
+    "remote_cpu_seconds": 6.852,
+    "ci_url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/38675710677",
+    "ci_status": "success",
+    "isaac_sdk_tests_run": false,
+    "full_physical_run": false
+  },
+  "new_host_status": "Graphics bootstrap and CPU environment ready; Isaac image restore blocked by mirror HTTP 502 and official layer EOF. No local VPN relay used.",
+  "cloud_root": "/home/featurize/work/isaac-support/graspgen/reports/20261015-partial-carry"
+}
