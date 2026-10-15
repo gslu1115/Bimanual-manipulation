@@ -1,0 +1,34 @@
+{
+  "scope": "120 s synthetic computation with cooperative display refresh on archived final scene; no new grasp/place",
+  "passed": true,
+  "duration_s": 120.00223271100003,
+  "display": {
+    "scope": "livestream-only render; no extra physics steps or actor observations",
+    "calls": 458,
+    "wall_s": 4.215722571995684,
+    "minimum_wall_period_s": 0.25
+  },
+  "max_render_gap_s": 0.2677115540000159,
+  "physics_steps": 0,
+  "timeline_before_s": 0.0,
+  "timeline_after_s": 0.0,
+  "source_sha256": {
+    "workstation/simulation/display_refresh.py": "6247c0a0a780cca1526d4f1162b635080ca2b2e911e2081bd57df071e36d4c75",
+    "workstation/simulation/robot_driver.py": "00ee517bf84f6beac0aa89009d4242aaaf56ab3447b962473800e5846a859032",
+    "workstation/app.py": "1a8e95dad706ac34da1aacb8bf17059d141adc99c057caa514b5aca81edc4366",
+    "workstation/diagnostics/visual_run.py": "88e9ca583783512939db5b1675eeec1957f5bf1c922d4ff2905cca89f2067ecb"
+  },
+  "browser_verification": {
+    "start_utc": "2026-10-15T04:43:02.314Z",
+    "checked_utc": "2026-10-15T04:45:49.550Z",
+    "baseline_video_time_s": 37.31054,
+    "final_video_time_s": 213.53145,
+    "video_size": [
+      1280,
+      720
+    ],
+    "final_ready_state": 4,
+    "new_error_events": [],
+    "continuous_stream_verified": true
+  }
+}

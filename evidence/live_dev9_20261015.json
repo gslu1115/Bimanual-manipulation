@@ -1,0 +1,123 @@
+{
+  "case_id": "isaac-live-dev9-graspgen-412",
+  "source_commit": "971457830bb064cc6a914d1f8f113e71b3cc01b0",
+  "utc": "2026-10-15T04:35:05.968252+00:00",
+  "status": "PASSED",
+  "task_wall_s": 502.20560002326965,
+  "runner_wall_s": 482.38099067999974,
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "PRELOAD",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "HOME",
+    "VERIFY",
+    "DONE"
+  ],
+  "max_visual_lift_m": 0.19146963702760245,
+  "held_on_exit": false,
+  "seed": 412,
+  "streaming": true,
+  "browser_stream_stable": false,
+  "stream_issue": "Client SERVER_DISCONNECTED; server NVST_R_BUSY at LOWER; relay alive; path validation blocked main thread up to 7.864 s",
+  "archive_sha256_verified": true,
+  "archive_files": 114,
+  "archive_bytes": 35011025,
+  "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-live-pnp/isaac-live-dev9-graspgen-412",
+  "acceptance": {
+    "visual_lift_m": 0.08,
+    "xy_m": 0.018,
+    "z_m": 0.008,
+    "axis_yaw_deg": 8,
+    "observed_stable_s": 0.5,
+    "release_and_home": true
+  },
+  "box_attachment": false,
+  "box_pose_teleport": false,
+  "observation_refresh": {
+    "initial_render_passes": 12,
+    "subsequent_render_passes": 3,
+    "physics_frozen_during_refresh": true,
+    "strict_annotator_exposure_ids_verified": false,
+    "reads": 508,
+    "monitor_period_steps": 12,
+    "monitor_period_sim_s": 0.1,
+    "maximum_frame_age_s": 0.15,
+    "motion_feedback_max_age_s": 0.15,
+    "inter_observation_pose": "encoder FK with last visually supported grasp; not a fresh visual measurement",
+    "immediate_phase_observations": true,
+    "policy": "adaptive_phase_and_motion",
+    "fast_period_sim_s": 0.09999999999999999,
+    "stable_translation_period_sim_s": 1.0,
+    "stable_translation_max_rotation_deg": 5.0,
+    "periodic_observations": {
+      "fast": 492,
+      "stable_transfer": 0
+    },
+    "monitor_period_fields_scope": "final state only; not a fixed whole-task interval"
+  },
+  "evaluation": {
+    "scope": "offline_final_pose_only",
+    "actor_success": true,
+    "states": [
+      {
+        "name": "box_00",
+        "position": [
+          -0.20084302127361298,
+          -0.39907559752464294,
+          0.7824999690055847
+        ],
+        "orientation_wxyz": [
+          0.001504976418800652,
+          8.380601101976026e-09,
+          3.0907255421652735e-08,
+          0.9999988675117493
+        ],
+        "linear_velocity": [
+          6.67759536554513e-08,
+          6.662291980319424e-07,
+          0.0016016201116144657
+        ],
+        "angular_velocity": [
+          2.841447712853551e-05,
+          -4.780358722200617e-06,
+          -1.803850068426982e-06
+        ]
+      }
+    ],
+    "slot_errors": {
+      "box_00": [
+        {
+          "xy_m": 0.0012510814538671407,
+          "z_m": 3.099441525655777e-08,
+          "tilt_deg": 3.6222548091772e-06,
+          "axis_yaw_deg": 0.1724576592313398,
+          "linear_speed": 0.0016016202515728582,
+          "angular_speed": 2.8870195965222527e-05
+        },
+        {
+          "xy_m": 0.20084514859525335,
+          "z_m": 3.099441525655777e-08,
+          "tilt_deg": 3.6222548091772e-06,
+          "axis_yaw_deg": 0.1724576592313398,
+          "linear_speed": 0.0016016202515728582,
+          "angular_speed": 2.8870195965222527e-05
+        },
+        {
+          "xy_m": 0.4008440871756681,
+          "z_m": 3.099441525655777e-08,
+          "tilt_deg": 3.6222548091772e-06,
+          "axis_yaw_deg": 0.1724576592313398,
+          "linear_speed": 0.0016016202515728582,
+          "angular_speed": 2.8870195965222527e-05
+        }
+      ]
+    }
+  },
+  "scope": "One fixed development case, not a general success rate"
+}

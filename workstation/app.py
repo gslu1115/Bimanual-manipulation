@@ -267,6 +267,7 @@ def main(argv=None):
             dual_handover=args.mode == "dual-handover",
             visual_fixture=args.fixture if args.mode == 'model-capture' else args.visual_fixture)
         env.record_video = args.record_video
+        env.livestream = args.livestream
         env.start()
         if args.mode == 'graspgen-check':
             from workstation.diagnostics.graspgen_check import check

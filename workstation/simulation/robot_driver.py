@@ -303,10 +303,12 @@ class RobotMotion:
         if workspace is None and getattr(self,'require_observed_workspace',False):
             raise RuntimeError('MISSING_WORKSPACE_OBSERVATION')
         minimum=float('inf'); samples=0
+        refresh_display=getattr(self,'refresh_display',None)
         # Include actual segment starts and interpolated command trajectory samples.
         for start,end in zip(knots,knots[1:]):
             count=max(1,math.ceil(float(np.max(np.abs(end-start)))/.025))
             for alpha in np.linspace(0,1,count+1):
+                if refresh_display is not None:refresh_display()
                 q=start+alpha*(end-start); samples+=1
                 if np.any(q < self.limits[0]) or np.any(q > self.limits[1]):
                     raise RuntimeError('JOINT_LIMIT')
@@ -644,6 +646,8 @@ class RobotMotion:
         for name,q in self.targets.items(): self.command(name,q)
         self.step()
         if self.monitor is not None: self.monitor()
+        refresh_display=getattr(self,'refresh_display',None)
+        if refresh_display is not None:refresh_display()
 
     def hold(self,seconds):
         for _ in range(math.ceil(seconds/self.dt)): self.tick()
@@ -814,5 +818,11 @@ def from_environment(env):
     def command(name,q):
         native=np.empty(9); native[list(maps[name])]=q
         env.command_joints(name,native)
-    return RobotMotion(env.c,env.observe_robot_states,command,
-                       lambda:env.step(monitor_conveyor=False,render=False))
+    robot=RobotMotion(env.c,env.observe_robot_states,command,
+                      lambda:env.step(monitor_conveyor=False,render=False))
+    if getattr(env,'livestream',False):
+        from workstation.simulation.display_refresh import DisplayRefresh
+        # CameraSystem.render latches same-tick encoders and renders with physics
+        # disabled. It does not read/estimate observations or issue drive commands.
+        robot.refresh_display=DisplayRefresh(env.camera_system.render)
+    return robot

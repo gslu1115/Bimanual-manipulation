@@ -29,7 +29,7 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
     sources=[root/'workstation/app.py',root/'workstation/task_logic.py',
              root/'workstation/diagnostics/depth_error_audit.py',
              *(root/'workstation/simulation'/name for name in
-               ('robot_driver.py','environment.py','visual_fixtures.py','station_priors.py'))]
+               ('robot_driver.py','environment.py','visual_fixtures.py','station_priors.py','display_refresh.py'))]
     for directory in ('observations','perception','planning','skills','models'):
         sources.extend((root/'workstation'/directory).glob('*.py'))
     env._write_json('online_source_hashes.json',{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest()
@@ -115,6 +115,8 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
     if hasattr(skill,'estimator'):timing.wrap(skill.estimator,'estimate','scene_estimation')
     if hasattr(skill,'_read_holding_surface'):timing.wrap(skill,'_read_holding_surface','holding_estimation')
     result=skill.run()
+    if getattr(robot,'refresh_display',None) is not None:
+        result['display_refresh']=robot.refresh_display.report()
     result['observation_refresh']=dict(initial_render_passes=env.camera_system.settings['warmup_render_frames'],
         subsequent_render_passes=3,physics_frozen_during_refresh=True,
         strict_annotator_exposure_ids_verified=False,reads=reads)
