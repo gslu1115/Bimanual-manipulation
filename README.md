@@ -248,6 +248,8 @@ graspgen-check 只诊断；visual-pnp 是物理开发入口，visual-adjust 是�
 
 ### 检查运行耗时
 
+最新一次完整实测为 dev10 / seed 413：历史失败角度约 11.56°的长轴方向成功抓放，总耗时约 **8 分 52 秒**，其中视觉 runner 约 **7 分 42 秒**。主耗时为路径检查、渲染、识别和建图；该例稳定搬运慢档未触发。详细分项与条件见交接 20.37 和 [原始计时摘要](evidence/live_dev10_20261015.json)。网页与模型当前保留，后续官方控制器短测单独记录。
+
 visual-pnp / visual-sort / visual-adjust 复用的视觉 runner 会在输出目录保存 performance.json，运行中约每 10 秒随下一次观测更新，正常返回或异常退出时再保存一次。wall_s 从视觉 runner 入口开始，不含 SimulationApp/场景启动；完整任务耗时另取进程启动到结果写入；若没有保留 GUI，也可参考容器 StartedAt 到 FinishedAt。保留 GUI 时不能把等待用户查看的时间算入任务。强制结束时文件可能只是最后一个快照，不能当作完整任务时间。
 
 categories 记录渲染、场景估计、深度障碍建图、空闲空间查询、路径验证、物理步进等的调用次数及耗时。inclusive_s 包含嵌套调用，不能相加；exclusive_s 扣除了已记录的子调用，用于找主要耗时。grasp_generation 还含点云准备、等待时的物理/观测等工作，纯模型请求时间查看 visual_task_report.json 的 model_requests。诊断时钟不参与控制决策或仿真时间。
