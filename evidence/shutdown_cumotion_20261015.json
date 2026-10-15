@@ -1,0 +1,71 @@
+{
+  "status": "READY_FOR_SERVER_RETURN",
+  "utc": "2026-10-15T14:08:03.300551+00:00",
+  "source_commit": "6bc0c7a3db587724a5bec34da215f5a63dffdc80",
+  "backup_directory": "/home/featurize/work/isaac-support/backups/shutdown-cumotion-20261015T140721Z",
+  "stopped": [
+    "Isaac GUI/WebRTC",
+    "project-graspgen",
+    "project-graspgen-proxy",
+    "viewer",
+    "Xvfb :99"
+  ],
+  "remaining_project_processes": [],
+  "project_listeners": [],
+  "gpu_compute_processes": "",
+  "verified_cases": [
+    {
+      "case": "isaac-live-dev10-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-live-dev10/isaac-live-dev10-graspgen-413",
+      "files": 122,
+      "bytes": 44061737
+    },
+    {
+      "case": "isaac-cumotion-dev13-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev13/isaac-cumotion-dev13-graspgen-413",
+      "files": 146,
+      "bytes": 40068891
+    },
+    {
+      "case": "isaac-cumotion-dev16-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev16/isaac-cumotion-dev16-graspgen-413",
+      "files": 116,
+      "bytes": 32667026
+    },
+    {
+      "case": "isaac-cumotion-dev17-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev17/isaac-cumotion-dev17-graspgen-413",
+      "files": 132,
+      "bytes": 38296322
+    },
+    {
+      "case": "isaac-cumotion-dev12-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev12/isaac-cumotion-dev12-graspgen-413",
+      "files": 186,
+      "bytes": 53304799
+    },
+    {
+      "case": "isaac-cumotion-dev14-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev14/isaac-cumotion-dev14-graspgen-413",
+      "files": 138,
+      "bytes": 35779201
+    },
+    {
+      "case": "isaac-cumotion-dev15-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev15/isaac-cumotion-dev15-graspgen-413",
+      "files": 107,
+      "bytes": 31749680
+    },
+    {
+      "case": "isaac-cumotion-dev11-graspgen-413",
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev11/isaac-cumotion-dev11-graspgen-413",
+      "files": 136,
+      "bytes": 36355167
+    }
+  ],
+  "additional_backup_files": 44,
+  "additional_backup_bytes": 171942218,
+  "supplemental_outputs": [],
+  "ready_for_user_shutdown": true,
+  "next_step": "Released partial-view collision bounds before retreat; dev17 physically released but no final online acceptance."
+}
