@@ -51,6 +51,8 @@ CI 仅验证当前提交逻辑，不能替代 RTX/Vulkan、模型服务、物理
 
 ## 官方控制器试用（Linux / Isaac 6.1）
 
+需要现场观看时同时添加 `--livestream --wait-for-start`。抓姿预检完成后，程序保持画面并冻结物理；点击 GUI 中 **Start pick and place** 后才开始动作。等待时间单独记录在 `manual_start_wait.json`，不要计入动作耗时。准备期间旧网页连接失效时，等 `ready_for_start.json` 生成后刷新一次再启动；任务结束继续保留 GUI。
+
 在现有 `visual-pnp --grasp-backend graspgen` 参数后添加 `--motion-backend cumotion`，使用官方 PickPlaceController + cuMotion RMPflow；不传时继续原执行器。仍经唯一 `python -m workstation` 入口，三路相机与 GraspGen 标定/服务要求不变。暂限单个正放纸盒，不能用于侧放、多盒或几何抓姿模式。
 
 初始选取、模型姿态、关节命名映射、物理夹爪、闭爪后的视觉关系、抬升与松爪前视觉复核及最终回 home/落位验收保留。完整感知改为阶段边界与最长 2 秒仿真时间的 watchdog；关节指令逐控制步经过现有碰撞/已观测障碍检查，局部未知空间在阶段预检复查。图像之间的载荷状态是编码器预测，不能称为持续实测；没有连续碰撞安全证明。接近点保留 GraspGen 方向；抓取接近、抬升和下降使用现有固定姿态 Cartesian 段，空中段由 RMPflow 执行。切换时同步实测关节并丢弃旧指令，结果内保存至多 4,000 条 20 Hz 末端轨迹。当前为开发试用，第一次接入 dev11 顶碰失败，修复及实际重试见交接 20.38–20.39。

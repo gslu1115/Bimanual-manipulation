@@ -836,6 +836,9 @@ def from_environment(env):
     if env.c.get('motion_backend')=='cumotion':
         from workstation.simulation.cumotion_driver import CuMotionPickPlaceDriver
         robot.create_pick_place_controller=lambda *a,**kw:CuMotionPickPlaceDriver(robot,*a,**kw)
+        if env.c.get('wait_for_start'):
+            from workstation.simulation.display_refresh import wait_for_live_start
+            robot.wait_for_start=lambda:wait_for_live_start(env)
     if getattr(env,'livestream',False):
         from workstation.simulation.display_refresh import DisplayRefresh
         # CameraSystem.render latches same-tick encoders and renders with physics

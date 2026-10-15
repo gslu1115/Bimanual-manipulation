@@ -1,0 +1,427 @@
+{
+  "case_id": "isaac-cumotion-dev12-graspgen-413",
+  "source_commit": "b0186431a2eaa53771554447e1e08949a020de3e",
+  "success": true,
+  "task_completion": {
+    "task_success": true,
+    "failure_reason": null,
+    "process_start_to_result_s": 158.1251528263092,
+    "result_file": "/home/featurize/isaac-runtime/output/bimanual-linux/cumotion-dev12/isaac-cumotion-dev12-graspgen-413/visual_task_report.json",
+    "gui_retained": true
+  },
+  "controller_timing": {
+    "motion_through_home_wall_s": 59.71919116600111,
+    "controller_sim_s": 16.866666666666372,
+    "controller_and_state_wall_s": 2.3101105309942795,
+    "controller_calls": 350,
+    "phase_at_exit": "DONE"
+  },
+  "controller_phases": [
+    {
+      "phase": "APPROACH_PICK",
+      "wall_s": 6.031769135999639,
+      "end_controller_sim_s": 2.0999999999999974
+    },
+    {
+      "phase": "DESCEND_PICK",
+      "wall_s": 8.853509455999301,
+      "end_controller_sim_s": 5.93333333333338
+    },
+    {
+      "phase": "GRASP",
+      "wall_s": 0.690999450001982,
+      "end_controller_sim_s": 6.150000000000046
+    },
+    {
+      "phase": "LIFT",
+      "wall_s": 10.865059406998625,
+      "end_controller_sim_s": 9.966666666666507
+    },
+    {
+      "phase": "APPROACH_PLACE",
+      "wall_s": 7.012548953000078,
+      "end_controller_sim_s": 11.866666666666601
+    },
+    {
+      "phase": "DESCEND_PLACE",
+      "wall_s": 12.531805163998797,
+      "end_controller_sim_s": 15.616666666666402
+    },
+    {
+      "phase": "RELEASE",
+      "wall_s": 1.8423699880004278,
+      "end_controller_sim_s": 15.816666666666412
+    },
+    {
+      "phase": "RETREAT",
+      "wall_s": 6.732100722001633,
+      "end_controller_sim_s": 16.866666666666372
+    }
+  ],
+  "performance": {
+    "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+    "wall_s": 136.85370888800026,
+    "categories": {
+      "path_validation": {
+        "calls": 1392,
+        "failed_calls": 62,
+        "inclusive_s": 67.20222680698134,
+        "exclusive_s": 51.49210772905644,
+        "max_s": 2.793452588997752
+      },
+      "camera_render": {
+        "calls": 391,
+        "failed_calls": 0,
+        "inclusive_s": 21.296315635026986,
+        "exclusive_s": 21.296315635026986,
+        "max_s": 0.14605676700011827
+      },
+      "cartesian_ik": {
+        "calls": 77,
+        "failed_calls": 9,
+        "inclusive_s": 18.380074971984868,
+        "exclusive_s": 18.380074971984868,
+        "max_s": 15.971671018000052
+      },
+      "physics_step": {
+        "calls": 3152,
+        "failed_calls": 0,
+        "inclusive_s": 16.681607391979924,
+        "exclusive_s": 16.681607391979924,
+        "max_s": 0.14299902399943676
+      },
+      "save_observation": {
+        "calls": 13,
+        "failed_calls": 0,
+        "inclusive_s": 6.275308664997283,
+        "exclusive_s": 6.275308664997283,
+        "max_s": 0.5154999829974258
+      },
+      "depth_obstacle_mapping": {
+        "calls": 1128554,
+        "failed_calls": 0,
+        "inclusive_s": 4.88259146078417,
+        "exclusive_s": 4.88259146078417,
+        "max_s": 0.3190406409994466
+      },
+      "scene_estimation": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 3.8545435029955115,
+        "exclusive_s": 3.8545435029955115,
+        "max_s": 0.2852292290008336
+      },
+      "trace_write": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 3.6181729159980023,
+        "exclusive_s": 3.6181729159980023,
+        "max_s": 2.5579192000004696
+      },
+      "free_space_mapping": {
+        "calls": 4533,
+        "failed_calls": 0,
+        "inclusive_s": 0.9038056431272707,
+        "exclusive_s": 0.9038056431272707,
+        "max_s": 0.03331646200240357
+      },
+      "sensor_read": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 4.686773890996847,
+        "exclusive_s": 0.5648754299945722,
+        "max_s": 0.7188424369996937
+      },
+      "holding_estimation": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 0.2895245639992936,
+        "exclusive_s": 0.2895245639992936,
+        "max_s": 0.05960621900158003
+      },
+      "grasp_generation": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 1.3669796499998483,
+        "exclusive_s": 0.1816079509917472,
+        "max_s": 1.3669796499998483
+      },
+      "workspace_setup": {
+        "calls": 22,
+        "failed_calls": 0,
+        "inclusive_s": 0.03805013399323798,
+        "exclusive_s": 0.03805013399323798,
+        "max_s": 0.004595554000843549
+      },
+      "joint_planning": {
+        "calls": 28,
+        "failed_calls": 0,
+        "inclusive_s": 8.871656849991268,
+        "exclusive_s": 0.019559207979909843,
+        "max_s": 1.8759344610007247
+      }
+    }
+  },
+  "max_visual_lift_m": 0.19113927862743518,
+  "visual_verification": [
+    {
+      "time_s": 25.466666666665862,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.19943389296531677,
+        -0.3992978632450104,
+        0.782499717373017
+      ],
+      "axis_yaw_error_deg": 0.15967457827908735,
+      "z_error_m": 2.826269829281358e-07,
+      "visual_speed_m_s": Infinity,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 25.66666666666585,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.19943013787269592,
+        -0.3996872305870056,
+        0.7824999194201163
+      ],
+      "axis_yaw_error_deg": 0.15973148065274656,
+      "z_error_m": 8.057988365450797e-08,
+      "visual_speed_m_s": 0.0019469275060725573,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 25.86666666666584,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.19943080842494965,
+        -0.39968764781951904,
+        0.782499947449151
+      ],
+      "axis_yaw_error_deg": 0.15962936894424015,
+      "z_error_m": 5.255084900568363e-08,
+      "visual_speed_m_s": 3.9512938451152585e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 26.066666666665828,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.19943147897720337,
+        -0.3996879756450653,
+        0.7824999578579224
+      ],
+      "axis_yaw_error_deg": 0.15962951112325297,
+      "z_error_m": 4.214207760533384e-08,
+      "visual_speed_m_s": 3.732352663800112e-06,
+      "arms_home_and_open": true
+    },
+    {
+      "time_s": 26.266666666665817,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.19943220913410187,
+        -0.3996883034706116,
+        0.7824999194201163
+      ],
+      "axis_yaw_error_deg": 0.1597315754993807,
+      "z_error_m": 8.057988365450797e-08,
+      "visual_speed_m_s": 4.006482715994986e-06,
+      "arms_home_and_open": true
+    }
+  ],
+  "observed_stable_s": 0.5999999999999659,
+  "release_geometry": {
+    "expected_lowest_corner_m": 0.7737059779510015,
+    "observed_supported_body": true,
+    "drop_bound_m": 0.01670597795100148,
+    "source": "current RGB-D support and image-time FK"
+  },
+  "observation_refresh": {
+    "initial_render_passes": 12,
+    "subsequent_render_passes": 3,
+    "physics_frozen_during_refresh": true,
+    "strict_annotator_exposure_ids_verified": false,
+    "reads": 21,
+    "monitor_period_steps": 240,
+    "monitor_period_sim_s": 2.0,
+    "maximum_frame_age_s": 0.15,
+    "motion_feedback_max_age_s": 2.183333333333333,
+    "inter_observation_pose": "encoder FK with last visually supported grasp; not a fresh visual measurement",
+    "immediate_phase_observations": true,
+    "policy": "official_controller_phase_boundaries_and_watchdog",
+    "watchdog_period_sim_s": 2.0,
+    "periodic_observations": null,
+    "controller_policy": {
+      "control_period_sim_s": 0.016666666666666666,
+      "perception": "phase boundaries plus 2 s simulation-time watchdog; synchronous boundary capture",
+      "per_command_guard": "sampled existing robot/payload collisions and observed obstacles",
+      "local_unknown_space": "fresh phase preflight; no repeated unknown-ray query per control tick",
+      "between_images": "encoder FK and last visually supported grasp relation; prediction, not measurement",
+      "surface_gripper": false,
+      "whole_arm_unknown_space_verified": false,
+      "continuous_collision_proof": false,
+      "closing_position_m": 0.023591703308220805,
+      "contact_motion": "model-direction approach and fixed-attitude Cartesian contact segments; RMPflow for free travel"
+    }
+  },
+  "controller_policy": {
+    "control_period_sim_s": 0.016666666666666666,
+    "perception": "phase boundaries plus 2 s simulation-time watchdog; synchronous boundary capture",
+    "per_command_guard": "sampled existing robot/payload collisions and observed obstacles",
+    "local_unknown_space": "fresh phase preflight; no repeated unknown-ray query per control tick",
+    "between_images": "encoder FK and last visually supported grasp relation; prediction, not measurement",
+    "surface_gripper": false,
+    "whole_arm_unknown_space_verified": false,
+    "continuous_collision_proof": false,
+    "closing_position_m": 0.023591703308220805,
+    "contact_motion": "model-direction approach and fixed-attitude Cartesian contact segments; RMPflow for free travel"
+  },
+  "controller_trace_count": 436,
+  "executed_candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.22747432813048366,
+      -0.05637138374149799,
+      0.7912585377693178
+    ],
+    "yaw_rad": -2.966202786352151,
+    "opening_m": 0.07203344124205738,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.030152556861196802,
+      -0.0870803954922991,
+      0.9956572831303152,
+      -0.013206157094230776
+    ],
+    "source": "graspgen",
+    "candidate_id": "4327a628700642708b663c80d36fe72b:124:panda_left",
+    "observation_time_s": 3.1999999999999913,
+    "validated_time_s": 3.4749999999999903,
+    "approach_direction": [
+      0.06234321743249893,
+      -0.021046217530965805,
+      -0.9978327751159668
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.05518340661644161,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.7517873644828796,
+    "metadata": {
+      "request_id": "4327a628700642708b663c80d36fe72b",
+      "sequence_ids": {
+        "scene_camera": 16,
+        "left_wrist_camera": 16,
+        "right_wrist_camera": 16
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.1999999999999913,
+        "position_m": [
+          -0.22268743813037872,
+          -0.056244452483952045,
+          0.782499986670732
+        ],
+        "axis_yaw_rad": 0.20171173246148094,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT",
+        "body_rotation": [
+          [
+            0.9797250734537709,
+            -0.20034665069824126,
+            0.0
+          ],
+          [
+            0.20034665069824126,
+            0.9797250734537709,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.05918353736030178,
+        "centre_offset_m": -0.0004249701022233938,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          -0.17260801792144775,
+          0.9830156564712524,
+          0.06234321743249893,
+          -0.23370864987373352
+        ],
+        [
+          0.9844851493835449,
+          0.1742008924484253,
+          -0.021046217530965805,
+          -0.05426676198840141
+        ],
+        [
+          -0.03154900297522545,
+          0.05774322897195816,
+          -0.9978327751159668,
+          0.8910418152809143
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 3.7728373707516467,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 3.4749999999999903,
+        "sequence_ids": {
+          "scene_camera": 188,
+          "left_wrist_camera": 188,
+          "right_wrist_camera": 188
+        },
+        "position_change_m": 8.293569654847978e-08,
+        "axis_change_rad": 1.3336531348162595e-06,
+        "body_rotation_change_rad": 1.3337996006370726e-06,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.05918340661644161,
+          "centre_offset_m": -0.0004250173128078793,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "archive_directory": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev12/isaac-cumotion-dev12-graspgen-413",
+  "archive_files": 186,
+  "archive_bytes": 53304799,
+  "same_initial_state_and_cameras_as_dev10": true,
+  "scope": "one development case; model proposals not frozen across runs; not a general success rate",
+  "livestream": "initial client disconnected during preparation; user missed motion; scene visible after reconnection; replay requested"
+}

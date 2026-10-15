@@ -52,6 +52,8 @@ class CuMotionPickPlace(VisualPickPlace):
         driver = self.robot.create_pick_place_controller(self.arm, self.scene,
             candidate.target_id, pick, pick_rotation, place, place_rotation, close_position,
             approach_direction=candidate.approach_direction)
+        wait=getattr(self.robot,'wait_for_start',None)
+        if wait is not None:wait()
         result['motion_backend'] = 'isaac6.1_pick_place_cumotion_rmpflow'
         result['executed_candidate'] = asdict(candidate)
         result['controller_policy'] = dict(control_period_sim_s=2*self.robot.dt,

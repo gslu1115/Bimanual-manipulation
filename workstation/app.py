@@ -39,6 +39,8 @@ def build_parser():
                         help='Candidate backend for graspgen-check or controlled visual-pnp')
     parser.add_argument('--motion-backend',choices=('legacy','cumotion'),default='legacy',
                         help='Opt-in Isaac 6.1 official controller for single upright GraspGen pick/place')
+    parser.add_argument('--wait-for-start',action='store_true',
+                        help='Livestream cuMotion demo: prepare first, then wait for the Start button')
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
     parser.add_argument("--camera-recording", action="store_true")
@@ -95,6 +97,9 @@ def load_config(args, parser):
     if motion_backend=='cumotion' and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
         parser.error('--motion-backend cumotion requires visual-pnp --grasp-backend graspgen')
     config['motion_backend']=motion_backend
+    if getattr(args,'wait_for_start',False) and (not args.livestream or motion_backend!='cumotion'):
+        parser.error('--wait-for-start requires --livestream --motion-backend cumotion')
+    config['wait_for_start']=getattr(args,'wait_for_start',False)
     period=getattr(args,'visual_observation_period_s',None)
     if period is not None and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
         parser.error('--visual-observation-period-s requires visual-pnp --grasp-backend graspgen')

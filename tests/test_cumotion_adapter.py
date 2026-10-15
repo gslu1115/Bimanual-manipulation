@@ -73,4 +73,12 @@ class CuMotionAdapterTests(unittest.TestCase):
         self.assertEqual(legacy['cameras'],official['cameras'])
         self.assertEqual(legacy['robots'],official['robots'])
 
+    def test_manual_start_requires_visible_official_trial(self):
+        parser=build_parser()
+        with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
+            load_config(parser.parse_args(['--wait-for-start']),parser)
+        args=parser.parse_args(['--mode','visual-pnp','--grasp-backend','graspgen',
+            '--graspgen-assets','assets','--motion-backend','cumotion','--livestream','--wait-for-start'])
+        self.assertTrue(load_config(args,parser)['wait_for_start'])
+
 if __name__=='__main__':unittest.main()
