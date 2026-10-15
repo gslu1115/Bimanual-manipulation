@@ -50,7 +50,8 @@ class CuMotionPickPlace(VisualPickPlace):
         # Same bounded position preload magnitude and 30 N physical finger drive.
         close_position = max(0., candidate.closing_width_m/2-.004)
         driver = self.robot.create_pick_place_controller(self.arm, self.scene,
-            candidate.target_id, pick, pick_rotation, place, place_rotation, close_position)
+            candidate.target_id, pick, pick_rotation, place, place_rotation, close_position,
+            approach_direction=candidate.approach_direction)
         result['motion_backend'] = 'isaac6.1_pick_place_cumotion_rmpflow'
         result['executed_candidate'] = asdict(candidate)
         result['controller_policy'] = dict(control_period_sim_s=2*self.robot.dt,
@@ -60,6 +61,22 @@ class CuMotionPickPlace(VisualPickPlace):
             between_images='encoder FK and last visually supported grasp relation; prediction, not measurement',
             surface_gripper=False, whole_arm_unknown_space_verified=False,
             continuous_collision_proof=False, closing_position_m=close_position)
+        result['controller_policy']['contact_motion']='model-direction approach and fixed-attitude Cartesian contact segments; RMPflow for free travel'
+        control_trace=[]
+        result['controller_trace']=control_trace
+        last_sample=-float('inf')
+        def record_step():
+            nonlocal last_sample
+            state=self.robot.read_states()[self.arm]
+            if state.sample_time_s-last_sample<.05-1e-9 or len(control_trace)>=4000:return
+            last_sample=state.sample_time_s
+            p,r=self.robot.fk(self.arm,state.joint_positions_rad)
+            target_p,target_r=self.robot.fk(self.arm,self.robot.targets[self.arm][:7])
+            control_trace.append(dict(time_s=state.sample_time_s,phase=driver.phase,
+                tcp_m=np.asarray(p).tolist(),orientation_wxyz=quaternion_from_matrix(r).tolist(),
+                commanded_tcp_m=np.asarray(target_p).tolist(),commanded_orientation_wxyz=quaternion_from_matrix(target_r).tolist(),
+                fingers_m=state.finger_positions_m.tolist(),qpos=state.qpos.tolist(),qvel=state.qvel.tolist()))
+        self.robot.record_control_step=record_step
         self.robot.visual_feedback_max_age_s=self.watchdog_period_s+self.priors.max_age_s
         previous_phase = driver.phase
         phase_start = time.perf_counter()
@@ -75,6 +92,7 @@ class CuMotionPickPlace(VisualPickPlace):
                 old_phase = driver.phase
                 target, velocity = driver.propose(2*self.robot.dt)
                 if driver.phase != previous_phase:
+                    used_cartesian=False
                     now=time.perf_counter()
                     phase_records.append(dict(phase=previous_phase,wall_s=now-phase_start,
                         end_controller_sim_s=driver.time_s))
@@ -85,14 +103,20 @@ class CuMotionPickPlace(VisualPickPlace):
                         current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
                         if len(current)!=1:raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
                         self.candidate=self._refresh_candidate(candidate,current[0])
-                        self._phase_path(pick,pick_rotation,contact=True,approach=True)
                         self.event('APPROACH')
+                        self._cartesian_segment(driver,pick,pick_rotation,contact=True,approach=True)
+                        self.observe('approached')
+                        current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
+                        if len(current)!=1:raise RuntimeError('APPROACHED_TARGET_UNCERTAIN')
+                        self.candidate=self._refresh_candidate(candidate,current[0])
+                        used_cartesian=True
                     elif driver.phase=='GRASP':
                         self.event('CLOSE')
                     elif driver.phase=='LIFT':
-                        self.latch_closed_payload(result,True,preload=False)
+                        tcp,grasp_rotation=self.latch_closed_payload(result,True,preload=False)
                         self.event('LIFT')
-                        self._phase_path(pick+[0.,0.,.18],pick_rotation,contact=True)
+                        self._cartesian_segment(driver,tcp+[0.,0.,.18],grasp_rotation,contact=True)
+                        used_cartesian=True
                     elif driver.phase in ('APPROACH_PLACE','DESCEND_PLACE'):
                         label='lifted' if driver.phase=='APPROACH_PLACE' else 'transferred'
                         self.observe(label)
@@ -109,8 +133,11 @@ class CuMotionPickPlace(VisualPickPlace):
                             visual_offset_tcp_m=relation['offset'].tolist(),relative_rotation=relation['relative_rotation'].tolist())
                         transfer=driver.phase=='APPROACH_PLACE'
                         self.event('TRANSFER' if transfer else 'LOWER')
-                        self._phase_path(place+([0.,0.,.18] if transfer else np.zeros(3)),
-                            place_rotation,contact=not transfer)
+                        if transfer:
+                            self._phase_path(place+[0.,0.,.18],place_rotation,contact=False)
+                        else:
+                            self._cartesian_segment(driver,place,place_rotation,contact=True)
+                            used_cartesian=True
                     elif driver.phase=='RELEASE':
                         self.observe('lowered')
                         if self.holding_measurement() is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
@@ -131,6 +158,9 @@ class CuMotionPickPlace(VisualPickPlace):
                         self._phase_path(place+[0.,0.,.18],place_rotation,contact=True)
                     driver.update_scene(self.scene)
                     next_observation=driver.time_s+self.watchdog_period_s
+                    # The pending desired command belongs to the previous phase
+                    # and predates the checked Cartesian motion. Never apply it.
+                    if used_cartesian:continue
                 elif driver.time_s>=next_observation and not driver.done:
                     self.observe('controller_watchdog')
                     if self.held and not self.releasing and self.holding_measurement() is None:
@@ -155,10 +185,25 @@ class CuMotionPickPlace(VisualPickPlace):
             self.robot.command_velocities(self.arm,np.zeros(9))
             self.robot.execute_joint(self.arm,self.robot.home,self.scene,candidate.target_id)
         finally:
+            self.robot.record_control_step=None
             self.robot.command_velocities(self.arm,np.zeros(9))
             result['controller_timing']=dict(motion_through_home_wall_s=time.perf_counter()-motion_start,
                 controller_sim_s=driver.time_s,controller_and_state_wall_s=driver.controller_wall_s,
                 controller_calls=driver.calls,phase_at_exit=driver.phase)
+
+    def _cartesian_segment(self,driver,target,rotation,contact,approach=False):
+        self.robot.command_velocities(self.arm,np.zeros(9))
+        start=self.robot.read_states()[self.arm].sample_time_s
+        self.robot.monitor=self.monitor
+        try:
+            self.robot.execute_cartesian(self.arm,np.asarray(target),0.,0.,self.scene,
+                self.candidate.target_id,speed=.10,
+                held_size=self.hold_tracker.size if self.held else None,
+                support_contact=contact,check_approach_corridor=approach,
+                orientation_wxyz=quaternion_from_matrix(rotation))
+        finally:self.robot.monitor=None
+        elapsed=self.robot.read_states()[self.arm].sample_time_s-start
+        driver.resync_after_cartesian(elapsed)
 
     def _phase_path(self,target,rotation,contact,approach=False):
         """One fresh preflight per segment; each actual RMP command is also guarded."""

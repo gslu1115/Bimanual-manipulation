@@ -1,0 +1,368 @@
+{
+  "case_id": "isaac-cumotion-dev11-graspgen-413",
+  "source_commit": "29657e3790e2f9d777f8d6a1fbfde59eb6f17a49",
+  "success": false,
+  "failure_reason": "STATIC_PATH_BLOCKED:visual_0002",
+  "controller_timing": {
+    "motion_through_home_wall_s": 11.92761685699952,
+    "controller_sim_s": 3.6333333333333253,
+    "controller_and_state_wall_s": 1.3453132129943697,
+    "controller_calls": 218,
+    "phase_at_exit": "DESCEND_PICK"
+  },
+  "controller_phases": [
+    {
+      "phase": "APPROACH_PICK",
+      "wall_s": 3.3097132000002603,
+      "end_controller_sim_s": 1.6166666666666658
+    }
+  ],
+  "task_completion": {
+    "task_success": false,
+    "failure_reason": "STATIC_PATH_BLOCKED:visual_0002",
+    "process_start_to_result_s": 95.92982792854309,
+    "result_file": "/home/featurize/isaac-runtime/output/bimanual-linux/cumotion-dev11/isaac-cumotion-dev11-graspgen-413/visual_task_report.json",
+    "gui_retained": true
+  },
+  "scope": "project integration attempt; failed before closing",
+  "user_observation": "Open gripper pressed carton top and tipped carton before grasping",
+  "offline_tilt_deg": 67.03247087374062,
+  "candidate": {
+    "target_id": "visual_0001",
+    "arm": "panda_left",
+    "position_m": [
+      -0.2262120723724365,
+      -0.054587125033140185,
+      0.797324585914612
+    ],
+    "yaw_rad": 0.1872820695418379,
+    "opening_m": 0.07512885868977036,
+    "uncertainty_m": 0.003,
+    "orientation_wxyz": [
+      0.02003289369744912,
+      -0.9944852026041159,
+      -0.09409846540996879,
+      -0.04175336847544268
+    ],
+    "source": "graspgen",
+    "candidate_id": "5015e8a8efee40c8b8904af05280a78a:181:panda_left",
+    "observation_time_s": 3.1999999999999913,
+    "validated_time_s": 3.3749999999999907,
+    "approach_direction": [
+      0.07927608489990234,
+      0.04770268499851227,
+      -0.9957106113433838
+    ],
+    "pregrasp_distance_m": 0.18,
+    "retreat_direction": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "closing_width_m": 0.05357097529607195,
+    "opening_source": "current visual cuboid orientation + known size; not a model output",
+    "model_score": 0.6785180568695068,
+    "metadata": {
+      "request_id": "5015e8a8efee40c8b8904af05280a78a",
+      "sequence_ids": {
+        "scene_camera": 16,
+        "left_wrist_camera": 16,
+        "right_wrist_camera": 16
+      },
+      "frame": "workcell",
+      "source_visual_object": {
+        "track_id": "visual_0001",
+        "time_s": 3.1999999999999913,
+        "position_m": [
+          -0.22268743813037872,
+          -0.056244452483952045,
+          0.782499986670732
+        ],
+        "axis_yaw_rad": 0.20171173246148094,
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "posture": "UPRIGHT",
+        "body_rotation": [
+          [
+            0.9797250734537709,
+            -0.20034665069824126,
+            0.0
+          ],
+          [
+            0.20034665069824126,
+            0.9797250734537709,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "model": {
+        "gripper_name": "franka_panda",
+        "model_name": "diffusion-discriminator",
+        "gripper_config": "/models/checkpoints/graspgen_franka_panda.yml"
+      },
+      "calibration_sha256": "08651186663b62129e391e97f657539adfcd6820befa7fa9bdfe2817269e9220",
+      "opening": {
+        "projected_span_m": 0.05757099497407404,
+        "centre_offset_m": 0.0027664050801404043,
+        "visual_uncertainty_m": 0.003,
+        "source": "current visual cuboid orientation + known size; not a model output"
+      },
+      "model_gripper_geometry_equivalent": false,
+      "geometry_policy": "model proposes only; validate with project robot model, not model mesh",
+      "T_workcell_from_graspgen_base": [
+        [
+          0.18883192539215088,
+          -0.9788042902946472,
+          0.07927608489990234,
+          -0.23413968086242676
+        ],
+        [
+          -0.9814882874488831,
+          -0.18548619747161865,
+          0.04770268499851227,
+          -0.05935739353299141
+        ],
+        [
+          -0.03198697790503502,
+          -0.08681634068489075,
+          -0.9957106113433838,
+          0.8968956470489502
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "supported_skill": "upright_pick_place",
+      "approach_tilt_deg": 5.3087306385752875,
+      "maximum_supported_tilt_deg": 10.0,
+      "revalidation": {
+        "time_s": 3.3749999999999907,
+        "sequence_ids": {
+          "scene_camera": 191,
+          "left_wrist_camera": 191,
+          "right_wrist_camera": 191
+        },
+        "position_change_m": 1.2543364674493853e-05,
+        "axis_change_rad": 2.0818670942723827e-07,
+        "body_rotation_change_rad": 2.0861625671386756e-07,
+        "original_pose_retained": true,
+        "opening": {
+          "projected_span_m": 0.05757097529607195,
+          "centre_offset_m": 0.0027789416968492,
+          "visual_uncertainty_m": 0.003,
+          "source": "current visual cuboid orientation + known size; not a model output"
+        }
+      }
+    },
+    "rejection_reasons": []
+  },
+  "fk_rows": [
+    {
+      "time_s": 2.999999999999992,
+      "tcp_m": [
+        -0.359999205566844,
+        -0.12023286402413264,
+        1.2456790543717662
+      ],
+      "rotation_wxyz": [
+        0.0006806918888071904,
+        -0.7071057165710262,
+        -0.707107190373765,
+        -0.0006808618421432646
+      ],
+      "orientation_error_deg": 79.33065970846059,
+      "hand_to_tcp_m": [
+        1.3283885873165603e-17,
+        -6.850506669774823e-18,
+        0.09999999999999991
+      ],
+      "hand_to_tcp_rotation": [
+        1.3965738051086107e-12,
+        0.0,
+        -8.673617379884035e-19,
+        1.0000000000000002
+      ]
+    },
+    {
+      "time_s": 3.1999999999999913,
+      "tcp_m": [
+        -0.3599992057562808,
+        -0.12013639048991537,
+        1.2450826801658135
+      ],
+      "rotation_wxyz": [
+        0.001183925640703268,
+        -0.7071050528573145,
+        -0.7071065269570642,
+        -0.0011840939364664766
+      ],
+      "orientation_error_deg": 79.32520729139051,
+      "hand_to_tcp_m": [
+        -1.4759445672833345e-17,
+        -4.1951972671186143e-19,
+        0.09999999999999985
+      ],
+      "hand_to_tcp_rotation": [
+        1.3965812085062003e-12,
+        -0.0,
+        -1.1102230246251565e-16,
+        1.0
+      ]
+    },
+    {
+      "time_s": 3.3499999999999908,
+      "tcp_m": [
+        -0.3599992058517587,
+        -0.12010557860838778,
+        1.2448998341563329
+      ],
+      "rotation_wxyz": [
+        0.001340079771306947,
+        -0.7071047740886114,
+        -0.7071062482994047,
+        -0.0013402474552290716
+      ],
+      "orientation_error_deg": 79.32352956729343,
+      "hand_to_tcp_m": [
+        -1.4205570760838584e-18,
+        2.155236008266712e-18,
+        0.10000000000000007
+      ],
+      "hand_to_tcp_rotation": [
+        1.3966100827645535e-12,
+        -0.0,
+        -2.220446049250313e-16,
+        0.9999999999999998
+      ]
+    },
+    {
+      "time_s": 3.3749999999999907,
+      "tcp_m": [
+        -0.35999920589064066,
+        -0.1201023270533692,
+        1.244879836306923
+      ],
+      "rotation_wxyz": [
+        0.0013562431286726741,
+        -0.7071047432621889,
+        -0.7071062174884186,
+        -0.0013564106719082404
+      ],
+      "orientation_error_deg": 79.32335629186547,
+      "hand_to_tcp_m": [
+        -1.284745390229359e-17,
+        -5.0467974404160305e-18,
+        0.10000000000000003
+      ],
+      "hand_to_tcp_rotation": [
+        1.3965963147823898e-12,
+        -0.0,
+        0.0,
+        1.0000000000000002
+      ]
+    },
+    {
+      "time_s": 4.975000000000037,
+      "tcp_m": [
+        -0.22518592216190705,
+        -0.05288423785367857,
+        0.9769851665506875
+      ],
+      "rotation_wxyz": [
+        0.024701204932224965,
+        -0.9927073502523326,
+        -0.10859807624237547,
+        -0.046134857389444506
+      ],
+      "orientation_error_deg": 1.82771000960316,
+      "hand_to_tcp_m": [
+        2.602162854070351e-18,
+        -1.603509149012718e-17,
+        0.09999999999999998
+      ],
+      "hand_to_tcp_rotation": [
+        1.3965955216888325e-12,
+        -0.0,
+        -7.632783294297951e-17,
+        1.0000000000000004
+      ]
+    },
+    {
+      "time_s": 6.991666666666804,
+      "tcp_m": [
+        -0.2263777643797337,
+        -0.054032805431684816,
+        0.8006079892653872
+      ],
+      "rotation_wxyz": [
+        0.021416399842931016,
+        -0.9944558131072747,
+        -0.09385089102332507,
+        -0.042320017120092195
+      ],
+      "orientation_error_deg": 0.1736860748467553,
+      "hand_to_tcp_m": [
+        -1.449229870572853e-17,
+        2.29420904392739e-17,
+        0.10000000000000002
+      ],
+      "hand_to_tcp_rotation": [
+        1.3967710444329352e-12,
+        -0.0,
+        -2.7755575615628914e-17,
+        1.0000000000000002
+      ]
+    },
+    {
+      "time_s": 7.191666666666814,
+      "tcp_m": [
+        -0.2265547104229061,
+        -0.053741493832624,
+        0.8003527991821417
+      ],
+      "rotation_wxyz": [
+        0.02185651982830557,
+        -0.9944639878570274,
+        -0.09368229140153152,
+        -0.042276443491046714
+      ],
+      "orientation_error_deg": 0.22258128836128913,
+      "hand_to_tcp_m": [
+        -1.6836130940713178e-17,
+        1.1864425294124448e-17,
+        0.10000000000000002
+      ],
+      "hand_to_tcp_rotation": [
+        1.3965818026293215e-12,
+        -0.0,
+        -1.0408340855860843e-17,
+        1.0000000000000004
+      ]
+    }
+  ],
+  "model_pregrasp": [
+    -0.24048176765441892,
+    -0.06317360833287239,
+    0.976552495956421
+  ],
+  "executed_pregrasp_goal": [
+    -0.2262120723724365,
+    -0.054587125033140185,
+    0.977324585914612
+  ],
+  "archive_directory": "/home/featurize/work/isaac-support/graspgen/reports/20261015-cumotion-dev11/isaac-cumotion-dev11-graspgen-413",
+  "archive_files": 136,
+  "archive_bytes": 36355167,
+  "root_cause_status": "Known mismatch: world-Z example approach vs 5.3087-degree model approach, 1.8277-degree measured pregrasp orientation residual. Intermediate contact trajectory not recorded; no proof of exact first contact. Duplicate ID follows physical disturbance."
+}

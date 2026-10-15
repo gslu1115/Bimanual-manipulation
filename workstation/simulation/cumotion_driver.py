@@ -25,10 +25,17 @@ def merge_named_command(current, names, values, joint_names):
     return result
 
 
+def model_pregrasp_offset(direction, distance):
+    direction=np.asarray(direction,float)
+    if direction.shape!=(3,) or not np.isfinite(direction).all() or abs(np.linalg.norm(direction)-1.)>1e-5:
+        raise ValueError('Invalid model approach direction')
+    return -direction*distance-np.array([0.,0.,distance])
+
+
 class CuMotionPickPlaceDriver:
     """Composable official PickPlaceController; no SceneQuery or USD object reads."""
     def __init__(self, robot, arm, scene, target_id, pick, pick_rotation, place, place_rotation,
-                 close_position, approach_height=.18):
+                 close_position, approach_direction=(0.,0.,-1.), approach_height=.18):
         import warp as wp
         import isaacsim.robot_motion.experimental.motion_generation as mg
         from isaacsim.robot_motion.cumotion import CumotionWorldInterface, RmpFlowController, load_cumotion_supported_robot
@@ -74,14 +81,22 @@ class CuMotionPickPlaceDriver:
         gripper_args = dict(robot_joint_space=self.names, joint_names=list(PANDA_FINGER_JOINT_NAMES),
             open_positions=[.04, .04], closed_positions=[close_position]*2,
             position_tolerance=.002, velocity_tolerance=.1, minimum_close_fraction=.1)
-        self.controller = PickPlaceController(arm_controller=self.arm_controller,
+        approach_offset=model_pregrasp_offset(approach_direction,approach_height)
+        class DirectionalPickPlaceController(PickPlaceController):
+            # Isaac 6.1's example only exposes world-Z approach height. Preserve
+            # the model's approach vector at the matching pregrasp target.
+            def _target(inner_self):
+                position,orientation=super()._target()
+                if inner_self.phase.name=='APPROACH_PICK':position=position+approach_offset
+                return position,orientation
+        self.controller = DirectionalPickPlaceController(arm_controller=self.arm_controller,
             gripper_open_controller=JointGripperController(**gripper_args, command=GripperCommand.OPEN),
             gripper_close_controller=JointGripperController(**gripper_args, command=GripperCommand.CLOSE),
             robot_site_space=[self.tool], tool_frame=self.tool,
             controller_to_grasp_position=tuple(self.hand_to_tcp),
             controller_to_grasp_orientation=tuple(quaternion_from_matrix(self.hand_to_tcp_r)),
             approach_height=approach_height, lift_height=.18,
-            position_tolerance=.003, grasp_position_tolerance=.003, orientation_tolerance=.05)
+            position_tolerance=.003, grasp_position_tolerance=.003, orientation_tolerance=.01)
         self.goal = self.goal_state(pick, pick_rotation, place, place_rotation)
         if not self.controller.reset(self.read_state(), self.goal, 0.):
             raise RuntimeError('CUMOTION_RESET:'+str(self.controller.failure_reason))
@@ -161,3 +176,12 @@ class CuMotionPickPlaceDriver:
             if joints.velocities is not None:
                 velocity = merge_named_command(velocity, joints.velocity_names, joints.velocities.numpy(), self.names)
         return target, velocity
+
+    def resync_after_cartesian(self, elapsed):
+        if not np.isfinite(elapsed) or elapsed<=0:
+            raise ValueError('Cartesian segment must advance measured simulation time')
+        self.time_s+=elapsed
+        # RMPflow integrates its own command state. Reset it to encoders before
+        # resuming, otherwise it would command the old pre-segment configuration.
+        if not self.arm_controller.reset(self.read_state(),self.controller._make_arm_setpoint(),self.time_s):
+            raise RuntimeError('CUMOTION_RESYNC_FAILED')

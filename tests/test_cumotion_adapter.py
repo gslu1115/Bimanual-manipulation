@@ -4,12 +4,28 @@ import unittest
 from types import SimpleNamespace
 import numpy as np
 
-from workstation.simulation.cumotion_driver import merge_named_command,CuMotionPickPlaceDriver
+from workstation.simulation.cumotion_driver import merge_named_command,CuMotionPickPlaceDriver,model_pregrasp_offset
 from workstation.skills.cumotion_pick_place import placement_goal
 from workstation.app import build_parser,load_config
 
 
 class CuMotionAdapterTests(unittest.TestCase):
+    def test_tilted_model_approach_is_not_replaced_by_vertical(self):
+        d=np.array([.0792760849,.047702685,-.9957106113]);d/=np.linalg.norm(d)
+        pick=np.array([.1,.2,.8]);distance=.18
+        np.testing.assert_allclose(pick+[0,0,distance]+model_pregrasp_offset(d,distance),pick-d*distance)
+        with self.assertRaises(ValueError):model_pregrasp_offset([0,0,-2],distance)
+
+    def test_resync_uses_measured_state_and_elapsed_time(self):
+        driver=object.__new__(CuMotionPickPlaceDriver);driver.time_s=2.
+        measured=object();goal=object();seen=[]
+        driver.read_state=lambda:measured
+        driver.controller=SimpleNamespace(_make_arm_setpoint=lambda:goal)
+        driver.arm_controller=SimpleNamespace(reset=lambda *args:seen.append(args) or True)
+        driver.resync_after_cartesian(3.25)
+        self.assertEqual(seen,[(measured,goal,5.25)])
+        with self.assertRaises(ValueError):driver.resync_after_cartesian(-1.)
+
     def test_named_output_is_copied_and_uncommanded_fingers_preserved(self):
         current=np.array([1.,2.,.03,.03]);values=np.array([8.,7.])
         result=merge_named_command(current,['b','a'],values,['a','b','f1','f2'])

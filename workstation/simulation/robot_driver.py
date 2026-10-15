@@ -652,6 +652,8 @@ class RobotMotion:
     def tick(self):
         for name,q in self.targets.items(): self.command(name,q)
         self.step()
+        sample=getattr(self,'record_control_step',None)
+        if sample is not None:sample()
         if self.monitor is not None: self.monitor()
         refresh_display=getattr(self,'refresh_display',None)
         if refresh_display is not None:refresh_display()
