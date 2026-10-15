@@ -20,11 +20,36 @@ class CuMotionAdapterTests(unittest.TestCase):
         driver=object.__new__(CuMotionPickPlaceDriver);driver.time_s=2.
         measured=object();goal=object();seen=[]
         driver.read_state=lambda:measured
-        driver.controller=SimpleNamespace(_make_arm_setpoint=lambda:goal)
+        driver.controller=SimpleNamespace(_make_arm_setpoint=lambda:goal,phase=SimpleNamespace(name='LIFT'))
         driver.arm_controller=SimpleNamespace(reset=lambda *args:seen.append(args) or True)
         driver.resync_after_cartesian(3.25)
         self.assertEqual(seen,[(measured,goal,5.25)])
+        self.assertIsNone(driver.contact_hold_q)
         with self.assertRaises(ValueError):driver.resync_after_cartesian(-1.)
+
+    def test_grasp_holds_reached_arm_without_hiding_measured_pose_or_overriding_fingers(self):
+        driver=object.__new__(CuMotionPickPlaceDriver);driver.time_s=2.;driver.controller_wall_s=0.;driver.calls=0
+        driver.arm='left';driver.names=['j'+str(i) for i in range(9)]
+        q=np.arange(7)*.01;target=np.r_[q,[.04,.04]]
+        driver.robot=SimpleNamespace(targets={'left':target},
+            read_states=lambda:{'left':SimpleNamespace(joint_positions_rad=q)})
+        measured=object();seen=[];driver.read_state=lambda:measured
+        proposed=np.r_[q+.1,[.023,.023]];vel=np.ones(9)*.2
+        joints=SimpleNamespace(position_names=driver.names,velocity_names=driver.names,
+            positions=SimpleNamespace(numpy=lambda:proposed),velocities=SimpleNamespace(numpy=lambda:vel))
+        controller=SimpleNamespace(phase=SimpleNamespace(name='DESCEND_PICK'),failed=False,
+            _make_arm_setpoint=lambda:None,forward=lambda state,*args:seen.append(state) or SimpleNamespace(joints=joints))
+        driver.controller=controller;driver.arm_controller=SimpleNamespace(reset=lambda *a:True)
+        driver.resync_after_cartesian(3.)
+        for phase in ('DESCEND_PICK','GRASP'):
+            controller.phase.name=phase
+            command,velocity=driver.propose(.02)
+            np.testing.assert_allclose(command[:7],q);np.testing.assert_allclose(velocity[:7],0.)
+            np.testing.assert_allclose(command[7:],proposed[7:]);np.testing.assert_allclose(velocity[7:],vel[7:])
+        self.assertEqual(seen,[measured,measured])
+        controller.phase.name='LIFT';driver.resync_after_cartesian(2.)
+        command,velocity=driver.propose(.02)
+        np.testing.assert_allclose(command,proposed);np.testing.assert_allclose(velocity,vel)
 
     def test_named_output_is_copied_and_uncommanded_fingers_preserved(self):
         current=np.array([1.,2.,.03,.03]);values=np.array([8.,7.])
