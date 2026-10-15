@@ -37,6 +37,8 @@ def build_parser():
     parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
     parser.add_argument('--grasp-backend',choices=('geometry','graspgen'),default='geometry',
                         help='Candidate backend for graspgen-check or controlled visual-pnp')
+    parser.add_argument('--motion-backend',choices=('legacy','cumotion'),default='legacy',
+                        help='Opt-in Isaac 6.1 official controller for single upright GraspGen pick/place')
     parser.add_argument("--no-sensors", action="store_true")
     parser.add_argument("--save-images", action="store_true")
     parser.add_argument("--camera-recording", action="store_true")
@@ -89,6 +91,10 @@ def load_config(args, parser):
     if args.mode=='visual-adjust' and args.grasp_backend!='graspgen':
         parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
+    motion_backend=getattr(args,'motion_backend','legacy')
+    if motion_backend=='cumotion' and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
+        parser.error('--motion-backend cumotion requires visual-pnp --grasp-backend graspgen')
+    config['motion_backend']=motion_backend
     period=getattr(args,'visual_observation_period_s',None)
     if period is not None and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
         parser.error('--visual-observation-period-s requires visual-pnp --grasp-backend graspgen')
@@ -244,6 +250,8 @@ def main(argv=None):
     from isaacsim import SimulationApp
     root = isaac_root()
     extra_args = ["--ext-folder", str(root/"extscache"), "--ext-folder", str(root/"extsDeprecated")]
+    if config.get('motion_backend')=='cumotion':
+        extra_args += ['--enable','isaacsim.robot_motion.examples']
     if args.livestream:
         args.keep_open = True
         extra_args += ['--enable', 'omni.kit.livestream.app',

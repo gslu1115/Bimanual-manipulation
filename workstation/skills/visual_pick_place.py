@@ -438,182 +438,8 @@ class VisualPickPlace:
                 result['prepared_candidate']=asdict(candidate)
                 if check['reasons']:raise RuntimeError('PREPARED_TASK_NOT_FEASIBLE:'+check['reasons'][0])
                 prepared_q=check['pregrasp_joint_positions_rad']
-            pick=np.asarray(candidate.position_m)
-            raised=pick-np.asarray(candidate.approach_direction)*candidate.pregrasp_distance_m
-            yaw=candidate.yaw_rad
-            self.event('PREGRASP')
-            q=prepared_q if prepared_q is not None else chosen.terms.get('pregrasp_joint_positions_rad')
-            if q is None:
-                if model:q=self.robot.solve_pose(self.arm,raised,candidate.orientation_wxyz,self.robot.read_states()[self.arm].joint_positions_rad)
-                else:q=self.robot.solve(self.arm,raised,yaw,self.robot.read_states()[self.arm].joint_positions_rad)
-            # Open fully for approach; estimated opening is a fit requirement.
-            # Closing preload below is computed separately for each model pose.
-            self.robot.execute_joint(self.arm,np.r_[q,[.04,.04]],self.scene,candidate.target_id)
-            self.events[-1]['path_check']=self.robot.last_plan_check.copy()
-            # Re-estimate after approach; do not blindly reuse a moved/ambiguous target.
-            scene=self.observe('pregrasp')
-            visible=[o for o in scene.objects if not o.failures and o.posture in self.accepted_postures
-                     and np.linalg.norm(np.asarray(o.position_m)-self.initial_position) < .015]
-            if len(visible) != 1: raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
-            self.candidate=self._refresh_candidate(candidate,visible[0])
-            pick=np.asarray(self.candidate.position_m)
-            result['executed_candidate']=asdict(self.candidate)
-            attitude=self.candidate.orientation_wxyz if model else None
-            self.event('APPROACH'); self.move(pick,yaw,yaw,.05,True,orientation=attitude)
-            self.event('CLOSE')
-            self.robot.grip(self.arm,self.candidate.closing_width_m/2 if model else .018,self.scene,self.candidate.target_id)
-            self.held=True
-            # Closing encoders do not prove a grip. Require fresh, complete
-            # visual geometry before starting the guarded lift experiment.
-            closed=self.observe('closed')
-            nearby=[o for o in closed.objects if not o.failures and o.posture in self.accepted_postures
-                    and pose_is_observed(o,closed) and o.uncertainty_m <= .008
-                    and np.linalg.norm(np.asarray(o.position_m)-(self.initial_position if model else pick)) < .015
-                    and (not model or o.track_id==self.candidate.target_id)]
-            if len(nearby) != 1: raise RuntimeError('CLOSED_TARGET_UNCERTAIN')
-            if model:
-                # Projecting the entire tilted cuboid can overestimate the
-                # actual pad-contact width. Add bounded position preload from
-                # image-time finger feedback; the existing 30 N limit stays.
-                from workstation.planning.graspgen_candidates import finger_preload_target
-                fingers=self.packet.robot_state[self.arm].finger_positions_m
-                preload=finger_preload_target(fingers,self.candidate.closing_width_m)
-                result['model_preload']=dict(measured_fingers_m=fingers.tolist(),
-                    original_command_m=self.candidate.closing_width_m/2,command_m=preload,
-                    maximum_position_preload_m=.004,holding_proof=False)
-                self.event('PRELOAD');self.robot.grip(self.arm,preload,self.scene,self.candidate.target_id)
-                closed=self.observe('preloaded')
-                nearby=[o for o in closed.objects if o.track_id==self.candidate.target_id and
-                    not o.failures and o.posture in self.accepted_postures and pose_is_observed(o,closed) and
-                    o.uncertainty_m<=.008 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
-                if len(nearby)!=1:raise RuntimeError('PRELOADED_TARGET_UNCERTAIN')
-            tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
-            self.release_tracker=(HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
-                                  if nearby[0].posture=='UPRIGHT' else None)
-            self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors,
-                              allow_grasp_translation=self.accepted_postures==('UPRIGHT',))
-                               if model else self.release_tracker)
-            self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
-                allow_grasp_translation=bool(model and self.accepted_postures==('UPRIGHT',)),
-                offset=self.hold_tracker.offset.copy(),relative_rotation=self.hold_tracker.relative_rotation.copy(),
-                uncertainty_m=self.hold_tracker.uncertainty_m,
-                source='pre-lift current observed visual pose and image-time encoder FK')
-            result['held_visual_geometry']=dict(offset_tcp_m=self.hold_tracker.offset.tolist(),
-                relative_rotation=self.hold_tracker.relative_rotation.tolist(),observation_time_s=closed.observation_time_s,
-                uncertainty_m=self.hold_tracker.uncertainty_m,
-                source=self.robot.held_visual_geometry['source'],physical_attachment=False)
-            measurement=self.hold_tracker.observe(self.packet,closed,tcp,rotation)
-            if measurement is None:raise RuntimeError('CLOSED_PAYLOAD_SURFACE_UNSUPPORTED')
-            if hasattr(self.robot,'confirm_payload_observation'):
-                if not self.robot.confirm_payload_observation(self.candidate.target_id,self.hold_tracker,measurement,self.packet):
-                    raise RuntimeError('CLOSED_PAYLOAD_HISTORY_UNSUPPORTED')
-            result['closed_surface_support']=measurement
-            # Lift from the sensed closed TCP, retaining its actual XY and
-            # attitude instead of first correcting a stale nominal grasp pose.
-            self.event('LIFT'); self.move(tcp+[0,0,.18],yaw,yaw,.06,True,
-                orientation=quaternion_from_matrix(rotation) if model else None)
-            self.observe('lifted')
-            if self.max_visual_lift < .08: raise RuntimeError('NO_VISUAL_LIFT_PROOF')
-            self.event('TRANSFER')
-            target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.robot.place_tcp_clearance_m])
-            place_attitude=None
-            place_yaw=nearest_aligned_yaw(yaw) if not model else 0.
-            if model:
-                measurement=self.holding_measurement()
-                if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
-                relation=self.robot.held_visual_geometry
-                desired_body=nearest_upright_slot_rotation(measurement['rotation'])
-                place_rotation=desired_body@np.asarray(relation['relative_rotation']).T
-                body_target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.release_gap_m])
-                target=body_target-place_rotation@relation['offset']
-                place_attitude=quaternion_from_matrix(place_rotation)
-                result['model_placement']=dict(target_tcp_m=target.tolist(),orientation_wxyz=place_attitude.tolist(),
-                    desired_body_rotation=desired_body.tolist(),axis_symmetry_rad=math.pi,
-                    release_gap_m=self.release_gap_m,
-                    visual_offset_tcp_m=relation['offset'].tolist(),relative_rotation=relation['relative_rotation'].tolist(),
-                    observation_time_s=self.scene.observation_time_s)
-            else:
-                result['geometry_placement']=dict(yaw_rad=place_yaw,from_yaw_rad=yaw,axis_symmetry_rad=math.pi)
-            self.move(target+[0,0,.18],0. if model else yaw,place_yaw,orientation=place_attitude)
-            self.observe('transferred')
-            self.event('LOWER'); self.move(target,place_yaw,place_yaw,.05,True,orientation=place_attitude)
-            self.observe('lowered')
-            release_measurement=self.holding_measurement()
-            if release_measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
-            tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
-            if self.release_tracker is None:
-                self.release_tracker=HeldSurfaceTracker.from_measured_flat_pose(
-                    release_measurement,tcp,rotation,self.scene.observation_time_s)
-                result['release_semantics']='unresolved until post-release current RGB verification'
-            relation=self.robot.held_visual_geometry if model else dict(offset=self.hold_tracker.offset,relative_rotation=self.hold_tracker.relative_rotation)
-            released_centre=tcp+rotation@relation['offset']
-            released_rotation=rotation@relation['relative_rotation']
-            bottom=released_centre[2]-np.abs(released_rotation[2])@(self.hold_tracker.size/2)
-            drop_bound=max(0.,float(bottom-self.priors.support_z_m))+self.hold_tracker.uncertainty_m
-            if drop_bound>.020:raise RuntimeError('RELEASE_HEIGHT_UNSUPPORTED')
-            result['release_geometry']=dict(expected_lowest_corner_m=float(bottom),
-                observed_supported_body=True,drop_bound_m=drop_bound,source='current supported visual body and image-time FK; known fixed support')
-            self.event('OPEN'); self.releasing=True
-            self.robot.grip(self.arm,.04,self.scene,self.candidate.target_id,held_size=self.hold_tracker.size)
-            self.held=False;self.releasing=False
-            self.observe('released')
-            tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
-            fitted=self.release_tracker.collision_estimate(self.packet,self.scene,tcp,rotation,
-                max_drop_m=drop_bound,reference_position_m=released_centre)
-            if fitted is None: raise RuntimeError('RELEASED_GEOMETRY_UNCERTAIN')
-            result['released_collision_estimate']=fitted
-            self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,fitted)
-            measured=next(o for o in self.scene.objects if o.track_id == self.candidate.target_id)
-            c,s=math.cos(fitted['axis_yaw_rad']),math.sin(fitted['axis_yaw_rad'])
-            rz=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
-            bounded=replace(measured,position_m=fitted['position_m'],axis_yaw_rad=fitted['axis_yaw_rad'],
-                posture='UNKNOWN',visibility='OBSERVED_TOP_AND_SIDE',failures=(),uncertainty_m=.003,
-                hypotheses=tuple(PoseHypothesis(label,tuple(quaternion_from_matrix(rz@flip)),
-                    'measured flat cuboid; top/bottom semantics unresolved') for label,flip in
-                    [('UPRIGHT',np.eye(3)),('INVERTED',np.diag([1.,-1.,-1.]))]),
-                quality={**measured.quality,'geometric_length_m':self.priors.carton_size_m[0],
-                    'geometric_width_m':self.priors.carton_size_m[1],'observed_height_m':self.priors.carton_size_m[2]})
-            collision_scene=replace(self.scene,objects=tuple(bounded if o.track_id == measured.track_id else o
-                                                            for o in self.scene.objects))
-            # Current measured released geometry replaces this track's clipped
-            # proxy for BOTH robot collision and depth-obstacle accounting.
-            self.scene=collision_scene
-            self.robot.set_observation(self.packet,self.scene,self.priors)
-            self.event('RETREAT'); self.move(target+[0,0,.18],place_yaw,place_yaw,.06,True,collision_scene,orientation=place_attitude)
-            self.event('HOME')
-            self.robot.execute_joint(self.arm,self.robot.home,self.scene,self.candidate.target_id)
-            for observer in sorted(self.observer_arms):
-                self.observe('before_observer_home_'+observer)
-                self.robot.execute_joint(observer,self.robot.home,self.scene,self.candidate.target_id)
-                self.observe('observer_home_'+observer)
-            self.event('VERIFY')
-            proof=[]; stable_start=None
-            for index in range(26):
-                self.robot.hold(.2); scene=self.observe()
-                good=[o for o in scene.objects if not o.failures and o.posture == 'UPRIGHT'
-                      and np.linalg.norm(np.asarray(o.position_m[:2])-slot) <= .018]
-                ok=False
-                if len(good) == 1:
-                    o=good[0]; yaw_error=math.degrees(axis_error(o.axis_yaw_rad,0.))
-                    z_error=abs(o.position_m[2]-(self.priors.support_z_m+o.size_m[2]/2))
-                    speed=float('inf') if o.velocity_m_s is None else np.linalg.norm(o.velocity_m_s)
-                    states=self.robot.read_states()
-                    clear=all(np.max(np.abs(s.joint_positions_rad-self.robot.home[:7])) < .04
-                              and min(s.finger_positions_m) > .037 for s in states.values())
-                    ok=yaw_error <= 8 and z_error <= .008 and speed <= .015 and clear
-                    proof.append(dict(time_s=scene.observation_time_s,track_id=o.track_id,
-                        position_m=o.position_m,axis_yaw_error_deg=yaw_error,z_error_m=z_error,
-                        visual_speed_m_s=float(speed),arms_home_and_open=clear))
-                if ok:
-                    if stable_start is None: stable_start=scene.observation_time_s
-                    if scene.observation_time_s-stable_start >= .5:
-                        result['success']=True; break
-                else: stable_start=None
-            result.update(visual_verification=proof,final_scene=self.scene.to_dict(),
-                          observed_stable_s=0. if stable_start is None else self.scene.observation_time_s-stable_start)
-            self.observe('final')
-            if not result['success']: raise RuntimeError('VISUAL_PLACEMENT_NOT_VERIFIED')
-            self.event('DONE')
+            self.execute_selected(result, chosen, prepared_q, obj, slot)
+            self.verify_placement(result, slot)
         except Exception as exc:
             result['failure_reason']=str(exc)
             if self.packet is not None and self.scene is not None:
@@ -643,3 +469,193 @@ class VisualPickPlace:
                 result['grasp_backend']='graspgen'
                 result['model_requests']=self.grasp_source.requests
         return result
+
+    def execute_selected(self, result, chosen, prepared_q, obj, slot):
+        candidate = self.candidate
+        model = candidate.source == 'graspgen'
+        pick=np.asarray(candidate.position_m)
+        raised=pick-np.asarray(candidate.approach_direction)*candidate.pregrasp_distance_m
+        yaw=candidate.yaw_rad
+        self.event('PREGRASP')
+        q=prepared_q if prepared_q is not None else chosen.terms.get('pregrasp_joint_positions_rad')
+        if q is None:
+            if model:q=self.robot.solve_pose(self.arm,raised,candidate.orientation_wxyz,self.robot.read_states()[self.arm].joint_positions_rad)
+            else:q=self.robot.solve(self.arm,raised,yaw,self.robot.read_states()[self.arm].joint_positions_rad)
+        # Open fully for approach; estimated opening is a fit requirement.
+        # Closing preload below is computed separately for each model pose.
+        self.robot.execute_joint(self.arm,np.r_[q,[.04,.04]],self.scene,candidate.target_id)
+        self.events[-1]['path_check']=self.robot.last_plan_check.copy()
+        # Re-estimate after approach; do not blindly reuse a moved/ambiguous target.
+        scene=self.observe('pregrasp')
+        visible=[o for o in scene.objects if not o.failures and o.posture in self.accepted_postures
+                 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position) < .015]
+        if len(visible) != 1: raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
+        self.candidate=self._refresh_candidate(candidate,visible[0])
+        pick=np.asarray(self.candidate.position_m)
+        result['executed_candidate']=asdict(self.candidate)
+        attitude=self.candidate.orientation_wxyz if model else None
+        self.event('APPROACH'); self.move(pick,yaw,yaw,.05,True,orientation=attitude)
+        self.event('CLOSE')
+        self.robot.grip(self.arm,self.candidate.closing_width_m/2 if model else .018,self.scene,self.candidate.target_id)
+        tcp,rotation=self.latch_closed_payload(result,model)
+        # Lift from the sensed closed TCP, retaining its actual XY and
+        # attitude instead of first correcting a stale nominal grasp pose.
+        self.event('LIFT'); self.move(tcp+[0,0,.18],yaw,yaw,.06,True,
+            orientation=quaternion_from_matrix(rotation) if model else None)
+        self.observe('lifted')
+        if self.max_visual_lift < .08: raise RuntimeError('NO_VISUAL_LIFT_PROOF')
+        self.event('TRANSFER')
+        target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.robot.place_tcp_clearance_m])
+        place_attitude=None
+        place_yaw=nearest_aligned_yaw(yaw) if not model else 0.
+        if model:
+            measurement=self.holding_measurement()
+            if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
+            relation=self.robot.held_visual_geometry
+            desired_body=nearest_upright_slot_rotation(measurement['rotation'])
+            place_rotation=desired_body@np.asarray(relation['relative_rotation']).T
+            body_target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.release_gap_m])
+            target=body_target-place_rotation@relation['offset']
+            place_attitude=quaternion_from_matrix(place_rotation)
+            result['model_placement']=dict(target_tcp_m=target.tolist(),orientation_wxyz=place_attitude.tolist(),
+                desired_body_rotation=desired_body.tolist(),axis_symmetry_rad=math.pi,
+                release_gap_m=self.release_gap_m,
+                visual_offset_tcp_m=relation['offset'].tolist(),relative_rotation=relation['relative_rotation'].tolist(),
+                observation_time_s=self.scene.observation_time_s)
+        else:
+            result['geometry_placement']=dict(yaw_rad=place_yaw,from_yaw_rad=yaw,axis_symmetry_rad=math.pi)
+        self.move(target+[0,0,.18],0. if model else yaw,place_yaw,orientation=place_attitude)
+        self.observe('transferred')
+        self.event('LOWER'); self.move(target,place_yaw,place_yaw,.05,True,orientation=place_attitude)
+        self.observe('lowered')
+        release_measurement=self.holding_measurement()
+        if release_measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
+        tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
+        if self.release_tracker is None:
+            self.release_tracker=HeldSurfaceTracker.from_measured_flat_pose(
+                release_measurement,tcp,rotation,self.scene.observation_time_s)
+            result['release_semantics']='unresolved until post-release current RGB verification'
+        relation=self.robot.held_visual_geometry if model else dict(offset=self.hold_tracker.offset,relative_rotation=self.hold_tracker.relative_rotation)
+        released_centre=tcp+rotation@relation['offset']
+        released_rotation=rotation@relation['relative_rotation']
+        bottom=released_centre[2]-np.abs(released_rotation[2])@(self.hold_tracker.size/2)
+        drop_bound=max(0.,float(bottom-self.priors.support_z_m))+self.hold_tracker.uncertainty_m
+        if drop_bound>.020:raise RuntimeError('RELEASE_HEIGHT_UNSUPPORTED')
+        result['release_geometry']=dict(expected_lowest_corner_m=float(bottom),
+            observed_supported_body=True,drop_bound_m=drop_bound,source='current supported visual body and image-time FK; known fixed support')
+        self.event('OPEN'); self.releasing=True
+        self.robot.grip(self.arm,.04,self.scene,self.candidate.target_id,held_size=self.hold_tracker.size)
+        collision_scene=self.observe_released(result,drop_bound,released_centre)
+        self.event('RETREAT'); self.move(target+[0,0,.18],place_yaw,place_yaw,.06,True,collision_scene,orientation=place_attitude)
+        self.event('HOME')
+        self.robot.execute_joint(self.arm,self.robot.home,self.scene,self.candidate.target_id)
+        for observer in sorted(self.observer_arms):
+            self.observe('before_observer_home_'+observer)
+            self.robot.execute_joint(observer,self.robot.home,self.scene,self.candidate.target_id)
+            self.observe('observer_home_'+observer)
+
+    def verify_placement(self, result, slot):
+        self.event('VERIFY')
+        proof=[]; stable_start=None
+        for index in range(26):
+            self.robot.hold(.2); scene=self.observe()
+            good=[o for o in scene.objects if not o.failures and o.posture == 'UPRIGHT'
+                  and np.linalg.norm(np.asarray(o.position_m[:2])-slot) <= .018]
+            ok=False
+            if len(good) == 1:
+                o=good[0]; yaw_error=math.degrees(axis_error(o.axis_yaw_rad,0.))
+                z_error=abs(o.position_m[2]-(self.priors.support_z_m+o.size_m[2]/2))
+                speed=float('inf') if o.velocity_m_s is None else np.linalg.norm(o.velocity_m_s)
+                states=self.robot.read_states()
+                clear=all(np.max(np.abs(s.joint_positions_rad-self.robot.home[:7])) < .04
+                          and min(s.finger_positions_m) > .037 for s in states.values())
+                ok=yaw_error <= 8 and z_error <= .008 and speed <= .015 and clear
+                proof.append(dict(time_s=scene.observation_time_s,track_id=o.track_id,
+                    position_m=o.position_m,axis_yaw_error_deg=yaw_error,z_error_m=z_error,
+                    visual_speed_m_s=float(speed),arms_home_and_open=clear))
+            if ok:
+                if stable_start is None: stable_start=scene.observation_time_s
+                if scene.observation_time_s-stable_start >= .5:
+                    result['success']=True; break
+            else: stable_start=None
+        result.update(visual_verification=proof,final_scene=self.scene.to_dict(),
+                      observed_stable_s=0. if stable_start is None else self.scene.observation_time_s-stable_start)
+        self.observe('final')
+        if not result['success']: raise RuntimeError('VISUAL_PLACEMENT_NOT_VERIFIED')
+        self.event('DONE')
+
+    def latch_closed_payload(self, result, model, preload=True):
+        self.held=True
+        # Closing encoders do not prove a grip. Require fresh, complete
+        # visual geometry before starting the guarded lift experiment.
+        closed=self.observe('closed')
+        nearby=[o for o in closed.objects if not o.failures and o.posture in self.accepted_postures
+                and pose_is_observed(o,closed) and o.uncertainty_m <= .008
+                and np.linalg.norm(np.asarray(o.position_m)-(self.initial_position if model else np.asarray(self.candidate.position_m))) < .015
+                and (not model or o.track_id==self.candidate.target_id)]
+        if len(nearby) != 1: raise RuntimeError('CLOSED_TARGET_UNCERTAIN')
+        if model and preload:
+            # Projecting the entire tilted cuboid can overestimate the
+            # actual pad-contact width. Add bounded position preload from
+            # image-time finger feedback; the existing 30 N limit stays.
+            from workstation.planning.graspgen_candidates import finger_preload_target
+            fingers=self.packet.robot_state[self.arm].finger_positions_m
+            preload=finger_preload_target(fingers,self.candidate.closing_width_m)
+            result['model_preload']=dict(measured_fingers_m=fingers.tolist(),
+                original_command_m=self.candidate.closing_width_m/2,command_m=preload,
+                maximum_position_preload_m=.004,holding_proof=False)
+            self.event('PRELOAD');self.robot.grip(self.arm,preload,self.scene,self.candidate.target_id)
+            closed=self.observe('preloaded')
+            nearby=[o for o in closed.objects if o.track_id==self.candidate.target_id and
+                not o.failures and o.posture in self.accepted_postures and pose_is_observed(o,closed) and
+                o.uncertainty_m<=.008 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
+            if len(nearby)!=1:raise RuntimeError('PRELOADED_TARGET_UNCERTAIN')
+        tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
+        self.release_tracker=(HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
+                              if nearby[0].posture=='UPRIGHT' else None)
+        self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors,
+                          allow_grasp_translation=self.accepted_postures==('UPRIGHT',))
+                           if model else self.release_tracker)
+        self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
+            allow_grasp_translation=bool(model and self.accepted_postures==('UPRIGHT',)),
+            offset=self.hold_tracker.offset.copy(),relative_rotation=self.hold_tracker.relative_rotation.copy(),
+            uncertainty_m=self.hold_tracker.uncertainty_m,
+            source='pre-lift current observed visual pose and image-time encoder FK')
+        result['held_visual_geometry']=dict(offset_tcp_m=self.hold_tracker.offset.tolist(),
+            relative_rotation=self.hold_tracker.relative_rotation.tolist(),observation_time_s=closed.observation_time_s,
+            uncertainty_m=self.hold_tracker.uncertainty_m,
+            source=self.robot.held_visual_geometry['source'],physical_attachment=False)
+        measurement=self.hold_tracker.observe(self.packet,closed,tcp,rotation)
+        if measurement is None:raise RuntimeError('CLOSED_PAYLOAD_SURFACE_UNSUPPORTED')
+        if hasattr(self.robot,'confirm_payload_observation'):
+            if not self.robot.confirm_payload_observation(self.candidate.target_id,self.hold_tracker,measurement,self.packet):
+                raise RuntimeError('CLOSED_PAYLOAD_HISTORY_UNSUPPORTED')
+        result['closed_surface_support']=measurement
+        return tcp,rotation
+
+    def observe_released(self, result, drop_bound, released_centre):
+        self.held=False;self.releasing=False
+        self.observe('released')
+        tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
+        fitted=self.release_tracker.collision_estimate(self.packet,self.scene,tcp,rotation,
+            max_drop_m=drop_bound,reference_position_m=released_centre)
+        if fitted is None: raise RuntimeError('RELEASED_GEOMETRY_UNCERTAIN')
+        result['released_collision_estimate']=fitted
+        self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,fitted)
+        measured=next(o for o in self.scene.objects if o.track_id == self.candidate.target_id)
+        c,s=math.cos(fitted['axis_yaw_rad']),math.sin(fitted['axis_yaw_rad'])
+        rz=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+        bounded=replace(measured,position_m=fitted['position_m'],axis_yaw_rad=fitted['axis_yaw_rad'],
+            posture='UNKNOWN',visibility='OBSERVED_TOP_AND_SIDE',failures=(),uncertainty_m=.003,
+            hypotheses=tuple(PoseHypothesis(label,tuple(quaternion_from_matrix(rz@flip)),
+                'measured flat cuboid; top/bottom semantics unresolved') for label,flip in
+                [('UPRIGHT',np.eye(3)),('INVERTED',np.diag([1.,-1.,-1.]))]),
+            quality={**measured.quality,'geometric_length_m':self.priors.carton_size_m[0],
+                'geometric_width_m':self.priors.carton_size_m[1],'observed_height_m':self.priors.carton_size_m[2]})
+        collision_scene=replace(self.scene,objects=tuple(bounded if o.track_id == measured.track_id else o
+                                                        for o in self.scene.objects))
+        # Current measured released geometry replaces this track's clipped
+        # proxy for BOTH robot collision and depth-obstacle accounting.
+        self.scene=collision_scene
+        self.robot.set_observation(self.packet,self.scene,self.priors)
+        return collision_scene

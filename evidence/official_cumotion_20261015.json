@@ -1,0 +1,94 @@
+{
+  "success": true,
+  "motion_and_settle_wall_s": 25.04281536400231,
+  "controller_simulation_s": 9.100000000000032,
+  "total_simulation_steps": 576,
+  "physics_dt_s": 0.016666666666666666,
+  "maximum_cube_height_m": 0.30968353152275085,
+  "initial_cube_height_m": 0.025,
+  "final_cube_position": [
+    0.4461458921432495,
+    0.3456805944442749,
+    0.024999814108014107
+  ],
+  "target": [
+    0.45,
+    0.35,
+    0.025
+  ],
+  "final_linear_speed_m_s": 0.0,
+  "final_angular_speed_rad_s": 0.0,
+  "phases": [
+    {
+      "phase": "APPROACH_PICK",
+      "wall_s": 6.960999598959461e-06,
+      "simulation_s": 0.0
+    },
+    {
+      "phase": "DESCEND_PICK",
+      "wall_s": 8.696694251000736,
+      "simulation_s": 3.349999999999993
+    },
+    {
+      "phase": "GRASP",
+      "wall_s": 10.876567745999637,
+      "simulation_s": 4.2833333333333234
+    },
+    {
+      "phase": "LIFT",
+      "wall_s": 11.423131479001313,
+      "simulation_s": 4.499999999999989
+    },
+    {
+      "phase": "APPROACH_PLACE",
+      "wall_s": 14.43835845400099,
+      "simulation_s": 5.549999999999986
+    },
+    {
+      "phase": "DESCEND_PLACE",
+      "wall_s": 17.872100410000712,
+      "simulation_s": 6.783333333333315
+    },
+    {
+      "phase": "RELEASE",
+      "wall_s": 19.99145499700171,
+      "simulation_s": 7.683333333333311
+    },
+    {
+      "phase": "RETREAT",
+      "wall_s": 21.5575092149993,
+      "simulation_s": 8.099999999999982
+    },
+    {
+      "phase": "DONE",
+      "wall_s": 24.224832965999667,
+      "simulation_s": 9.100000000000032
+    }
+  ],
+  "timing_s": {
+    "simulation_update": 16.602900671994576,
+    "world_sync": 1.9560935100307688,
+    "robot_state": 1.7032413630149676,
+    "controller_forward": 2.8087510030418343,
+    "apply_command": 0.787602816006256
+  },
+  "call_counts": {
+    "simulation_update": 546,
+    "world_sync": 546,
+    "robot_state": 546,
+    "controller_forward": 546,
+    "apply_command": 546
+  },
+  "scope": "Official fixed-goal Franka example with physical fingers; known cube pose and truth-based evaluation. No project cameras, GraspGen, visual obstacle map, or project acceptance.",
+  "process_includes_manual_browser_wait": true,
+  "controller_parameters_changed": false,
+  "date": "2026-10-15",
+  "isaac_sim": "6.1.0",
+  "gpu": "RTX 4090",
+  "cloud_directory": "/home/featurize/work/isaac-support/graspgen/reports/20261015-official-pickplace",
+  "stock_exit_code": 0,
+  "stock_cold_process_wall_s": 274.95482778549194,
+  "warm_app_setup_wall_s": 39.486791589999484,
+  "comparison_limit": "Different small cube, station, trajectory, no project perception. Not a project speedup measurement.",
+  "integration_status": "Opt-in project backend implemented; 513 CPU tests passed; project physical test pending."
+}

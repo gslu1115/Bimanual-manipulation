@@ -49,6 +49,12 @@ CI 仅验证当前提交逻辑，不能替代 RTX/Vulkan、模型服务、物理
 
 复查先看单相机掩码，再把保存点云变换到同一 workcell 坐标系，最后看关联与历史，不以局部拟合盒心差直接判断标定错。已有 dev8 真实 RGB-D 回放及本轮修复范围见 [调查证据](evidence/identity_audit_20261015.json) 和交接 20.36。当前云盘缺少历史运动视角 YOLO 权重，分割器公平对照尚未执行。
 
+## 官方控制器试用（Linux / Isaac 6.1）
+
+在现有 `visual-pnp --grasp-backend graspgen` 参数后添加 `--motion-backend cumotion`，使用官方 PickPlaceController + cuMotion RMPflow；不传时继续原执行器。仍经唯一 `python -m workstation` 入口，三路相机与 GraspGen 标定/服务要求不变。暂限单个正放纸盒，不能用于侧放、多盒或几何抓姿模式。
+
+初始选取、模型姿态、关节命名映射、物理夹爪、闭爪后的视觉关系、抬升与松爪前视觉复核及最终回 home/落位验收保留。完整感知改为阶段边界与最长 2 秒仿真时间的 watchdog；关节指令逐控制步经过现有碰撞/已观测障碍检查，局部未知空间在阶段预检复查。图像之间的载荷状态是编码器预测，不能称为持续实测；没有连续碰撞安全证明。当前为开发试用，实际成败见交接 20.38。
+
 ## 运行
 
 在仓库根目录打开 PowerShell，统一使用根目录的 `launch.ps1`：

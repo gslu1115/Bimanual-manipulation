@@ -122,8 +122,13 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
         from workstation.skills.visual_side_adjustment import VisualSideAdjustment
         if max_items is not None:raise ValueError('Side adjustment is a controlled single-object skill')
         skill=VisualSideAdjustment(*args,grasp_source=grasp_source)
-    elif max_items is None:skill=VisualPickPlace(*args,grasp_source=grasp_source,
-        observation_period_s=env.c.get('visual_observation_period_s') if grasp_source is not None else None)
+    elif max_items is None:
+        skill_type=VisualPickPlace
+        if env.c.get('motion_backend')=='cumotion':
+            from workstation.skills.cumotion_pick_place import CuMotionPickPlace
+            skill_type=CuMotionPickPlace
+        skill=skill_type(*args,grasp_source=grasp_source,
+            observation_period_s=env.c.get('visual_observation_period_s') if grasp_source is not None else None)
     else:
         from workstation.skills.visual_sorting import VisualSortingTask
         skill=VisualSortingTask(*args,max_items=max_items)
@@ -146,7 +151,11 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
             motion_feedback_max_age_s=getattr(robot,'visual_feedback_max_age_s',skill.priors.max_age_s),
             inter_observation_pose='encoder FK with last visually supported grasp; not a fresh visual measurement',
             immediate_phase_observations=True)
-        if getattr(skill,'observation_period_s',None) is not None:
+        if result.get('motion_backend')=='isaac6.1_pick_place_cumotion_rmpflow':
+            result['observation_refresh'].update(policy='official_controller_phase_boundaries_and_watchdog',
+                watchdog_period_sim_s=skill.watchdog_period_s,
+                periodic_observations=None,controller_policy=result['controller_policy'])
+        elif getattr(skill,'observation_period_s',None) is not None:
             result['observation_refresh'].update(policy='adaptive_phase_and_motion',
                 fast_period_sim_s=min(.1,skill.priors.max_age_s*2/3),
                 stable_translation_period_sim_s=skill.observation_period_s,

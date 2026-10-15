@@ -21,6 +21,7 @@ class RobotMotion:
         import yaml
         self.read_states,self.command,self.step = read_states,command,step
         self.dt=float(config['physics']['dt'])
+        self.base_config={r['name']:dict(base_xyz=tuple(r['base_xyz']),yaw_deg=r['yaw_deg']) for r in config['robots']}
         self.home=np.asarray(config['robot_home'],float)
         self.speed=float(config['single_pick_place']['move_speed'])
         self.joint_speed=float(config['single_pick_place']['joint_speed'])
@@ -826,6 +827,13 @@ def from_environment(env):
         env.command_joints(name,native)
     robot=RobotMotion(env.c,env.observe_robot_states,command,
                       lambda:env.step(monitor_conveyor=False,render=False))
+    def command_velocities(name,values):
+        native=np.empty(9);native[list(maps[name])]=values
+        env.arms[name].set_dof_velocity_targets(native)
+    robot.command_velocities=command_velocities
+    if env.c.get('motion_backend')=='cumotion':
+        from workstation.simulation.cumotion_driver import CuMotionPickPlaceDriver
+        robot.create_pick_place_controller=lambda *a,**kw:CuMotionPickPlaceDriver(robot,*a,**kw)
     if getattr(env,'livestream',False):
         from workstation.simulation.display_refresh import DisplayRefresh
         # CameraSystem.render latches same-tick encoders and renders with physics
