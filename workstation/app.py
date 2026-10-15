@@ -33,7 +33,7 @@ def build_parser():
     parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')
     parser.add_argument('--num-grasps',type=int,default=64)
     parser.add_argument('--visual-observation-period-s',type=float,
-                        help='Upright GraspGen stable-translation vision interval, 0.1..2 seconds; default 1; critical phases/reorientation stay at 0.1 seconds')
+                        help='Upright GraspGen stable-translation/empty-travel vision interval, 0.1..2 seconds; default 1; contact phases/reorientation stay at 0.1 seconds')
     parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
     parser.add_argument('--grasp-backend',choices=('geometry','graspgen'),default='geometry',
                         help='Candidate backend for graspgen-check or controlled visual-pnp')

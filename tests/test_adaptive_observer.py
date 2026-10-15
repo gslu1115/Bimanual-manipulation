@@ -71,7 +71,7 @@ class AdaptiveObserverTests(unittest.TestCase):
             for _ in range(3600):skill.monitor()
             self.assertEqual(skill.observe.call_count,expected)
             self.assertEqual(skill.periodic_observations,
-                             dict(fast=300,stable_transfer=int(30/period)))
+                             dict(fast=300,stable_transfer=int(30/period),empty_motion=0))
         skill=self.skill();skill._monitor_ticks=239
         def lost_support():
             skill._hold_observation=(*skill._hold_observation[:3],None)
@@ -82,3 +82,27 @@ class AdaptiveObserverTests(unittest.TestCase):
         self.assertEqual(skill._missing,1)
         self.assertEqual(skill._monitor_period_steps(),12)
         self.assertEqual(skill.robot.visual_feedback_max_age_s,.15)
+
+    def test_empty_travel_is_slow_but_contact_and_uncertain_load_are_fast(self):
+        for phase in ('PREGRASP','RETREAT','HOME'):
+            skill=self.skill(1.);skill.held=False;skill.events[-1]['phase']=phase
+            self.assertEqual(skill._monitor_period_steps(),120,phase)
+            skill.held=True;self.assertEqual(skill._monitor_period_steps(),12)
+            skill.held=False;skill.releasing=True;self.assertEqual(skill._monitor_period_steps(),12)
+            skill.releasing=False;skill._missing=1;self.assertEqual(skill._monitor_period_steps(),12)
+        for phase in ('APPROACH','CLOSE','OPEN','VERIFY','UNKNOWN'):
+            skill=self.skill(1.);skill.held=False;skill.events[-1]['phase']=phase
+            self.assertEqual(skill._monitor_period_steps(),12,phase)
+
+    def test_empty_travel_keeps_phase_observation_and_immediate_fast_transition(self):
+        skill=self.skill(1.);skill.held=False;skill.events[-1]['phase']='HOME'
+        for _ in range(1200):skill.monitor()
+        self.assertEqual(skill.observe.call_count,10)
+        self.assertEqual(skill.periodic_observations['empty_motion'],10)
+        skill._monitor_ticks=61;skill.events[-1]['phase']='VERIFY'
+        skill.monitor();self.assertEqual(skill.observe.call_count,11)
+        self.assertEqual(skill.robot.visual_feedback_max_age_s,.15)
+
+    def test_explicit_fast_mode_still_applies_to_empty_travel(self):
+        skill=self.skill(.1);skill.held=False;skill.events[-1]['phase']='HOME'
+        self.assertEqual(skill._monitor_period_steps(),12)

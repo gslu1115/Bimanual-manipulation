@@ -110,6 +110,8 @@ class ObservedWorkspace:
 
     def _modelled(self, points):
         result = np.zeros(len(points),bool)
+        if not len(points):return result
+        point_lower=points.min(axis=0);point_upper=points.max(axis=0)
         payload=self.payload_observation
         if payload is not None and not (0<=self.packet.assembled_time_s-payload['time_s']<=self.priors.max_age_s
                 and abs(payload['time_s']-self.packet.observation_time_s)<=1e-6):payload=None
@@ -119,9 +121,15 @@ class ObservedWorkspace:
             # Current independently supported holding geometry supersedes
             # this track's clipped single-view proxy, not neighbouring objects.
             if payload is not None and box.name==payload['target_id']:continue
+            half=np.asarray(box.size)/2+.002
+            # Reject only boxes wholly outside this batch's bounds. The small
+            # roundoff allowance applies to pruning, never final membership.
+            centre=np.asarray(box.centre)
+            slack=1e-9*np.maximum(1.,np.abs(centre)+half)
+            if np.any(point_upper<centre-half-slack) or np.any(point_lower>centre+half+slack):continue
             pending=np.flatnonzero(~result)
             if not len(pending):break
-            result[pending] |= np.all(np.abs(points[pending]-box.centre) <= np.asarray(box.size)/2+.002,axis=1)
+            result[pending] |= np.all(np.abs(points[pending]-box.centre) <= half,axis=1)
         if payload is not None:
             local=(points-payload['centre'])@payload['rotation']
             # Retain the visual pose uncertainty AND the existing 2 mm mapping
@@ -174,6 +182,42 @@ class ObservedWorkspace:
         out[indices]=(valid[v,u] != 0) & (camera[indices,2] < depth[v,u]-self.priors.optical_depth_error_margin_m)
         return out
 
+    def _clear_points(self, points, frames):
+        # Each point needs ANY valid source. Cheap current rays can settle it
+        # before robot halfspaces/history; never change the source predicates.
+        cleared=np.zeros(len(points),bool)
+        for frame in frames:
+            pending=np.flatnonzero(~cleared)
+            if not len(pending):break
+            cleared[pending]=self._ray_free(points[pending],frame)
+        pending=np.flatnonzero(~cleared)
+        if len(pending):cleared[pending]=self._modelled(points[pending])
+        pending=np.flatnonzero(~cleared)
+        if len(pending) and self.occlusion_memory is not None:
+            cleared[pending]=self.occlusion_memory.free(points[pending],self)
+        return cleared
+
+    def _corner_evidence(self, centres, spacing, frames, clip_to_volume=None):
+        # Evaluate the same eight corners in bounded batches. Tiny repeated
+        # geometry/ray calls cost more than their array arithmetic on long paths.
+        offsets=np.asarray(list(product((-.5,.5),repeat=3)))
+        known=np.empty(len(centres),bool);first_unknown=np.empty_like(centres)
+        for start in range(0,len(centres),4096):
+            current=centres[start:start+4096];count=len(current)
+            points=np.clip(current[None,:,:]+offsets[:,None,:]*spacing,self.lower,self.upper).reshape(-1,3)
+            if clip_to_volume is None:
+                clear=self._clear_points(points,frames)
+            else:
+                points=clip_to_volume(points)
+                inside=np.all((points>=self.lower)&(points<=self.upper),axis=1)
+                clear=~inside
+                clear[inside]=self._clear_points(points[inside],frames)
+            clear=clear.reshape(8,count)
+            known[start:start+count]=clear.all(axis=0)
+            # Match the original corner order for the first rejection witness.
+            first_unknown[start:start+count]=points.reshape(8,count,3)[clear.argmin(axis=0),np.arange(count)]
+        return known,first_unknown
+
     def _fine_unknown(self, coarse_indices, predicate,clip_to_volume):
         # Mixed 10mm cells at a robot silhouette are subdivided instead of
         # clearing them wholesale. Every 2.5mm subcell still needs evidence at
@@ -193,36 +237,15 @@ class ObservedWorkspace:
         keys=(indices[:,0]*fine_shape[1]+indices[:,1])*fine_shape[2]+indices[:,2]
         missing=np.flatnonzero(self._fine_cache[keys]==0)
         if len(missing):
-            centres=centres[missing];known=np.ones(len(centres),bool)
             frames=list(self._frames())
-            for corner in product((-.5,.5),repeat=3):
-                points=np.clip(centres+np.asarray(corner)*spacing,self.lower,self.upper)
-                cleared=self._modelled(points)
-                for frame in frames:cleared |= self._ray_free(points,frame)
-                if self.occlusion_memory is not None and (~cleared).any():
-                    pending=np.flatnonzero(~cleared)
-                    cleared[pending] |= self.occlusion_memory.free(points[pending],self)
-                known &= cleared
+            known,_=self._corner_evidence(centres[missing],spacing,frames)
             self._fine_cache[keys[missing]]=1+known.astype(np.uint8)
         unsafe=indices[self._fine_cache[keys]==1]
         if len(unsafe):
             centres=self.lower+(unsafe+.5)*spacing
-            known=np.ones(len(centres),bool);frames=list(self._frames())
-            first_unknown=centres.copy()
-            for corner in product((-.5,.5),repeat=3):
-                # A boundary subcell can contain unknown points OUTSIDE the
-                # queried body. Query its clipped body-volume samples instead
-                # of declaring that unrelated outside space an intersection.
-                points=clip_to_volume(np.clip(centres+np.asarray(corner)*spacing,self.lower,self.upper))
-                in_scope=np.all((points>=self.lower)&(points<=self.upper),axis=1)
-                cleared=self._modelled(points)|~in_scope
-                for frame in frames:cleared |= self._ray_free(points,frame)
-                if self.occlusion_memory is not None and (~cleared).any():
-                    pending=np.flatnonzero(~cleared)
-                    cleared[pending] |= self.occlusion_memory.free(points[pending],self)
-                newly_failed=known & ~cleared
-                first_unknown[newly_failed]=points[newly_failed]
-                known &= cleared
+            # Unknown outside the queried body is not an intersection: retain
+            # query-specific clipped samples for these boundary subcells.
+            known,first_unknown=self._corner_evidence(centres,spacing,list(self._frames()),clip_to_volume)
             failed=np.flatnonzero(~known)
             if len(failed):
                 self.last_unknown_point=centres[failed[0]]

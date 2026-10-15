@@ -48,7 +48,7 @@ class VisualPickPlace:
         self.scene=None; self.packet=None; self.events=[]; self.arm=None; self.held=False
         self._monitor_ticks=0; self._missing=0; self.max_visual_lift=0.
         self._translation_only=False
-        self.periodic_observations={'fast':0,'stable_transfer':0}
+        self.periodic_observations={'fast':0,'stable_transfer':0,'empty_motion':0}
         self.initial_position=None; self.candidate=None
         self.hold_tracker=None
         self._hold_observation=None
@@ -172,12 +172,18 @@ class VisualPickPlace:
             all(a is b for a,b in zip(cached[:3],(self.packet,self.scene,self.hold_tracker))) and
             cached[3] is not None)
 
+    def _empty_motion(self):
+        events=getattr(self,'events',())
+        return bool(getattr(self,'observation_period_s',None) is not None and
+            events and events[-1]['phase'] in ('PREGRASP','RETREAT','HOME') and
+            not self.held and not self.releasing and self._missing==0)
+
     def _monitor_period_steps(self):
         if getattr(self,'grasp_source',None) is None:return 24
         period_s=self.priors.max_age_s*.5
         if self.accepted_postures==('UPRIGHT',):
             period_s=min(.1,self.priors.max_age_s*2/3)
-            if self._stable_transfer():
+            if self._stable_transfer() or self._empty_motion():
                 period_s=getattr(self,'observation_period_s',None) or period_s
         return max(1,int(period_s/self.robot.dt+1e-9))
 
@@ -194,11 +200,13 @@ class VisualPickPlace:
         # A shorter interval takes effect on the next tick if already overdue;
         # modulo scheduling could otherwise miss that deadline.
         if self._monitor_ticks < period: return
+        mode=None
+        if getattr(self,'observation_period_s',None) is not None:
+            mode=('empty_motion' if self._empty_motion() else 'stable_transfer') if period*self.robot.dt>.1+1e-9 else 'fast'
         scene=self.observe()
         self._monitor_ticks=0
         if getattr(self,'observation_period_s',None) is not None:
-            key='stable_transfer' if period*self.robot.dt>.1+1e-9 else 'fast'
-            self.periodic_observations[key]+=1
+            self.periodic_observations[mode]+=1
         self._set_feedback_deadline(self._monitor_period_steps())
         if not self.held or self.releasing: return
         # Compare against encoder FK at the IMAGE time, not execution's latest q.

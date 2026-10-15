@@ -131,6 +131,8 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
             result['observation_refresh'].update(policy='adaptive_phase_and_motion',
                 fast_period_sim_s=min(.1,skill.priors.max_age_s*2/3),
                 stable_translation_period_sim_s=skill.observation_period_s,
+                empty_motion_period_sim_s=skill.observation_period_s,
+                empty_motion_phases=['PREGRASP','RETREAT','HOME'],
                 stable_translation_max_rotation_deg=5.,
                 periodic_observations=skill.periodic_observations,
                 monitor_period_fields_scope='final state only; not a fixed whole-task interval')

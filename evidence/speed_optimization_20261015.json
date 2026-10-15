@@ -1,0 +1,281 @@
+{
+  "date_utc": "2026-10-15T06:53:06.392797+00:00",
+  "base_commit": "ed32b6a6a61f681cfd2620f203a6313e5621a63a",
+  "scope": "Engineering short replays on RTX 4090 / 16 CPUs; no new complete physical grasp or WebRTC test",
+  "original_success": {
+    "case": "isaac-live-dev9-graspgen-412",
+    "source_commit": "971457830bb064cc6a914d1f8f113e71b3cc01b0",
+    "process_wall_s": 502.20560002326965,
+    "runner_wall_s": 482.38099067999974,
+    "physics_steps": 6305,
+    "dt_s": 0.008333333333333333,
+    "observation_reads": 508,
+    "periodic_slow_transfer_calls": 0,
+    "exclusive_categories_s": {
+      "path_validation": 147.9850003320762,
+      "scene_estimation": 105.92190025200307,
+      "depth_obstacle_mapping": 92.58005496691203,
+      "camera_render": 68.89011653501893,
+      "physics_step": 24.84360494205248,
+      "sensor_read": 10.140127063973523,
+      "holding_estimation": 10.04459804399994,
+      "free_space_mapping": 7.905308666988276,
+      "save_observation": 5.957879879002576,
+      "workspace_setup": 0.7898309890060773,
+      "trace_write": 0.472803091998685,
+      "cartesian_ik": 0.40111569999771746,
+      "grasp_generation": 0.12176966299739433,
+      "joint_planning": 0.0011174630008099484
+    }
+  },
+  "path_replay": {
+    "input_case": "/home/featurize/work/isaac-support/graspgen/reports/20261015-live-pnp/isaac-live-dev9-graspgen-412",
+    "baseline": {
+      "timings": {
+        "set_observation": 0.3142726330000869,
+        "cartesian_knots": 0.03411925800003246,
+        "full_lower_path_cprofile": 7.588890206999963,
+        "full_lower_path_unprofiled": 6.567717683000069,
+        "first_runtime_edge_fresh_frame": 0.7180747429999883,
+        "fresh_occupied_build": 0.685131006000006,
+        "full_lower_path_warm_grid": 5.813484287999927,
+        "runtime_edges_same_frame": 1.8612788369999862
+      },
+      "knots": 201,
+      "clearance_m": 0.0329076589680186,
+      "repeat_clearance_m": 0.0329076589680186,
+      "edge_clearance_m": 0.0329076589680186,
+      "physical_execution": false,
+      "truth_inputs": false,
+      "release_gap_m": 0.015,
+      "workspace_source_sha256": "ac37ece41d8fc26da620e826272df7465410714a404aa279d80c5260bc628554",
+      "full_unknown_grid_sha256": "f5a9450c77ac1e3988b8c1ffe6c5303a41434f529d237296c642b9bcdfa67e2a",
+      "full_occupied_grid_sha256": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "scope": "same archived RGB-D and image-time FK; original optical/collision predicates; cold grid and all path samples"
+    },
+    "final": {
+      "timings": {
+        "set_observation": 0.15780581600006371,
+        "cartesian_knots": 0.02747046800004682,
+        "full_lower_path_cprofile": 2.803226694999921,
+        "full_lower_path_unprofiled": 2.684261329000037,
+        "first_runtime_edge_fresh_frame": 0.3550061700000242,
+        "fresh_occupied_build": 0.37129366800013486,
+        "full_lower_path_warm_grid": 2.2846909800000503,
+        "runtime_edges_same_frame": 1.7089179740000873
+      },
+      "knots": 201,
+      "clearance_m": 0.0329076589680186,
+      "repeat_clearance_m": 0.0329076589680186,
+      "edge_clearance_m": 0.0329076589680186,
+      "physical_execution": false,
+      "truth_inputs": false,
+      "release_gap_m": 0.015,
+      "workspace_source_sha256": "ea20faa37f69fc3f64b0e923d272d52c03f9b74ec2efeb4c2ab000ab87055685",
+      "full_unknown_grid_sha256": "f5a9450c77ac1e3988b8c1ffe6c5303a41434f529d237296c642b9bcdfa67e2a",
+      "full_occupied_grid_sha256": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af",
+      "driver_source_sha256": "e350dda9f5b841187adfbff5fb2f71dbbd18889c89bcdd418ae35134611ec492",
+      "scope": "same archived RGB-D and image-time FK; original optical/collision predicates; cold grid and all path samples"
+    },
+    "clearance_and_materialized_grid_hashes_match": true,
+    "all_original_joint_samples_represented": true,
+    "reuse": "exact duplicate joint vectors within one frozen validation call only"
+  },
+  "mapping_replay": {
+    "scope": "Seven archived RGB-D/FK snapshots, current scene estimation plus occupied map, no robot motion; one warmup and two timed samples per setting",
+    "base_commit": "ed32b6a6a61f681cfd2620f203a6313e5621a63a",
+    "candidate_sha256": "ea20faa37f69fc3f64b0e923d272d52c03f9b74ec2efeb4c2ab000ab87055685",
+    "samples": {
+      "baseline": [
+        {
+          "scene_s": 1.5146022449998782,
+          "mapping_s": 1.5721795900001325,
+          "cpu_s": 9.229826626999987,
+          "combined_s": 3.0867818350000107
+        },
+        {
+          "scene_s": 1.6302393619998838,
+          "mapping_s": 1.6073460679999698,
+          "cpu_s": 9.578401296000017,
+          "combined_s": 3.2375854299998537
+        }
+      ],
+      "candidate": [
+        {
+          "scene_s": 1.535731209000005,
+          "mapping_s": 1.3781859149999036,
+          "cpu_s": 7.423188407999991,
+          "combined_s": 2.9139171239999087
+        },
+        {
+          "scene_s": 1.6609128180000425,
+          "mapping_s": 1.4029877039999974,
+          "cpu_s": 7.596574791000016,
+          "combined_s": 3.06390052200004
+        }
+      ]
+    },
+    "median": {
+      "baseline": {
+        "scene_s": 1.572420803499881,
+        "mapping_s": 1.5897628290000512,
+        "cpu_s": 9.404113961500002,
+        "combined_s": 3.162183632499932
+      },
+      "candidate": {
+        "scene_s": 1.5983220135000238,
+        "mapping_s": 1.3905868094999505,
+        "cpu_s": 7.5098815995000034,
+        "combined_s": 2.9889088229999743
+      }
+    },
+    "scenes_masks_maps_exact": true,
+    "hashes": [
+      {
+        "phase": "initial",
+        "scene": "8fa499eeeae35b285a91db5fc09bcaf4510df3f78e56710d75ef9f4084ea68cf",
+        "masks": "585f062ce1b30668f068c3b9def2fb8909645c14ad028e10c813ffe11892aa8a",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "tracked",
+        "scene": "bc980dbdc8af83c9a95165e5e9e68849d1adf6f4e8d92f5b718e6663e1b605bc",
+        "masks": "bb8b74ac81502c024ee72534afd37b35b29dc04ec27ed55b426939f89a20ad06",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "pregrasp",
+        "scene": "7d39394caf88c0c899008ab9623b94de0118edad0264102604f4e448629bd362",
+        "masks": "70488344d335d545b3b539f46661b34dab587fe4e1216ccfd325ac390cb9507c",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "preloaded",
+        "scene": "b3086824d2e34ecc07f7f6ac3e27f6c844d0bf87974651a0748082d67d805f38",
+        "masks": "b4d3601c8e156b5793c72b28f402cc93a6003510bc9391d6716c6b09c804229e",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "lifted",
+        "scene": "e1999fab40e5fb6162ae261cce84f5dd0f271b29950f0b9e02fa0fb3ccb36c50",
+        "masks": "42cfdf61cec670fcf6a333c36fe44d1552f5ac7c652db301d3c90987fce59a3a",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "transferred",
+        "scene": "920792b1ef47db761ecb1ead25aa8a86a871a7f1bcc8a5f59d5793151d8088b3",
+        "masks": "27726b78c24b722e9adf4967b60b7dd13e02ad8a0aaba959d46fc27f031eeb30",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      },
+      {
+        "phase": "failure_trigger",
+        "scene": "920792b1ef47db761ecb1ead25aa8a86a871a7f1bcc8a5f59d5793151d8088b3",
+        "masks": "27726b78c24b722e9adf4967b60b7dd13e02ad8a0aaba959d46fc27f031eeb30",
+        "occupied": "bad3873bb6106bb8cdcd4b476157acaf58b08156fe600f28f1ca34a1a5dff7af"
+      }
+    ]
+  },
+  "schedule_replay": {
+    "scope": "Scheduler-only replay of dev9 phase durations; synthetic supported observations, no camera/physics or full grasp execution",
+    "rows": [
+      {
+        "phase": "PREGRASP",
+        "simulated_duration_s": 7.775000000000018,
+        "baseline": 77,
+        "candidate": 7
+      },
+      {
+        "phase": "APPROACH",
+        "simulated_duration_s": 6.999999999999604,
+        "baseline": 70,
+        "candidate": 70
+      },
+      {
+        "phase": "CLOSE",
+        "simulated_duration_s": 1.3333333333332575,
+        "baseline": 13,
+        "candidate": 13
+      },
+      {
+        "phase": "PRELOAD",
+        "simulated_duration_s": 1.299999999999926,
+        "baseline": 13,
+        "candidate": 13
+      },
+      {
+        "phase": "LIFT",
+        "simulated_duration_s": 5.933333333332996,
+        "baseline": 59,
+        "candidate": 59
+      },
+      {
+        "phase": "TRANSFER",
+        "simulated_duration_s": 6.63333333333296,
+        "baseline": 66,
+        "candidate": 66
+      },
+      {
+        "phase": "LOWER",
+        "simulated_duration_s": 6.966666666666271,
+        "baseline": 69,
+        "candidate": 69
+      },
+      {
+        "phase": "OPEN",
+        "simulated_duration_s": 1.299999999999926,
+        "baseline": 13,
+        "candidate": 13
+      },
+      {
+        "phase": "RETREAT",
+        "simulated_duration_s": 5.999999999999659,
+        "baseline": 60,
+        "candidate": 6
+      },
+      {
+        "phase": "HOME",
+        "simulated_duration_s": 4.099999999999767,
+        "baseline": 41,
+        "candidate": 4
+      },
+      {
+        "phase": "VERIFY",
+        "simulated_duration_s": 0.8499999999999517,
+        "baseline": 8,
+        "candidate": 8
+      }
+    ],
+    "baseline_periodic_calls": 489,
+    "candidate_periodic_calls": 328,
+    "phase_observations_preserved": true,
+    "critical_period_s": 0.1,
+    "empty_motion_period_s": 1.0,
+    "empty_motion_phases": [
+      "PREGRASP",
+      "RETREAT",
+      "HOME"
+    ],
+    "limitation": "New obstacles during empty travel may be detected up to one configured interval later; this does not measure end-to-end task duration"
+  },
+  "validation": {
+    "local_cpu_tests": 494,
+    "local_cpu_seconds": 6.54,
+    "isaac_sdk_tests": 494,
+    "isaac_sdk_seconds": 7.578
+  },
+  "candidate_source_sha256": {
+    "workstation/planning/observed_workspace.py": "ea20faa37f69fc3f64b0e923d272d52c03f9b74ec2efeb4c2ab000ab87055685",
+    "workstation/simulation/robot_driver.py": "e350dda9f5b841187adfbff5fb2f71dbbd18889c89bcdd418ae35134611ec492",
+    "workstation/skills/visual_pick_place.py": "a6faf7a160150f64de9166a1c6f0716ffdccc19c5b4addfea5cd9fcf08035cd7",
+    "workstation/diagnostics/visual_run.py": "6c75595f12554f99f0c5ed7a79067fa69591a1117f96567cd003ce0b5a5e9569"
+  },
+  "cloud_report_root": "/home/featurize/work/isaac-support/graspgen/reports/20261015-speed",
+  "full_task_retested": false,
+  "limits": [
+    "Path replay savings are not whole-task savings",
+    "Scheduler replay uses saved phase durations and synthetic supported observations; phase-triggered captures are separate",
+    "Empty PREGRASP/RETREAT/HOME now use configured 1 s default / 2 s optional; new obstacle discovery can be delayed accordingly",
+    "Contact, grip, lift, turning transfer, lower, release and final verification retain the existing high rate",
+    "Camera intrinsics/mounts and optical/collision margins unchanged"
+  ]
+}

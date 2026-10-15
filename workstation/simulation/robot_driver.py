@@ -302,7 +302,7 @@ class RobotMotion:
         workspace=getattr(self,'observed_workspace',None)
         if workspace is None and getattr(self,'require_observed_workspace',False):
             raise RuntimeError('MISSING_WORKSPACE_OBSERVATION')
-        minimum=float('inf'); samples=0
+        minimum=float('inf'); samples=0;checked_samples=set()
         refresh_display=getattr(self,'refresh_display',None)
         # Include actual segment starts and interpolated command trajectory samples.
         for start,end in zip(knots,knots[1:]):
@@ -310,6 +310,12 @@ class RobotMotion:
             for alpha in np.linspace(0,1,count+1):
                 if refresh_display is not None:refresh_display()
                 q=start+alpha*(end-start); samples+=1
+                # Adjacent edges repeat endpoints. Reuse only an EXACT joint
+                # sample inside this call's frozen scene/encoder/finger context.
+                # No tolerance, cross-observation cache or skipped new edge.
+                key=np.asarray(q,dtype=np.float64).tobytes()
+                if key in checked_samples:continue
+                checked_samples.add(key)
                 if np.any(q < self.limits[0]) or np.any(q > self.limits[1]):
                     raise RuntimeError('JOINT_LIMIT')
                 fingers=states[arm].finger_positions_m if finger_positions is None else np.asarray(finger_positions)
@@ -406,7 +412,7 @@ class RobotMotion:
                                 nominal_clearance_m=float(np.linalg.norm(np.maximum(
                                     np.abs(local)-np.asarray(held_size)/2,0))-radius))
                             raise RuntimeError('HELD_CARTON_OWN_BODY_COLLISION')
-        self.last_plan_check=dict(samples=samples,clearance_m=minimum,
+        self.last_plan_check=dict(samples=samples,unique_samples=len(checked_samples),clearance_m=minimum,
             model='official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs',
             observed_space_body_model='Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks',
             whole_arm_unknown_space_verified=False,
