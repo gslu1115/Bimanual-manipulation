@@ -245,6 +245,10 @@ class CuboidHoldingTracker:
             for label,relative,evidence in self.hypotheses]
         measured['top_bottom_semantics']='UNRESOLVED' if len(self.hypotheses)>1 else self.hypotheses[0][0]
         measured['height_gain_m']=measured['position_m'][2]-self.initial_z
+        if 'visual_height_lower_bound_m' in measured:
+            # This lower bound uses current measured surface heights minus the
+            # entire cuboid's vertical extent and optical margin, not hidden XY.
+            measured['height_gain_lower_bound_m']=measured['visual_height_lower_bound_m']-self.initial_z
         measured['full_6d_pose_measured']=measured['geometric_pose_measured']
         measured['uncertainty_m']=max(self.uncertainty_m,measured['uncertainty_m'])
         return measured

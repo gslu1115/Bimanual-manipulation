@@ -36,7 +36,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         return unknown('CUBOID_SCENE_TIME_OR_FRAME_MISMATCH')
     age=packet.assembled_time_s-packet.observation_time_s
     if not 0<=age<=priors.max_age_s:return unknown('STALE_CUBOID_OBSERVATION')
-    half=size/2;instances=[];normal_points=[];normals=[];refs=[];ratios=[];cached={}
+    half=size/2;instances=[];instance_rgb=[];normal_points=[];normals=[];refs=[];ratios=[];cached={}
     for ref,mask in scene.masks.items():
         name=ref.split('/')[0];frame=packet.cameras.get(name)
         if frame is None or scene.camera_status.get(name)!='OK' or packet.camera_status.get(name)!='OK':continue
@@ -53,6 +53,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         ratio=float(supported.mean())
         if ratio<.95:continue  # Whole instance; never crop a merged mask into good evidence.
         instances.append(points);refs.append(ref);ratios.append(ratio)
+        instance_rgb.append(frame.rgb[valid])
         _,_,pts,ns=visible_surface_normals(xyz,valid)
         ns*=np.where(np.sum(ns*(frame.T_workcell_from_camera_cv[:3,3]-pts),axis=1)>=0,1.,-1.)[:,None]
         normal_points.append(pts);normals.append(ns)
@@ -83,6 +84,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             normal=sum(len(face['points'])*face['normal'] for face in same)
             axes[axis]=normal/np.linalg.norm(normal)
     if not axes:return unknown('VISIBLE_PLANES_UNRESOLVED')
+    tape_direction=None
     if len(axes)>=2:
         order=sorted(axes,key=lambda axis:sum(len(f['points']) for f in faces if f['axis']==axis),reverse=True)
         a,b=order[:2]
@@ -95,8 +97,8 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         if missing in axes and measured[:,missing]@axes[missing]<math.cos(math.radians(8)):
             return unknown('MEASURED_PLANES_CONFLICT')
     else:
-        # One FULL rectangular face supplies measured tangent axes. A clipped
-        # patch does not: its unobserved edges cannot inherit the pose hint.
+        # A full rectangle or an observed central tape supplies tangent axes.
+        # A plain clipped patch cannot inherit rotation from the pose hint.
         axis=next(iter(axes));normal=axes[axis];tangent=[i for i in range(3) if i!=axis]
         basis=r[:,tangent].copy();basis[:,0]-=normal*(normal@basis[:,0]);basis[:,0]/=np.linalg.norm(basis[:,0])
         basis[:,1]-=normal*(normal@basis[:,1])+basis[:,0]*(basis[:,0]@basis[:,1]);basis[:,1]/=np.linalg.norm(basis[:,1])
@@ -107,11 +109,21 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         permutation=min(((0,1),(1,0)),key=lambda order:np.linalg.norm(lengths[list(order)]-size[tangent]))
         if (np.max(np.abs(lengths[list(permutation)]-size[tangent]))>.006 or
                 cv2.contourArea(hull)/float(np.prod(size[tangent]))<.72):
-            return unknown('ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE')
-        measured=np.zeros((3,3));measured[:,axis]=normal
-        for index,edge in zip(tangent,permutation):
-            direction=basis@(edges[edge]/lengths[edge])
-            measured[:,index]=direction if direction@r[:,index]>=0 else -direction
+            if axis==2 and any(f['axis']==2 and f['sign']==1 for f in faces):
+                from workstation.perception.packaging_evidence import tape_axis_evidence
+                level=float(np.median(patch@normal));views=[]
+                for instance,rgb in zip(instances,instance_rgb):
+                    on_plane=np.abs(instance@normal-level)<.003
+                    views.append((instance[on_plane],rgb[on_plane]))
+                tape_direction=tape_axis_evidence(views,centre,r,normal,size)
+            if tape_direction is None:return unknown('ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE')
+            measured=np.column_stack((tape_direction['axis_workcell'],
+                np.cross(normal,tape_direction['axis_workcell']),normal))
+        else:
+            measured=np.zeros((3,3));measured[:,axis]=normal
+            for index,edge in zip(tangent,permutation):
+                direction=basis@(edges[edge]/lengths[edge])
+                measured[:,index]=direction if direction@r[:,index]>=0 else -direction
     angle=math.degrees(math.acos(np.clip((np.trace(measured.T@r)-1)/2,-1,1)))
     if np.linalg.det(measured)<.999 or angle>8:return unknown('POSE_HINT_CONFLICT')
     # Extents come from measured, signed planar patches, not isolated mask
@@ -145,7 +157,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             # A latched grasp can carry one hidden in-plane coordinate. Keep
             # current planes/rotation and label the coordinate as predicted,
             # never as an independently measured pose or a fabricated edge.
-            if allow_grasp_translation and axis in (0,1) and len(axes)>=2 and not predicted_axes:
+            if allow_grasp_translation and axis in (0,1) and (len(axes)>=2 or tape_direction is not None) and not predicted_axes:
                 values.append(float(centre@measured[:,axis]));predicted_axes.append(axis)
                 constraints.append(dict(axis=axis,source='grasp_relation_prediction',
                     observed_span_m=span,expected_span_m=float(size[axis])))
@@ -164,6 +176,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
     residual=max(face['residual'] for face in faces)
     uncertainty=max(.003,priors.optical_depth_error_margin_m)+2*residual+max(extent_errors,default=0.)/2
     if uncertainty>.008:return unknown('POSE_UNCERTAINTY_UNBOUNDED')
+    height_bound=max(float(np.median(face['points'][:,2])) for face in faces)-float(np.abs(measured[2])@half)-max(.003,priors.optical_depth_error_margin_m)
     return dict(status='GRASP_CONSTRAINED' if predicted_axes else 'GEOMETRY_OBSERVED',time_s=packet.observation_time_s,
         position_m=fitted.tolist(),orientation_wxyz=quaternion_from_matrix(measured).tolist(),
         rotation=measured.tolist(),size_m=size.tolist(),mask_refs=refs,
@@ -172,6 +185,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         translation_difference_from_hint_m=float(np.linalg.norm(fitted-centre)),
         orientation_difference_from_hint_deg=angle,geometric_pose_measured=not predicted_axes,semantic_pose_unique=False,
         grasp_constrained=bool(predicted_axes),predicted_translation_axes=predicted_axes,
+        tape_direction=tape_direction,visual_height_lower_bound_m=min(height_bound,float(fitted[2])),
         evidence=('current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip'
                   if predicted_axes else 'current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes'))
 
@@ -209,12 +223,17 @@ def _cuboid_supported(measurement,time_s,grasp_constrained):
             not all(np.isfinite(value).all() for value in (centre,r,size)) or
             not np.allclose(r.T@r,np.eye(3),atol=1e-6) or
             not np.isclose(np.linalg.det(r),1.,atol=1e-6)):return False
+    height_bound=measurement.get('visual_height_lower_bound_m')
+    if height_bound is not None and (not np.isfinite(height_bound) or height_bound>centre[2]+1e-8):return False
     constraints=measurement.get('coordinate_constraints',())
     sources={'visible_signed_plane','complete_observed_extent'}
     if grasp_constrained:
         predicted=measurement.get('predicted_translation_axes',())
-        if (measurement.get('grasp_constrained') is not True or len(predicted)!=1 or predicted[0] not in (0,1) or
-                len(measurement.get('observed_face_axes',()))<2):return False
+        if measurement.get('grasp_constrained') is not True or len(predicted)!=1 or predicted[0] not in (0,1):return False
+        if len(measurement.get('observed_face_axes',()))<2:
+            from workstation.perception.packaging_evidence import tape_axis_supported
+            if (measurement.get('observed_face_axes')!=[2] or
+                    not tape_axis_supported(measurement.get('tape_direction'),r)):return False
         measured_axes={item.get('axis') for item in constraints if item.get('source') in sources}
         prediction_axes={item.get('axis') for item in constraints if item.get('source')=='grasp_relation_prediction'}
         return (prediction_axes==set(predicted) and measured_axes=={0,1,2}-prediction_axes and

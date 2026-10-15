@@ -97,11 +97,7 @@ class VisualPickPlace:
             self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,measurement)
         self.robot.set_observation(packet,self.scene,self.priors)
         measurement=self._register_holding_surface(measurement)
-        if (measurement is not None and 'height_gain_m' in measurement and
-                not measurement.get('grasp_constrained',False)):
-            # Phase-triggered captures count too: a short lift may finish before
-            # the next periodic exposure, but still has fresh independent proof.
-            self.max_visual_lift=max(self.max_visual_lift,measurement['height_gain_m'])
+        self._record_visual_lift(measurement)
         self._hold_observation=(packet,self.scene,self.hold_tracker,measurement) if self.hold_tracker is not None and not self.releasing else None
         self._anchor_normal_stage(label,measurement)
         self.trace_scene(packet,self.scene)
@@ -109,6 +105,14 @@ class VisualPickPlace:
         # A phase-triggered exposure also satisfies the periodic observer.
         self._monitor_ticks=0
         return self.scene
+
+    def _record_visual_lift(self,measurement):
+        if measurement is None:return
+        # Hidden in-plane position need not hide height. Only a conservative
+        # current RGB-D height bound may prove lift for a constrained pose.
+        key='height_gain_lower_bound_m' if measurement.get('grasp_constrained',False) else 'height_gain_m'
+        gain=measurement.get(key)
+        if gain is not None and np.isfinite(gain):self.max_visual_lift=max(self.max_visual_lift,gain)
 
     def _anchor_normal_stage(self,label,measurement):
         # Fresh rays acquired by NORMAL task motion, with the original 30 s
@@ -203,8 +207,7 @@ class VisualPickPlace:
             measurement=self.holding_measurement()
             if measurement is not None:
                 self._missing=0
-                if not measurement.get('grasp_constrained',False):
-                    self.max_visual_lift=max(self.max_visual_lift,measurement['height_gain_m'])
+                self._record_visual_lift(measurement)
                 self.events[-1]['last_visual_hold']=measurement
                 return
         reliable=[o for o in scene.objects if not o.failures and pose_is_observed(o,scene)
