@@ -30,6 +30,7 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
              root/'workstation/diagnostics/depth_error_audit.py',
              *(root/'workstation/simulation'/name for name in
                ('robot_driver.py','environment.py','visual_fixtures.py','station_priors.py','display_refresh.py'))]
+    sources.extend((root/'workstation/diagnostics'/name for name in ('visual_run.py','vision_check.py','identity_capture.py')))
     for directory in ('observations','perception','planning','skills','models'):
         sources.extend((root/'workstation'/directory).glob('*.py'))
     env._write_json('online_source_hashes.json',{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest()
@@ -47,10 +48,16 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
     env._write_json('robot_model_manifest.json',{name:dict(sha256=model.sha256,
         lower_m=model.lower.tolist(),upper_m=model.upper.tolist()) for name,model in robot.collision_links.items()})
     reads=0
+    capture_timing={}
+    estimation_before_read=0.
+    identity_capture=None
     last_timing_write=timing.clock()
     @timing.timed('sensor_read')
     def read_packet():
-        nonlocal reads
+        nonlocal reads,estimation_before_read
+        import time
+        start=timing.clock();wall_start=time.time()
+        estimation_before_read=timing.rows.get('scene_estimation',{}).get('inclusive_s',0.)
         if not reads:
             packet=env.get_observation_packet(refresh=True)
         else:
@@ -59,6 +66,8 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
             for _ in range(3): env.camera_system.render()
             packet=env.get_observation_packet(refresh=False)
         reads+=1
+        capture_timing.update(read_wall_start_s=wall_start,read_monotonic_start_s=start,
+                              read_duration_s=timing.clock()-start)
         return packet
     @timing.timed('trace_write')
     def trace_scene(packet,scene):
@@ -68,6 +77,12 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
             qpos=state.qpos.tolist(),tcp_fk_m=robot.fk(name,state.joint_positions_rad)[0].tolist(),
             commanded_qpos=robot.targets[name].tolist()) for name,state in packet.robot_state.items()})
         record['robot_self_filter_counts']=dict(getattr(getattr(skill,'estimator',None),'last_robot_filter_counts',{}))
+        record['observation_timing']=dict(capture_timing,trace_monotonic_s=timing.clock(),
+            estimation_duration_s=timing.rows.get('scene_estimation',{}).get('inclusive_s',0.)-estimation_before_read)
+        estimator=getattr(skill,'estimator',None)
+        if getattr(estimator,'record_association',False):
+            record['association']=estimator.association_events
+        if identity_capture is not None:identity_capture.observe(packet,scene,record)
         with (env.output/'visual_trace.jsonl').open('a',encoding='utf-8') as stream:
             stream.write(json.dumps(record)+'\n')
         if timing.clock()-last_timing_write>=10.:
@@ -113,6 +128,10 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
         from workstation.skills.visual_sorting import VisualSortingTask
         skill=VisualSortingTask(*args,max_items=max_items)
     if hasattr(skill,'estimator'):timing.wrap(skill.estimator,'estimate','scene_estimation')
+    if env.camera_system.settings['save_images'] and hasattr(skill,'estimator'):
+        from workstation.diagnostics.identity_capture import IdentityCapture
+        skill.estimator.record_association=True
+        identity_capture=IdentityCapture(env.output,save_observation)
     if hasattr(skill,'_read_holding_surface'):timing.wrap(skill,'_read_holding_surface','holding_estimation')
     result=skill.run()
     if getattr(robot,'refresh_display',None) is not None:

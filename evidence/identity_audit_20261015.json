@@ -1,0 +1,1059 @@
+{
+  "date_utc": "2026-10-15T08:19:43.422744+00:00",
+  "scope": "saved actual RGB-D replay with image-time Lula FK self-filter plus targeted CPU regressions; no new physical grasp or segmentation-model comparison",
+  "case_id": "isaac-live-dev8-graspgen-412",
+  "original_commit": "6084930f95fc3c0fcfeefd9b66663e4701a371a4",
+  "base_commit": "70091ea43776765c9a8a64bae4231082d030c867",
+  "launch": {
+    "case_id": "isaac-live-dev8-graspgen-412",
+    "purpose": "User-requested live single-box grasp/place and WebRTC viewing",
+    "source_commit": "6084930f95fc3c0fcfeefd9b66663e4701a371a4",
+    "source_tar_sha256": "77aa8e695195977ae96bbac86b31e7ba747c2df1bd6dd4f0e93dd82eff0d1524",
+    "start_utc": "2026-10-15T04:03:43.207156+00:00",
+    "start_epoch": 1792037023.2071698,
+    "seed": 412,
+    "fixture": "upright",
+    "grasp_backend": "graspgen",
+    "num_grasps": 256,
+    "visual_observation_period_s": 1,
+    "streaming": true,
+    "keep_gui_on_task_failure": true,
+    "output": "/home/featurize/isaac-runtime/output/bimanual-linux/live-dev8/isaac-live-dev8-graspgen-412"
+  },
+  "source_tar_sha256": "c5bddb2800c60f173e74deaac9544d80f964e46f0cef9ecc5461be039d306a66",
+  "tested_source_sha256": {
+    "workstation/perception/rgbd_cartons.py": "96e24168bde51f4803cb98b966a039c41cca814329b9eec6a2605e5406c1595e",
+    "workstation/diagnostics/visual_run.py": "5fa3fd4e42b2b9f7111a4a4a917dfc1666e245088f4e9461df0f98942f569c46",
+    "workstation/diagnostics/identity_capture.py": "f3d2c1248b866d06ee1ba91ca2b78a730a00d08c09b8b2495231808f9fd62088",
+    "tests/test_partial_surface_identity.py": "d85260aebcf849648021a7c83751fe11af83a283094782729c45a1bf41913287",
+    "tests/test_track_retention.py": "6563308fb6a1c0a4a5d2a68e16b793f4efdbf1d12fe443b87589aabc991fee9f",
+    "tests/test_identity_capture.py": "5180528cc2589cfcc271643565b3b4b4fb595dc377e4965f714837529587e337"
+  },
+  "original_estimator_matches_archived_snapshot": true,
+  "original_seven_snapshots_exact_masks_centres_ids": true,
+  "candidate_seven_snapshots_masks_unchanged": true,
+  "candidate_results_equal_prechange_current_on_all_seven_snapshots": true,
+  "snapshot_times_s": {
+    "initial": 2.999999999999992,
+    "tracked": 3.1999999999999913,
+    "after_model_inference": 3.52499999999999,
+    "before_model_pregrasp": 3.54999999999999,
+    "pregrasp": 11.44999999999999,
+    "failure_trigger": 17.44999999999965,
+    "failed": 17.64999999999964
+  },
+  "initial_duplicate_trace": [
+    {
+      "observation_time_s": 17.049999999999674,
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "time_s": 17.049999999999674,
+          "position_m": [
+            -0.19046011567115784,
+            -0.055848574033007026,
+            0.7824998343689209
+          ],
+          "axis_yaw_rad": 1.0187387895238156,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UPRIGHT",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.8730521812252706,
+                0.0,
+                0.0,
+                0.4876267925963432
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.4876267925963432,
+                0.0,
+                0.0,
+                -0.8730521812252706
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/444/component_1",
+            "left_wrist_camera/444/component_1"
+          ],
+          "cameras": [
+            "scene_camera",
+            "left_wrist_camera"
+          ],
+          "visibility": "COMPLETE_TOP",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 0.9779677344110982,
+            "footprint_error_m": 0.0016747163355790018,
+            "plane_residual_m": 0.0001242489442090976,
+            "surface_tilt_deg": 0.01754544737920007,
+            "observed_length_m": 0.098325283664421,
+            "observed_width_m": 0.05499869117296225,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.040932774823822404,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8049998343689209,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.0828914929285762,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0,
+            "current_partial_views_associated": 1.0,
+            "current_partial_min_surface_ratio": 1.0,
+            "visible_fragments_joined": 2.0,
+            "association_prior_age_s": 0.09999999999999432
+          },
+          "failures": [],
+          "velocity_m_s": [
+            -0.004956871271133705,
+            -0.008061302360147696,
+            5.553241755329768e-07
+          ],
+          "uncertainty_m": 0.003,
+          "measured_cuboid": null
+        }
+      ]
+    },
+    {
+      "observation_time_s": 17.149999999999668,
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "time_s": 17.149999999999668,
+          "position_m": [
+            -0.19108492136001587,
+            -0.05686447210609913,
+            0.782499925493202
+          ],
+          "axis_yaw_rad": 1.0189638421663891,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UPRIGHT",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.8729973048488859,
+                0.0,
+                0.0,
+                0.4877250308591732
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.4877250308591732,
+                0.0,
+                0.0,
+                -0.8729973048488859
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/447/component_1",
+            "left_wrist_camera/447/component_1"
+          ],
+          "cameras": [
+            "scene_camera",
+            "left_wrist_camera"
+          ],
+          "visibility": "COMPLETE_TOP",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 0.9540064138072907,
+            "footprint_error_m": 0.004057811993392418,
+            "plane_residual_m": 0.00011869386114564426,
+            "surface_tilt_deg": 0.015912303080883382,
+            "observed_length_m": 0.09594218800660759,
+            "observed_width_m": 0.05499817018901093,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.040932774823822404,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.804999925493202,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.03310185239269294,
+            "tape_partial_support": 1.0,
+            "tape_paired_bins": 7.0,
+            "tape_paired_span_m": 0.03470508968426296,
+            "tape_stripe_width_m": 0.01083644972139976,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0,
+            "current_partial_views_associated": 1.0,
+            "current_partial_min_surface_ratio": 1.0,
+            "visible_fragments_joined": 2.0,
+            "association_prior_age_s": 0.09999999999999432
+          },
+          "failures": [],
+          "velocity_m_s": [
+            -0.006248056888580677,
+            -0.010158980730921608,
+            9.112428112079647e-07
+          ],
+          "uncertainty_m": 0.004057811993392418,
+          "measured_cuboid": null
+        }
+      ]
+    },
+    {
+      "observation_time_s": 17.249999999999662,
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "time_s": 17.249999999999662,
+          "position_m": [
+            -0.1916285753250122,
+            -0.057744300458580256,
+            0.7824997775557218
+          ],
+          "axis_yaw_rad": 1.0187273963024124,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UPRIGHT",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.8730549590311097,
+                0.0,
+                0.0,
+                0.48762181915003244
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.48762181915003244,
+                0.0,
+                0.0,
+                -0.8730549590311097
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/450/component_1",
+            "left_wrist_camera/450/component_1"
+          ],
+          "cameras": [
+            "scene_camera",
+            "left_wrist_camera"
+          ],
+          "visibility": "COMPLETE_TOP",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 0.933409314208001,
+            "footprint_error_m": 0.0061284385172988565,
+            "plane_residual_m": 0.00012650872089123581,
+            "surface_tilt_deg": 0.019345559910814557,
+            "observed_length_m": 0.09387156148270115,
+            "observed_width_m": 0.05499945481834397,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.040932774823822404,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8049997775557217,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.03259559307522413,
+            "tape_partial_support": 1.0,
+            "tape_paired_bins": 7.0,
+            "tape_paired_span_m": 0.034988481545466535,
+            "tape_stripe_width_m": 0.010851832992771463,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0,
+            "current_partial_views_associated": 1.0,
+            "current_partial_min_surface_ratio": 1.0,
+            "visible_fragments_joined": 2.0,
+            "association_prior_age_s": 0.09999999999999432
+          },
+          "failures": [],
+          "velocity_m_s": [
+            -0.005436539649963688,
+            -0.008798283524811767,
+            -1.4793748026598893e-06
+          ],
+          "uncertainty_m": 0.0061284385172988565,
+          "measured_cuboid": null
+        }
+      ]
+    },
+    {
+      "observation_time_s": 17.349999999999657,
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "time_s": 17.349999999999657,
+          "position_m": [
+            -0.19210849702358246,
+            -0.058523545041680336,
+            0.7824994883119841
+          ],
+          "axis_yaw_rad": 1.018727256581124,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UPRIGHT",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.8730549930966822,
+                0.0,
+                0.0,
+                0.4876217581578495
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.4876217581578495,
+                0.0,
+                0.0,
+                -0.8730549930966822
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/453/component_1",
+            "left_wrist_camera/453/component_1"
+          ],
+          "cameras": [
+            "scene_camera",
+            "left_wrist_camera"
+          ],
+          "visibility": "COMPLETE_TOP",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 0.9151588939320235,
+            "footprint_error_m": 0.00795887744767948,
+            "plane_residual_m": 0.00011941309899162233,
+            "surface_tilt_deg": 0.016948879667699302,
+            "observed_length_m": 0.09204112255232053,
+            "observed_width_m": 0.05499938062374981,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.040932774823822404,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8049994883119841,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.032400464450420906,
+            "tape_partial_support": 1.0,
+            "tape_paired_bins": 8.0,
+            "tape_paired_span_m": 0.03987028951277602,
+            "tape_stripe_width_m": 0.010878173774509739,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0,
+            "current_partial_views_associated": 1.0,
+            "current_partial_min_surface_ratio": 1.0,
+            "visible_fragments_joined": 2.0,
+            "association_prior_age_s": 0.09999999999999432
+          },
+          "failures": [],
+          "velocity_m_s": [
+            -0.004799216985702788,
+            -0.007792445831001248,
+            -2.892437376278587e-06
+          ],
+          "uncertainty_m": 0.00795887744767948,
+          "measured_cuboid": null
+        }
+      ]
+    },
+    {
+      "observation_time_s": 17.44999999999965,
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "time_s": 17.44999999999965,
+          "position_m": [
+            -0.20235976576805115,
+            -0.07524798810482025,
+            0.7549999047472361
+          ],
+          "axis_yaw_rad": 2.5895235893698247,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UNKNOWN",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.27254245123646575,
+                0.0,
+                0.0,
+                0.9621437586317436
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.9621437586317436,
+                0.0,
+                0.0,
+                -0.27254245123646575
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                0.0,
+                0.27254245123646575,
+                0.9621437586317436,
+                0.0
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                0.0,
+                -0.9621437586317436,
+                0.27254245123646575,
+                0.0
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "SIDE_UNRESOLVED",
+              "orientation_wxyz": [
+                0.6173431049341046,
+                0.3448006536976386,
+                -0.6173431049341052,
+                0.3448006536976388
+              ],
+              "evidence": "footprint matches side face; local top direction unresolved"
+            },
+            {
+              "label": "SIDE_UNRESOLVED",
+              "orientation_wxyz": [
+                0.34480065369763885,
+                -0.6173431049341047,
+                -0.3448006536976389,
+                -0.6173431049341046
+              ],
+              "evidence": "footprint matches side face; local top direction unresolved"
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/456/component_1"
+          ],
+          "cameras": [
+            "scene_camera"
+          ],
+          "visibility": "PARTIAL_OR_UNCERTAIN",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 1.0,
+            "footprint_error_m": 0.007808549150977687,
+            "plane_residual_m": 0.0002902344664350454,
+            "surface_tilt_deg": 0.20354992111511452,
+            "observed_length_m": 0.05491380822232957,
+            "observed_width_m": 0.052808549150977685,
+            "observed_height_m": 0.1,
+            "geometric_length_m": 0.055,
+            "geometric_width_m": 0.045,
+            "observed_vertical_span_m": 0.0418585060896971,
+            "geometry_inlier_ratio": 0.9892183288409704,
+            "observed_top_z_m": 0.8049999047472362,
+            "tape_observed": 0.0,
+            "tape_visible_span_m": 0.01018012867818158,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "boundary_refined_pixels": 0.0
+          },
+          "failures": [
+            "INCOMPATIBLE_SIZE_OR_SUPPORT"
+          ],
+          "velocity_m_s": null,
+          "uncertainty_m": 0.007808549150977687,
+          "measured_cuboid": null
+        },
+        {
+          "track_id": "visual_0002",
+          "time_s": 17.44999999999965,
+          "position_m": [
+            -0.1925063133239746,
+            -0.05916890548542142,
+            0.7826895937727756
+          ],
+          "axis_yaw_rad": 1.0188285512352697,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UNKNOWN",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.8730302952382601,
+                0.0,
+                0.0,
+                0.4876659754342066
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.4876659754342066,
+                0.0,
+                0.0,
+                -0.8730302952382601
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                -0.0,
+                -0.8730302952382601,
+                -0.4876659754342066,
+                -0.0
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                0.0,
+                -0.4876659754342066,
+                0.8730302952382601,
+                0.0
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            }
+          ],
+          "mask_refs": [
+            "left_wrist_camera/456/component_1"
+          ],
+          "cameras": [
+            "left_wrist_camera"
+          ],
+          "visibility": "PARTIAL_OR_UNCERTAIN",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 0.9001292519618258,
+            "footprint_error_m": 0.009474084462369053,
+            "plane_residual_m": 0.0001213798455219525,
+            "surface_tilt_deg": 0.019259487959781146,
+            "observed_length_m": 0.09052591553763095,
+            "observed_width_m": 0.05499833992072786,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.00019524109077595497,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8051895937727755,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.032607501477805355,
+            "tape_partial_support": 1.0,
+            "tape_paired_bins": 8.0,
+            "tape_paired_span_m": 0.03984620088571837,
+            "tape_stripe_width_m": 0.010823394170156072,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0
+          },
+          "failures": [
+            "PARTIAL_OR_MERGED_GEOMETRY"
+          ],
+          "velocity_m_s": null,
+          "uncertainty_m": 0.009474084462369053,
+          "measured_cuboid": null
+        }
+      ]
+    },
+    {
+      "observation_time_s": 17.64999999999964,
+      "objects": [
+        {
+          "track_id": "visual_0001",
+          "time_s": 17.64999999999964,
+          "position_m": [
+            -0.20231398940086365,
+            -0.07539805769920349,
+            0.7550000142021442
+          ],
+          "axis_yaw_rad": 2.597254986282147,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UNKNOWN",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.2688210664740611,
+                0.0,
+                0.0,
+                0.9631901339921151
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.9631901339921151,
+                0.0,
+                0.0,
+                -0.2688210664740611
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                0.0,
+                0.2688210664740611,
+                0.9631901339921151,
+                0.0
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                0.0,
+                -0.9631901339921151,
+                0.2688210664740611,
+                0.0
+              ],
+              "evidence": "top/bottom appearance not resolved; 180-degree axis symmetry"
+            },
+            {
+              "label": "SIDE_UNRESOLVED",
+              "orientation_wxyz": [
+                0.616005600233088,
+                0.34718453375902697,
+                -0.616005600233088,
+                0.3471845337590269
+              ],
+              "evidence": "footprint matches side face; local top direction unresolved"
+            },
+            {
+              "label": "SIDE_UNRESOLVED",
+              "orientation_wxyz": [
+                0.3471845337590269,
+                -0.6160056002330879,
+                -0.3471845337590269,
+                -0.616005600233088
+              ],
+              "evidence": "footprint matches side face; local top direction unresolved"
+            }
+          ],
+          "mask_refs": [
+            "scene_camera/459/component_1"
+          ],
+          "cameras": [
+            "scene_camera"
+          ],
+          "visibility": "PARTIAL_OR_UNCERTAIN",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 1.0,
+            "footprint_error_m": 0.007628792955816005,
+            "plane_residual_m": 0.0002902627681095006,
+            "surface_tilt_deg": 0.2027584995168635,
+            "observed_length_m": 0.05506492248559957,
+            "observed_width_m": 0.052628792955816,
+            "observed_height_m": 0.1,
+            "geometric_length_m": 0.055,
+            "geometric_width_m": 0.045,
+            "observed_vertical_span_m": 0.04185830704799376,
+            "geometry_inlier_ratio": 0.98989898989899,
+            "observed_top_z_m": 0.8050000142021443,
+            "tape_observed": 0.0,
+            "tape_visible_span_m": 0.010152596748068704,
+            "tape_partial_support": 0.0,
+            "tape_paired_bins": 0.0,
+            "tape_paired_span_m": 0.0,
+            "tape_stripe_width_m": 0.0,
+            "boundary_refined_pixels": 0.0
+          },
+          "failures": [
+            "INCOMPATIBLE_SIZE_OR_SUPPORT"
+          ],
+          "velocity_m_s": null,
+          "uncertainty_m": 0.007628792955816005,
+          "measured_cuboid": null
+        },
+        {
+          "track_id": "visual_0002",
+          "time_s": 17.64999999999964,
+          "position_m": [
+            -0.19256752729415894,
+            -0.059271397069096565,
+            0.7826897614227488
+          ],
+          "axis_yaw_rad": 1.0187227742976783,
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "size_source": "known_size_prior; footprint and visible surface measured",
+          "posture": "UNKNOWN",
+          "hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.8730560859239569,
+                0.0,
+                0.0,
+                0.48761980151665346
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.48761980151665346,
+                0.0,
+                0.0,
+                -0.8730560859239569
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                -0.0,
+                -0.8730560859239569,
+                -0.48761980151665346,
+                -0.0
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            },
+            {
+              "label": "INVERTED",
+              "orientation_wxyz": [
+                0.0,
+                -0.48761980151665346,
+                0.8730560859239569,
+                0.0
+              ],
+              "evidence": "top stripe in left_wrist_camera; 180-degree axis symmetry"
+            }
+          ],
+          "mask_refs": [
+            "left_wrist_camera/459/component_1"
+          ],
+          "cameras": [
+            "left_wrist_camera"
+          ],
+          "visibility": "PARTIAL_OR_UNCERTAIN",
+          "valid_depth_ratio": 1.0,
+          "quality": {
+            "footprint_coverage": 0.8980533471675071,
+            "footprint_error_m": 0.009714152742259494,
+            "plane_residual_m": 0.00012467947882295377,
+            "surface_tilt_deg": 0.020005274244012373,
+            "observed_length_m": 0.09028584725774051,
+            "observed_width_m": 0.05499617876978207,
+            "observed_height_m": 0.045,
+            "geometric_length_m": 0.1,
+            "geometric_width_m": 0.055,
+            "observed_vertical_span_m": 0.0001901210523297392,
+            "geometry_inlier_ratio": 1.0,
+            "observed_top_z_m": 0.8051897614227488,
+            "tape_observed": 1.0,
+            "tape_visible_span_m": 0.032918907709006,
+            "tape_partial_support": 1.0,
+            "tape_paired_bins": 8.0,
+            "tape_paired_span_m": 0.03970666585352628,
+            "tape_stripe_width_m": 0.010823227951895198,
+            "tape_camera_count": 1.0,
+            "tape_fold_upright_views": 0.0,
+            "tape_fold_inverted_views": 0.0,
+            "packaging_conflict": 0.0,
+            "boundary_refined_pixels": 0.0
+          },
+          "failures": [
+            "PARTIAL_OR_MERGED_GEOMETRY"
+          ],
+          "velocity_m_s": null,
+          "uncertainty_m": 0.009714152742259494,
+          "measured_cuboid": null
+        }
+      ]
+    }
+  ],
+  "failure_frame": {
+    "time_s": 17.44999999999965,
+    "candidate_counts": {
+      "right_wrist_camera": 0,
+      "scene_camera": 1,
+      "left_wrist_camera": 1
+    },
+    "masks": {
+      "right_wrist_camera": [],
+      "scene_camera": [
+        {
+          "pixels": 1409,
+          "valid_points": 1409,
+          "position_m": [
+            -0.20235976576805115,
+            -0.07524798810482025,
+            0.7549999047472361
+          ],
+          "failures": [
+            "INCOMPATIBLE_SIZE_OR_SUPPORT"
+          ]
+        }
+      ],
+      "left_wrist_camera": [
+        {
+          "pixels": 76826,
+          "valid_points": 76826,
+          "position_m": [
+            -0.1925063133239746,
+            -0.05916890548542142,
+            0.7826895937727756
+          ],
+          "failures": [
+            "PARTIAL_OR_MERGED_GEOMETRY"
+          ]
+        }
+      ]
+    },
+    "pairwise": [
+      {
+        "cameras": [
+          "scene_camera",
+          "left_wrist_camera"
+        ],
+        "directions": {
+          "scene_camera->left_wrist_camera": {
+            "overlap_3mm": 0.7565649396735273,
+            "matches": 1066,
+            "distance_quantiles_m": [
+              1.504844238128127e-06,
+              0.00010346737994193314,
+              0.00014480503326671297,
+              0.027516326908357612,
+              0.034700026338538116,
+              0.044289880620450195
+            ]
+          },
+          "left_wrist_camera->scene_camera": {
+            "overlap_3mm": 0.76611328125,
+            "matches": 3138,
+            "distance_quantiles_m": [
+              1.3781400694370193e-05,
+              0.0007520790467622054,
+              0.0009666696424054139,
+              0.021258755273889457,
+              0.029967982026855383,
+              0.0432485439676346
+            ]
+          }
+        },
+        "estimated_centre_distance_m": 0.03350143730170711
+      }
+    ],
+    "reject_reasons": [
+      {
+        "event": "historical_fragment_rejected",
+        "anchor_id": "visual_0001",
+        "reason": "incomplete_union_footprint",
+        "error_m": 0.009472207268151608,
+        "coverage": 0.9001469515375299,
+        "max_error_m": 0.008,
+        "min_coverage": 0.72
+      },
+      {
+        "event": "complete_fragment_rejected",
+        "reason": "no_current_complete_anchor"
+      },
+      {
+        "event": "measured_fragment_rejected",
+        "track_id": "visual_0001",
+        "reason": "current_full_cuboid_not_supported",
+        "measurement": {
+          "status": "UNKNOWN",
+          "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+          "time_s": 17.44999999999965,
+          "unobserved_axis": 0,
+          "observed_span_m": 0.0890076148115006,
+          "expected_span_m": 0.1,
+          "visible_face_axes": [
+            2
+          ],
+          "face_point_counts": [
+            {
+              "axis": 2,
+              "sign": 1.0,
+              "points": 74999
+            }
+          ]
+        }
+      }
+    ],
+    "original_tracks": [
+      "visual_0001",
+      "visual_0002"
+    ],
+    "candidate_tracks": [
+      "visual_0001"
+    ]
+  },
+  "coordinate_max_abs_error": 0.0,
+  "timing": {
+    "frame_joint_times_equal": true,
+    "prior_track_last_seen_s": 17.349999999999657,
+    "duplicate_gap_sim_s": 0.09999999999999432,
+    "original_per_frame_wall_jitter_recorded": false,
+    "retention_slow_1s": 1.15,
+    "retention_slow_2s": 2.15,
+    "frequency_or_thresholds_changed": false
+  },
+  "continuous_failure_then_after_ids": [
+    [
+      "visual_0001"
+    ],
+    [
+      "visual_0001"
+    ]
+  ],
+  "historical_duplicate_state_injection": {
+    "independent_failed_replay_id": [
+      "visual_0002"
+    ],
+    "explanation": "Independently replaying failed injects the OLD duplicate track table; nearest matching selects alias 0002. Sequential candidate replay keeps 0001. Canonicalizing pre-existing aliases is not implemented."
+  },
+  "fixes": [
+    "retain unmatched history until original last-seen expiry without publishing stale detections",
+    "no centre-only grouping of partial or same-camera candidates",
+    "bounded actual before/after identity-change capture and per-stage association/wall timing diagnostics with save-images"
+  ],
+  "tests": {
+    "local": {
+      "count": 506,
+      "seconds": 6.951,
+      "passed": true
+    },
+    "isaac_sdk": {
+      "count": 506,
+      "seconds": 8.317,
+      "passed": true
+    }
+  },
+  "limits": [
+    "raw immediately preceding 17.45 seconds was not recorded; 17.35 state is reconstructed from saved trace",
+    "FK recomputation validates internal record consistency, not real hand-eye calibration or independent annotator exposure IDs",
+    "historical YOLO motion best.pt absent from current cloud and known local project; fair segmentation comparison not run",
+    "two disjoint partial surfaces and general neighbour/multi-object association remain unvalidated",
+    "new complete physical task and new speed measurement not run"
+  ],
+  "cloud_report_root": "/home/featurize/work/isaac-support/graspgen/reports/20261015-identity-audit",
+  "input_sha256": {
+    "initial_left_wrist_camera.npz": "faa12c72ee77e3badd71895ed6117eeda85f7c07f1029c727b082c9901717fda",
+    "initial_right_wrist_camera.npz": "523530da94052085bf41c8396eef9233c1bfd01f0fcc3225663fe877e55875aa",
+    "initial_masks.npz": "7c2b64f8498e162ff8c9b158f8623d49d9ab9d87b006982983ca159404d22f7a",
+    "initial_scene.json": "feae2cff8dffd74086bc3fb222578c6a99d08f9af36d4681f00ec423bb944a15",
+    "initial_scene_camera.npz": "4dd99471b19ef00339abda0aac0fa928e580d6b872d61a732ece457e606474d9",
+    "tracked_masks.npz": "b82c191b3287b1e434ccdc2913362e864e785ae028566a6e2c2d8cb2a5b034cf",
+    "tracked_scene_camera.npz": "7d798eed0972a6e7b7d3b05d2e85f1febe2916de7a2d406f5c6bf547fbc7fd94",
+    "tracked_right_wrist_camera.npz": "740ff08e66f97cfcf134fbe279025f3e2322d856f0c5555d5acf7b85fd6aaf99",
+    "tracked_scene.json": "44b670492a8a88b3e420d9cba9d9c5c859aa561ac0d596d1b98064a9bd69e63f",
+    "tracked_left_wrist_camera.npz": "e8b04b572d765cf51e82532ca8a2ac396796136aa88225047452f261f9c2713d",
+    "after_model_inference_right_wrist_camera.npz": "59e5422aa9b7bfc351d90b296ad88dee148f7f29cd53d37b5b221a7a158a6c38",
+    "after_model_inference_scene.json": "d1b11eddf6adce59e38310875774443e322d04bc47a026b7dc68771c65f8120d",
+    "after_model_inference_left_wrist_camera.npz": "cc3f61b0df469615c16014668d4c10939a559822d971685a74da8a6870f396e1",
+    "after_model_inference_scene_camera.npz": "c1713aa368b96148a2c358f263b88a4ec3ac3953624ec50a590a5fb15d038640",
+    "after_model_inference_masks.npz": "7520509376e8fc2cc82e081d0d50d691d8929761c974832e3fe81fda378b2942",
+    "before_model_pregrasp_left_wrist_camera.npz": "b15a985f4ab0b41872b822e1ccbd25cf5c1c1f97f0b7377cd2ff6736c6ae4ac6",
+    "before_model_pregrasp_right_wrist_camera.npz": "5f3888e48500d110dd47eab8b41694df3fc4e33060ee4ba31429ba98324c62f4",
+    "before_model_pregrasp_scene.json": "1ff8fd979fd7642c611d239ee4f5f62da237f5067538449a3e5ed3db4f29f919",
+    "before_model_pregrasp_scene_camera.npz": "9671346a4aea94e9936fe11b8a92d6e3226e910ca328a23d698dae69d4fe89d7",
+    "before_model_pregrasp_masks.npz": "cd91e69025de88e201080641a8f564a928560dddf60c1a968d682e689d6b7f9e",
+    "pregrasp_masks.npz": "c89ac8b39a835d61224d36aba8ea41f18d887d3b38a268663ab51dcef17a4a88",
+    "pregrasp_right_wrist_camera.npz": "7ffd30f160a17a7470da7243fc4a70a2fffa2a409242b74f12d533722687a756",
+    "pregrasp_scene.json": "d88c633b5e90ac126394b18ff0c366584353a8aa1298cdc0a3f9e0091f6009a8",
+    "pregrasp_scene_camera.npz": "fff8cf187cad6c19069549b94d7e42bed3f7c7fa0aa3e8cf5d5e8b764e4e80fb",
+    "pregrasp_left_wrist_camera.npz": "c1153df1dc04546d75c0943da934f10c21ad99c71ca960b2cae28acfff4aa007",
+    "failure_trigger_left_wrist_camera.npz": "b593bfb52fdb07c5cc0f369d68dd6c3019631d68629e7ffca547b48af2228397",
+    "failure_trigger_scene_camera.npz": "21bbd4c31f3404330cf9ad55cf6e69ed750102bedfe5cfe7e195d99da33f2601",
+    "failure_trigger_scene.json": "a07773f57a58c4e30afb038ef0ca10a19e3695752f1b9c6e66fd0e2b05028ddd",
+    "failure_trigger_right_wrist_camera.npz": "9da2115ce6c07d652b2f85e48ffea3f80a41c4b6a1f56058e1f2165d8d33490b",
+    "failure_trigger_masks.npz": "39a6558df7afe12b8586fdd33eec7c859fea771f443956556f2e10e621b05123",
+    "failed_masks.npz": "328fbaaa88c7f7b46ce3ca87e0adeaf2cdbf702eb929a2405f5bf248a0517fa5",
+    "failed_right_wrist_camera.npz": "859d3064b12ad47d5e814fc0488e547061e3eff41f55c1fe508f61ac44e93298",
+    "failed_scene_camera.npz": "de0e6b336d5bcdf4f75400d7e4d53a1e3ead72cec22b93dd039678868fbbf922",
+    "failed_left_wrist_camera.npz": "30c8749952df7a9f23bea5220f41688ba65117ecdf92c149b5a4119e6550bdc3",
+    "failed_scene.json": "ab851e2ba94db287e57d900ae813857c0bb243b2d89470f387c564c40f8345b0"
+  },
+  "tested_source_sha256_lf": {
+    "workstation/perception/rgbd_cartons.py": "fe7618e7f95eb74bf124e586ac6f5e16ec00770cdfa34493ba51116a326e519d",
+    "workstation/diagnostics/visual_run.py": "ffa7e1a236980289840dd700347f84d69bd0c7dfd7e88d9c829f4d7029b7ef79",
+    "workstation/diagnostics/identity_capture.py": "f3d2c1248b866d06ee1ba91ca2b78a730a00d08c09b8b2495231808f9fd62088",
+    "tests/test_partial_surface_identity.py": "d85260aebcf849648021a7c83751fe11af83a283094782729c45a1bf41913287",
+    "tests/test_track_retention.py": "6563308fb6a1c0a4a5d2a68e16b793f4efdbf1d12fe443b87589aabc991fee9f",
+    "tests/test_identity_capture.py": "5180528cc2589cfcc271643565b3b4b4fb595dc377e4965f714837529587e337"
+  },
+  "source_line_endings_note": "Raw tested archive includes CRLF in two existing Windows checkout files; canonical LF hashes permit exact Git/Linux text verification without changing Python tokens."
+}

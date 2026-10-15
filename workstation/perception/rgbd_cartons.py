@@ -5,9 +5,10 @@ components. This is not a general learned segmenter and does not split touching
 cartons. Hidden top/bottom and 180-degree symmetry remain hypotheses.
 """
 from __future__ import annotations
-from dataclasses import replace
+from dataclasses import replace, asdict
 from concurrent.futures import ThreadPoolExecutor
 import math
+from time import perf_counter
 import numpy as np
 from workstation.observations.camera_geometry import quaternion_from_matrix
 from workstation.perception.scene_estimate import (
@@ -31,7 +32,8 @@ def deproject(frame):
 
 class CartonEstimator:
     def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None,
-                 robot_filter_factory=None,camera_workers=3,track_retention_s=.6):
+                 robot_filter_factory=None,camera_workers=3,track_retention_s=.6,
+                 record_association=False):
         self.priors = priors
         self.segmenter = segmenter
         self.robot_point_filter=robot_point_filter
@@ -46,8 +48,19 @@ class CartonEstimator:
         self._next_id = 1
         self._last_time = None
         self._anchors = {}
+        self.record_association=bool(record_association)
+        self.association_events=[]
+
+    def _association_event(self,event,**values):
+        if self.record_association:self.association_events.append(dict(event=event,**values))
+
+    def _association_snapshot(self,event,objects):
+        if self.record_association:
+            self._association_event(event,objects=[asdict(o) for o in objects])
 
     def estimate(self, packet):
+        self.association_events=[]
+        self._association_snapshot('history_before',self._tracks.values())
         self.last_robot_filter_counts={}
         previous_anchors=tuple(self._anchors.values())
         masks, detections, failures, statuses = {}, [], [], {}
@@ -75,8 +88,10 @@ class CartonEstimator:
                   (self.robot_point_filter is None or self.robot_filter_factory is not None) and
                   sum(frame.depth_m.size for _,frame in jobs)>=100000)
         prepared={name:self.robot_filter_factory(frame) for name,frame in jobs} if parallel and self.robot_filter_factory else {}
+        detection_seconds={}
         def detect(job):
             name,frame=job
+            started=perf_counter() if self.record_association else None
             try:
                 segmentation = self.segmenter.segment(frame).validate_for(frame) if self.segmenter else None
                 result=(self._detect(frame,segmentation,prepared[name]) if name in prepared else
@@ -85,6 +100,8 @@ class CartonEstimator:
             except Exception as exc:
                 if self.segmenter is None: raise
                 return None,type(exc).__name__+':'+str(exc)
+            finally:
+                if started is not None:detection_seconds[name]=perf_counter()-started
         if parallel:
             with ThreadPoolExecutor(max_workers=min(self.camera_workers,len(jobs))) as pool:
                 results=list(pool.map(detect,jobs))
@@ -97,14 +114,28 @@ class CartonEstimator:
             objects,frame_masks=result
             detections.extend(objects)
             masks.update(frame_masks)
+        self._association_event('camera_detection_timing',wall_s=detection_seconds,
+            parallel=parallel,scope='individual worker elapsed time; parallel values must not be summed')
+        self._association_snapshot('per_camera_detections',detections)
         detections = self._join_visible_fragments(detections,masks,packet)
+        self._association_snapshot('historical_fragment_join',detections)
         detections = self._associate_current_fragments(detections,masks,packet)
+        self._association_snapshot('current_complete_join',detections)
         detections = self._associate_overlapping_partial_views(detections,masks,packet)
-        # Fuse unambiguous spatially matching components, prefer complete geometry.
+        self._association_snapshot('current_partial_join',detections)
+        # Centre proximity is only a fallback for complete, distinct-camera
+        # views. A clipped fit must pass a surface association above; this
+        # final gate must not undo its rejection or absorb same-camera peers.
         groups = []
         for obj in sorted(detections, key=lambda d: (bool(d.failures), -d.quality['footprint_coverage'])):
-            group = next((g for g in groups if np.linalg.norm(
-                np.asarray(obj.position_m)-g[0].position_m) < .025), None)
+            if self.record_association:
+                self._association_event('centre_group',mask_refs=obj.mask_refs,threshold_m=.025,
+                    candidates=[dict(mask_refs=g[0].mask_refs,distance_m=float(np.linalg.norm(
+                        np.asarray(obj.position_m)-g[0].position_m))) for g in groups])
+            group = next((g for g in groups if not obj.failures and obj.visibility=='COMPLETE_TOP'
+                and all(not other.failures and other.visibility=='COMPLETE_TOP' and
+                    not set(obj.cameras)&set(other.cameras) and np.linalg.norm(
+                        np.asarray(obj.position_m)-other.position_m)<.025 for other in g)),None)
             if group is None:
                 groups.append([obj])
             else:
@@ -135,9 +166,11 @@ class CartonEstimator:
         if self._last_time is not None and now < self._last_time:
             raise ValueError('Observation time moved backwards')
         available = {k:v for k,v in self._tracks.items() if 0 <= now-v.time_s <= self.track_retention_s}
+        self._association_event('track_window',time_s=now,retention_s=self.track_retention_s,
+            available_ids=list(available),expired_ids=[k for k in self._tracks if k not in available])
         tracked = []
         for obj in fused:
-            # Mutual nearest association is sufficient only for separated cartons.
+            # Greedy nearest association, limited to separated cartons.
             near = sorted((np.linalg.norm(np.asarray(obj.position_m)-old.position_m), k)
                           for k,old in available.items())
             if near and near[0][0] < .065:
@@ -146,7 +179,7 @@ class CartonEstimator:
                 dt = now-old.time_s
                 velocity = (tuple((np.asarray(obj.position_m)-old.position_m)/dt)
                             if dt > 1e-6 else old.velocity_m_s)
-                if obj.failures or old.failures:velocity=None
+                if obj.failures or old.failures or old.time_s != self._last_time:velocity=None
                 if len(near) > 1 and near[1][0]-near[0][0] < .015:
                     obj = replace(obj, failures=obj.failures+('TRACK_AMBIGUOUS',))
             else:
@@ -154,7 +187,13 @@ class CartonEstimator:
                 self._next_id += 1
                 velocity = None
             tracked.append(replace(obj, track_id=key, velocity_m_s=velocity))
-        self._tracks = {o.track_id:o for o in tracked}
+            self._association_event('track_match',mask_refs=obj.mask_refs,assigned_id=key,
+                candidates=[dict(track_id=k,distance_m=float(d)) for d,k in near],
+                threshold_m=.065,reason='nearest_available' if near and near[0][0]<.065 else 'no_track_within_gate')
+        # Unmatched history keeps its original last-seen time until expiry.
+        # Only this frame's tracked detections go into SceneEstimate; an empty
+        # detection must neither erase identity nor publish an old pose as new.
+        self._tracks = {**available, **{o.track_id:o for o in tracked}}
         for obj in tracked:
             if not obj.failures:
                 self._anchors[obj.track_id] = obj
@@ -173,7 +212,9 @@ class CartonEstimator:
                 edges.extend(observed_face_edges(frame,masks[ref],xyz,ref))
         scene=SceneEstimate(now, packet.assembled_time_s, 'workcell', tuple(tracked),
                             tuple(failures), statuses, masks,tuple(edges))
-        return self._associate_measured_fragments(packet,scene,previous_anchors)
+        scene=self._associate_measured_fragments(packet,scene,previous_anchors)
+        self._association_snapshot('output',scene.objects)
+        return scene
 
     def _associate_measured_fragments(self,packet,scene,anchors):
         """Reconcile clipped identities using current independently fitted planes.
@@ -201,7 +242,10 @@ class CartonEstimator:
                    for other in recent):continue
             rotation=pose_matrix([0.,0.,0.],anchor.hypotheses[0].orientation_wxyz)[:3,:3]
             measured=fit_cuboid_pose(packet,scene,anchor.position_m,rotation,anchor.size_m,self.priors)
-            if not measured_cuboid_supported(measured,scene.observation_time_s):continue
+            if not measured_cuboid_supported(measured,scene.observation_time_s):
+                self._association_event('measured_fragment_rejected',track_id=anchor.track_id,
+                    reason='current_full_cuboid_not_supported',measurement=measured)
+                continue
             refs=set(measured['mask_refs'])
             members=[o for o in scene.objects if o.mask_refs and set(o.mask_refs)<=refs]
             if (not members or any(not o.failures for o in members) or
@@ -371,7 +415,9 @@ class CartonEstimator:
         """
         anchors=[i for i,obj in enumerate(detections) if not obj.failures and
                  obj.visibility=='COMPLETE_TOP' and obj.uncertainty_m<=.008]
-        if not anchors:return detections
+        if not anchors:
+            self._association_event('complete_fragment_rejected',reason='no_current_complete_anchor')
+            return detections
         attached={};used=set();clouds={}
         def body(obj):
             c,s=math.cos(obj.axis_yaw_rad),math.sin(obj.axis_yaw_rad)
@@ -482,12 +528,17 @@ class CartonEstimator:
         for i in points:
             for j in points:
                 if j<=i or set(detections[i].cameras)&set(detections[j].cameras):continue
-                if not any(body_support(k,(i,j)) is not None for k in (i,j)):continue
+                if not any(body_support(k,(i,j)) is not None for k in (i,j)):
+                    self._association_event('partial_pair_rejected',members=[i,j],reason='no_compatible_body')
+                    continue
                 ratios=[]
                 for source,target in ((i,j),(j,i)):
                     sample=samples[source]
                     query=sample[np.linspace(0,len(sample)-1,min(4096,len(sample)),dtype=int)]
                     matched=trees[target].query(query,workers=1)[0]<=.003
+                    self._association_event('partial_overlap',source=source,target=target,
+                        ratio=float(matched.mean()),matches=int(matched.sum()),distance_threshold_m=.003,
+                        ratio_threshold=.7,minimum_matches=60)
                     if matched.sum()<60 or matched.mean()<.7:break
                     ratios.append(float(matched.mean()))
                 else:
@@ -569,7 +620,11 @@ class CartonEstimator:
             measured=np.sort(lengths[:2])[::-1]; expected=np.asarray(anchor.size_m[:2])
             error=float(np.max(np.abs(measured-expected)))
             coverage=min(1.,float(cv2.contourArea(hull)/np.prod(expected)))
-            if error > .008 or coverage < .72: continue
+            if error > .008 or coverage < .72:
+                self._association_event('historical_fragment_rejected',anchor_id=anchor.track_id,
+                    reason='incomplete_union_footprint',error_m=error,coverage=coverage,
+                    max_error_m=.008,min_coverage=.72)
+                continue
             long_index=int(np.argmax(lengths)); direction=edges[long_index]/lengths[long_index]
             yaw=math.atan2(direction[1],direction[0]) % math.pi
             if axis_error(yaw,anchor.axis_yaw_rad) > math.radians(10): continue

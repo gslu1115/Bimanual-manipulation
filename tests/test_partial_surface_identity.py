@@ -53,6 +53,28 @@ class PartialSurfaceIdentityTests(unittest.TestCase):
         with patch('workstation.perception.rgbd_cartons.deproject',side_effect=moved):
             self.assertEqual(len(self.associate()),2)
 
+    def test_close_partial_centres_cannot_bypass_rejected_surface_association(self):
+        second=replace(self.second,position_m=tuple(np.asarray(self.first.position_m)+[.02,0,0]))
+        original=deproject
+        def separate(frame):
+            xyz=original(frame).copy()
+            if frame.name=='left_wrist_camera':xyz+=np.array([.08,0,0])
+            return xyz
+        detections=[([self.first],{self.first.mask_refs[0]:self.masks[self.first.mask_refs[0]]}),
+                    ([second],{second.mask_refs[0]:self.masks[second.mask_refs[0]]})]
+        with patch('workstation.perception.rgbd_cartons.deproject',side_effect=separate),\
+                patch.object(self.est,'_detect',side_effect=detections):
+            scene=self.est.estimate(self.packet)
+        self.assertEqual(len(scene.objects),2)
+        self.assertEqual({o.mask_refs for o in scene.objects},{self.first.mask_refs,second.mask_refs})
+
+    def test_same_camera_candidates_cannot_merge_by_centre_alone(self):
+        other=replace(self.complete,mask_refs=('scene_camera/100/other',))
+        detections=[([self.complete,other],{self.complete.mask_refs[0]:self.masks[self.complete.mask_refs[0]],
+                    other.mask_refs[0]:self.masks[self.complete.mask_refs[0]]}),([], {})]
+        with patch.object(self.est,'_detect',side_effect=detections):scene=self.est.estimate(self.packet)
+        self.assertEqual(len(scene.objects),2)
+
     def test_overlapping_view_with_second_box_cannot_be_absorbed(self):
         original=deproject
         def contaminated(frame):
