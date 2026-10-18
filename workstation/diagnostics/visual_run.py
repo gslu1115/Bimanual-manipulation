@@ -119,6 +119,10 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
         grasp_source=GraspGenSource(GraspGenProxy(graspgen.graspgen_proxy),calibration,graspgen.num_grasps,
                                    accepted_postures=('SIDE',) if side_adjustment else ('UPRIGHT',))
         timing.wrap(grasp_source,'generate','grasp_generation')
+    if env.c.get('grasp_backend')=='centered':
+        from workstation.planning.centered_grasp import CenteredGraspSource
+        grasp_source=CenteredGraspSource()
+        timing.wrap(grasp_source,'generate','grasp_generation')
     if side_adjustment:
         from workstation.skills.visual_side_adjustment import VisualSideAdjustment
         if max_items is not None:raise ValueError('Side adjustment is a controlled single-object skill')

@@ -5,6 +5,27 @@ from workstation.simulation.robot_driver import RobotMotion
 
 
 class RobotDriveTests(unittest.TestCase):
+    def test_cartesian_refines_continuous_high_joint_gradient_without_relaxing_jump(self):
+        driver=RobotMotion.__new__(RobotMotion);driver.dt=.1;driver.speed=.2
+        start=np.zeros(7)
+        driver.read_states=lambda:{'left':RobotState(1.,start,np.full(2,.04))}
+        driver.solve=lambda arm,p,yaw,warm:np.full(7,p[2]*10)
+        path=driver.cartesian_knots('left',np.zeros(3),[0,0,.1],0.,0.)
+        self.assertGreater(driver.last_cartesian_ik['refinement'],1)
+        self.assertLessEqual(driver.last_cartesian_ik['max_joint_step_rad'],.15)
+        np.testing.assert_array_equal(path[0],start)
+        np.testing.assert_allclose(path[-1],np.ones(7))
+
+    def test_cartesian_true_branch_jump_still_rejects_with_bounded_retries(self):
+        driver=RobotMotion.__new__(RobotMotion);driver.dt=.1;driver.speed=.2
+        driver.read_states=lambda:{'left':RobotState(1.,np.zeros(7),np.full(2,.04))}
+        calls=[]
+        def jump(arm,p,yaw,warm):calls.append(True);return warm+1.
+        driver.solve=jump
+        with self.assertRaisesRegex(RuntimeError,'IK_DISCONTINUITY'):
+            driver.cartesian_knots('left',np.zeros(3),[0,0,.1],0.,0.)
+        self.assertEqual(len(calls),4)
+
     def test_collision_report_does_not_retain_previous_unknown_query(self):
         driver=RobotMotion.__new__(RobotMotion)
         state=RobotState(1.,np.zeros(7),np.full(2,.04))

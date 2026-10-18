@@ -484,16 +484,26 @@ class RobotMotion:
         # Forecast phases pass their planned predecessor explicitly; drive
         # setpoints are not encoder observations and are not IK warm states.
         warm=np.asarray(self.read_states()[arm].joint_positions_rad if warm_start is None else warm_start).copy()
-        knots=[warm]
-        for i in range(1,count+1):
-            a=smooth(i/count)
-            if orientation0 is None:
-                q=self.solve(arm,start+a*(target-start),yaw0+a*(yaw1-yaw0),knots[-1])
+        # Near a redundant-arm singularity a continuous Cartesian path may
+        # need finer IK continuation. Do not accept a larger joint jump: retry
+        # from the SAME measured start with denser knots, bounded to 8x. Each
+        # knot still gets four physics ticks, slowing only the affected path.
+        base_count=count
+        for refinement in (1,2,4,8):
+            count=base_count*refinement;knots=[warm.copy()]
+            for i in range(1,count+1):
+                a=smooth(i/count)
+                if orientation0 is None:
+                    q=self.solve(arm,start+a*(target-start),yaw0+a*(yaw1-yaw0),knots[-1])
+                else:
+                    q=self.solve_pose(arm,start+a*(target-start),slerp(*orientations,a),knots[-1])
+                if np.max(np.abs(q-knots[-1])) > .15:break
+                knots.append(q)
             else:
-                q=self.solve_pose(arm,start+a*(target-start),slerp(*orientations,a),knots[-1])
-            if np.max(np.abs(q-knots[-1])) > .15: raise RuntimeError('IK_DISCONTINUITY')
-            knots.append(q)
-        return knots
+                self.last_cartesian_ik=dict(refinement=refinement,knots=len(knots),
+                    max_joint_step_rad=max(float(np.max(np.abs(b-a))) for a,b in zip(knots,knots[1:])))
+                return knots
+        raise RuntimeError('IK_DISCONTINUITY')
 
     def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M):
         if getattr(candidate,'orientation_wxyz',None) is not None:

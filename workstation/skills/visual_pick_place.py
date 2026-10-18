@@ -79,7 +79,7 @@ class VisualPickPlace:
             accepted_postures=self.accepted_postures)
 
     def _refresh_candidate(self,candidate,obj):
-        if candidate.source=='graspgen':
+        if candidate.source in ('graspgen','centered'):
             from workstation.planning.graspgen_candidates import revalidate_candidate
             return revalidate_candidate(candidate,obj,self.scene,
                 {n:f.sequence_id for n,f in self.packet.cameras.items() if f},self.accepted_postures)
@@ -391,7 +391,7 @@ class VisualPickPlace:
                 raise RuntimeError('NO_FEASIBLE_DIRECT_GRASP')
             candidate=chosen.candidate; self.candidate=candidate; self.arm=candidate.arm
             result['decision']['skill']=self.skill_name
-            model=candidate.source=='graspgen'
+            model=candidate.source in ('graspgen','centered')
             if self.skill_name=='SIDE_ADJUST' and not model:
                 raise RuntimeError('SIDE_REQUIRES_MODEL_POSE')
             if model:
@@ -471,8 +471,9 @@ class VisualPickPlace:
             result['held_on_exit']=self.held
             result['normal_stage_observation_anchors']=self.observation_anchors
             if self.grasp_source is not None:
-                result['grasp_backend']='graspgen'
-                result['model_requests']=self.grasp_source.requests
+                result['grasp_backend']=getattr(self.grasp_source,'backend','graspgen')
+                result['candidate_requests']=self.grasp_source.requests
+                if result['grasp_backend']=='graspgen':result['model_requests']=self.grasp_source.requests
         return result
 
     def execute_selected(self, result, chosen, prepared_q, obj, slot):

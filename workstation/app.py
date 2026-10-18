@@ -39,10 +39,10 @@ def build_parser():
     parser.add_argument('--visual-observation-period-s',type=float,
                         help='Upright GraspGen stable-translation/empty-travel vision interval, 0.1..2 seconds; default 1; contact phases/reorientation stay at 0.1 seconds')
     parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
-    parser.add_argument('--grasp-backend',choices=('geometry','graspgen'),default='geometry',
+    parser.add_argument('--grasp-backend',choices=('geometry','graspgen','centered'),default='geometry',
                         help='Candidate backend for graspgen-check or controlled visual-pnp')
     parser.add_argument('--motion-backend',choices=('legacy','cumotion'),default='legacy',
-                        help='Opt-in Isaac 6.1 official controller for single upright GraspGen pick/place')
+                        help='Opt-in Isaac 6.1 controller for single upright graspgen/centered pick/place')
     parser.add_argument('--wait-for-start',action='store_true',
                         help='Livestream cuMotion demo: prepare first, then wait for the Start button')
     parser.add_argument("--no-sensors", action="store_true")
@@ -120,8 +120,11 @@ def load_config(args, parser):
             config['conveyor']['slot_size_xy']=[max(config['conveyor']['slot_size_xy'][j],
                 max(v['size_m'][j] for v in variants)+.02) for j in range(2)]
     motion_backend=getattr(args,'motion_backend','legacy')
-    if motion_backend=='cumotion' and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
-        parser.error('--motion-backend cumotion requires visual-pnp --grasp-backend graspgen')
+    if args.grasp_backend=='centered' and (args.mode!='visual-pnp' or motion_backend!='cumotion'):
+        parser.error('--grasp-backend centered requires visual-pnp --motion-backend cumotion')
+    if motion_backend=='cumotion' and (args.mode!='visual-pnp' or args.grasp_backend not in ('graspgen','centered')):
+        parser.error('--motion-backend cumotion requires visual-pnp --grasp-backend graspgen or centered')
+    config['grasp_backend']=args.grasp_backend
     config['motion_backend']=motion_backend
     if getattr(args,'wait_for_start',False) and (not args.livestream or motion_backend!='cumotion'):
         parser.error('--wait-for-start requires --livestream --motion-backend cumotion')

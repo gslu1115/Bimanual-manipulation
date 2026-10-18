@@ -26,7 +26,7 @@ class CuMotionPickPlace(VisualPickPlace):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.grasp_source is None:
-            raise ValueError('cuMotion development requires the verified GraspGen pose')
+            raise ValueError('cuMotion requires an explicit full-pose candidate source')
         # Heavy perception happens at state boundaries and a bounded watchdog,
         # not in every physics tick. Encoders and proposed commands are checked
         # continuously; intervening payload poses are explicitly predictions.
