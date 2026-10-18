@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-18",
+  "source_commit": "cecf144b371812eaf020a34803e474a62ef8e900",
+  "plan": {
+    "source_commit": "cecf144b371812eaf020a34803e474a62ef8e900",
+    "seed": 413,
+    "angles_deg": [
+      88
+    ],
+    "retry_of": "random-upright-dev23/yaw088-seed413-attempt01",
+    "started_utc": "2026-10-18T05:56:34.092083+00:00",
+    "num_grasps": 256,
+    "scope": "user-requested live retry at 88 degrees; same algorithm and parameters; GraspGen proposals regenerated, not frozen; fixed position/size/cameras; wait for viewer start",
+    "timing": "PREGRASP wall timestamp to DONE includes motion, compute, home and final verification; FAILED reported separately; no action means null"
+  },
+  "result": {
+    "angle_deg": 88,
+    "success": true,
+    "failure_reason": null,
+    "motion_started": true,
+    "motion_start_to_done_s": 63.388702154159546,
+    "motion_start_to_failure_s": null,
+    "process_start_to_result_s": 179.92788577079773,
+    "manual_start_wait": {
+      "start_epoch": 1792303054.8828406,
+      "end_epoch": 1792303110.5889478,
+      "wait_wall_s": 55.70610761642456,
+      "physics_frozen": true
+    },
+    "phases": [
+      {
+        "phase": "PREGRASP",
+        "epoch": 1792303110.5902126,
+        "elapsed_from_start_s": 115.67588996887207
+      },
+      {
+        "phase": "APPROACH",
+        "epoch": 1792303115.298526,
+        "elapsed_from_start_s": 120.38420343399048
+      },
+      {
+        "phase": "CLOSE",
+        "epoch": 1792303123.6494324,
+        "elapsed_from_start_s": 128.7351098060608
+      },
+      {
+        "phase": "LIFT",
+        "epoch": 1792303125.3961892,
+        "elapsed_from_start_s": 130.48186659812927
+      },
+      {
+        "phase": "TRANSFER",
+        "epoch": 1792303136.1073759,
+        "elapsed_from_start_s": 141.19305324554443
+      },
+      {
+        "phase": "LOWER",
+        "epoch": 1792303142.8795748,
+        "elapsed_from_start_s": 147.965252161026
+      },
+      {
+        "phase": "OPEN",
+        "epoch": 1792303155.9514887,
+        "elapsed_from_start_s": 161.03716611862183
+      },
+      {
+        "phase": "RETREAT",
+        "epoch": 1792303160.6402512,
+        "elapsed_from_start_s": 165.72592854499817
+      },
+      {
+        "phase": "HOME",
+        "epoch": 1792303164.3155808,
+        "elapsed_from_start_s": 169.40125823020935
+      },
+      {
+        "phase": "VERIFY",
+        "epoch": 1792303169.5798385,
+        "elapsed_from_start_s": 174.6655158996582
+      },
+      {
+        "phase": "DONE",
+        "epoch": 1792303173.9789147,
+        "elapsed_from_start_s": 179.06459212303162
+      }
+    ],
+    "controller_timing": {
+      "motion_through_home_wall_s": 58.98911735500042,
+      "controller_sim_s": 16.183333333333117,
+      "controller_and_state_wall_s": 1.975769639999271,
+      "controller_calls": 311,
+      "phase_at_exit": "DONE"
+    },
+    "max_visual_lift_m": 0.18827322819495673,
+    "observed_stable_s": 0.5999999999999659,
+    "initial_state": [
+      {
+        "name": "box_00",
+        "position": [
+          -0.22268897610158897,
+          -0.056236772516897356,
+          0.7865
+        ],
+        "orientation_wxyz": [
+          0.7193398003386512,
+          0.0,
+          0.0,
+          0.6946583704589973
+        ],
+        "linear_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "angular_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-live-88-dev24/yaw088-seed413-attempt01/output",
+    "archive_files": 189,
+    "archive_bytes": 53738154,
+    "last_online_verification": {
+      "time_s": 26.024999999999164,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.19957150518894196,
+        -0.39712050557136536,
+        0.7824999673389318
+      ],
+      "axis_yaw_error_deg": 0.15023918282183954,
+      "z_error_m": 3.266106818333725e-08,
+      "visual_speed_m_s": 3.554521790646202e-06,
+      "arms_home_and_open": true
+    },
+    "release_checks": 1,
+    "process_start_to_result_excluding_viewer_wait_s": 124.22177815437317,
+    "phase_wall_s": {
+      "PREGRASP": 4.708313465118408,
+      "APPROACH": 8.350906372070312,
+      "CLOSE": 1.7467567920684814,
+      "LIFT": 10.711186647415161,
+      "TRANSFER": 6.772198915481567,
+      "LOWER": 13.071913957595825,
+      "OPEN": 4.688762426376343,
+      "RETREAT": 3.6753296852111816,
+      "HOME": 5.2642576694488525,
+      "VERIFY": 4.399076223373413
+    }
+  },
+  "scope": "User-requested live retry of 88-degree dev23 failure, same algorithm/parameters and seed413 position, unchanged size/cameras/acceptance. GraspGen proposals regenerated, not a deterministic grasp replay.",
+  "timing": "PREGRASP to DONE includes motion, synchronous compute, retreat/home and final current RGB-D acceptance; application/model preparation and viewer waiting excluded.",
+  "archive": {
+    "root": "/home/featurize/work/isaac-support/graspgen/reports/20261018-live-88-dev24",
+    "files": 189,
+    "bytes": 53738154,
+    "per_file_sha256_verified": true
+  },
+  "screenshot": {
+    "path": "browser-final.png",
+    "sha256": "ba3c705f74de6f7733d3737b0bebd1ea306ec65a92a3195c70b90950c4761a97"
+  },
+  "validation": "No algorithm change or new CPU test run. Real Isaac6.1/4090 physical execution and online visual acceptance completed.",
+  "limitation": "Previous 88-degree failure retained. A successful retry is not evidence that its cause was repaired or general repeatability established.",
+  "gui": "successful final scene retained; viewer and model services running"
+}
