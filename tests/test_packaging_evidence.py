@@ -32,3 +32,15 @@ class PackagingEvidenceTests(unittest.TestCase):
     def test_visible_top_and_bottom_folds_remain_ambiguous(self):
         p,a=self.face('UPRIGHT');_,b=self.face('INVERTED')
         self.assertTrue(self.evaluate(p,np.maximum(a,b))['conflicting'])
+
+    def test_only_one_flank_cannot_turn_an_illuminated_patch_into_a_fold(self):
+        p,c=self.face();visible=p[:,1]<.008
+        # A smooth brightening toward the hidden side used to look like a
+        # narrow central stripe when compared only with the left shadow.
+        gain=1.+.5*(p[:,1]+.0275)/.055
+        c=np.clip(c*gain[:,None],0,255).astype(np.uint8)
+        self.assertEqual(self.evaluate(p[visible],c[visible])['label'],'UNKNOWN')
+
+    def test_fold_conflict_requires_both_observed_flanks(self):
+        p,c=self.face('INVERTED');visible=p[:,1]<.008
+        self.assertEqual(self.evaluate(p[visible],c[visible])['observed'],[])

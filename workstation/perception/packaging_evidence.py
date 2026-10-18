@@ -35,7 +35,11 @@ def tape_axis_evidence(views,centre,rotation_hint,normal,size):
             if stripe.sum()<5:continue
             width=float(np.ptp(np.quantile(local[stripe,1],[.05,.95])))
             if not .006<=width<=.018:continue
-            rows.append((int(index),np.median(points[stripe],axis=0),width))
+            # Use the observed stripe boundaries, not the pixel-population
+            # median: perspective/raster sampling can heavily weight one side
+            # and make two views invent different tape directions.
+            midpoint=np.mean(np.quantile(local[stripe],[.05,.95],axis=0),axis=0)
+            rows.append((int(index),centre+rotation_hint@midpoint,width))
         runs=[]
         for row in rows:
             if not runs or row[0]!=runs[-1][-1][0]+1:runs.append([])
@@ -90,8 +94,12 @@ def tape_fold_evidence(points, rgb, centre_xy, yaw, length, width, height, top_z
         for label,direction in [('UPRIGHT',1.),('INVERTED',-1.)]:
             band=(z*direction>height*.10)&(z*direction<height*.52)
             flank=outer&band
-            if flank.sum()<10:continue
-            bright=central&band&(brightness>np.median(brightness[flank])+12)
+            left=flank&(local[:,1]<0);right=flank&(local[:,1]>0)
+            if min(left.sum(),right.sum())<5:continue
+            # A one-sided shadow/lighting gradient is not an end-fold. Require
+            # contrast against BOTH observed cardboard flanks at this height.
+            baseline=max(np.median(brightness[left]),np.median(brightness[right]))
+            bright=central&band&(brightness>baseline+12)
             if bright.sum()<10:continue
             span_y=float(np.ptp(local[bright,1]));span_z=float(np.ptp(z[bright]))
             fraction=float(bright.sum()/max(1,(central&band).sum()))

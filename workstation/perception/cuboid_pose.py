@@ -39,7 +39,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         return unknown('CUBOID_SCENE_TIME_OR_FRAME_MISMATCH')
     age=packet.assembled_time_s-packet.observation_time_s
     if not 0<=age<=priors.max_age_s:return unknown('STALE_CUBOID_OBSERVATION')
-    half=size/2;instances=[];instance_rgb=[];normal_points=[];normals=[];refs=[];ratios=[];cached={}
+    half=size/2;instances=[];instance_rgb=[];normal_points=[];normals=[];refs=[];ratios=[];cached={};current_instances=[]
     for ref,mask in scene.masks.items():
         name=ref.split('/')[0];frame=packet.cameras.get(name)
         if frame is None or scene.camera_status.get(name)!='OK' or packet.camera_status.get(name)!='OK':continue
@@ -51,6 +51,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         xyz=cached[name]
         valid=mask&frame.valid_depth;points=xyz[valid]
         if len(points)<60:continue
+        current_instances.append((ref,points))
         local=(points-centre)@r
         supported=np.all(np.abs(local)<=half+.006,axis=1)&(np.min(np.abs(np.abs(local)-half),axis=1)<=.006)
         ratio=float(supported.mean())
@@ -176,6 +177,18 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         local=(instance-fitted)@measured
         support=np.all(np.abs(local)<=half+.006,axis=1)&(np.min(np.abs(np.abs(local)-half),axis=1)<=.006)
         if support.mean()<.95:return unknown('FITTED_INSTANCE_GEOMETRY_CONFLICT')
+    # The correspondence hint can exclude a real second face before the
+    # current observation corrects the body's orientation. Recheck those WHOLE
+    # instances against the now fitted body, using the same 6mm/95% gates.
+    # These extra refs support identity only; they do not invent pose constraints.
+    rechecked=[]
+    for ref,instance in current_instances:
+        if ref in refs:continue
+        local=(instance-fitted)@measured
+        support=np.all(np.abs(local)<=half+.006,axis=1)&(np.min(np.abs(np.abs(local)-half),axis=1)<=.006)
+        ratio=float(support.mean())
+        if ratio>=.95:
+            refs.append(ref);ratios.append(ratio);rechecked.append(ref)
     residual=max(face['residual'] for face in faces)
     uncertainty=max(.003,priors.optical_depth_error_margin_m)+2*residual+max(extent_errors,default=0.)/2
     if uncertainty>.008:return unknown('POSE_UNCERTAINTY_UNBOUNDED')
@@ -184,6 +197,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
     return dict(status=('REFERENCE_CONSTRAINED' if reference_constrained else 'GRASP_CONSTRAINED') if predicted_axes else 'GEOMETRY_OBSERVED',time_s=packet.observation_time_s,
         position_m=fitted.tolist(),orientation_wxyz=quaternion_from_matrix(measured).tolist(),
         rotation=measured.tolist(),size_m=size.tolist(),mask_refs=refs,
+        identity_refs_rechecked_after_fit=rechecked,
         surface_inlier_ratio=min(ratios),plane_residual_m=residual,uncertainty_m=uncertainty,
         observed_face_axes=sorted(axes),coordinate_constraints=constraints,
         translation_difference_from_hint_m=float(np.linalg.norm(fitted-centre)),
