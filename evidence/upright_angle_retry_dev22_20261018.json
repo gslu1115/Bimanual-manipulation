@@ -1,0 +1,223 @@
+{
+  "angle_deg": 135,
+  "success": true,
+  "failure_reason": null,
+  "motion_start_to_done_s": 61.210105895996094,
+  "motion_start_to_failure_s": null,
+  "process_start_to_result_s": 143.26042413711548,
+  "phases": [
+    {
+      "phase": "PREGRASP",
+      "epoch": 1792301505.3055453,
+      "elapsed_from_start_s": 81.19384384155273
+    },
+    {
+      "phase": "APPROACH",
+      "epoch": 1792301510.0745835,
+      "elapsed_from_start_s": 85.96288204193115
+    },
+    {
+      "phase": "CLOSE",
+      "epoch": 1792301518.5971632,
+      "elapsed_from_start_s": 94.48546171188354
+    },
+    {
+      "phase": "LIFT",
+      "epoch": 1792301520.3218005,
+      "elapsed_from_start_s": 96.2100989818573
+    },
+    {
+      "phase": "TRANSFER",
+      "epoch": 1792301530.9100745,
+      "elapsed_from_start_s": 106.7983729839325
+    },
+    {
+      "phase": "LOWER",
+      "epoch": 1792301537.7015018,
+      "elapsed_from_start_s": 113.5898003578186
+    },
+    {
+      "phase": "OPEN",
+      "epoch": 1792301550.4324162,
+      "elapsed_from_start_s": 126.32071471214294
+    },
+    {
+      "phase": "RETREAT",
+      "epoch": 1792301552.0712276,
+      "elapsed_from_start_s": 127.95952606201172
+    },
+    {
+      "phase": "HOME",
+      "epoch": 1792301555.0145886,
+      "elapsed_from_start_s": 130.90288710594177
+    },
+    {
+      "phase": "VERIFY",
+      "epoch": 1792301559.8773835,
+      "elapsed_from_start_s": 135.7656819820404
+    },
+    {
+      "phase": "DONE",
+      "epoch": 1792301566.5156512,
+      "elapsed_from_start_s": 142.40394973754883
+    }
+  ],
+  "controller_timing": {
+    "motion_through_home_wall_s": 54.57103344699863,
+    "controller_sim_s": 16.249999999999787,
+    "controller_and_state_wall_s": 1.9559034279973275,
+    "controller_calls": 313,
+    "phase_at_exit": "DONE"
+  },
+  "observed_stable_s": 0.5999999999999659,
+  "max_visual_lift_m": 0.18953247004522422,
+  "initial_state": [
+    {
+      "name": "box_00",
+      "position": [
+        -0.22268897610158897,
+        -0.056236772516897356,
+        0.7865
+      ],
+      "orientation_wxyz": [
+        0.38268343236508984,
+        0.0,
+        0.0,
+        0.9238795325112867
+      ],
+      "linear_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angular_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev22/yaw135-seed413-attempt01/output",
+  "archive_files": 186,
+  "archive_bytes": 52197682,
+  "released_geometry_checks": [
+    {
+      "position_m": [
+        -0.19996860662865226,
+        -0.3995280868219932,
+        0.7824997427144407
+      ],
+      "axis_yaw_rad": -3.141206481551283,
+      "uncertainty_m": 0.003,
+      "coordinate_constraints": [
+        {
+          "axis": 0,
+          "source": "complete_observed_extent",
+          "span_m": 0.09997551022774176
+        },
+        {
+          "axis": 1,
+          "source": "complete_observed_extent",
+          "span_m": 0.05488996904253041
+        }
+      ],
+      "mask_refs": [
+        "scene_camera/239/component_1",
+        "left_wrist_camera/239/component_1"
+      ],
+      "top_bottom_semantics": "UNKNOWN",
+      "time_s": 18.766666666666243,
+      "surface_inlier_ratio": 1.0,
+      "top_coverage": 1.0005388467362528,
+      "side_points": 157,
+      "plane_residual_m": 0.00010667144759817866,
+      "surface_tilt_deg": 0.005469348281490158,
+      "post_release_drop_bound_m": 0.019226065458677877,
+      "observed_downward_shift_m": 0.013512704315732482,
+      "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis",
+      "released_bounded": true,
+      "geometric_pose_measured": false,
+      "grasp_constrained": false,
+      "reference_constrained": false,
+      "status": "RELEASE_BOUNDED",
+      "known_size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "centre_intervals_local_m": [
+        [
+          0.2001228782900044,
+          0.2001228782900044
+        ],
+        [
+          0.39945083474887233,
+          0.39945083474887233
+        ],
+        [
+          0.7824997427144407,
+          0.7824997427144407
+        ]
+      ],
+      "collision_size_m": [
+        0.10003482193058089,
+        0.05502751083167088,
+        0.045111015659217005
+      ],
+      "reference_position_m": [
+        -0.20041667833319116,
+        -0.3995690992221842,
+        0.7960124470301732
+      ],
+      "reference_rotation": [
+        [
+          -0.9999996258926065,
+          0.0003865647490920153,
+          0.0007737700180866283
+        ],
+        [
+          -0.00038617191323704066,
+          -0.9999997382686012,
+          0.00061187924313409
+        ],
+        [
+          0.0007740063957907045,
+          0.0006115802683426036,
+          0.9999995134417576
+        ]
+      ],
+      "assumption": "pre-release orientation remains consistent with current broad top patch; geometry is a collision envelope, not placement acceptance"
+    }
+  ],
+  "date": "2026-10-18",
+  "source_commit": "861ace7242364627a099bb33d2d2b8f42ea54767",
+  "last_online_verification": {
+    "time_s": 24.724999999999238,
+    "track_id": "visual_0011",
+    "position_m": [
+      -0.19977544620633125,
+      -0.3996201157569885,
+      0.7824999615331159
+    ],
+    "axis_yaw_error_deg": 0.3992540196491385,
+    "z_error_m": 3.846688412245669e-08,
+    "visual_speed_m_s": 4.917524301426424e-07,
+    "arms_home_and_open": true
+  },
+  "archive_sha256_verified": true,
+  "cpu_tests": {
+    "count": 553,
+    "passed": true,
+    "ci_url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/39100737076",
+    "ci_passed": true
+  },
+  "scope": "one targeted 135-degree retry after carry-reference and observation-spacing corrections, original cameras/size/position/control acceptance retained",
+  "previous_failures": [
+    "dev19 duplicate obstacle at 33.954s",
+    "dev20 unsupported initial carry correspondence at 44.046s",
+    "dev21 null velocity due to interval/age mixup at 5.595s"
+  ],
+  "timing": "motion PREGRASP to DONE includes computation, retreat/home, final RGB-D verification; process preparation excluded",
+  "limitation": "0/45/90 successes are on 0cbf3a3, this135 success on861ace7; not a same-final-version four-angle evaluation or general success rate",
+  "final_gui": "successful GUI and model/stream services retained"
+}
