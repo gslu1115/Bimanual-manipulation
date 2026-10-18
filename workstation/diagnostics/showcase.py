@@ -41,7 +41,19 @@ def capture(env):
             if not finished.done():
                 finished.cancel();raise RuntimeError('Presentation capture timed out: '+name)
             finished.result()
-            if not filename.is_file():raise RuntimeError('Missing presentation image: '+name)
+            # GPU readback completion can precede asynchronous PNG disk output.
+            # Require a complete, decodable image rather than only a finished future.
+            from PIL import Image
+            while True:
+                try:
+                    with Image.open(filename) as saved:
+                        saved.verify()
+                    break
+                except (OSError,SyntaxError):
+                    if time.monotonic()>=deadline:
+                        raise RuntimeError('Presentation image was not fully written: '+name)
+                    RenderingManager.render()
+                    time.sleep(.01)
             print('[showcase] '+str(filename),flush=True)
     finally:
         for op,value in original_ops:op.Set(value)
