@@ -1,0 +1,284 @@
+{
+  "source_commit": "684aebbdc5eab151f2a0a48c44e8251095dad463",
+  "scope": "six pre-drawn development cases; two per size, perturbed initial XY and yaw, fixed single centre target; no changes within batch",
+  "cases": [
+    {
+      "variant": "small_reference",
+      "yaw_deg": 16,
+      "seed": 2901,
+      "initial_position_m": [
+        -0.19771580633601488,
+        -0.07109993884163908,
+        0.7865
+      ],
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "success": true,
+      "failure_reason": null,
+      "motion_to_done_s": 61.676668882369995,
+      "motion_to_failure_s": null,
+      "archive_wall_s": 0.9703169230015192,
+      "setup_task_archive_wall_s": 92.93235874176025,
+      "offline_final_center_error_xy_m": [
+        -0.00027816295623778187,
+        0.0025211215019226296
+      ],
+      "archive_files": 194,
+      "archive_bytes": 49493063,
+      "performance_exclusive_s": {
+        "path_validation": 19.030034634281037,
+        "physics_step": 11.860454760946595,
+        "save_observation": 7.064088657996763,
+        "scene_estimation": 4.4401517450060055,
+        "trace_write": 3.7318815179933154
+      }
+    },
+    {
+      "variant": "small_medium",
+      "yaw_deg": 68,
+      "seed": 2902,
+      "initial_position_m": [
+        -0.22458878882104227,
+        -0.06244145084955282,
+        0.789
+      ],
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "success": true,
+      "failure_reason": null,
+      "motion_to_done_s": 54.28111028671265,
+      "motion_to_failure_s": null,
+      "archive_wall_s": 0.6893267839986947,
+      "setup_task_archive_wall_s": 86.12757182121277,
+      "offline_final_center_error_xy_m": [
+        -0.0002541273832321056,
+        0.002729231119155906
+      ],
+      "archive_files": 186,
+      "archive_bytes": 47253164,
+      "performance_exclusive_s": {
+        "path_validation": 20.352834322533454,
+        "physics_step": 11.83195646596505,
+        "save_observation": 6.468088750989409,
+        "scene_estimation": 4.324848341995676,
+        "trace_write": 3.680402514000889
+      }
+    },
+    {
+      "variant": "small_wide",
+      "yaw_deg": 195,
+      "seed": 2903,
+      "initial_position_m": [
+        -0.19919819111463702,
+        -0.08408007361855503,
+        0.7915
+      ],
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "success": true,
+      "failure_reason": null,
+      "motion_to_done_s": 50.85429406166077,
+      "motion_to_failure_s": null,
+      "archive_wall_s": 0.6047440420006751,
+      "setup_task_archive_wall_s": 103.16385912895203,
+      "offline_final_center_error_xy_m": [
+        -0.0007434517145156749,
+        0.0036217212677002175
+      ],
+      "archive_files": 194,
+      "archive_bytes": 51044618,
+      "performance_exclusive_s": {
+        "path_validation": 20.160623869636765,
+        "physics_step": 12.183668992936873,
+        "save_observation": 6.940370660999179,
+        "scene_estimation": 5.164493191005022,
+        "trace_write": 3.7731397169991396
+      }
+    },
+    {
+      "variant": "small_reference",
+      "yaw_deg": 176,
+      "seed": 2904,
+      "initial_position_m": [
+        -0.1943455068590583,
+        -0.06351595529445568,
+        0.7865
+      ],
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "success": true,
+      "failure_reason": null,
+      "motion_to_done_s": 43.90966749191284,
+      "motion_to_failure_s": null,
+      "archive_wall_s": 0.6733067120003398,
+      "setup_task_archive_wall_s": 79.01332211494446,
+      "offline_final_center_error_xy_m": [
+        -7.313787937163196e-05,
+        -0.0007207155227660911
+      ],
+      "archive_files": 186,
+      "archive_bytes": 46842279,
+      "performance_exclusive_s": {
+        "path_validation": 15.88263811384968,
+        "physics_step": 10.461983256074745,
+        "save_observation": 6.290629902992805,
+        "scene_estimation": 3.675260674001038,
+        "trace_write": 3.555129879005108
+      }
+    },
+    {
+      "variant": "small_medium",
+      "yaw_deg": 111,
+      "seed": 2905,
+      "initial_position_m": [
+        -0.18943643551642977,
+        -0.05795854037534973,
+        0.789
+      ],
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "success": true,
+      "failure_reason": null,
+      "motion_to_done_s": 46.87631940841675,
+      "motion_to_failure_s": null,
+      "archive_wall_s": 0.7441696050009341,
+      "setup_task_archive_wall_s": 77.0572738647461,
+      "offline_final_center_error_xy_m": [
+        0.0004051595926284901,
+        -0.0006217420101165549
+      ],
+      "archive_files": 186,
+      "archive_bytes": 46218657,
+      "performance_exclusive_s": {
+        "path_validation": 18.133895312435925,
+        "physics_step": 10.943563018914574,
+        "save_observation": 6.422125756987953,
+        "scene_estimation": 4.2161941030026355,
+        "trace_write": 3.5007568760047434
+      }
+    },
+    {
+      "variant": "small_wide",
+      "yaw_deg": 196,
+      "seed": 2906,
+      "initial_position_m": [
+        -0.21026320543883784,
+        -0.08126309474771437,
+        0.7915
+      ],
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "success": true,
+      "failure_reason": null,
+      "motion_to_done_s": 51.98321533203125,
+      "motion_to_failure_s": null,
+      "archive_wall_s": 0.6003802489976806,
+      "setup_task_archive_wall_s": 84.59182834625244,
+      "offline_final_center_error_xy_m": [
+        -0.000800567865371693,
+        0.0035986244678497536
+      ],
+      "archive_files": 194,
+      "archive_bytes": 49451760,
+      "performance_exclusive_s": {
+        "path_validation": 21.333952545970533,
+        "physics_step": 12.871324340016145,
+        "save_observation": 7.016229611006565,
+        "scene_estimation": 4.836673378991691,
+        "trace_write": 3.72294468099426
+      }
+    }
+  ],
+  "successes": 6,
+  "total": 6,
+  "archives_verified": true,
+  "files": 1140,
+  "bytes": 290303541,
+  "io_benchmark": {
+    "scope": "same saved observation repeated; compression/render-overlay retained, only storage path changes; not task speedup",
+    "results": [
+      {
+        "pair": 0,
+        "storage": "scratch",
+        "three_observations_s": 1.4346825499997067
+      },
+      {
+        "pair": 0,
+        "storage": "cloud",
+        "three_observations_s": 5.609091671998613
+      },
+      {
+        "pair": 1,
+        "storage": "cloud",
+        "three_observations_s": 1.4405446259988821
+      },
+      {
+        "pair": 1,
+        "storage": "scratch",
+        "three_observations_s": 1.3735946269989654
+      },
+      {
+        "pair": 2,
+        "storage": "scratch",
+        "three_observations_s": 1.4251953870007128
+      },
+      {
+        "pair": 2,
+        "storage": "cloud",
+        "three_observations_s": 9.19817315399996
+      }
+    ],
+    "median_s": {
+      "scratch": 1.4251953870007128,
+      "cloud": 5.609091671998613
+    },
+    "contents_identical": true
+  },
+  "mean_success_motion_s": 51.59687924385071,
+  "median_success_motion_s": 51.41875469684601,
+  "max_success_xy_abs_error_m": [
+    0.000800567865371693,
+    0.0036217212677002175
+  ],
+  "initial_xy_range_m": [
+    [
+      -0.22458878882104227,
+      -0.18943643551642977
+    ],
+    [
+      -0.08408007361855503,
+      -0.05795854037534973
+    ]
+  ],
+  "cloud_root": "/home/featurize/work/isaac-support/graspgen/reports/20261018-small-center-dev29",
+  "validation": {
+    "cpu_tests": 571,
+    "ci_run": 39109093908,
+    "ci_conclusion": "success"
+  },
+  "limitations": [
+    "Six pre-drawn development scenes, not an all-yaw success guarantee.",
+    "Other sizes, multiple boxes/targets, side/inverted/contact cases remain out of scope.",
+    "Changed scenarios prevent attributing whole-task timing differences solely to storage.",
+    "The existing live sidebar scene was retained; this batch ran headless.",
+    "Local temporary copies are retained, verified cloud copies are authoritative after return of the machine."
+  ]
+}
