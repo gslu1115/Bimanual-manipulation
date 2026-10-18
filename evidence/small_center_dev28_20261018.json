@@ -1,0 +1,326 @@
+{
+  "scope": "single affected reference-size 127-degree retry; not a new six-case batch",
+  "source_commit": "355be3eb512ef6e36b787705c896e26e0e0cb499",
+  "files": 185,
+  "bytes": 46222359,
+  "artifacts_verified": true,
+  "case": {
+    "variant": "small_reference",
+    "yaw_deg": 127,
+    "size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "source_commit": "355be3eb512ef6e36b787705c896e26e0e0cb499",
+    "returncode": 0,
+    "success": true,
+    "failure_reason": null,
+    "motion_started": true,
+    "motion_to_done_s": 50.95834994316101,
+    "motion_to_failure_s": null,
+    "setup_and_task_wall_s": 79.55758810043335,
+    "phases": [
+      {
+        "phase": "PREGRASP",
+        "epoch": 1792309147.3817008
+      },
+      {
+        "phase": "APPROACH",
+        "epoch": 1792309150.1746953
+      },
+      {
+        "phase": "CLOSE",
+        "epoch": 1792309155.7515297
+      },
+      {
+        "phase": "LIFT",
+        "epoch": 1792309157.2733343
+      },
+      {
+        "phase": "TRANSFER",
+        "epoch": 1792309164.1434326
+      },
+      {
+        "phase": "LOWER",
+        "epoch": 1792309174.31271
+      },
+      {
+        "phase": "OPEN",
+        "epoch": 1792309183.5194614
+      },
+      {
+        "phase": "RETREAT",
+        "epoch": 1792309188.7731895
+      },
+      {
+        "phase": "HOME",
+        "epoch": 1792309192.3174393
+      },
+      {
+        "phase": "VERIFY",
+        "epoch": 1792309194.843478
+      },
+      {
+        "phase": "DONE",
+        "epoch": 1792309198.3400507
+      }
+    ],
+    "output": "/home/featurize/work/isaac-support/graspgen/reports/20261018-small-center-dev28/small_reference-yaw127-seed413-attempt01/output",
+    "slot_xy": [
+      -0.2,
+      -0.4
+    ],
+    "initial_online_sizes": [
+      [
+        0.1,
+        0.055,
+        0.045
+      ]
+    ],
+    "final_visual": {
+      "time_s": 24.741666666665903,
+      "track_id": "visual_0012",
+      "position_m": [
+        -0.2004448100924492,
+        -0.4000614881515503,
+        0.7824999883676526
+      ],
+      "target_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "x_error_m": -0.00044481009244917713,
+      "y_error_m": -6.148815155027076e-05,
+      "axis_yaw_error_deg": 0.13668547495272712,
+      "z_error_m": 1.163234741863306e-08,
+      "visual_speed_m_s": 5.182034406772749e-06,
+      "arms_home_and_open": true
+    },
+    "offline_final_position_m": [
+      -0.20034845173358917,
+      -0.4006056785583496,
+      0.7824999690055847
+    ],
+    "offline_final_center_error_xy_m": [
+      -0.00034845173358916126,
+      -0.0006056785583495872
+    ],
+    "offline_final_slot_errors": {
+      "xy_m": 0.0006987597059688875,
+      "z_m": 3.099441525655777e-08,
+      "tilt_deg": 4.829673078902934e-06,
+      "axis_yaw_deg": 0.13676643867067903,
+      "linear_speed": 0.001601612100715968,
+      "angular_speed": 2.8792270399504814e-05
+    },
+    "archive_files": 185,
+    "archive_bytes": 46222359
+  },
+  "release_geometry": {
+    "expected_lowest_corner_m": 0.7714130494735496,
+    "observed_supported_body": true,
+    "drop_bound_m": 0.016756810979007587,
+    "measured_gap_m": 0.011413049473549597,
+    "uncertainty_m": 0.00534376150545799,
+    "maximum_drop_bound_m": 0.02,
+    "source": "current RGB-D support and image-time FK"
+  },
+  "placement": {
+    "target_tcp_m": [
+      -0.20034513340615828,
+      -0.40009193647926095,
+      0.8042260894880421
+    ],
+    "orientation_wxyz": [
+      0.005988155038662412,
+      0.00023562349211944523,
+      0.9999819704447525,
+      0.0003811380748119816
+    ],
+    "release_gap_m": 0.01165623849454201,
+    "nominal_release_gap_m": 0.015,
+    "release_uncertainty_m": 0.00534376150545799,
+    "observation_time_s": 14.649999999999809,
+    "visual_offset_tcp_m": [
+      -0.00022446919760963057,
+      8.439322193205053e-05,
+      0.0100733291308736
+    ],
+    "relative_rotation": [
+      [
+        0.9999281729613456,
+        -0.00047580256886708316,
+        -0.011975914539612298
+      ],
+      [
+        -0.0004666744069026771,
+        -0.9999995984309309,
+        0.000765084306127136
+      ],
+      [
+        -0.011976273760364226,
+        -0.0007594405126695577,
+        -0.9999279934660016
+      ]
+    ]
+  },
+  "controller_phases": [
+    {
+      "phase": "APPROACH_PICK",
+      "wall_s": 1.9617316499970912,
+      "end_controller_sim_s": 1.8333333333333317
+    },
+    {
+      "phase": "DESCEND_PICK",
+      "wall_s": 6.407691727003112,
+      "end_controller_sim_s": 5.633333333333434
+    },
+    {
+      "phase": "GRASP",
+      "wall_s": 0.3437833949974447,
+      "end_controller_sim_s": 5.8500000000001
+    },
+    {
+      "phase": "LIFT",
+      "wall_s": 7.024870412002201,
+      "end_controller_sim_s": 9.666666666666563
+    },
+    {
+      "phase": "APPROACH_PLACE",
+      "wall_s": 4.747376358998736,
+      "end_controller_sim_s": 11.449999999999985
+    },
+    {
+      "phase": "DESCEND_PLACE",
+      "wall_s": 14.506615096001042,
+      "end_controller_sim_s": 15.199999999999786
+    },
+    {
+      "phase": "RELEASE",
+      "wall_s": 1.7380744649999542,
+      "end_controller_sim_s": 15.399999999999796
+    },
+    {
+      "phase": "RETREAT",
+      "wall_s": 5.853484541999933,
+      "end_controller_sim_s": 16.21666666666648
+    }
+  ],
+  "performance": {
+    "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+    "wall_s": 64.27696018400093,
+    "categories": {
+      "path_validation": {
+        "calls": 718,
+        "failed_calls": 0,
+        "inclusive_s": 19.95407190797414,
+        "exclusive_s": 16.263652820405696,
+        "max_s": 2.423181600999669
+      },
+      "trace_write": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 10.515260102001776,
+        "exclusive_s": 10.515260102001776,
+        "max_s": 5.31936453399976
+      },
+      "physics_step": {
+        "calls": 2969,
+        "failed_calls": 0,
+        "inclusive_s": 10.180862074008473,
+        "exclusive_s": 10.180862074008473,
+        "max_s": 0.13317310599813936
+      },
+      "save_observation": {
+        "calls": 13,
+        "failed_calls": 0,
+        "inclusive_s": 7.598448862001533,
+        "exclusive_s": 7.598448862001533,
+        "max_s": 1.5550310380021983
+      },
+      "camera_render": {
+        "calls": 72,
+        "failed_calls": 0,
+        "inclusive_s": 4.1885813049993885,
+        "exclusive_s": 4.1885813049993885,
+        "max_s": 0.14187383700118517
+      },
+      "depth_obstacle_mapping": {
+        "calls": 269662,
+        "failed_calls": 0,
+        "inclusive_s": 3.88664446058101,
+        "exclusive_s": 3.88664446058101,
+        "max_s": 0.2909420619980665
+      },
+      "scene_estimation": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 3.7133075919919065,
+        "exclusive_s": 3.7133075919919065,
+        "max_s": 0.3413378119985282
+      },
+      "cartesian_ik": {
+        "calls": 19,
+        "failed_calls": 3,
+        "inclusive_s": 1.6168686899945897,
+        "exclusive_s": 1.6168686899945897,
+        "max_s": 0.47178403699945193
+      },
+      "sensor_read": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 4.839728431008552,
+        "exclusive_s": 0.6511471260091639,
+        "max_s": 0.6806752789998427
+      },
+      "free_space_mapping": {
+        "calls": 1755,
+        "failed_calls": 0,
+        "inclusive_s": 0.5348390429935534,
+        "exclusive_s": 0.5348390429935534,
+        "max_s": 0.026025644998298958
+      },
+      "holding_estimation": {
+        "calls": 21,
+        "failed_calls": 0,
+        "inclusive_s": 0.3271675249961845,
+        "exclusive_s": 0.3271675249961845,
+        "max_s": 0.06845309599884786
+      },
+      "workspace_setup": {
+        "calls": 22,
+        "failed_calls": 0,
+        "inclusive_s": 0.034923715007607825,
+        "exclusive_s": 0.034923715007607825,
+        "max_s": 0.0029810249980073422
+      },
+      "grasp_generation": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.7634103719974519,
+        "exclusive_s": 0.007078072998410789,
+        "max_s": 0.7634103719974519
+      },
+      "joint_planning": {
+        "calls": 6,
+        "failed_calls": 0,
+        "inclusive_s": 1.348766698003601,
+        "exclusive_s": 0.0008033700032683555,
+        "max_s": 0.4383056060032686
+      }
+    }
+  },
+  "protocol_note": "plan.json inherited the earlier generic scope wording; exact planned cases and command contain only reference127, reflected here",
+  "ci": {
+    "run_id": 39108390842,
+    "conclusion": "success",
+    "cpu_tests": 567
+  },
+  "coverage_boundary": "dev27 five successful cases plus dev28 affected reference127 success; not six of six on final version and not random/general all-yaw success rate"
+}
