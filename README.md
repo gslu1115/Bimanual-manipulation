@@ -41,7 +41,7 @@ CI 仅验证当前提交逻辑，不能替代 RTX/Vulkan、模型服务、物理
 
 当前开发范围固定为**一个正面向上的盒子、三种小尺寸、不同初始转角、一个目标位置**。视觉任务只开放 `visual_task.target_slot_index=0`，即盒心 XY=(-0.2,-0.4)米；历史固定基线的另外两个槽位不会参与视觉目标选择。三种小尺寸使用相同公共 `perception.carton_size_catalog_m`，由当前RGB-D足迹匹配，抓取、持盒和放置使用该目标的尺寸及视觉/FK偏移。不能从fixture名字直接获得在线尺寸。多目标、多盒、竖立/倒置与接触堆叠后续再引入，当前不启动强化学习。
 
-三种单盒初态分别用 `--visual-fixture upright --visual-carton-variant small_reference|small_medium|small_wide`（三选一），在 `visual-pnp` 下可结合 `--visual-yaw-deg` 与 `--seed`。尺寸分别100×55×45、110×60×50、120×65×55mm；选项只构造待测实体，三路相机和在线候选尺寸表相同。落位结果增加单独的X/Y中心误差，现有验收容差保持，实际鲁棒性以交接20.53记录为准。首轮三尺寸六例3/6成功，见交接20.53。新增显式 `--grasp-backend centered --motion-backend cumotion`：由当前视觉盒心产生长轴中点抓姿，TCP位于顶面下12mm，保留两种对向腕姿及完整路径/闭爪/持盒检查；不调用模型、不改写GraspGen输出，也不自动回退。原GraspGen入口保留。566项CPU通过，居中方案物理验证待完成。
+三种单盒初态分别用 `--visual-fixture upright --visual-carton-variant small_reference|small_medium|small_wide`（三选一），在 `visual-pnp` 下可结合 `--visual-yaw-deg` 与 `--seed`。尺寸分别100×55×45、110×60×50、120×65×55mm；选项只构造待测实体，三路相机和在线候选尺寸表相同。落位结果增加单独的X/Y中心误差，现有验收容差保持，实际鲁棒性以交接20.53记录为准。首轮三尺寸六例3/6成功，见交接20.53。新增显式 `--grasp-backend centered --motion-backend cumotion`：由当前视觉盒心产生长轴中点抓姿，TCP位于顶面下12mm，保留两种对向腕姿及完整路径/闭爪/持盒检查；不调用模型、不改写GraspGen输出，也不自动回退。原GraspGen入口保留。居中方案dev27六例5/6通过，剩余127°释放高度补修中；567项CPU通过，见交接20.53。
 
 cuMotion 单盒松爪后的撤手复核允许当前大块顶面加已确认盒体尺寸/释放前朝向提供有界碰撞范围，不再强求侧面与两个完整水平边同时可见。隐藏盒心保持为区间并扩大障碍范围，标为 RELEASE_BOUNDED；撤开后重观察，最终落位验收仍读取新 RGB-D。仅直立受控释放启用，三路相机与运动到位范围保持。539 项 CPU、原 dev17 失败帧回放通过；dev18 / seed413 完整抓放及最终视觉验收通过，开始运动至完成 63.684 秒、含启动准备并扣除等待 145.212 秒。此轮释放时两个水平坐标均有当前约束，隐藏轴区间由回放验证；单次开发案例不代表任意角度成功率。结果见 evidence/cumotion_dev18_20261018.json 和交接 20.47。
 

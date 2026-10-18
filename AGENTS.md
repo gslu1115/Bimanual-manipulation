@@ -4,6 +4,9 @@
 
 ## 当前主线
 
+2026-10-18 centered / dev27 / 9525318 六例5/6成功，三尺寸88°及medium108、wide209均完成。reference127松爪前RELEASE_HEIGHT_UNSUPPORTED：固定15mm间隙未预留当前约5.5mm以上不确定界/跟踪余量。补修按min(名义间隙,20mm-当前不确定界-3mm)下放，原20mm上限/碰撞检查保留；失败前也记录释放几何。567项CPU通过，仅重试reference127。dev27全1045文件262406279字节云盘SHA复核，见20.53。
+
+
 2026-10-18 dev26 / f6949a4 三尺寸六例3/6成功：reference88/127、wide88；medium88 IK_DISCONTINUITY、medium108掌部距不确定盒体边界不足2mm、wide209持盒倾斜。原始数据已归档。新增显式centered候选入口（正放盒长轴中点、顶面下12mm TCP，两种对向腕姿），复用cuMotion，不冒充或修改GraspGen原姿态；用户已授权选择更适合当前规则单盒的方法。关节跳变只允许有界细分后仍<=.15rad的连续路径，完整碰撞检查保留。566项CPU通过，后续物理结果待记录。
 
 

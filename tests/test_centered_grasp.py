@@ -16,6 +16,16 @@ from workstation.observations.camera_geometry import pose_matrix
 
 
 class CenteredGraspTests(unittest.TestCase):
+    def test_release_goal_reserves_current_uncertainty_and_tracking_room(self):
+        from workstation.skills.cumotion_pick_place import release_gap_with_uncertainty
+        for uncertainty in (.003,.005493463658365234,.008):
+            gap=release_gap_with_uncertainty(.015,uncertainty)
+            self.assertGreaterEqual(gap,.009-1e-12)
+            self.assertLessEqual(gap+uncertainty+.003,.020+1e-12)
+        self.assertEqual(release_gap_with_uncertainty(.010,.003),.010)
+        for bad in (-.001,.02,float('nan')):
+            with self.assertRaises(ValueError):release_gap_with_uncertainty(.015,bad)
+
     def test_three_sizes_and_yaws_have_central_symmetric_opening_and_top_clearance(self):
         config=json.loads((Path(__file__).resolve().parents[1]/'config/scene.json').read_text())
         priors=ScenePriors.from_config(config)

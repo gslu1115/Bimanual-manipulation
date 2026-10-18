@@ -19,6 +19,13 @@ def placement_goal(slot, support_z, size, release_gap, body_rotation, offset, re
     return centre-rotation@np.asarray(offset), rotation
 
 
+def release_gap_with_uncertainty(nominal_gap, uncertainty):
+    """Leave 3 mm tracking headroom inside the existing 20 mm drop bound."""
+    if not np.isfinite([nominal_gap,uncertainty]).all() or not 0<nominal_gap<=.020 or not 0<=uncertainty<=.008:
+        raise ValueError('Release gap requires bounded current visual uncertainty')
+    return min(float(nominal_gap),.020-float(uncertainty)-.003)
+
+
 class CuMotionPickPlace(VisualPickPlace):
     run_scope = 'controlled_upright_single_carton_official_controller_development'
     allow_partial_release=True
@@ -181,12 +188,15 @@ class CuMotionPickPlace(VisualPickPlace):
                         if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
                         if self.max_visual_lift < .08:raise RuntimeError('NO_VISUAL_LIFT_PROOF')
                         relation=self.robot.held_visual_geometry
+                        release_gap=release_gap_with_uncertainty(self.release_gap_m,self.hold_tracker.uncertainty_m)
                         place,place_rotation=placement_goal(slot,self.robot.place_support_z,obj.size_m,
-                            self.release_gap_m,measurement['rotation'],relation['offset'],relation['relative_rotation'])
+                            release_gap,measurement['rotation'],relation['offset'],relation['relative_rotation'])
                         driver.update_place_from_measurement(place,place_rotation)
                         result['model_placement']=dict(target_tcp_m=place.tolist(),
                             orientation_wxyz=quaternion_from_matrix(place_rotation).tolist(),
-                            release_gap_m=self.release_gap_m,observation_time_s=self.scene.observation_time_s,
+                            release_gap_m=release_gap,nominal_release_gap_m=self.release_gap_m,
+                            release_uncertainty_m=self.hold_tracker.uncertainty_m,
+                            observation_time_s=self.scene.observation_time_s,
                             visual_offset_tcp_m=relation['offset'].tolist(),relative_rotation=relation['relative_rotation'].tolist())
                         transfer=driver.phase=='APPROACH_PLACE'
                         self.event('TRANSFER' if transfer else 'LOWER')
@@ -204,10 +214,12 @@ class CuMotionPickPlace(VisualPickPlace):
                         released_rotation=rotation@relation['relative_rotation']
                         bottom=released_centre[2]-np.abs(released_rotation[2])@(self.hold_tracker.size/2)
                         drop_bound=max(0.,float(bottom-self.robot.place_support_z))+self.hold_tracker.uncertainty_m
-                        if drop_bound>.020:raise RuntimeError('RELEASE_HEIGHT_UNSUPPORTED')
                         result['release_geometry']=dict(expected_lowest_corner_m=float(bottom),
                             observed_supported_body=True,drop_bound_m=drop_bound,
+                            measured_gap_m=float(bottom-self.robot.place_support_z),
+                            uncertainty_m=self.hold_tracker.uncertainty_m,maximum_drop_bound_m=.020,
                             source='current RGB-D support and image-time FK')
+                        if drop_bound>.020:raise RuntimeError('RELEASE_HEIGHT_UNSUPPORTED')
                         self.event('OPEN');self.releasing=True
                     elif driver.phase=='RETREAT':
                         self.observe_released(result,drop_bound,released_centre,released_rotation)
