@@ -1,0 +1,436 @@
+{
+  "date": "2026-10-18",
+  "scope": "One seeded mixed-carton scene and presentation renders; no manipulation or multi-seed physics success rate",
+  "source_commit": "b7d0482f5d16f7043fdfe5b1d37f2321be3f32b9",
+  "initial_scene_commit": "4334f6005bc45ccd4e6d50451a5794c8ae110b7a",
+  "seed": 6,
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 4090 24 GB",
+    "driver": "580.95.05",
+    "isaac_sim": "6.1.0 Linux standalone",
+    "sdk_restored_from_verified_cloud_zip": true,
+    "host_and_docker_vulkan_passed": true,
+    "models_not_started": true
+  },
+  "settle": {
+    "settled": true,
+    "elapsed_s": 2.5999999999999934,
+    "inside_upstream_tray": true,
+    "above_table": true,
+    "max_linear_speed": 0.003850316323039202,
+    "max_angular_speed": 0.04971374012772324
+  },
+  "boxes": [
+    {
+      "name": "box_00",
+      "variant": "large_c",
+      "size_m": [
+        0.16,
+        0.12,
+        0.1
+      ],
+      "mass_kg": 0.30268537074148294,
+      "position": [
+        -0.08954232186079025,
+        -0.14953823387622833,
+        0.8318730592727661
+      ],
+      "orientation_wxyz": [
+        0.7907823324203491,
+        0.5876442790031433,
+        -0.10216209292411804,
+        -0.13747863471508026
+      ],
+      "tray_edge_margin_xy_m": [
+        0.15315233658825445,
+        -0.002896558084970316
+      ],
+      "bottom_z_m": 0.7600000006318375
+    },
+    {
+      "name": "box_01",
+      "variant": "large_b",
+      "size_m": [
+        0.145,
+        0.11,
+        0.095
+      ],
+      "mass_kg": 0.2576352705410822,
+      "position": [
+        0.13904032111167908,
+        0.010067595168948174,
+        0.8074999451637268
+      ],
+      "orientation_wxyz": [
+        0.11510010063648224,
+        -4.3752397687057965e-06,
+        -5.205294201005017e-06,
+        0.9933539032936096
+      ],
+      "tray_edge_margin_xy_m": [
+        0.11780330924486682,
+        0.06481065079667536
+      ],
+      "bottom_z_m": 0.7599987776766638
+    },
+    {
+      "name": "box_02",
+      "variant": "small_medium",
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "mass_kg": 0.09683366733466933,
+      "position": [
+        -0.19083741307258606,
+        0.02038983628153801,
+        0.7850001454353333
+      ],
+      "orientation_wxyz": [
+        -9.217705155606382e-06,
+        0.6891322135925293,
+        0.724635660648346,
+        -6.974672032811213e-06
+      ],
+      "tray_edge_margin_xy_m": [
+        0.11643917780686612,
+        0.06817361710666786
+      ],
+      "bottom_z_m": 0.7599992550325034
+    },
+    {
+      "name": "box_03",
+      "variant": "small_reference",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "mass_kg": 0.08,
+      "position": [
+        -0.014094630256295204,
+        0.0682528018951416,
+        0.7875000238418579
+      ],
+      "orientation_wxyz": [
+        -0.3000320494174957,
+        0.3000265657901764,
+        -0.640296459197998,
+        0.6403009295463562
+      ],
+      "tray_edge_margin_xy_m": [
+        0.27661886628947374,
+        0.023927039273672825
+      ],
+      "bottom_z_m": 0.7599996040085276
+    },
+    {
+      "name": "box_04",
+      "variant": "small_wide",
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "mass_kg": 0.11527054108216432,
+      "position": [
+        -0.1248563826084137,
+        0.011675245128571987,
+        0.824483335018158
+      ],
+      "orientation_wxyz": [
+        0.688004732131958,
+        -0.6406290531158447,
+        0.10965181887149811,
+        0.3228318989276886
+      ],
+      "tray_edge_margin_xy_m": [
+        0.142864153017643,
+        0.0879618988022713
+      ],
+      "bottom_z_m": 0.7599979755353329
+    },
+    {
+      "name": "box_05",
+      "variant": "small_medium",
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "mass_kg": 0.09683366733466933,
+      "position": [
+        -0.2717660665512085,
+        -0.18123850226402283,
+        0.789999783039093
+      ],
+      "orientation_wxyz": [
+        0.7057416439056396,
+        -0.7057384252548218,
+        -0.0439436137676239,
+        0.043943751603364944
+      ],
+      "tray_edge_margin_xy_m": [
+        0.010557468140325231,
+        0.022131647561131458
+      ],
+      "bottom_z_m": 0.7599996643020787
+    },
+    {
+      "name": "box_06",
+      "variant": "small_reference",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "mass_kg": 0.08,
+      "position": [
+        -0.05272386968135834,
+        -0.052841007709503174,
+        0.7825000286102295
+      ],
+      "orientation_wxyz": [
+        0.9736668467521667,
+        -8.932907036296456e-08,
+        -2.447004305849987e-07,
+        -0.22797590494155884
+      ],
+      "tray_edge_margin_xy_m": [
+        0.23026493090288624,
+        0.13532024628432562
+      ],
+      "bottom_z_m": 0.7600000010325768
+    },
+    {
+      "name": "box_07",
+      "variant": "large_a",
+      "size_m": [
+        0.13,
+        0.1,
+        0.09
+      ],
+      "mass_kg": 0.2161122244488978,
+      "position": [
+        0.22576108574867249,
+        -0.13909463584423065,
+        0.8100000023841858
+      ],
+      "orientation_wxyz": [
+        0.704359233379364,
+        0.7043606042861938,
+        0.06226682662963867,
+        0.06226667761802673
+      ],
+      "tray_edge_margin_xy_m": [
+        0.04235247760521334,
+        0.04020002301060385
+      ],
+      "bottom_z_m": 0.7599999120966966
+    },
+    {
+      "name": "box_08",
+      "variant": "small_wide",
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "mass_kg": 0.11527054108216432,
+      "position": [
+        0.02467780001461506,
+        0.02485150285065174,
+        0.8246955275535583
+      ],
+      "orientation_wxyz": [
+        0.4101141095161438,
+        -0.47809138894081116,
+        0.7543502449989319,
+        -0.1849079430103302
+      ],
+      "tray_edge_margin_xy_m": [
+        0.26254352704691625,
+        0.04923798330704045
+      ],
+      "bottom_z_m": 0.7599994405934922
+    }
+  ],
+  "sensors": {
+    "scene_camera": {
+      "rgb_shape": [
+        480,
+        640,
+        3
+      ],
+      "depth_shape": [
+        480,
+        640
+      ],
+      "finite_depth_fraction": 1.0,
+      "min_depth_m": 0.5208995342254639,
+      "max_depth_m": 1.1864368915557861
+    },
+    "left_wrist_camera": {
+      "rgb_shape": [
+        480,
+        640,
+        3
+      ],
+      "depth_shape": [
+        480,
+        640
+      ],
+      "finite_depth_fraction": 1.0,
+      "min_depth_m": 0.04232541099190712,
+      "max_depth_m": 1.9876843690872192
+    },
+    "right_wrist_camera": {
+      "rgb_shape": [
+        480,
+        640,
+        3
+      ],
+      "depth_shape": [
+        480,
+        640
+      ],
+      "finite_depth_fraction": 1.0,
+      "min_depth_m": 0.04232540726661682,
+      "max_depth_m": 1.9966719150543213
+    }
+  },
+  "all_body_footprints_inside_tray": false,
+  "minimum_tray_margin_m": -0.002896558084970316,
+  "boundary_note": "large_c rests tilted on tray front rim; centre is inside, its projected outline overhangs by about 2.90 mm. The legacy settle check checks centres only.",
+  "all_body_bottoms_at_or_above_table_with_1mm_tolerance": true,
+  "captures": {
+    "presentation_views": 4,
+    "presentation_resolution_wh": [
+      1920,
+      1080
+    ],
+    "formal_rgb_views": 3,
+    "formal_resolution_wh": [
+      640,
+      480
+    ],
+    "images": [
+      {
+        "file": "01_双臂工位全景.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "f7252f25d137f5462d1b16c0362c582a4a770afe752a625cdbb79e8221dbcac9",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/showcase/01_workcell_overview.png"
+      },
+      {
+        "file": "02_混合纸盒前侧.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "7c91f34b236ad7a216401302ee0e57d9cadc3b60b768d2023a6fdfcb7e7ac552",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/showcase/02_cartons_front.png"
+      },
+      {
+        "file": "03_混合纸盒俯视.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "2b60c390e6f83a32fe9a24b6470f3f81333acc3b71bb0a6c44d6da8b2c2ee6de",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/showcase/03_cartons_overhead.png"
+      },
+      {
+        "file": "04_混合纸盒左侧.png",
+        "width": 1920,
+        "height": 1080,
+        "sha256": "80c6ca5495df789072f597ccdea5c7a25c676c6f7f3d80319cc0f3db303a8f74",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/showcase/04_cartons_left.png"
+      },
+      {
+        "file": "05_固定全局相机.png",
+        "width": 640,
+        "height": 480,
+        "sha256": "426675494a501cd764deaa1f205e3177a81ac4164ca9ef63e3c86fbef0dc15fa",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/settled_scene_camera_rgb.png"
+      },
+      {
+        "file": "06_左腕相机.png",
+        "width": 640,
+        "height": 480,
+        "sha256": "bdf868cb39fd85e1d3c902bc5a6dea979e98e60f8ecb8a23691281f0a2b8b1af",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/settled_left_wrist_camera_rgb.png"
+      },
+      {
+        "file": "07_右腕相机.png",
+        "width": 640,
+        "height": 480,
+        "sha256": "b2d494c713a3eebe926aced1e612b1b53e275c3aa1feca787de93929e22006e2",
+        "remote": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/settled_right_wrist_camera_rgb.png"
+      }
+    ],
+    "visual_review_passed": true,
+    "physics_time_not_advanced": true,
+    "box_states_identical_before_after": true,
+    "formal_camera_config_equal_to_original": true,
+    "robots_equal_to_original": true,
+    "temporary_presentation_camera_removed": true
+  },
+  "archive": {
+    "path": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04",
+    "verified_files": 43,
+    "verified_bytes": 14643576
+  },
+  "attempts": [
+    {
+      "case": "seed006-attempt01",
+      "source": "4334f60",
+      "physical_settle_passed": true
+    },
+    {
+      "case": "showcase-attempt01",
+      "source": "390a268",
+      "physical_settle_passed": true,
+      "export_passed": false,
+      "reason": "GPU readback completed before asynchronous PNG disk write"
+    },
+    {
+      "case": "showcase-attempt02",
+      "source": "83a226f",
+      "physical_settle_passed": true,
+      "export_passed": true,
+      "visual_review_passed": false,
+      "reason": "Editor perspective close-ups contained black clipping artifacts"
+    },
+    {
+      "case": "showcase-attempt03",
+      "source": "ae52e83",
+      "physical_settle_passed": true,
+      "export_passed": true,
+      "visual_review_passed": false,
+      "reason": "Explicit editor-camera clip range did not remove artifacts"
+    },
+    {
+      "case": "showcase-attempt04",
+      "source": "b7d0482",
+      "physical_settle_passed": true,
+      "export_passed": true,
+      "visual_review_passed": true
+    }
+  ],
+  "ci": {
+    "passed": true,
+    "tests_per_python_version": 533,
+    "python_versions": [
+      "3.12",
+      "3.13"
+    ],
+    "url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/39094275194"
+  },
+  "webrtc": {
+    "end_to_end_verified": false,
+    "status": "Browser waits for video; TCP signaling bytes observed, current new-machine stream unresolved"
+  },
+  "untested": [
+    "mixed-size perception and grasp planning",
+    "bimanual handling of oversize cartons",
+    "independent physical random-seed robustness"
+  ]
+}
