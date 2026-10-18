@@ -1,0 +1,632 @@
+{
+  "date": "2026-10-18",
+  "source_commit": "8d856119fb0e358eb44be06eac60507a6be2d13e",
+  "original_weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+  "candidate_weights_sha256": "cc6e8f042e23aab622fdf2e286450c8b47a080f832c9c02a3fa82e558849645c",
+  "original_weights_cloud": "/home/featurize/work/isaac-support/models/carton-yolo11n-motion-20261007/best.pt",
+  "candidate_weights_cloud": "/home/featurize/work/isaac-support/models/carton-yolo11n-motion-20261007/candidates/mixed-dev25-best.pt",
+  "data": {
+    "single_saved_observations": 63,
+    "single_images": 189,
+    "single_scope": "five prior physical attempts; conditional one-step replay with identical historical geometry tracking checkpoints; before held-object skill reconciliation; not 63 task trials or contiguous ID-switch evaluation",
+    "development_mixed_seeds": [
+      41,
+      73,
+      109
+    ],
+    "train_seeds": [
+      201,
+      202,
+      203,
+      204,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211,
+      212
+    ],
+    "validation_seeds": [
+      301,
+      302,
+      303
+    ],
+    "heldout_test_seeds": [
+      401,
+      402,
+      403
+    ],
+    "test_images": 9,
+    "whole_scene_split": true,
+    "formal_cameras_unchanged": true
+  },
+  "training": {
+    "initial_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+    "best_sha256": "cc6e8f042e23aab622fdf2e286450c8b47a080f832c9c02a3fa82e558849645c",
+    "wall_s": 71.03852939605713,
+    "selection": "best validation fitness, never test images",
+    "physical_success_claimed": false,
+    "notes": "One mixed-size segmentation pilot. Original checkpoint retained. Held-out raw-mask and saved single-motion comparison required before promotion."
+  },
+  "training_counts": {
+    "train": {
+      "images": 31,
+      "objects": 209
+    },
+    "val": {
+      "images": 9,
+      "objects": 62
+    },
+    "test": {
+      "images": 8,
+      "objects": 50
+    }
+  },
+  "polygon_export_skipped": [
+    {
+      "seed": 203,
+      "camera": "scene_camera",
+      "split": "train",
+      "reasons": [
+        {
+          "object": 7,
+          "reason": "polygon_distorts_visible_mask",
+          "iou": 0.9370199692780338
+        }
+      ]
+    },
+    {
+      "seed": 208,
+      "camera": "left_wrist_camera",
+      "split": "train",
+      "reasons": [
+        {
+          "object": 2,
+          "reason": "polygon_distorts_visible_mask",
+          "iou": 0.7075208913649025
+        }
+      ]
+    },
+    {
+      "seed": 209,
+      "camera": "scene_camera",
+      "split": "train",
+      "reasons": [
+        {
+          "object": 2,
+          "reason": "polygon_distorts_visible_mask",
+          "iou": 0.8916666666666667
+        }
+      ]
+    },
+    {
+      "seed": 211,
+      "camera": "right_wrist_camera",
+      "split": "train",
+      "reasons": [
+        {
+          "object": 1,
+          "reason": "polygon_distorts_visible_mask",
+          "iou": 0.9451219512195121
+        }
+      ]
+    },
+    {
+      "seed": 212,
+      "camera": "right_wrist_camera",
+      "split": "train",
+      "reasons": [
+        {
+          "object": 6,
+          "reason": "polygon_distorts_visible_mask",
+          "iou": 0.6646341463414634
+        }
+      ]
+    },
+    {
+      "seed": 402,
+      "camera": "scene_camera",
+      "split": "test",
+      "reasons": [
+        {
+          "object": 4,
+          "reason": "polygon_distorts_visible_mask",
+          "iou": 0.9769230769230769
+        }
+      ]
+    }
+  ],
+  "single_original": {
+    "geometry": {
+      "observations": 63,
+      "zero_object_observations": 0,
+      "extra_id_observations": 18,
+      "extra_ids": 19,
+      "observations_with_accepted_geometry": 44,
+      "latency_p50_ms": 159.13823200025945,
+      "latency_p95_ms": 321.53214609879797
+    },
+    "yolo": {
+      "observations": 63,
+      "zero_object_observations": 0,
+      "extra_id_observations": 18,
+      "extra_ids": 19,
+      "observations_with_accepted_geometry": 44,
+      "latency_p50_ms": 368.0522030008433,
+      "latency_p95_ms": 512.7730555001108
+    }
+  },
+  "single_trained": {
+    "geometry": {
+      "observations": 63,
+      "zero_object_observations": 0,
+      "extra_id_observations": 18,
+      "extra_ids": 19,
+      "observations_with_accepted_geometry": 44,
+      "latency_p50_ms": 151.26828199936426,
+      "latency_p95_ms": 299.45860340121726
+    },
+    "yolo": {
+      "observations": 63,
+      "zero_object_observations": 0,
+      "extra_id_observations": 23,
+      "extra_ids": 56,
+      "observations_with_accepted_geometry": 39,
+      "latency_p50_ms": 415.53582300002745,
+      "latency_p95_ms": 800.7181813996795
+    }
+  },
+  "single_changes": [
+    {
+      "key": "dev23-yaw036-lifted",
+      "old_count": 3,
+      "new_count": 5,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw036-transferred",
+      "old_count": 2,
+      "new_count": 5,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw036-lowered",
+      "old_count": 2,
+      "new_count": 5,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw036-released",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw160-lifted",
+      "old_count": 2,
+      "new_count": 4,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw160-transferred",
+      "old_count": 2,
+      "new_count": 4,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw160-lowered",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw160-released",
+      "old_count": 1,
+      "new_count": 3,
+      "old_accepted": 1,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw106-approached",
+      "old_count": 1,
+      "new_count": 2,
+      "old_accepted": 1,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw106-transferred",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw106-lowered",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw106-released",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw106-retreated",
+      "old_count": 1,
+      "new_count": 2,
+      "old_accepted": 1,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw088-approached",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw088-failure_trigger",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev23-yaw088-failed",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev24-yaw088-approached",
+      "old_count": 1,
+      "new_count": 5,
+      "old_accepted": 1,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev24-yaw088-closed",
+      "old_count": 1,
+      "new_count": 3,
+      "old_accepted": 1,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev24-yaw088-lifted",
+      "old_count": 2,
+      "new_count": 4,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev24-yaw088-transferred",
+      "old_count": 2,
+      "new_count": 4,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev24-yaw088-lowered",
+      "old_count": 2,
+      "new_count": 4,
+      "old_accepted": 0,
+      "new_accepted": 0
+    },
+    {
+      "key": "dev24-yaw088-released",
+      "old_count": 2,
+      "new_count": 3,
+      "old_accepted": 0,
+      "new_accepted": 0
+    }
+  ],
+  "mixed_scores": {
+    "heldout_original": {
+      "full_visible": {
+        "geometry": {
+          "tp": 18,
+          "fp": 6,
+          "fn": 41,
+          "eligible_labels": 59,
+          "precision": 0.75,
+          "recall": 0.3050847457627119,
+          "mean_matched_iou": 0.8587291716999772,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 11
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 7
+            }
+          }
+        },
+        "yolo": {
+          "tp": 30,
+          "fp": 6,
+          "fn": 29,
+          "eligible_labels": 59,
+          "precision": 0.8333333333333334,
+          "recall": 0.5084745762711864,
+          "mean_matched_iou": 0.882158901691061,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 16
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 14
+            }
+          }
+        }
+      },
+      "same_workcell_roi": {
+        "geometry": {
+          "tp": 18,
+          "fp": 6,
+          "fn": 41,
+          "eligible_labels": 59,
+          "precision": 0.75,
+          "recall": 0.3050847457627119,
+          "mean_matched_iou": 0.8605952883479095,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 11
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 7
+            }
+          }
+        },
+        "yolo": {
+          "tp": 30,
+          "fp": 6,
+          "fn": 29,
+          "eligible_labels": 59,
+          "precision": 0.8333333333333334,
+          "recall": 0.5084745762711864,
+          "mean_matched_iou": 0.8975726507586417,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 16
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 14
+            }
+          }
+        }
+      }
+    },
+    "heldout_trained": {
+      "full_visible": {
+        "geometry": {
+          "tp": 18,
+          "fp": 6,
+          "fn": 41,
+          "eligible_labels": 59,
+          "precision": 0.75,
+          "recall": 0.3050847457627119,
+          "mean_matched_iou": 0.8587291716999772,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 11
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 7
+            }
+          }
+        },
+        "yolo": {
+          "tp": 53,
+          "fp": 10,
+          "fn": 6,
+          "eligible_labels": 59,
+          "precision": 0.8412698412698413,
+          "recall": 0.8983050847457628,
+          "mean_matched_iou": 0.8804680693494591,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 32
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 21
+            }
+          }
+        }
+      },
+      "same_workcell_roi": {
+        "geometry": {
+          "tp": 18,
+          "fp": 6,
+          "fn": 41,
+          "eligible_labels": 59,
+          "precision": 0.75,
+          "recall": 0.3050847457627119,
+          "mean_matched_iou": 0.8605952883479095,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 11
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 7
+            }
+          }
+        },
+        "yolo": {
+          "tp": 53,
+          "fp": 10,
+          "fn": 6,
+          "eligible_labels": 59,
+          "precision": 0.8412698412698413,
+          "recall": 0.8983050847457628,
+          "mean_matched_iou": 0.8996880705314648,
+          "size_groups": {
+            "small": {
+              "visible_instances": 37,
+              "matched": 32
+            },
+            "large": {
+              "visible_instances": 22,
+              "matched": 21
+            }
+          }
+        }
+      }
+    },
+    "development_trained": {
+      "full_visible": {
+        "geometry": {
+          "tp": 17,
+          "fp": 4,
+          "fn": 49,
+          "eligible_labels": 66,
+          "precision": 0.8095238095238095,
+          "recall": 0.25757575757575757,
+          "mean_matched_iou": 0.8208230473203781,
+          "size_groups": {
+            "small": {
+              "visible_instances": 43,
+              "matched": 9
+            },
+            "large": {
+              "visible_instances": 23,
+              "matched": 8
+            }
+          }
+        },
+        "yolo": {
+          "tp": 51,
+          "fp": 11,
+          "fn": 15,
+          "eligible_labels": 66,
+          "precision": 0.8225806451612904,
+          "recall": 0.7727272727272727,
+          "mean_matched_iou": 0.8474047862768995,
+          "size_groups": {
+            "small": {
+              "visible_instances": 43,
+              "matched": 29
+            },
+            "large": {
+              "visible_instances": 23,
+              "matched": 22
+            }
+          }
+        }
+      },
+      "same_workcell_roi": {
+        "geometry": {
+          "tp": 17,
+          "fp": 4,
+          "fn": 47,
+          "eligible_labels": 64,
+          "precision": 0.8095238095238095,
+          "recall": 0.265625,
+          "mean_matched_iou": 0.872588602977469,
+          "size_groups": {
+            "small": {
+              "visible_instances": 43,
+              "matched": 9
+            },
+            "large": {
+              "visible_instances": 21,
+              "matched": 8
+            }
+          }
+        },
+        "yolo": {
+          "tp": 49,
+          "fp": 10,
+          "fn": 15,
+          "eligible_labels": 64,
+          "precision": 0.8305084745762712,
+          "recall": 0.765625,
+          "mean_matched_iou": 0.8613041035713878,
+          "size_groups": {
+            "small": {
+              "visible_instances": 43,
+              "matched": 29
+            },
+            "large": {
+              "visible_instances": 21,
+              "matched": 20
+            }
+          }
+        }
+      }
+    }
+  },
+  "model_runtime": {
+    "status": "ready",
+    "source": "yolo11n-seg/project-finetuned",
+    "ultralytics": "8.3.253",
+    "torch": "2.1.0",
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "weights_sha256": "402e0c8e63005e408624ce85544a5ae1da5784c72dd67b4b67ed6d999fa35f11",
+    "confidence_threshold": 0.4,
+    "imgsz": 640,
+    "retina_masks": true,
+    "reference_sha256": null
+  },
+  "candidate_runtime": {
+    "status": "ready",
+    "source": "yolo11n-seg/project-finetuned",
+    "ultralytics": "8.3.253",
+    "torch": "2.1.0",
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "weights_sha256": "cc6e8f042e23aab622fdf2e286450c8b47a080f832c9c02a3fa82e558849645c",
+    "confidence_threshold": 0.4,
+    "imgsz": 640,
+    "retina_masks": true,
+    "reference_sha256": null
+  },
+  "archive": {
+    "root": "/home/featurize/work/isaac-support/graspgen/reports/20261018-yolo-geometry-dev25",
+    "files": 2221,
+    "bytes": 151165671,
+    "manifest_sha256": "a3facc77ae6bbf3f72fdf31de2b6e18465fd79278ead54346ee62a562a179524",
+    "storage": "created directly on persistent cloud disk; checksum manifest generated after completion"
+  },
+  "validation": {
+    "targeted_cpu_tests": 17,
+    "targeted_cpu_passed": true,
+    "github_cpu_ci_run": 39103399864,
+    "github_cpu_ci_conclusion": "success",
+    "new_physical_grasp_trial": false
+  },
+  "decision": "Keep existing geometry default and original model. Mixed-only fine-tuned checkpoint improves held-out instance recall but regresses close-up single-box masks, so remains an experimental candidate. Multi-size geometric fitting and downstream association still need work.",
+  "limitations": [
+    "Six development/test random nine-carton scenes are a small engineering sample, not a general success guarantee.",
+    "Minimum 80 visible pixels and mask IoU>=0.5, one-to-one matching. Entirely hidden boxes are not counted as visible misses.",
+    "Both full-view and equal depth-defined workspace ROI scores retained; model only receives RGB.",
+    "No independent per-pixel labels for old single-box motion data; geometry masks are not used as truth.",
+    "The held-out evaluation uses all nine raw camera frames, including one omitted from polygon training-format export.",
+    "Current 3-D estimator retains the fixed reference-size prior. Improved segmentation is not multi-size grasping capability."
+  ]
+}

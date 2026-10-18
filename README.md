@@ -51,6 +51,10 @@ cuMotion 单盒松爪后的撤手复核允许当前大块顶面加已确认盒�
 
 用户观看的88°同参数重试 dev24 完整成功63.389秒，含动作期间计算、撤手/home和最终视觉验收，不含准备和人工等待。没有修改算法；模型抓姿重新生成，上次88°失败仍保留，不能据此视为已修复夹持失稳。见交接20.51及 evidence/live_88_retry_dev24_20261018.json。
 
+同帧感知对照（2026-10-18）已覆盖63组单盒运动观测和6个随机大小混合九盒开发/测试场景。独立测试集可见实例匹配率：geometry 18/59，原YOLO 30/59，九盒补训候选53/59；候选仍有10个未匹配预测，且单盒夹爪近景发生退化，因此默认继续geometry。九盒多尺寸定位/关联还需扩展，不能把分割收益当作九盒抓放通过。完整方法、权重、限制见交接20.52及 evidence/yolo_geometry_dev25_20261018.json。
+
+YOLO原权重位于云盘 `isaac-support/models/carton-yolo11n-motion-20261007/best.pt`，候选另存其 `candidates/mixed-dev25-best.pt`，不覆盖原件。新机器先按既有步骤恢复 `project-graspgen:2dd8852` 基础镜像，再运行云盘 `isaac-support/graspgen/reports/20261018-yolo-geometry-dev25/restore-yolo.py`；它创建独立YOLO环境，不安装到Isaac Python。设置 `WORKSTATION_MODEL_PYTHON` 为同目录 `model-python` 后，已有 `--segmenter yolo-seg --weights <权重路径> --confidence .4` 接口可读取对应版本。Featurize本机需显式NVIDIA容器运行时。只换权重属于新实验，候选尚未通过完整物理抓放验收。
+
 ## 大小混合的九盒场景（2026-10-18）
 
 随机大小混合九盒的离线感知采集：`python -m workstation --mode model-capture --fixture clutter --box-set mixed --capture-seeds 41,73,109 --headless --output <新目录>`。保持正式三机位；RGB-D 与同步关节记录和独立评价标签分开保存。只有显式指定 mixed 的 clutter 采集启用多尺寸，既有受控抓放入口保持原尺寸。
