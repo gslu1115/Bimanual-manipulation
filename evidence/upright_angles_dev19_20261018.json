@@ -1,0 +1,411 @@
+{
+  "date": "2026-10-18",
+  "source_commit": "8aa4b1d0bb1574a70667e15631f1dc5952089fe2",
+  "scope": "four single upright box angle development cases, one attempt each; fixed seed413 XY and original size/cameras; no control/perception threshold changes within batch",
+  "timing": "PREGRASP wall timestamp to DONE (successful completion includes home and final visual verification); failures use PREGRASP to FAILED including hold/reobserve, not a completed-cycle time; application/model preparation excluded",
+  "results": {
+    "completed": 4,
+    "successful": 1,
+    "failed": 3,
+    "conclusion": "Current upright single-box handling is not stable across tested angles."
+  },
+  "cases": [
+    {
+      "angle_deg": 0,
+      "success": false,
+      "failure_reason": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "motion_start_to_done_s": null,
+      "motion_start_to_failure_s": 51.39528250694275,
+      "motion_started": true,
+      "process_start_to_result_s": 92.0433201789856,
+      "last_phase": "FAILED",
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792298546.418681,
+          "elapsed_from_start_s": 39.820422649383545
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792298552.27564,
+          "elapsed_from_start_s": 45.67738175392151
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792298560.8447495,
+          "elapsed_from_start_s": 54.24649119377136
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792298562.7469065,
+          "elapsed_from_start_s": 56.148648262023926
+        },
+        {
+          "phase": "TRANSFER",
+          "epoch": 1792298573.7281108,
+          "elapsed_from_start_s": 67.12985253334045
+        },
+        {
+          "phase": "LOWER",
+          "epoch": 1792298582.2702928,
+          "elapsed_from_start_s": 75.67203450202942
+        },
+        {
+          "phase": "FAILED",
+          "epoch": 1792298597.8139634,
+          "elapsed_from_start_s": 91.2157051563263
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 49.086332726000364,
+        "controller_sim_s": 15.316666666666364,
+        "controller_and_state_wall_s": 1.542676872998527,
+        "controller_calls": 261,
+        "phase_at_exit": "RELEASE"
+      },
+      "observed_stable_s": null,
+      "max_visual_lift_m": 0.18702041632218602,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev19/yaw000-seed413-attempt01/output",
+      "archive_files": 176,
+      "archive_bytes": 50907844,
+      "diagnosis": {
+        "stage": "after descent, before opening gripper",
+        "code": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+        "inner_reason": "ORIENTATION_NOT_OBSERVABLE_FROM_PARTIAL_FACE",
+        "evidence": "Moved and lifted 0.187m; current observer could not support orientation at RELEASE. Physical drop was not established."
+      },
+      "release_bound_checks": 0
+    },
+    {
+      "angle_deg": 45,
+      "success": true,
+      "failure_reason": null,
+      "motion_start_to_done_s": 62.34786057472229,
+      "motion_start_to_failure_s": null,
+      "motion_started": true,
+      "process_start_to_result_s": 98.27795076370239,
+      "last_phase": "DONE",
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792298635.4619563,
+          "elapsed_from_start_s": 35.07048177719116
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792298640.3346128,
+          "elapsed_from_start_s": 39.94313836097717
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792298648.310261,
+          "elapsed_from_start_s": 47.91878652572632
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792298649.874911,
+          "elapsed_from_start_s": 49.483436584472656
+        },
+        {
+          "phase": "TRANSFER",
+          "epoch": 1792298660.6384983,
+          "elapsed_from_start_s": 60.247023820877075
+        },
+        {
+          "phase": "LOWER",
+          "epoch": 1792298667.5759485,
+          "elapsed_from_start_s": 67.18447399139404
+        },
+        {
+          "phase": "OPEN",
+          "epoch": 1792298681.326527,
+          "elapsed_from_start_s": 80.93505263328552
+        },
+        {
+          "phase": "RETREAT",
+          "epoch": 1792298683.1345677,
+          "elapsed_from_start_s": 82.743093252182
+        },
+        {
+          "phase": "HOME",
+          "epoch": 1792298686.3153236,
+          "elapsed_from_start_s": 85.92384910583496
+        },
+        {
+          "phase": "VERIFY",
+          "epoch": 1792298691.1215322,
+          "elapsed_from_start_s": 90.73005771636963
+        },
+        {
+          "phase": "DONE",
+          "epoch": 1792298697.8098168,
+          "elapsed_from_start_s": 97.41834235191345
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 55.65863226900001,
+        "controller_sim_s": 16.13333333333311,
+        "controller_and_state_wall_s": 2.043688516988368,
+        "controller_calls": 308,
+        "phase_at_exit": "DONE"
+      },
+      "observed_stable_s": 0.5999999999999659,
+      "max_visual_lift_m": 0.18643709581749635,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9238795325112867,
+            0.0,
+            0.0,
+            0.3826834323650898
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev19/yaw045-seed413-attempt01/output",
+      "archive_files": 186,
+      "archive_bytes": 51592303,
+      "diagnosis": {
+        "stage": "DONE",
+        "code": null,
+        "evidence": "Full grasp/transport/release/retreat/home and original final RGB-D acceptance passed."
+      },
+      "final_online_verification": {
+        "time_s": 26.174999999999155,
+        "track_id": "visual_0013",
+        "position_m": [
+          -0.2006141096353531,
+          -0.39781808853149414,
+          0.7824999615331159
+        ],
+        "axis_yaw_error_deg": 0.3708932461945466,
+        "z_error_m": 3.846688412245669e-08,
+        "visual_speed_m_s": 2.385349660155629e-07,
+        "arms_home_and_open": true
+      },
+      "release_bound_checks": 1
+    },
+    {
+      "angle_deg": 90,
+      "success": false,
+      "failure_reason": "MODEL_TARGET_UNCERTAIN",
+      "motion_start_to_done_s": null,
+      "motion_start_to_failure_s": 5.689788103103638,
+      "motion_started": true,
+      "process_start_to_result_s": 68.76809811592102,
+      "last_phase": "FAILED",
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792298762.6326725,
+          "elapsed_from_start_s": 62.30343270301819
+        },
+        {
+          "phase": "FAILED",
+          "epoch": 1792298768.3224607,
+          "elapsed_from_start_s": 67.99322080612183
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 4.1872809670003335,
+        "controller_sim_s": 1.9333333333333313,
+        "controller_and_state_wall_s": 0.6148792279964255,
+        "controller_calls": 116,
+        "phase_at_exit": "DESCEND_PICK"
+      },
+      "observed_stable_s": null,
+      "max_visual_lift_m": 0.0,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.7071067811865476,
+            0.0,
+            0.0,
+            0.7071067811865475
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev19/yaw090-seed413-attempt01/output",
+      "archive_files": 73,
+      "archive_bytes": 20747771,
+      "diagnosis": {
+        "stage": "pregrasp revalidation, before descent/close",
+        "code": "MODEL_TARGET_UNCERTAIN",
+        "inner_reason": "PACKAGING_CUE_CONFLICT",
+        "evidence": "Same visual_0001 has COMPLETE_TOP geometry but semantic posture becomes UNKNOWN after top/fold cue conflict. No gripper contact yet."
+      },
+      "release_bound_checks": 0
+    },
+    {
+      "angle_deg": 135,
+      "success": false,
+      "failure_reason": "STATIC_PATH_BLOCKED:visual_0006",
+      "motion_start_to_done_s": null,
+      "motion_start_to_failure_s": 33.954235315322876,
+      "motion_started": true,
+      "process_start_to_result_s": 88.01464247703552,
+      "last_phase": "FAILED",
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792298823.2952864,
+          "elapsed_from_start_s": 53.21668028831482
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792298828.039851,
+          "elapsed_from_start_s": 57.96124482154846
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792298835.0658994,
+          "elapsed_from_start_s": 64.9872932434082
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792298836.5993981,
+          "elapsed_from_start_s": 66.52079200744629
+        },
+        {
+          "phase": "TRANSFER",
+          "epoch": 1792298846.6351228,
+          "elapsed_from_start_s": 76.55651664733887
+        },
+        {
+          "phase": "LOWER",
+          "epoch": 1792298855.0182045,
+          "elapsed_from_start_s": 84.93959832191467
+        },
+        {
+          "phase": "FAILED",
+          "epoch": 1792298857.2495217,
+          "elapsed_from_start_s": 87.1709156036377
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 31.7827473490006,
+        "controller_sim_s": 11.483333333333254,
+        "controller_and_state_wall_s": 1.5102251589933076,
+        "controller_calls": 245,
+        "phase_at_exit": "DESCEND_PLACE"
+      },
+      "observed_stable_s": null,
+      "max_visual_lift_m": 0.18484852513731798,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.38268343236508984,
+            0.0,
+            0.0,
+            0.9238795325112867
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev19/yaw135-seed413-attempt01/output",
+      "archive_files": 160,
+      "archive_bytes": 46528513,
+      "diagnosis": {
+        "stage": "DESCEND_PLACE path validation before descent",
+        "code": "STATIC_PATH_BLOCKED:visual_0006",
+        "evidence": "One physical carton; current scene contains visual_0001 from wrist and visual_0006 from scene camera. Extra ID treated as obstacle; rejected clearance -0.015532479m. Likely split surfaces/identity association; earliest upstream cause not replay-localized.",
+        "obstacle_clearance_m": -0.015532479084219904
+      },
+      "release_bound_checks": 0
+    }
+  ],
+  "limitation": "One run per angle, model proposals may vary; observed 1/4 is not a calibrated population success-rate estimate. Duplicate ID earliest cause and observer rejection need saved-frame diagnosis.",
+  "archive": {
+    "root": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev19",
+    "files": 595,
+    "bytes": 169776431,
+    "per_case_sha256_verified": true
+  },
+  "tests": {
+    "targeted_local_cli": {
+      "count": 14,
+      "passed": true
+    },
+    "github_ci": {
+      "passed": true,
+      "url": "https://github.com/gslu1115/Bimanual-manipulation/actions/runs/39097879607"
+    }
+  },
+  "current_gui": "135-degree failed scene paused and retained; model/viewer/relay remain running",
+  "browser_screenshot": {
+    "filename": "browser-final-135.png",
+    "sha256": "84ba596ed0106572ed5d8dc3fa099ab859c43f038fc8325a1bea9462bd2019b4"
+  }
+}
