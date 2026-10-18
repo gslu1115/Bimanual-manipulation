@@ -1,0 +1,627 @@
+{
+  "date": "2026-10-18",
+  "source_commit": "58cd4a0cc3787a13fefd6e5c260ab27d633f385b",
+  "random_sampling": {
+    "random_seed": 2097492562,
+    "method": "uniform sample of 4 distinct integer degrees from 0..359 excluding previously tested 0,45,90,135; draw fixed before runs",
+    "angles_deg": [
+      36,
+      160,
+      106,
+      88
+    ],
+    "source_commit": "58cd4a0cc3787a13fefd6e5c260ab27d633f385b",
+    "fixture_position_seed": 413
+  },
+  "cases": [
+    {
+      "angle_deg": 36,
+      "success": true,
+      "failure_reason": null,
+      "motion_started": true,
+      "motion_start_to_done_s": 63.44090223312378,
+      "motion_start_to_failure_s": null,
+      "process_start_to_result_s": 120.71018123626709,
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792302021.7234874,
+          "elapsed_from_start_s": 56.36662483215332
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792302028.4398627,
+          "elapsed_from_start_s": 63.08300018310547
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792302036.730508,
+          "elapsed_from_start_s": 71.37364554405212
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792302038.2074409,
+          "elapsed_from_start_s": 72.85057830810547
+        },
+        {
+          "phase": "TRANSFER",
+          "epoch": 1792302049.510683,
+          "elapsed_from_start_s": 84.15382051467896
+        },
+        {
+          "phase": "LOWER",
+          "epoch": 1792302055.6538012,
+          "elapsed_from_start_s": 90.29693865776062
+        },
+        {
+          "phase": "OPEN",
+          "epoch": 1792302067.9109902,
+          "elapsed_from_start_s": 102.55412769317627
+        },
+        {
+          "phase": "RETREAT",
+          "epoch": 1792302072.0921996,
+          "elapsed_from_start_s": 106.73533701896667
+        },
+        {
+          "phase": "HOME",
+          "epoch": 1792302075.6950793,
+          "elapsed_from_start_s": 110.33821678161621
+        },
+        {
+          "phase": "VERIFY",
+          "epoch": 1792302081.2818868,
+          "elapsed_from_start_s": 115.92502427101135
+        },
+        {
+          "phase": "DONE",
+          "epoch": 1792302085.1643896,
+          "elapsed_from_start_s": 119.8075270652771
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 59.55672996099929,
+        "controller_sim_s": 16.483333333332983,
+        "controller_and_state_wall_s": 1.9209308579793287,
+        "controller_calls": 327,
+        "phase_at_exit": "DONE"
+      },
+      "max_visual_lift_m": 0.18967577922486145,
+      "observed_stable_s": 0.5999999999999659,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9510565162951535,
+            0.0,
+            0.0,
+            0.3090169943749474
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-random-upright-dev23/yaw036-seed413-attempt01/output",
+      "archive_files": 194,
+      "archive_bytes": 56269875,
+      "last_online_verification": {
+        "time_s": 26.649999999999128,
+        "track_id": "visual_0015",
+        "position_m": [
+          -0.19960914179682732,
+          -0.3997030556201935,
+          0.7824999061600157
+        ],
+        "axis_yaw_error_deg": 0.5959054975527224,
+        "z_error_m": 9.383998422762829e-08,
+        "visual_speed_m_s": 1.7810678093381713e-06,
+        "arms_home_and_open": true
+      },
+      "release_checks": 1,
+      "phase_wall_s": [
+        {
+          "phase": "PREGRASP",
+          "wall_s": 6.716375350952148
+        },
+        {
+          "phase": "APPROACH",
+          "wall_s": 8.290645360946655
+        },
+        {
+          "phase": "CLOSE",
+          "wall_s": 1.4769327640533447
+        },
+        {
+          "phase": "LIFT",
+          "wall_s": 11.303242206573486
+        },
+        {
+          "phase": "TRANSFER",
+          "wall_s": 6.143118143081665
+        },
+        {
+          "phase": "LOWER",
+          "wall_s": 12.25718903541565
+        },
+        {
+          "phase": "OPEN",
+          "wall_s": 4.181209325790405
+        },
+        {
+          "phase": "RETREAT",
+          "wall_s": 3.602879762649536
+        },
+        {
+          "phase": "HOME",
+          "wall_s": 5.586807489395142
+        },
+        {
+          "phase": "VERIFY",
+          "wall_s": 3.882502794265747
+        }
+      ]
+    },
+    {
+      "angle_deg": 160,
+      "success": true,
+      "failure_reason": null,
+      "motion_started": true,
+      "motion_start_to_done_s": 79.77705812454224,
+      "motion_start_to_failure_s": null,
+      "process_start_to_result_s": 128.4635329246521,
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792302135.7903109,
+          "elapsed_from_start_s": 47.82593750953674
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792302160.0235019,
+          "elapsed_from_start_s": 72.05912852287292
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792302167.918846,
+          "elapsed_from_start_s": 79.95447254180908
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792302169.5129714,
+          "elapsed_from_start_s": 81.54859805107117
+        },
+        {
+          "phase": "TRANSFER",
+          "epoch": 1792302180.3578286,
+          "elapsed_from_start_s": 92.39345526695251
+        },
+        {
+          "phase": "LOWER",
+          "epoch": 1792302186.4179878,
+          "elapsed_from_start_s": 98.4536144733429
+        },
+        {
+          "phase": "OPEN",
+          "epoch": 1792302199.0926588,
+          "elapsed_from_start_s": 111.12828540802002
+        },
+        {
+          "phase": "RETREAT",
+          "epoch": 1792302200.824518,
+          "elapsed_from_start_s": 112.86014461517334
+        },
+        {
+          "phase": "HOME",
+          "epoch": 1792302203.8531678,
+          "elapsed_from_start_s": 115.88879442214966
+        },
+        {
+          "phase": "VERIFY",
+          "epoch": 1792302208.4558563,
+          "elapsed_from_start_s": 120.49148297309875
+        },
+        {
+          "phase": "DONE",
+          "epoch": 1792302215.567369,
+          "elapsed_from_start_s": 127.60299563407898
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 72.6634687730002,
+        "controller_sim_s": 16.133333333333088,
+        "controller_and_state_wall_s": 1.9966189650021988,
+        "controller_calls": 308,
+        "phase_at_exit": "DONE"
+      },
+      "max_visual_lift_m": 0.19123457323112192,
+      "observed_stable_s": 0.5999999999999659,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.17364817766693041,
+            0.0,
+            0.0,
+            0.984807753012208
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-random-upright-dev23/yaw160-seed413-attempt01/output",
+      "archive_files": 186,
+      "archive_bytes": 52210115,
+      "last_online_verification": {
+        "time_s": 25.216666666665876,
+        "track_id": "visual_0012",
+        "position_m": [
+          -0.19975334405899048,
+          -0.3992844820022583,
+          0.7824999937567831
+        ],
+        "axis_yaw_error_deg": 0.34386275314245623,
+        "z_error_m": 6.243216832402254e-09,
+        "visual_speed_m_s": 2.298219843190343e-06,
+        "arms_home_and_open": true
+      },
+      "release_checks": 1,
+      "phase_wall_s": [
+        {
+          "phase": "PREGRASP",
+          "wall_s": 24.23319101333618
+        },
+        {
+          "phase": "APPROACH",
+          "wall_s": 7.895344018936157
+        },
+        {
+          "phase": "CLOSE",
+          "wall_s": 1.594125509262085
+        },
+        {
+          "phase": "LIFT",
+          "wall_s": 10.844857215881348
+        },
+        {
+          "phase": "TRANSFER",
+          "wall_s": 6.060159206390381
+        },
+        {
+          "phase": "LOWER",
+          "wall_s": 12.674670934677124
+        },
+        {
+          "phase": "OPEN",
+          "wall_s": 1.7318592071533203
+        },
+        {
+          "phase": "RETREAT",
+          "wall_s": 3.0286498069763184
+        },
+        {
+          "phase": "HOME",
+          "wall_s": 4.602688550949097
+        },
+        {
+          "phase": "VERIFY",
+          "wall_s": 7.111512660980225
+        }
+      ]
+    },
+    {
+      "angle_deg": 106,
+      "success": true,
+      "failure_reason": null,
+      "motion_started": true,
+      "motion_start_to_done_s": 62.136146783828735,
+      "motion_start_to_failure_s": null,
+      "process_start_to_result_s": 136.4201307296753,
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792302291.6327438,
+          "elapsed_from_start_s": 73.42427659034729
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792302296.5884202,
+          "elapsed_from_start_s": 78.37995290756226
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792302305.2034812,
+          "elapsed_from_start_s": 86.99501395225525
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792302306.8731663,
+          "elapsed_from_start_s": 88.6646990776062
+        },
+        {
+          "phase": "TRANSFER",
+          "epoch": 1792302317.9958947,
+          "elapsed_from_start_s": 99.78742742538452
+        },
+        {
+          "phase": "LOWER",
+          "epoch": 1792302324.947086,
+          "elapsed_from_start_s": 106.73861885070801
+        },
+        {
+          "phase": "OPEN",
+          "epoch": 1792302337.194865,
+          "elapsed_from_start_s": 118.9863977432251
+        },
+        {
+          "phase": "RETREAT",
+          "epoch": 1792302341.3764224,
+          "elapsed_from_start_s": 123.16795516014099
+        },
+        {
+          "phase": "HOME",
+          "epoch": 1792302344.8487284,
+          "elapsed_from_start_s": 126.64026117324829
+        },
+        {
+          "phase": "VERIFY",
+          "epoch": 1792302349.8114955,
+          "elapsed_from_start_s": 131.60302829742432
+        },
+        {
+          "phase": "DONE",
+          "epoch": 1792302353.7688906,
+          "elapsed_from_start_s": 135.56042337417603
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 58.177047743,
+        "controller_sim_s": 16.166666666666455,
+        "controller_and_state_wall_s": 1.9027617369938525,
+        "controller_calls": 312,
+        "phase_at_exit": "DONE"
+      },
+      "max_visual_lift_m": 0.18941395663451144,
+      "observed_stable_s": 0.5999999999999659,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.6018150231520484,
+            0.0,
+            0.0,
+            0.7986355100472928
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-random-upright-dev23/yaw106-seed413-attempt01/output",
+      "archive_files": 186,
+      "archive_bytes": 52756591,
+      "last_online_verification": {
+        "time_s": 25.08333333333255,
+        "track_id": "visual_0013",
+        "position_m": [
+          -0.19892773032188416,
+          -0.39955994486808777,
+          0.7824999654360687
+        ],
+        "axis_yaw_error_deg": 0.0,
+        "z_error_m": 3.4563931272657555e-08,
+        "visual_speed_m_s": 5.5923112718494696e-06,
+        "arms_home_and_open": true
+      },
+      "release_checks": 1,
+      "phase_wall_s": [
+        {
+          "phase": "PREGRASP",
+          "wall_s": 4.955676317214966
+        },
+        {
+          "phase": "APPROACH",
+          "wall_s": 8.615061044692993
+        },
+        {
+          "phase": "CLOSE",
+          "wall_s": 1.6696851253509521
+        },
+        {
+          "phase": "LIFT",
+          "wall_s": 11.12272834777832
+        },
+        {
+          "phase": "TRANSFER",
+          "wall_s": 6.951191425323486
+        },
+        {
+          "phase": "LOWER",
+          "wall_s": 12.24777889251709
+        },
+        {
+          "phase": "OPEN",
+          "wall_s": 4.1815574169158936
+        },
+        {
+          "phase": "RETREAT",
+          "wall_s": 3.4723060131073
+        },
+        {
+          "phase": "HOME",
+          "wall_s": 4.962767124176025
+        },
+        {
+          "phase": "VERIFY",
+          "wall_s": 3.957395076751709
+        }
+      ]
+    },
+    {
+      "angle_deg": 88,
+      "success": false,
+      "failure_reason": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+      "motion_started": true,
+      "motion_start_to_done_s": null,
+      "motion_start_to_failure_s": 26.4379460811615,
+      "process_start_to_result_s": 70.54872369766235,
+      "phases": [
+        {
+          "phase": "PREGRASP",
+          "epoch": 1792302400.830663,
+          "elapsed_from_start_s": 43.28649544715881
+        },
+        {
+          "phase": "APPROACH",
+          "epoch": 1792302408.0866573,
+          "elapsed_from_start_s": 50.542489767074585
+        },
+        {
+          "phase": "CLOSE",
+          "epoch": 1792302414.7815917,
+          "elapsed_from_start_s": 57.23742413520813
+        },
+        {
+          "phase": "LIFT",
+          "epoch": 1792302416.2678418,
+          "elapsed_from_start_s": 58.723674297332764
+        },
+        {
+          "phase": "FAILED",
+          "epoch": 1792302427.268609,
+          "elapsed_from_start_s": 69.72444152832031
+        }
+      ],
+      "controller_timing": {
+        "motion_through_home_wall_s": 24.273287034000532,
+        "controller_sim_s": 6.899999999999946,
+        "controller_and_state_wall_s": 1.0780255860063335,
+        "controller_calls": 192,
+        "phase_at_exit": "LIFT"
+      },
+      "max_visual_lift_m": 0.0,
+      "observed_stable_s": null,
+      "initial_state": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22268897610158897,
+            -0.056236772516897356,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.7193398003386512,
+            0.0,
+            0.0,
+            0.6946583704589973
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-random-upright-dev23/yaw088-seed413-attempt01/output",
+      "archive_files": 152,
+      "archive_bytes": 42871908,
+      "last_online_verification": null,
+      "release_checks": 0,
+      "phase_wall_s": [
+        {
+          "phase": "PREGRASP",
+          "wall_s": 7.2559943199157715
+        },
+        {
+          "phase": "APPROACH",
+          "wall_s": 6.694934368133545
+        },
+        {
+          "phase": "CLOSE",
+          "wall_s": 1.4862501621246338
+        },
+        {
+          "phase": "LIFT",
+          "wall_s": 11.000767230987549
+        }
+      ],
+      "diagnosis": {
+        "stage": "LIFT; before TRANSFER/LOWER/OPEN",
+        "outer_rejection": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+        "holding_geometry_failure": {
+          "status": "UNKNOWN",
+          "reason": "NO_SUPPORTED_CURRENT_INSTANCE",
+          "time_s": 12.491666666666598
+        },
+        "recovery": "HOLD_AND_REOBSERVE; holding not verified",
+        "offline_only": {
+          "box_tilt_deg": 49.81999173182743,
+          "centre_height_gain_over_rest_m": 0.07805594682693484,
+          "source": "archived output/privileged_evaluation.json after task stopped and reobserved; never an online control input"
+        },
+        "conclusion": "Physical box had tilted substantially during lift; cannot classify solely as conservative visibility rejection. Specific grasp/contact/dynamics cause not yet localized."
+      }
+    }
+  ],
+  "scope": "four preselected random integer yaw angles; one attempt each on one unchanged source version; upright 100x55x45mm single box, fixed seed413 XY and original camera intrinsics/mounts",
+  "timing": "PREGRASP to DONE includes motion, synchronous compute, retreat/home and final current RGB-D placement acceptance; application and model preparation excluded; failure-to-FAILED reported separately",
+  "results": {
+    "successful": 3,
+    "total": 4,
+    "successful_mean_action_s": 68.45136904716492,
+    "successful_min_action_s": 62.136146783828735,
+    "successful_max_action_s": 79.77705812454224,
+    "conclusion": "Three of four new random angles succeeded on one unchanged version; one lifting failure remains."
+  },
+  "limitation": "Small development sample with varying model proposals. This batch is same-version evidence, not a general population guarantee or multi-object/other-posture validation.",
+  "archive": {
+    "root": "/home/featurize/work/isaac-support/graspgen/reports/20261018-random-upright-dev23",
+    "files": 718,
+    "bytes": 204108489,
+    "per_file_sha256_verified": true
+  },
+  "gui": "last case retained; model/viewer/relay running",
+  "algorithm_changes_during_batch": false
+}
