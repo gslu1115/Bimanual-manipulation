@@ -4,6 +4,30 @@ from workstation.app import build_parser,load_config,PROJECT_ROOT
 
 
 class VisualCLITests(unittest.TestCase):
+    def test_explicit_upright_yaw_changes_only_initial_rotation(self):
+        import math
+        from workstation.simulation.visual_fixtures import initial_cartons
+        from workstation.perception.scene_estimate import ScenePriors
+        parser=build_parser();args=['--mode','visual-pnp','--visual-fixture','upright','--seed','413']
+        baseline=load_config(parser.parse_args(args),parser)
+        original=initial_cartons(baseline,'upright')[0]
+        for yaw in (0,45,90,135,225,-45):
+            config=load_config(parser.parse_args(args+['--visual-yaw-deg',str(yaw)]),parser)
+            state=initial_cartons(config,'upright')[0]
+            self.assertEqual(state.position,original.position)
+            self.assertEqual(config['cameras'],baseline['cameras'])
+            self.assertEqual(ScenePriors.from_config(config),ScenePriors.from_config(baseline))
+            self.assertAlmostEqual(state.orientation_wxyz[0],math.cos(math.radians(yaw%360)/2))
+            self.assertAlmostEqual(state.orientation_wxyz[3],math.sin(math.radians(yaw%360)/2))
+
+    def test_explicit_yaw_rejects_non_upright_modes_and_nonfinite_values(self):
+        import contextlib,io
+        parser=build_parser()
+        for args in (['--mode','scene'],['--mode','visual-pnp','--visual-fixture','side'],
+                     ['--mode','visual-pnp','--visual-fixture','upright','--visual-yaw-deg','nan']):
+            with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
+                load_config(parser.parse_args(args if 'nan' in args else args+['--visual-yaw-deg','45']),parser)
+
     def test_calibrated_sim_depth_margin_is_explicit_with_static_board(self):
         parser=build_parser();config=load_config(parser.parse_args(['--mode','visual-pnp',
             '--depth-backboard','--optical-depth-margin-mm','1']),parser)

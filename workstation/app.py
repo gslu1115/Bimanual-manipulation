@@ -4,6 +4,7 @@ import argparse
 from datetime import datetime
 import faulthandler
 import json
+import math
 import os
 from pathlib import Path
 import sys
@@ -62,6 +63,8 @@ def build_parser():
     parser.add_argument('--teacher-capture',action='store_true',help='Offline truth-baseline supervision, model-capture upright only')
     parser.add_argument('--visual-fixture',choices=('upright','side','inverted','separated-upright','separated','clutter'),
                         help='Explicit diagnostic INITIAL condition for visual-pnp; seed then changes XY/yaw')
+    parser.add_argument('--visual-yaw-deg',type=float,
+                        help='Initial upright single-carton yaw only; preserves seed-generated position, never an online pose input')
     parser.add_argument('--scene-focal-length-mm',type=float,
                         help='Explicit calibrated scene-camera optics experiment; original config is preserved')
     parser.add_argument('--wrist-focal-length-mm',type=float,
@@ -159,6 +162,11 @@ def load_config(args, parser):
         if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'): parser.error('--visual-fixture requires a visual mode')
         config['boxes']['count']=9 if args.visual_fixture == 'clutter' else 3 if args.visual_fixture.startswith('separated') else 1
         config['diagnostic_visual_fixture']=args.visual_fixture
+    if args.visual_yaw_deg is not None:
+        if args.mode!='visual-pnp' or args.visual_fixture!='upright':
+            parser.error('--visual-yaw-deg requires visual-pnp --visual-fixture upright')
+        if not math.isfinite(args.visual_yaw_deg):parser.error('Visual fixture yaw must be finite')
+        config['diagnostic_visual_yaw_deg']=args.visual_yaw_deg%360.
     if args.scene_focal_length_mm is not None:
         if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-focal-length-mm requires a visual diagnostic mode')

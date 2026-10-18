@@ -17,6 +17,11 @@ def initial_cartons(config, fixture):
         rng=np.random.default_rng(config['seed'])
         entries=[(posture,tuple(np.asarray(xy)+rng.uniform([-.025,-.04],[.025,.05])),
                   float(rng.uniform(-180.,180.))) for posture,xy,_ in entries]
+    if 'diagnostic_visual_yaw_deg' in config:
+        if fixture!='upright':raise ValueError('Explicit yaw is only for the upright single-carton fixture')
+        yaw=float(config['diagnostic_visual_yaw_deg'])
+        if not math.isfinite(yaw):raise ValueError('Visual fixture yaw must be finite')
+        entries=[(posture,xy,yaw%360.) for posture,xy,_ in entries]
     result=[]
     for index,(posture,xy,yaw_deg) in enumerate(entries):
         roll={'upright':0.,'side':math.pi/2,'inverted':math.pi}[posture]
