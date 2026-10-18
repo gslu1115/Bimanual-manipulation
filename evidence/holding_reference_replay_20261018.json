@@ -1,0 +1,356 @@
+{
+  "date": "2026-10-18",
+  "source_runtime_commit": "0cbf3a32260127e6c84afa99ccd3548dc7b8f227",
+  "scope": "sequential saved current RGB-D plus exposure-time FK; original logged closure relation; no simulator box pose",
+  "old_failure": "NO_SUPPORTED_CURRENT_INSTANCE in dev20 135-degree transferred frame",
+  "rows": [
+    {
+      "phase": "lifted",
+      "measurement": {
+        "status": "GEOMETRY_OBSERVED",
+        "time_s": 12.999999999999902,
+        "position_m": [
+          -0.223793426785941,
+          -0.0588083710002412,
+          0.9606813223824284
+        ],
+        "orientation_wxyz": [
+          0.3833777224138914,
+          -0.059040547697964664,
+          -0.004448467259921207,
+          0.9216918936517229
+        ],
+        "rotation": [
+          [
+            -0.6990714713685232,
+            -0.7061869980242039,
+            -0.11224527491262658
+          ],
+          [
+            0.7072375577979728,
+            -0.7060034661915493,
+            0.03706942898773984
+          ],
+          [
+            -0.10542350192726112,
+            -0.05346989383831781,
+            0.9929888497331235
+          ]
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "mask_refs": [
+          "scene_camera/154/component_1",
+          "left_wrist_camera/154/component_2"
+        ],
+        "identity_refs_rechecked_after_fit": [],
+        "surface_inlier_ratio": 1.0,
+        "plane_residual_m": 8.002844491521722e-05,
+        "uncertainty_m": 0.005684382608437566,
+        "observed_face_axes": [
+          0,
+          2
+        ],
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_plane",
+            "sign": -1.0,
+            "points": 542
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05408589389640091,
+            "aggregation": "union of per-view validated planar quantiles",
+            "mask_refs": [
+              "left_wrist_camera/154/component_2",
+              "scene_camera/154/component_1"
+            ]
+          },
+          {
+            "axis": 2,
+            "source": "visible_signed_plane",
+            "sign": 1.0,
+            "points": 44435
+          },
+          {
+            "axis": 2,
+            "source": "complete_observed_extent",
+            "span_m": 0.04186921958769274,
+            "aggregation": "union of per-view validated planar quantiles",
+            "mask_refs": [
+              "left_wrist_camera/154/component_2",
+              "scene_camera/154/component_1"
+            ]
+          }
+        ],
+        "translation_difference_from_hint_m": 0.002928129103136075,
+        "orientation_difference_from_hint_deg": 6.8446725919348825,
+        "geometric_pose_measured": true,
+        "semantic_pose_unique": false,
+        "grasp_constrained": false,
+        "reference_constrained": false,
+        "predicted_translation_axes": [],
+        "tape_direction": null,
+        "visual_height_lower_bound_m": 0.9503637340171922,
+        "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes",
+        "correspondence_reference_time_s": null,
+        "correspondence_reference_source": "closure_relation",
+        "pose_hypotheses": [
+          {
+            "label": "UPRIGHT",
+            "orientation_wxyz": [
+              0.3833777224138913,
+              -0.05904054769796468,
+              -0.004448467259921207,
+              0.9216918936517229
+            ],
+            "evidence": "verified closure semantic reference; propagated by current RGB-D measured geometric rotation"
+          }
+        ],
+        "top_bottom_semantics": "UPRIGHT",
+        "height_gain_m": 0.17677756528894417,
+        "height_gain_lower_bound_m": 0.16645997692370795,
+        "full_6d_pose_measured": true
+      },
+      "reference_time_s": 12.999999999999902
+    },
+    {
+      "phase": "transferred",
+      "measurement": {
+        "status": "GRASP_CONSTRAINED",
+        "time_s": 14.649999999999809,
+        "position_m": [
+          -0.2000109968828938,
+          -0.40120369646575943,
+          0.9734013860527045
+        ],
+        "orientation_wxyz": [
+          0.003138263840909512,
+          -0.01556561692323134,
+          0.0005857738168506543,
+          0.9998737519001581
+        ],
+        "rotation": [
+          [
+            -0.9994957257397281,
+            -0.006293971143799113,
+            -0.03112362696176709
+          ],
+          [
+            0.006257499420452071,
+            -0.9999796163382006,
+            0.0012690977535424475
+          ],
+          [
+            -0.031130980212920593,
+            0.001073701702535943,
+            0.9995147368776695
+          ]
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "mask_refs": [
+          "left_wrist_camera/174/component_1"
+        ],
+        "identity_refs_rechecked_after_fit": [],
+        "surface_inlier_ratio": 1.0,
+        "plane_residual_m": 8.073374296586536e-05,
+        "uncertainty_m": 0.005684382608437566,
+        "observed_face_axes": [
+          2
+        ],
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "grasp_relation_prediction",
+            "observed_span_m": 0.08211674723260817,
+            "expected_span_m": 0.1
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.054309583171434916,
+            "aggregation": "union of per-view validated planar quantiles",
+            "mask_refs": [
+              "left_wrist_camera/174/component_1"
+            ]
+          },
+          {
+            "axis": 2,
+            "source": "visible_signed_plane",
+            "sign": 1.0,
+            "points": 84115
+          }
+        ],
+        "translation_difference_from_hint_m": 0.001910718725215986,
+        "orientation_difference_from_hint_deg": 1.8395221508059392,
+        "geometric_pose_measured": false,
+        "semantic_pose_unique": false,
+        "grasp_constrained": true,
+        "reference_constrained": false,
+        "predicted_translation_axes": [
+          0
+        ],
+        "tape_direction": {
+          "source": "current_rgbd_central_tape",
+          "axis_workcell": [
+            -0.9994957257397281,
+            0.006257499420452071,
+            -0.031130980212920593
+          ],
+          "span_m": 0.07042687825904362,
+          "width_m": 0.01090215227654397,
+          "line_residual_m": 3.1253255622338117e-05,
+          "paired_bins": 19,
+          "camera_count": 1
+        },
+        "visual_height_lower_bound_m": 0.9683312589334955,
+        "evidence": "current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip",
+        "correspondence_reference_time_s": 12.999999999999902,
+        "correspondence_reference_source": "last_independent_current_geometry",
+        "pose_hypotheses": [
+          {
+            "label": "UPRIGHT",
+            "orientation_wxyz": [
+              0.0031382638409095135,
+              -0.015565616923231353,
+              0.0005857738168508764,
+              0.9998737519001584
+            ],
+            "evidence": "verified closure semantic reference; propagated by current RGB-D measured geometric rotation"
+          }
+        ],
+        "top_bottom_semantics": "UPRIGHT",
+        "height_gain_m": 0.1894976289592203,
+        "height_gain_lower_bound_m": 0.18442750184001122,
+        "full_6d_pose_measured": false
+      },
+      "reference_time_s": 12.999999999999902
+    },
+    {
+      "phase": "failed",
+      "measurement": {
+        "status": "GRASP_CONSTRAINED",
+        "time_s": 14.849999999999797,
+        "position_m": [
+          -0.20054288367434833,
+          -0.40159228838179706,
+          0.9721465491064535
+        ],
+        "orientation_wxyz": [
+          0.0028754696001989095,
+          -0.01396432989332047,
+          0.001700913385306091,
+          0.9998969127159382
+        ],
+        "rotation": [
+          [
+            -0.9995934583304178,
+            -0.005797850582959602,
+            -0.027915998847492015
+          ],
+          [
+            0.005702842120430086,
+            -0.9999776771364682,
+            0.0034817840977203747
+          ],
+          [
+            -0.02793556254642009,
+            0.0033211680733388075,
+            0.9996042087685725
+          ]
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "mask_refs": [
+          "left_wrist_camera/178/component_1"
+        ],
+        "identity_refs_rechecked_after_fit": [],
+        "surface_inlier_ratio": 1.0,
+        "plane_residual_m": 8.072963961788641e-05,
+        "uncertainty_m": 0.005684382608437566,
+        "observed_face_axes": [
+          2
+        ],
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "grasp_relation_prediction",
+            "observed_span_m": 0.08211805368490036,
+            "expected_span_m": 0.1
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05431073259108632,
+            "aggregation": "union of per-view validated planar quantiles",
+            "mask_refs": [
+              "left_wrist_camera/178/component_1"
+            ]
+          },
+          {
+            "axis": 2,
+            "source": "visible_signed_plane",
+            "sign": 1.0,
+            "points": 84114
+          }
+        ],
+        "translation_difference_from_hint_m": 0.0019120164510444473,
+        "orientation_difference_from_hint_deg": 1.8419679312433481,
+        "geometric_pose_measured": false,
+        "semantic_pose_unique": false,
+        "grasp_constrained": true,
+        "reference_constrained": false,
+        "predicted_translation_axes": [
+          0
+        ],
+        "tape_direction": {
+          "source": "current_rgbd_central_tape",
+          "axis_workcell": [
+            -0.9995934583304178,
+            0.005702842120430086,
+            -0.02793556254642009
+          ],
+          "span_m": 0.07046972657957436,
+          "width_m": 0.010898053153054501,
+          "line_residual_m": 2.9857456971609023e-05,
+          "paired_bins": 19,
+          "camera_count": 1
+        },
+        "visual_height_lower_bound_m": 0.9672293967691502,
+        "evidence": "current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip",
+        "correspondence_reference_time_s": 12.999999999999902,
+        "correspondence_reference_source": "last_independent_current_geometry",
+        "pose_hypotheses": [
+          {
+            "label": "UPRIGHT",
+            "orientation_wxyz": [
+              0.002875469600198911,
+              -0.013964329893320464,
+              0.001700913385306424,
+              0.9998969127159384
+            ],
+            "evidence": "verified closure semantic reference; propagated by current RGB-D measured geometric rotation"
+          }
+        ],
+        "top_bottom_semantics": "UPRIGHT",
+        "height_gain_m": 0.18824279201296923,
+        "height_gain_lower_bound_m": 0.18332563967566595,
+        "full_6d_pose_measured": false
+      },
+      "reference_time_s": 12.999999999999902
+    }
+  ],
+  "limitation": "Replay only; physical retry recorded separately. Independently observed poses refresh search correspondence; partial predictions do not refresh it."
+}

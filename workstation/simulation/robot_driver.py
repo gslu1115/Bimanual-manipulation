@@ -111,7 +111,8 @@ class RobotMotion:
         confirmed=self.observed_workspace.confirm_payload(target_id,centre,body_rotation,tracker.size,measurement,uncertainty)
         if confirmed and (measured or constrained):
             # Planning predicts future sweep from the CURRENT measured body/TCP
-            # relation. The observer keeps its original latch to detect drift.
+            # relation. The observer preserves its original semantic/lift latch
+            # and refreshes correspondence only from independent visual poses.
             visual.update(offset=np.asarray(rotation).T@(centre-np.asarray(tcp)),
                 relative_rotation=np.asarray(rotation).T@body_rotation,uncertainty_m=uncertainty,
                 measured_pose_time_s=packet.observation_time_s if measured else None,

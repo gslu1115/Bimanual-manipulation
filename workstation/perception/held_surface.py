@@ -338,18 +338,33 @@ class CuboidHoldingTracker:
                               for hyp in obj.hypotheses)
         self.relative_rotation=self.hypotheses[0][1]
         self.initial_z=float(obj.position_m[2]);self.last_failure=None
+        self._fit_reference=None
 
     def observe(self,packet,scene,tcp_position,tcp_rotation,require_motion_extent=True):
         from workstation.perception.cuboid_pose import fit_cuboid_pose
         from workstation.observations.camera_geometry import quaternion_from_matrix
         tcp,r=np.asarray(tcp_position),np.asarray(tcp_rotation)
-        hint=tcp+r@self.offset;body_hint=r@self.relative_rotation
+        reference=self._fit_reference
+        offset=self.offset if reference is None else reference['offset']
+        relative=self.relative_rotation if reference is None else reference['relative_rotation']
+        hint=tcp+r@offset;body_hint=r@relative
         measured=fit_cuboid_pose(packet,scene,hint,body_hint,self.size,self.priors,
                                 allow_grasp_translation=self.allow_grasp_translation)
         if measured['status'] not in ('GEOMETRY_OBSERVED','GRASP_CONSTRAINED'):
             self.last_failure=measured;return None
         self.last_failure=None
-        correction=np.asarray(measured['rotation'])@body_hint.T
+        # Semantic alternatives are anchored to the original observed body,
+        # independently of the newer geometric correspondence reference.
+        correction=np.asarray(measured['rotation'])@(r@self.relative_rotation).T
+        measured['correspondence_reference_time_s']=None if reference is None else reference['time_s']
+        measured['correspondence_reference_source']='closure_relation' if reference is None else 'last_independent_current_geometry'
+        if self.allow_grasp_translation and measured['geometric_pose_measured']:
+            # A fresh complete visual pose can correct the search reference.
+            # Never accumulate hidden-axis predictions into another prediction.
+            # Keep the original latch/initial height for semantic/lift history.
+            self._fit_reference=dict(time_s=packet.observation_time_s,
+                offset=r.T@(np.asarray(measured['position_m'])-tcp),
+                relative_rotation=r.T@np.asarray(measured['rotation']))
         measured['pose_hypotheses']=[dict(label=label,
             orientation_wxyz=quaternion_from_matrix(correction@r@relative).tolist(),
             evidence=evidence+'; propagated by current RGB-D measured geometric rotation')
