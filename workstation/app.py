@@ -102,9 +102,13 @@ def load_config(args, parser):
     requested_boxes=getattr(args,'box_set',None)
     if getattr(args,'save_showcase',False) and args.mode!='scene':
         parser.error('--save-showcase requires --mode scene')
-    if requested_boxes=='mixed' and args.mode!='scene':
-        parser.error('--box-set mixed currently requires --mode scene; manipulation/vision fixtures use the reference size')
-    config['boxes']['size_set']=(requested_boxes or config['boxes'].get('size_set','uniform')) if args.mode=='scene' else 'uniform'
+    mixed_capture=args.mode=='model-capture' and args.fixture=='clutter'
+    if requested_boxes=='mixed' and args.mode!='scene' and not mixed_capture:
+        parser.error('--box-set mixed requires scene or model-capture --fixture clutter; manipulation fixtures use the reference size')
+    if args.mode=='scene':
+        config['boxes']['size_set']=requested_boxes or config['boxes'].get('size_set','uniform')
+    else:
+        config['boxes']['size_set']=(requested_boxes or 'uniform') if mixed_capture else 'uniform'
     from workstation.simulation.cartons import validate_cartons
     validate_cartons(config['boxes'])
     if config['boxes']['size_set']=='mixed':

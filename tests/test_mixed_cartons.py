@@ -77,6 +77,23 @@ class MixedCartonTests(unittest.TestCase):
         with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
             load_config(parser.parse_args(['--mode','visual-pnp','--box-set','mixed']),parser)
 
+    def test_mixed_capture_keeps_camera_calibration_and_nine_physical_sizes(self):
+        parser=build_parser()
+        config=load_config(parser.parse_args(['--mode','model-capture','--fixture','clutter',
+            '--box-set','mixed','--seed','73']),parser)
+        self.assertEqual(config['boxes']['count'],9)
+        self.assertEqual(config['boxes']['size_set'],'mixed')
+        self.assertEqual(config['cameras'],self.config['cameras'])
+        from workstation.simulation.visual_fixtures import initial_cartons
+        boxes=initial_cartons(config,'clutter')
+        self.assertEqual(len({tuple(b.size_m) for b in boxes}),6)
+        self.assertEqual(sum(min(b.size_m)>.08 for b in boxes),3)
+        default=load_config(parser.parse_args(['--mode','model-capture','--fixture','clutter']),parser)
+        self.assertEqual(default['boxes']['size_set'],'uniform')
+        for mode,extra in [('model-capture',['--fixture','upright']),('vision-check',[])]:
+            with self.subTest(mode=mode),contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
+                load_config(parser.parse_args(['--mode',mode,'--box-set','mixed',*extra]),parser)
+
     def test_uniform_scene_preserves_original_release_and_record_schema(self):
         parser=build_parser();c=load_config(parser.parse_args(['--box-set','uniform']),parser)
         old=copy.deepcopy(c);old['boxes'].pop('size_set');old['boxes'].pop('variants')
