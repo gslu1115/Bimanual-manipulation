@@ -1,0 +1,275 @@
+{
+  "source_commit": "dac7f6b6907ee6ba2ae2b18a7e3d8d1c263e7a0e",
+  "case": {
+    "variant": "small_medium",
+    "yaw_deg": 68,
+    "seed": 2902,
+    "initial_position_m": [
+      -0.22458878882104227,
+      -0.06244145084955282,
+      0.789
+    ],
+    "size_m": [
+      0.11,
+      0.06,
+      0.05
+    ],
+    "source_commit": "dac7f6b6907ee6ba2ae2b18a7e3d8d1c263e7a0e",
+    "returncode": 0,
+    "success": true,
+    "failure_reason": null,
+    "motion_started": true,
+    "motion_to_done_s": 91.4789867401123,
+    "motion_to_failure_s": null,
+    "setup_task_archive_wall_s": 129.12517642974854,
+    "archive_wall_s": 0.7080373559983855,
+    "archive_verified": true,
+    "phases": [
+      {
+        "phase": "PREGRASP",
+        "epoch": 1792311348.4965801
+      },
+      {
+        "phase": "APPROACH",
+        "epoch": 1792311355.760232
+      },
+      {
+        "phase": "CLOSE",
+        "epoch": 1792311368.22207
+      },
+      {
+        "phase": "LIFT",
+        "epoch": 1792311370.4438987
+      },
+      {
+        "phase": "TRANSFER",
+        "epoch": 1792311385.233136
+      },
+      {
+        "phase": "LOWER",
+        "epoch": 1792311394.0110335
+      },
+      {
+        "phase": "OPEN",
+        "epoch": 1792311411.6844969
+      },
+      {
+        "phase": "RETREAT",
+        "epoch": 1792311416.317785
+      },
+      {
+        "phase": "HOME",
+        "epoch": 1792311420.7721632
+      },
+      {
+        "phase": "VERIFY",
+        "epoch": 1792311435.0584471
+      },
+      {
+        "phase": "DONE",
+        "epoch": 1792311439.9755669
+      }
+    ],
+    "output": "/home/featurize/work/isaac-support/graspgen/reports/20261018-demo-video-dev30/small_medium-yaw068-seed2902-attempt01/output",
+    "slot_xy": [
+      -0.2,
+      -0.4
+    ],
+    "performance": {
+      "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+      "wall_s": 113.90071849800006,
+      "categories": {
+        "camera_render": {
+          "calls": 546,
+          "failed_calls": 0,
+          "inclusive_s": 36.18462762497438,
+          "exclusive_s": 36.18462762497438,
+          "max_s": 0.39152125799955684
+        },
+        "path_validation": {
+          "calls": 721,
+          "failed_calls": 0,
+          "inclusive_s": 25.15408824997212,
+          "exclusive_s": 21.852791450604855,
+          "max_s": 3.0609546749983565
+        },
+        "physics_step": {
+          "calls": 3152,
+          "failed_calls": 0,
+          "inclusive_s": 15.965002457029186,
+          "exclusive_s": 15.965002457029186,
+          "max_s": 0.14813385399975232
+        },
+        "cartesian_ik": {
+          "calls": 21,
+          "failed_calls": 2,
+          "inclusive_s": 7.623822615987592,
+          "exclusive_s": 7.623822615987592,
+          "max_s": 6.184477602997504
+        },
+        "save_observation": {
+          "calls": 13,
+          "failed_calls": 0,
+          "inclusive_s": 6.557251485999586,
+          "exclusive_s": 6.557251485999586,
+          "max_s": 0.7166148389987939
+        },
+        "scene_estimation": {
+          "calls": 21,
+          "failed_calls": 0,
+          "inclusive_s": 4.066578609003045,
+          "exclusive_s": 4.066578609003045,
+          "max_s": 0.3584897170003387
+        },
+        "trace_write": {
+          "calls": 21,
+          "failed_calls": 0,
+          "inclusive_s": 3.715883042987116,
+          "exclusive_s": 3.715883042987116,
+          "max_s": 2.696441156000219
+        },
+        "depth_obstacle_mapping": {
+          "calls": 321672,
+          "failed_calls": 0,
+          "inclusive_s": 3.3334109843344777,
+          "exclusive_s": 3.3334109843344777,
+          "max_s": 0.2524538149991713
+        },
+        "free_space_mapping": {
+          "calls": 1797,
+          "failed_calls": 0,
+          "inclusive_s": 0.6360229290439747,
+          "exclusive_s": 0.6360229290439747,
+          "max_s": 0.03802730900133611
+        },
+        "sensor_read": {
+          "calls": 21,
+          "failed_calls": 0,
+          "inclusive_s": 4.922176686992316,
+          "exclusive_s": 0.6156589939710102,
+          "max_s": 0.6488842059989111
+        },
+        "holding_estimation": {
+          "calls": 21,
+          "failed_calls": 0,
+          "inclusive_s": 0.4471446610041312,
+          "exclusive_s": 0.4471446610041312,
+          "max_s": 0.0912130190008611
+        },
+        "workspace_setup": {
+          "calls": 22,
+          "failed_calls": 0,
+          "inclusive_s": 0.03821790199435782,
+          "exclusive_s": 0.03821790199435782,
+          "max_s": 0.006176357997901505
+        },
+        "grasp_generation": {
+          "calls": 1,
+          "failed_calls": 0,
+          "inclusive_s": 0.8062127030025295,
+          "exclusive_s": 0.0053630890033673495,
+          "max_s": 0.8062127030025295
+        },
+        "joint_planning": {
+          "calls": 7,
+          "failed_calls": 0,
+          "inclusive_s": 1.6122904599978938,
+          "exclusive_s": 0.001174437998997746,
+          "max_s": 0.4559346739988541
+        }
+      }
+    },
+    "initial_online_sizes": [
+      [
+        0.11,
+        0.06,
+        0.05
+      ]
+    ],
+    "final_visual": {
+      "time_s": 26.266666666665817,
+      "track_id": "visual_0013",
+      "position_m": [
+        -0.2002861350774765,
+        -0.397092342376709,
+        0.7849998916585086
+      ],
+      "target_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "x_error_m": -0.00028613507747649036,
+      "y_error_m": 0.002907657623291038,
+      "axis_yaw_error_deg": 0.03684882153870138,
+      "z_error_m": 1.0834149144489658e-07,
+      "visual_speed_m_s": 1.624955879343251e-05,
+      "arms_home_and_open": true
+    },
+    "offline_final_position_m": [
+      -0.2002861499786377,
+      -0.3972820043563843,
+      0.7849999070167542
+    ],
+    "offline_final_center_error_xy_m": [
+      -0.0002861499786376842,
+      0.002717995643615745
+    ],
+    "offline_final_slot_errors": {
+      "xy_m": 0.002733017037815263,
+      "z_m": 9.298324588069562e-08,
+      "tilt_deg": 0.0,
+      "axis_yaw_deg": 0.03689386250158655,
+      "linear_speed": 0.0016028462285659234,
+      "angular_speed": 4.1492564052524363e-07
+    },
+    "archive_files": 190,
+    "archive_bytes": 89805412
+  },
+  "video_path": "/home/featurize/work/isaac-support/graspgen/reports/20261018-demo-video-dev30/small_medium-yaw068-seed2902-attempt01/output/pick_place_demo.mp4",
+  "video_bytes": 43278743,
+  "video_sha256": "96a18a7cd1ec53dc04d763ab139c378b91ca7e3fbb18b7314ebe09ed79971954",
+  "fps": 20.0,
+  "resolution_wh": [
+    1280,
+    720
+  ],
+  "video_frames": 482,
+  "nominal_duration_s": 24.1,
+  "playback": "1x simulation time with computation waits omitted; wall-clock overlay retained",
+  "phases": [
+    "PREGRASP",
+    "APPROACH",
+    "CLOSE",
+    "LIFT",
+    "TRANSFER",
+    "LOWER",
+    "OPEN",
+    "RETREAT",
+    "HOME",
+    "VERIFY",
+    "DONE"
+  ],
+  "archive_verified": true,
+  "local_delivery": {
+    "local_file": "E:\\nju\\智能机器人\\展示视频\\单盒抓放演示_中号盒68度_20261018.mp4",
+    "sha256": "96a18a7cd1ec53dc04d763ab139c378b91ca7e3fbb18b7314ebe09ed79971954",
+    "bytes": 43278743,
+    "decoded_frames": 482,
+    "fps": 20.0,
+    "duration_s": 24.1,
+    "resolution_wh": [
+      1280,
+      720
+    ],
+    "all_frames_decoded": true,
+    "cloud_hash_matched": true,
+    "task_success": true
+  },
+  "visual_qa": "Decoded all 482 frames; inspected initial, lift, descent and released/retreated views. Box and belt are visible; recording is simulation-time, not a wall-clock speed claim.",
+  "ci_conclusion": "success; full CPU workflow on recording source"
+}

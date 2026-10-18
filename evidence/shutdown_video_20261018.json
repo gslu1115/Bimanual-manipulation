@@ -1,0 +1,67 @@
+{
+  "status": "ARTIFACTS_VERIFIED_AND_PROJECT_SERVICES_STOPPED",
+  "original_shutdown": {
+    "status": "REMOTE_READY_FOR_RETURN",
+    "utc": "2026-10-18T08:08:38.438930+00:00",
+    "source_commit": "8ea798be3784ed3d3ba819e1eeb5ed5efac25c34",
+    "backup_directory": "/home/featurize/work/isaac-support/backups/shutdown-small-center-20261018T080727Z",
+    "stopped": [
+      {
+        "pid": 26405,
+        "name": "Isaac dev24 GUI/WebRTC"
+      },
+      {
+        "pid": 6515,
+        "name": "viewer"
+      },
+      {
+        "pid": 6368,
+        "name": "Xvfb :99"
+      },
+      {
+        "container": "project-yolo11n"
+      },
+      {
+        "container": "project-graspgen-proxy"
+      },
+      {
+        "container": "project-graspgen"
+      }
+    ],
+    "remaining_project_processes": [],
+    "project_listeners": [],
+    "gpu_compute_processes": "",
+    "temporary_files_verified": 4191,
+    "temporary_bytes_verified": 1414245508,
+    "supplemental_files": 73,
+    "supplemental_bytes": 273403191,
+    "cloud_free_bytes": 72290926592,
+    "git_documentation_checkpoint_pending": true,
+    "next_step": "Continue only upright single cartons, three small sizes and one centre target; dev29 six pre-drawn scenes all passed. No new run before explicit resume."
+  },
+  "video_runtime_commit": "dac7f6b6907ee6ba2ae2b18a7e3d8d1c263e7a0e",
+  "video_cloud": "/home/featurize/work/isaac-support/graspgen/reports/20261018-demo-video-dev30/small_medium-yaw068-seed2902-attempt01/output/pick_place_demo.mp4",
+  "video_local": {
+    "local_file": "E:\\nju\\智能机器人\\展示视频\\单盒抓放演示_中号盒68度_20261018.mp4",
+    "sha256": "96a18a7cd1ec53dc04d763ab139c378b91ca7e3fbb18b7314ebe09ed79971954",
+    "bytes": 43278743,
+    "decoded_frames": 482,
+    "fps": 20.0,
+    "duration_s": 24.1,
+    "resolution_wh": [
+      1280,
+      720
+    ],
+    "all_frames_decoded": true,
+    "cloud_hash_matched": true,
+    "task_success": true
+  },
+  "recording_task_success": true,
+  "gpu_compute_processes": [],
+  "remote_project_listeners": [],
+  "local_forward_listeners": [],
+  "project_containers_running": [],
+  "new_training_or_simulation_running": false,
+  "cloud_final_receipt": "/home/featurize/work/isaac-support/graspgen/reports/20261018-demo-video-dev30/shutdown-final.json",
+  "next_session": "Restore a new server, retain three small sizes/upright single carton/one centre target. No need to rerun automatically for shutdown."
+}
