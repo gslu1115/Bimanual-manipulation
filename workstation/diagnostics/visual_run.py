@@ -30,7 +30,7 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
              root/'workstation/diagnostics/depth_error_audit.py',
              *(root/'workstation/simulation'/name for name in
                ('robot_driver.py','environment.py','visual_fixtures.py','station_priors.py','display_refresh.py'))]
-    sources.extend((root/'workstation/diagnostics'/name for name in ('visual_run.py','vision_check.py','identity_capture.py')))
+    sources.extend((root/'workstation/diagnostics'/name for name in ('visual_run.py','vision_check.py','identity_capture.py','presentation_video.py')))
     for directory in ('observations','perception','planning','skills','models'):
         sources.extend((root/'workstation'/directory).glob('*.py'))
     env._write_json('online_source_hashes.json',{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest()
@@ -143,7 +143,19 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
         skill.estimator.record_association=True
         identity_capture=IdentityCapture(env.output,save_observation)
     if hasattr(skill,'_read_holding_surface'):timing.wrap(skill,'_read_holding_surface','holding_estimation')
-    result=skill.run()
+    video=None;original_step=env.step
+    if getattr(env,'record_video',False):
+        from workstation.diagnostics.presentation_video import PresentationVideo
+        video=PresentationVideo(env,lambda:skill.events[-1]['phase'] if skill.events else 'PREPARING')
+        def recorded_step(*a,**kw):
+            original_step(*a,**kw)
+            video.tick()
+        env.step=recorded_step
+    try:
+        result=skill.run()
+    finally:
+        env.step=original_step
+        if video is not None:video.close()
     if getattr(robot,'refresh_display',None) is not None:
         result['display_refresh']=robot.refresh_display.report()
     result['observation_refresh']=dict(initial_render_passes=env.camera_system.settings['warmup_render_frames'],

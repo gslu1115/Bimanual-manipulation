@@ -250,8 +250,8 @@ def load_config(args, parser):
     if args.camera_recording:
         config.setdefault("camera_system", {})["recording_enabled"] = True
     settings = camera_settings(config)
-    if args.record_video and args.mode != "dual-handover":
-        parser.error("--record-video requires --mode dual-handover")
+    if args.record_video and args.mode not in ("dual-handover","visual-pnp"):
+        parser.error("--record-video requires dual-handover or visual-pnp")
     if (args.mode in ("sensor-check", "vision-check", "visual-pnp", "visual-adjust", "visual-sort", "model-capture") or args.camera_recording or args.record_video) and (
             args.no_sensors or not settings["enabled"]):
         parser.error("Requested sensor operation requires enabled cameras")
@@ -306,6 +306,8 @@ def main(argv=None):
     extra_args = ["--ext-folder", str(root/"extscache"), "--ext-folder", str(root/"extsDeprecated")]
     if config.get('motion_backend')=='cumotion':
         extra_args += ['--enable','isaacsim.robot_motion.examples']
+    if args.record_video:
+        extra_args += ['--enable','omni.videoencoding']
     if args.livestream:
         args.keep_open = True
         extra_args += ['--enable', 'omni.kit.livestream.app',
