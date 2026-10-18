@@ -59,11 +59,15 @@ CI 仅验证当前提交逻辑，不能替代 RTX/Vulkan、模型服务、物理
 ```bash
 # 新默认：混合尺寸场景
 python -m workstation --mode scene --box-set mixed --save-images
+# 展示图：四个 1920×1080 无界面视角，保存到本次输出的 showcase/
+python -m workstation --mode scene --box-set mixed --save-images --save-showcase
 # 恢复历史九盒同尺寸的开发场景
 python -m workstation --mode scene --box-set uniform --seed 6
 ```
 
 Linux 在已恢复的 Isaac 环境中通过原 `run-standalone.sh -m workstation ...` 启动；PowerShell 对应 `./launch.ps1 -Mode scene -BoxSet mixed`。混合尺寸目前只接 `scene`。原单盒/视觉抓放、诊断和训练采集模式继续使用 uniform 参考尺寸，显式请求 mixed 会拒绝；感知与抓取仍不能据此宣称支持多尺寸。三路相机内参、安装位置、机器人及抓放控制器未改。
+
+`--save-showcase` 仅在沉降后移动展示用的编辑器视角，物理时间保持不变，结束后恢复视角；不移动三路正式相机，也不把展示视角图像送入感知或策略。
 
 533 项本地 CPU 回归通过；60 个随机种子的初始盒体包围盒不互穿并在托盘边界内。2026-10-18 已连接新开的 4090，正在恢复缓存 SDK；Isaac RTX 渲染与动态掉落沉降尚待验证，本轮不做双臂抓放验收。证据见 `evidence/mixed_cartons_scene_20261018.json`，进展见交接 20.46。
 

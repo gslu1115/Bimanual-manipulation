@@ -26,6 +26,7 @@ def build_parser():
     parser.add_argument("--seed", type=int)
     parser.add_argument('--box-set',choices=('mixed','uniform'),
                         help='scene: mixed carton sizes by default; uniform restores the original nine-box fixture')
+    parser.add_argument('--save-showcase',action='store_true',help='scene only: save four 1920x1080 presentation viewport images')
     parser.add_argument("--headless", action="store_true")
     parser.add_argument("--livestream", action="store_true", help="WebRTC GUI without a local window; keeps the app open")
     parser.add_argument("--stream-host", default="127.0.0.1", help="WebRTC endpoint address (SSH relay: 127.0.0.1)")
@@ -96,6 +97,8 @@ def load_config(args, parser):
         parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
     requested_boxes=getattr(args,'box_set',None)
+    if getattr(args,'save_showcase',False) and args.mode!='scene':
+        parser.error('--save-showcase requires --mode scene')
     if requested_boxes=='mixed' and args.mode!='scene':
         parser.error('--box-set mixed currently requires --mode scene; manipulation/vision fixtures use the reference size')
     config['boxes']['size_set']=(requested_boxes or config['boxes'].get('size_set','uniform')) if args.mode=='scene' else 'uniform'
@@ -345,6 +348,9 @@ def main(argv=None):
             if not all(settled[key] for key in ("settled", "inside_upstream_tray", "above_table")):
                 raise RuntimeError("Cartons did not settle inside the tray")
             env.capture("settled")
+            if args.save_showcase:
+                from workstation.diagnostics.showcase import capture
+                capture(env)
             if args.mode == "single-pnp":
                 from workstation.baselines.single_pick_place import SinglePickPlace
                 if not SinglePickPlace(env).run()["success"]:
