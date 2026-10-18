@@ -186,6 +186,16 @@ class CartonEstimator:
                 key = f'visual_{self._next_id:04d}'
                 self._next_id += 1
                 velocity = None
+            anchor=self._anchors.get(key)
+            if (anchor is not None and now-anchor.time_s<=3. and
+                    not np.allclose(obj.size_m,anchor.size_m,atol=1e-6,rtol=0)):
+                # A clipped view must not resize an established physical box.
+                # Keep its known dimensions, mark this fit partial, then let
+                # current-plane recovery below determine the current centre.
+                obj=replace(obj,size_m=anchor.size_m,posture='UNKNOWN',visibility='PARTIAL_OR_UNCERTAIN',
+                    measured_cuboid=None,failures=tuple(dict.fromkeys((*obj.failures,'PARTIAL_OR_MERGED_GEOMETRY'))),
+                    quality=dict(obj.quality,catalog_size_conflict=1.))
+                velocity=None
             tracked.append(replace(obj, track_id=key, velocity_m_s=velocity))
             self._association_event('track_match',mask_refs=obj.mask_refs,assigned_id=key,
                 candidates=[dict(track_id=k,distance_m=float(d)) for d,k in near],
@@ -255,7 +265,7 @@ class CartonEstimator:
             # Attach current geometry before checking current packaging. Never
             # substitute an old anchor or clipped fit for measured coordinates.
             bounded=replace(next(o for o in scene.objects if o.track_id==anchor.track_id),
-                            measured_cuboid=measured)
+                            size_m=tuple(measured['size_m']),measured_cuboid=measured)
             bounded=self._resolve_measured_flat_cuboid(packet,scene,bounded,measured,anchor)
             bounded=self._resolve_measured_side_cuboid(packet,scene,bounded,measured,anchor)
             scene=replace(scene,objects=tuple(bounded if o.track_id==anchor.track_id else o
@@ -658,7 +668,7 @@ class CartonEstimator:
             hypotheses=self._flat_hypotheses(yaw,posture,source)
             source=detections[members[0]]
             # Orientation semantics are not inferred from a clipped footprint.
-            joined.append(replace(source,position_m=(*tuple(centre),z-anchor.size_m[2]/2),
+            joined.append(replace(source,size_m=anchor.size_m,position_m=(*tuple(centre),z-anchor.size_m[2]/2),
                 axis_yaw_rad=yaw,posture=posture,hypotheses=hypotheses,
                 mask_refs=tuple(dict.fromkeys(refs)),cameras=tuple(dict.fromkeys(r.split('/')[0] for r in refs)),
                 visibility='COMPLETE_TOP',quality=q,
@@ -752,11 +762,15 @@ class CartonEstimator:
             yaw = math.atan2(axis[1],axis[0]) % math.pi
             size_xy = np.sort(lengths[:2])[::-1]
             centre_xy = corners.mean(axis=0)
-            combinations = [(p.carton_size_m[0],p.carton_size_m[1],p.carton_size_m[2],'FLAT'),
-                            (p.carton_size_m[0],p.carton_size_m[2],p.carton_size_m[1],'SIDE'),
-                            (p.carton_size_m[1],p.carton_size_m[2],p.carton_size_m[0],'SIDE')]
+            # The public catalogue is common to every scene. Select from the
+            # current measured footprint, never the scene's chosen variant.
+            catalogue=p.carton_size_catalog_m or (p.carton_size_m,)
+            combinations=[face for size in catalogue for face in (
+                (size[0],size[1],size[2],'FLAT',size),
+                (size[0],size[2],size[1],'SIDE',size),
+                (size[1],size[2],size[0],'SIDE',size))]
             expected = min(combinations, key=lambda s: np.linalg.norm(size_xy-np.asarray(s[:2])))
-            length,width,height,geometric_posture = expected
+            length,width,height,geometric_posture,selected_size = expected
             footprint_error = float(np.max(np.abs(size_xy-np.array([length,width]))))
             normal = np.linalg.svd(surface-surface.mean(axis=0), full_matrices=False)[2][-1]
             if normal[2] < 0: normal = -normal
@@ -799,7 +813,7 @@ class CartonEstimator:
                            [math.sin(yaw), math.cos(yaw),0],[0,0,1]])
             hypotheses = list(self._flat_hypotheses(yaw,posture if posture!='SIDE' else 'UNKNOWN',appearance_source))
             if geometric_posture == 'SIDE':
-                if length == p.carton_size_m[0]:
+                if length == selected_size[0]:
                     side_rotation=np.array([[1.,0.,0.],[0.,0.,-1.],[0.,1.,0.]])
                 else:
                     side_rotation=np.array([[0.,1.,0.],[0.,0.,1.],[1.,0.,0.]])
@@ -810,7 +824,7 @@ class CartonEstimator:
             ref = f'{frame.name}/{frame.sequence_id}/component_{index}'
             stored = visible.copy(); stored.setflags(write=False); masks[ref] = stored
             result.append(ObjectEstimate('',frame.sample_time_s,
-                (*tuple(centre_xy),top_z-height/2),yaw,tuple(p.carton_size_m),
+                (*tuple(centre_xy),top_z-height/2),yaw,tuple(selected_size),
                 'known_size_prior; footprint and visible surface measured',posture,
                 tuple(hypotheses),(ref,),(frame.name,),
                 'COMPLETE_TOP' if not reasons else 'PARTIAL_OR_UNCERTAIN',

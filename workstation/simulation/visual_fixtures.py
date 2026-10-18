@@ -23,12 +23,22 @@ def initial_cartons(config, fixture):
         if not math.isfinite(yaw):raise ValueError('Visual fixture yaw must be finite')
         entries=[(posture,xy,yaw%360.) for posture,xy,_ in entries]
     result=[]
+    variant=config.get('diagnostic_visual_carton_variant')
+    spec=next((v for v in config['boxes'].get('variants',[]) if v['name']==variant),None) if variant else None
+    if variant and (spec is None or spec['group']!='small' or fixture!='upright'):
+        raise ValueError('Single upright fixture requires a configured small-carton variant')
+    size=spec['size_m'] if spec else config['boxes']['size']
     for index,(posture,xy,yaw_deg) in enumerate(entries):
         roll={'upright':0.,'side':math.pi/2,'inverted':math.pi}[posture]
         yaw=math.radians(yaw_deg)
-        height=config['boxes']['size'][1 if posture == 'side' else 2]
+        height=size[1 if posture == 'side' else 2]
         q=[math.cos(yaw/2)*math.cos(roll/2),math.cos(yaw/2)*math.sin(roll/2),
            math.sin(yaw/2)*math.sin(roll/2),math.sin(yaw/2)*math.cos(roll/2)]
-        result.append(BoxState(f'box_{index:02d}',[*xy,config['table']['top_z']+height/2+.004],
-                               q,[0.,0.,0.],[0.,0.,0.]))
+        state=BoxState(f'box_{index:02d}',[*xy,config['table']['top_z']+height/2+.004],
+                       q,[0.,0.,0.],[0.,0.,0.])
+        if spec:
+            from workstation.simulation.cartons import surface_area
+            state.size_m=list(size);state.variant=variant
+            state.mass_kg=config['boxes']['mass_kg']*surface_area(size)/surface_area(config['boxes']['size'])
+        result.append(state)
     return result

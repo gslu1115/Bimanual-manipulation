@@ -58,6 +58,10 @@
     0.04,
     0.04
   ],
+  "visual_task": {"target_slot_index": 0},
+  "perception": {
+    "carton_size_catalog_m": [[0.100, 0.055, 0.045], [0.110, 0.060, 0.050], [0.120, 0.065, 0.055]]
+  },
   "boxes": {
     "count": 9,
     "size_set": "mixed",

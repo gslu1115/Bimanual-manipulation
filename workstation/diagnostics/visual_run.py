@@ -106,7 +106,8 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
                 failure_reason='OPTICAL_DEPTH_CALIBRATION_FAILED',events=[],held_on_exit=False,
                 max_visual_lift_m=0.,calibration_gate=gate))
             raise RuntimeError('Optical depth margin rejected by current three-camera calibration')
-    args=(robot,read_packet,ScenePriors.from_config(env.c),env.c['conveyor']['slots_xy'],
+    from workstation.planning.task_targets import visual_target_slots
+    args=(robot,read_packet,ScenePriors.from_config(env.c),visual_target_slots(env.c),
           timing.timed('save_observation',lambda prefix,packet,scene:save_observation(env.output,prefix,packet,scene)),trace_scene,segmenter)
     grasp_source=None
     if graspgen is not None:

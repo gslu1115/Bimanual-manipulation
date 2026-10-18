@@ -119,6 +119,10 @@ def validate(c):
         raise ValueError('Invalid contact material')
     from workstation.observations.camera_config import validate_cameras
     validate_cameras(c)
+    from workstation.planning.task_targets import visual_target_slots
+    visual_target_slots(c)
+    from workstation.perception.scene_estimate import ScenePriors
+    ScenePriors.from_config(c)
     from workstation.observations.policy_observation import policy_settings
     policy_settings(c)
     if 'single_pick_place' in c:

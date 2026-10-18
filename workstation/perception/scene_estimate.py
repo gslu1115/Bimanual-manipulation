@@ -13,10 +13,14 @@ class ScenePriors:
     max_age_s: float = .15
     sync_tolerance_s: float = .02
     optical_depth_error_margin_m: float = .003
+    carton_size_catalog_m: tuple[tuple[float, float, float], ...] = ()
 
     def __post_init__(self):
         if not np.isfinite(self.optical_depth_error_margin_m) or self.optical_depth_error_margin_m<=0:
             raise ValueError('Optical depth error margin must be finite and positive')
+        for size in self.carton_size_catalog_m:
+            if len(size)!=3 or not np.isfinite(size).all() or min(size)<=0:
+                raise ValueError('Carton catalogue requires positive finite dimensions')
 
     @classmethod
     def from_config(cls, config):
@@ -25,7 +29,8 @@ class ScenePriors:
                    (-.38, .38, -.51, .16),
                    float(config['policy_observation']['max_frame_age_s']),
                    float(config['policy_observation']['sync_tolerance_s']),
-                   float(config.get('diagnostic_optical_depth_error_margin_m',.003)))
+                   float(config.get('diagnostic_optical_depth_error_margin_m',.003)),
+                   tuple(tuple(size) for size in config.get('perception',{}).get('carton_size_catalog_m',())))
 
 
 @dataclass(frozen=True)

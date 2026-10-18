@@ -65,6 +65,8 @@ def build_parser():
                         help='Explicit diagnostic INITIAL condition for visual-pnp; seed then changes XY/yaw')
     parser.add_argument('--visual-yaw-deg',type=float,
                         help='Initial upright single-carton yaw only; preserves seed-generated position, never an online pose input')
+    parser.add_argument('--visual-carton-variant',
+                        help='Initial upright small-carton variant; public size catalogue stays identical in all trials')
     parser.add_argument('--scene-focal-length-mm',type=float,
                         help='Explicit calibrated scene-camera optics experiment; original config is preserved')
     parser.add_argument('--wrist-focal-length-mm',type=float,
@@ -171,6 +173,13 @@ def load_config(args, parser):
             parser.error('--visual-yaw-deg requires visual-pnp --visual-fixture upright')
         if not math.isfinite(args.visual_yaw_deg):parser.error('Visual fixture yaw must be finite')
         config['diagnostic_visual_yaw_deg']=args.visual_yaw_deg%360.
+    if args.visual_carton_variant is not None:
+        if args.mode not in ('visual-pnp','vision-check') or args.visual_fixture!='upright':
+            parser.error('--visual-carton-variant requires single upright visual-pnp or vision-check')
+        variants={v['name']:v for v in config['boxes'].get('variants',[]) if v['group']=='small'}
+        if args.visual_carton_variant not in variants:
+            parser.error('--visual-carton-variant must name a configured small carton')
+        config['diagnostic_visual_carton_variant']=args.visual_carton_variant
     if args.scene_focal_length_mm is not None:
         if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-focal-length-mm requires a visual diagnostic mode')

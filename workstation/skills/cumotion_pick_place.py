@@ -92,7 +92,7 @@ class CuMotionPickPlace(VisualPickPlace):
         body_rotation = upright_body_rotation(obj)
         offset = pick_rotation.T@(np.asarray(obj.position_m)-pick)
         relative = pick_rotation.T@body_rotation
-        place, place_rotation = placement_goal(slot, self.priors.support_z_m,
+        place, place_rotation = placement_goal(slot, self.robot.place_support_z,
             obj.size_m, self.release_gap_m, body_rotation, offset, relative)
         # Same bounded position preload magnitude and 30 N physical finger drive.
         close_position = max(0., candidate.closing_width_m/2-.004)
@@ -181,7 +181,7 @@ class CuMotionPickPlace(VisualPickPlace):
                         if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
                         if self.max_visual_lift < .08:raise RuntimeError('NO_VISUAL_LIFT_PROOF')
                         relation=self.robot.held_visual_geometry
-                        place,place_rotation=placement_goal(slot,self.priors.support_z_m,obj.size_m,
+                        place,place_rotation=placement_goal(slot,self.robot.place_support_z,obj.size_m,
                             self.release_gap_m,measurement['rotation'],relation['offset'],relation['relative_rotation'])
                         driver.update_place_from_measurement(place,place_rotation)
                         result['model_placement']=dict(target_tcp_m=place.tolist(),
@@ -203,7 +203,7 @@ class CuMotionPickPlace(VisualPickPlace):
                         released_centre=tcp+rotation@relation['offset']
                         released_rotation=rotation@relation['relative_rotation']
                         bottom=released_centre[2]-np.abs(released_rotation[2])@(self.hold_tracker.size/2)
-                        drop_bound=max(0.,float(bottom-self.priors.support_z_m))+self.hold_tracker.uncertainty_m
+                        drop_bound=max(0.,float(bottom-self.robot.place_support_z))+self.hold_tracker.uncertainty_m
                         if drop_bound>.020:raise RuntimeError('RELEASE_HEIGHT_UNSUPPORTED')
                         result['release_geometry']=dict(expected_lowest_corner_m=float(bottom),
                             observed_supported_body=True,drop_bound_m=drop_bound,

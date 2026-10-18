@@ -281,7 +281,7 @@ class VisualPickPlace:
         for attempt in range(3):
             try:
                 self.robot.execute_cartesian(self.arm,np.asarray(position),yaw0,yaw1,self.scene if planning_scene is None else planning_scene,
-                    self.candidate.target_id,speed,self.priors.carton_size_m if self.held else None,contact,
+                    self.candidate.target_id,speed,self.hold_tracker.size if self.held else None,contact,
                     check_approach_corridor=self.events[-1]['phase']=='APPROACH',
                     **({'orientation_wxyz':orientation} if orientation is not None else {}))
                 break
@@ -510,7 +510,7 @@ class VisualPickPlace:
         self.observe('lifted')
         if self.max_visual_lift < .08: raise RuntimeError('NO_VISUAL_LIFT_PROOF')
         self.event('TRANSFER')
-        target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.robot.place_tcp_clearance_m])
+        target=np.array([*slot,self.robot.place_support_z+obj.size_m[2]/2+self.robot.place_tcp_clearance_m])
         place_attitude=None
         place_yaw=nearest_aligned_yaw(yaw) if not model else 0.
         if model:
@@ -519,7 +519,7 @@ class VisualPickPlace:
             relation=self.robot.held_visual_geometry
             desired_body=nearest_upright_slot_rotation(measurement['rotation'])
             place_rotation=desired_body@np.asarray(relation['relative_rotation']).T
-            body_target=np.array([*slot,self.priors.support_z_m+self.priors.carton_size_m[2]/2+self.release_gap_m])
+            body_target=np.array([*slot,self.robot.place_support_z+obj.size_m[2]/2+self.release_gap_m])
             target=body_target-place_rotation@relation['offset']
             place_attitude=quaternion_from_matrix(place_rotation)
             result['model_placement']=dict(target_tcp_m=target.tolist(),orientation_wxyz=place_attitude.tolist(),
@@ -569,14 +569,17 @@ class VisualPickPlace:
             ok=False
             if len(good) == 1:
                 o=good[0]; yaw_error=math.degrees(axis_error(o.axis_yaw_rad,0.))
-                z_error=abs(o.position_m[2]-(self.priors.support_z_m+o.size_m[2]/2))
+                support_z=getattr(self.robot,'place_support_z',self.priors.support_z_m)
+                z_error=abs(o.position_m[2]-(support_z+o.size_m[2]/2))
                 speed=float('inf') if o.velocity_m_s is None else np.linalg.norm(o.velocity_m_s)
                 states=self.robot.read_states()
                 clear=all(np.max(np.abs(s.joint_positions_rad-self.robot.home[:7])) < .04
                           and min(s.finger_positions_m) > .037 for s in states.values())
                 ok=yaw_error <= 8 and z_error <= .008 and speed <= .015 and clear
                 proof.append(dict(time_s=scene.observation_time_s,track_id=o.track_id,
-                    position_m=o.position_m,axis_yaw_error_deg=yaw_error,z_error_m=z_error,
+                    position_m=o.position_m,target_xy_m=list(slot),size_m=o.size_m,
+                    x_error_m=float(o.position_m[0]-slot[0]),y_error_m=float(o.position_m[1]-slot[1]),
+                    axis_yaw_error_deg=yaw_error,z_error_m=z_error,
                     visual_speed_m_s=float(speed),arms_home_and_open=clear))
             if ok:
                 if stable_start is None: stable_start=scene.observation_time_s
@@ -616,9 +619,9 @@ class VisualPickPlace:
                 o.uncertainty_m<=.008 and np.linalg.norm(np.asarray(o.position_m)-self.initial_position)<.015]
             if len(nearby)!=1:raise RuntimeError('PRELOADED_TARGET_UNCERTAIN')
         tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
-        self.release_tracker=(HeldSurfaceTracker(nearby[0],tcp,rotation,self.priors.carton_size_m)
+        self.release_tracker=(HeldSurfaceTracker(nearby[0],tcp,rotation,nearby[0].size_m)
                               if nearby[0].posture=='UPRIGHT' else None)
-        self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,self.priors.carton_size_m,self.priors,
+        self.hold_tracker=(CuboidHoldingTracker(nearby[0],tcp,rotation,nearby[0].size_m,self.priors,
                           allow_grasp_translation=self.accepted_postures==('UPRIGHT',))
                            if model else self.release_tracker)
         self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
@@ -652,7 +655,7 @@ class VisualPickPlace:
         measured=next(o for o in self.scene.objects if o.track_id == self.candidate.target_id)
         c,s=math.cos(fitted['axis_yaw_rad']),math.sin(fitted['axis_yaw_rad'])
         rz=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
-        dimensions=fitted.get('collision_size_m',self.priors.carton_size_m)
+        dimensions=fitted.get('collision_size_m',self.hold_tracker.size)
         bounded=replace(measured,position_m=fitted['position_m'],axis_yaw_rad=fitted['axis_yaw_rad'],
             posture='UNKNOWN',visibility='RELEASE_BOUNDED_CUBOID' if fitted.get('released_bounded') else 'OBSERVED_TOP_AND_SIDE',
             failures=(),uncertainty_m=fitted['uncertainty_m'],measured_cuboid=None,velocity_m_s=None,
