@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-18",
+  "utc": "2026-10-18T03:44:42.776Z",
+  "scope": "Live browser display of the mixed-size scene after presentation capture; no manipulation trial",
+  "runtime_source_commit": "b7d0482f5d16f7043fdfe5b1d37f2321be3f32b9",
+  "case": "mixed-showcase-20261018-seed006-attempt04",
+  "browser_url": "http://127.0.0.1:8210/",
+  "webrtc_end_to_end_passed": true,
+  "video_resolution_wh": [1280, 720],
+  "ready_state": 4,
+  "paused": false,
+  "first_observed_video_time_s": 51.701071,
+  "later_observed_video_time_s": 110.236769,
+  "screenshot_visually_checked": true,
+  "actual_scene_visible": true,
+  "transport": "TCP 49100/8210 and framed UDP 47998 over authenticated SSH, local loopback viewer",
+  "connection_note": "Initial connections waited for video. After replacing the diagnostic relay with a fresh normal relay and reloading the ready scene, playback succeeded. No precise root cause is claimed.",
+  "earlier_record": "mixed_cartons_physical_20261018.json recorded the earlier unverified streaming state and remains unchanged",
+  "archive": "/home/featurize/work/isaac-support/reports/20261018-mixed-cartons/showcase-attempt04",
+  "scene_left_running": true
+}

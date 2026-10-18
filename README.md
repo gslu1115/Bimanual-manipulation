@@ -67,7 +67,7 @@ python -m workstation --mode scene --box-set uniform --seed 6
 
 Linux 在已恢复的 Isaac 环境中通过原 `run-standalone.sh -m workstation ...` 启动；PowerShell 对应 `./launch.ps1 -Mode scene -BoxSet mixed`。混合尺寸目前只接 `scene`。原单盒/视觉抓放、诊断和训练采集模式继续使用 uniform 参考尺寸，显式请求 mixed 会拒绝；感知与抓取仍不能据此宣称支持多尺寸。三路相机内参、安装位置、机器人及抓放控制器未改。
 
-`--save-showcase` 在沉降后使用临时展示相机拍摄四个视角，物理时间保持不变，结束后恢复编辑器视角并删除临时相机；不移动三路正式相机，也不把展示图送入感知或策略。输出为 1920×1080 PNG，等待文件完整写入后再报告完成。
+`--save-showcase` 在沉降后使用临时展示相机拍摄四个视角，物理时间保持不变，结束后恢复编辑器视角并删除临时相机；不移动三路正式相机，也不把展示图送入感知或策略。输出为 1920×1080 PNG，等待文件完整写入后再报告完成。此次新机的浏览器直播随后也已实际出画：1280×720 持续播放，见 `evidence/mixed_cartons_stream_20261018.json`。
 
 533 项本地 CPU 回归及 GitHub CI 通过；60 个随机种子的初始盒体包围盒不互穿并在托盘边界内。2026-10-18 新 4090 / Isaac 6.1 已实际运行 seed6：九盒在 2.6 秒仿真时间稳定，三路 640×480 RGB-D 有效，四个高清展示视角通过人工检查。一只大盒自然倚在托盘前沿，平面投影伸出边界约 2.90 mm，并非所有盒体投影完全内缩。本轮只验证同一初态的场景构造/沉降/图像，没有多随机种子物理成功率或混合尺寸抓放结论。CPU 与物理证据分别见 `evidence/mixed_cartons_scene_20261018.json`、`evidence/mixed_cartons_physical_20261018.json`，进展见交接 20.46。高清原图保存云盘 `isaac-support/reports/20261018-mixed-cartons/showcase-attempt04/showcase/`。
 
