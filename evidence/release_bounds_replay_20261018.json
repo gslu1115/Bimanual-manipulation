@@ -1,0 +1,115 @@
+{
+  "scope": "saved dev17 current RGB-D and same-exposure wrist FK/extrinsics plus fixed audited hand/TCP transform; no simulator box state",
+  "source_case": "dev17-release-replay",
+  "source_runtime_commit": "a311fad",
+  "old_strict_rejected": true,
+  "new_released_bound": {
+    "position_m": [
+      -0.19567455564745448,
+      -0.3967500194152506,
+      0.7824996539862494
+    ],
+    "axis_yaw_rad": -0.0034886337637752103,
+    "uncertainty_m": 0.003,
+    "coordinate_constraints": [
+      {
+        "axis": 0,
+        "source": "visible_patch_centre_interval",
+        "observed_span_m": 0.09271100067803623,
+        "interval_m": [
+          -0.2009337518687081,
+          -0.18764475254674434
+        ]
+      },
+      {
+        "axis": 1,
+        "source": "complete_observed_extent",
+        "span_m": 0.05480138058587475
+      }
+    ],
+    "mask_refs": [
+      "scene_camera/1034/component_1",
+      "left_wrist_camera/1034/component_1"
+    ],
+    "top_bottom_semantics": "UNKNOWN",
+    "time_s": 18.949999999999566,
+    "surface_inlier_ratio": 1.0,
+    "top_coverage": 0.92997121696757,
+    "side_points": 159,
+    "plane_residual_m": 8.680640144844578e-05,
+    "surface_tilt_deg": 0.0013000730092244,
+    "post_release_drop_bound_m": 0.016166116866833793,
+    "observed_downward_shift_m": 0.013111141629169376,
+    "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis",
+    "released_bounded": true,
+    "geometric_pose_measured": false,
+    "grasp_constrained": false,
+    "reference_constrained": false,
+    "status": "RELEASE_BOUNDED",
+    "known_size_m": [
+      0.1,
+      0.055,
+      0.045
+    ],
+    "centre_intervals_local_m": [
+      [
+        -0.2009337518687081,
+        -0.18764475254674434
+      ],
+      [
+        -0.3974302405585074,
+        -0.3974302405585074
+      ],
+      [
+        0.7824996539862494,
+        0.7824996539862494
+      ]
+    ],
+    "collision_size_m": [
+      0.11335597459640182,
+      0.05553467389819443,
+      0.04580196773225406
+    ],
+    "reference_position_m": [
+      -0.200416856033968,
+      -0.3971100743698164,
+      0.7956107956154188
+    ],
+    "reference_rotation": [
+      [
+        0.9999928352369711,
+        0.003505963594872254,
+        0.0014274781943198272
+      ],
+      [
+        -0.0034886229213904486,
+        0.9999222204360207,
+        -0.011974246882798913
+      ],
+      [
+        -0.0014693484393353883,
+        0.01196918115700906,
+        0.9999272872152228
+      ]
+    ],
+    "assumption": "pre-release orientation remains consistent with current broad top patch; geometry is a collision envelope, not placement acceptance"
+  },
+  "reconstructed_pre_release_lowest_z_m": 0.7727098117492918,
+  "recorded_pre_release_lowest_z_m": 0.7727098117492914,
+  "ids_before": [
+    "visual_0001"
+  ],
+  "ids_after": [
+    "visual_0001"
+  ],
+  "wall_s": 0.17704850000154693,
+  "full_placement_success_claimed": false,
+  "date": "2026-10-18",
+  "parent_commit": "b5cf8c1742cd155283f202628f993cc773f360bc",
+  "cpu_tests": {
+    "count": 539,
+    "result": "PASS",
+    "command": "python -m unittest discover -s tests -q"
+  },
+  "physical_trial": "pending in this evidence; recorded separately"
+}

@@ -638,25 +638,30 @@ class VisualPickPlace:
         result['closed_surface_support']=measurement
         return tcp,rotation
 
-    def observe_released(self, result, drop_bound, released_centre):
+    def observe_released(self, result, drop_bound, released_centre,released_rotation=None):
         self.held=False;self.releasing=False
         self.observe('released')
         tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
         fitted=self.release_tracker.collision_estimate(self.packet,self.scene,tcp,rotation,
-            max_drop_m=drop_bound,reference_position_m=released_centre)
+            max_drop_m=drop_bound,reference_position_m=released_centre,reference_rotation=released_rotation,
+            allow_partial=getattr(self,'allow_partial_release',False))
         if fitted is None: raise RuntimeError('RELEASED_GEOMETRY_UNCERTAIN')
         result['released_collision_estimate']=fitted
+        result.setdefault('released_geometry_checks',[]).append(fitted)
         self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,fitted)
         measured=next(o for o in self.scene.objects if o.track_id == self.candidate.target_id)
         c,s=math.cos(fitted['axis_yaw_rad']),math.sin(fitted['axis_yaw_rad'])
         rz=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+        dimensions=fitted.get('collision_size_m',self.priors.carton_size_m)
         bounded=replace(measured,position_m=fitted['position_m'],axis_yaw_rad=fitted['axis_yaw_rad'],
-            posture='UNKNOWN',visibility='OBSERVED_TOP_AND_SIDE',failures=(),uncertainty_m=.003,
+            posture='UNKNOWN',visibility='RELEASE_BOUNDED_CUBOID' if fitted.get('released_bounded') else 'OBSERVED_TOP_AND_SIDE',
+            failures=(),uncertainty_m=fitted['uncertainty_m'],measured_cuboid=None,velocity_m_s=None,
             hypotheses=tuple(PoseHypothesis(label,tuple(quaternion_from_matrix(rz@flip)),
-                'measured flat cuboid; top/bottom semantics unresolved') for label,flip in
+                'released collision envelope; placement/semantics unverified') for label,flip in
                 [('UPRIGHT',np.eye(3)),('INVERTED',np.diag([1.,-1.,-1.]))]),
-            quality={**measured.quality,'geometric_length_m':self.priors.carton_size_m[0],
-                'geometric_width_m':self.priors.carton_size_m[1],'observed_height_m':self.priors.carton_size_m[2]})
+            quality={**measured.quality,'geometric_length_m':dimensions[0],
+                'geometric_width_m':dimensions[1],'observed_height_m':dimensions[2],
+                'released_collision_bound':float(bool(fitted.get('released_bounded')))})
         collision_scene=replace(self.scene,objects=tuple(bounded if o.track_id == measured.track_id else o
                                                         for o in self.scene.objects))
         # Current measured released geometry replaces this track's clipped

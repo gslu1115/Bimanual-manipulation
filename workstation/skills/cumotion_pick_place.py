@@ -21,6 +21,7 @@ def placement_goal(slot, support_z, size, release_gap, body_rotation, offset, re
 
 class CuMotionPickPlace(VisualPickPlace):
     run_scope = 'controlled_upright_single_carton_official_controller_development'
+    allow_partial_release=True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -139,6 +140,7 @@ class CuMotionPickPlace(VisualPickPlace):
         self.event('PREGRASP')
         next_observation = self.watchdog_period_s
         released_centre = None
+        released_rotation = None
         drop_bound = None
         try:
             while not driver.done:
@@ -208,7 +210,7 @@ class CuMotionPickPlace(VisualPickPlace):
                             source='current RGB-D support and image-time FK')
                         self.event('OPEN');self.releasing=True
                     elif driver.phase=='RETREAT':
-                        self.observe_released(result,drop_bound,released_centre)
+                        self.observe_released(result,drop_bound,released_centre,released_rotation)
                         self.event('RETREAT')
                         self._phase_path(place+[0.,0.,.18],place_rotation,contact=True)
                     driver.update_scene(self.scene)
@@ -217,7 +219,9 @@ class CuMotionPickPlace(VisualPickPlace):
                     # and predates the checked Cartesian motion. Never apply it.
                     if used_cartesian:continue
                 elif driver.time_s>=next_observation and not driver.done:
-                    self.observe('controller_watchdog')
+                    if driver.phase=='RETREAT':
+                        self.observe_released(result,drop_bound,released_centre,released_rotation)
+                    else:self.observe('controller_watchdog')
                     if self.held and not self.releasing and self.holding_measurement() is None:
                         raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
                     driver.update_scene(self.scene)
@@ -236,6 +240,7 @@ class CuMotionPickPlace(VisualPickPlace):
                 self.robot.targets[self.arm]=target
                 self.robot.command_velocities(self.arm,velocity)
                 for _ in range(2):self.robot.tick()
+            self.observe('retreated')
             self.event('HOME')
             self.robot.command_velocities(self.arm,np.zeros(9))
             self.robot.execute_joint(self.arm,self.robot.home,self.scene,candidate.target_id)

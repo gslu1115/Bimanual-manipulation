@@ -364,7 +364,10 @@ class CartonEstimator:
         Unproved refs and a separately observed original target stay obstacles.
         """
         refs=tuple(measurement.get('mask_refs',()))
-        if measurement.get('geometric_pose_measured'):
+        if measurement.get('released_bounded'):
+            from workstation.perception.held_surface import released_bound_supported
+            supported=released_bound_supported(measurement,scene.observation_time_s)
+        elif measurement.get('geometric_pose_measured'):
             from workstation.perception.cuboid_pose import measured_cuboid_supported
             supported=measured_cuboid_supported(measurement,scene.observation_time_s)
         elif measurement.get('grasp_constrained'):
@@ -405,7 +408,7 @@ class CartonEstimator:
                       if obj is best or obj.track_id not in ids)
         for alias in ids-{target_id}:self._tracks.pop(alias,None);self._anchors.pop(alias,None)
         self._tracks[target_id]=joined
-        if not joined.failures and not measurement.get('reference_constrained'):
+        if not joined.failures and not measurement.get('reference_constrained') and not measurement.get('released_bounded'):
             self._anchors[target_id]=joined
         return replace(scene,objects=objects)
 

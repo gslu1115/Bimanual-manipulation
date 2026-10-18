@@ -75,7 +75,7 @@ class HeldSurfaceTracker:
         rotation=np.asarray(tcp_rotation)@self.relative_rotation
         return self._surface_evidence(packet,scene,centre,rotation,require_motion_extent)
 
-    def _surface_evidence(self,packet,scene,centre,rotation,require_motion_extent):
+    def _surface_evidence(self,packet,scene,centre,rotation,require_motion_extent,require_side=True):
         import cv2
         # This observer is deliberately limited to the upright transport skill.
         if rotation[2,2] < math.cos(math.radians(8)):
@@ -111,7 +111,7 @@ class HeldSurfaceTracker:
         # Sufficient current extent in both directions plus a visible side.
         # A tiny top patch near a predicted pose is not holding evidence.
         side=np.any(np.abs(np.abs(local[:,:2])-half[:2]) < .004,axis=1) & ~top
-        if coverage < .3 or (require_motion_extent and np.any(spans < self.size[:2]*.5)) or side.sum() < 20:
+        if coverage < .3 or (require_motion_extent and np.any(spans < self.size[:2]*.5)) or (require_side and side.sum() < 20):
             return None
         normal=np.linalg.svd(surface-surface.mean(axis=0),full_matrices=False)[2][-1]
         residual=float(np.sqrt(np.mean(((surface-surface.mean(axis=0))@normal)**2)))
@@ -127,12 +127,15 @@ class HeldSurfaceTracker:
             surface_inlier_ratio=min(ratios),plane_residual_m=residual,surface_tilt_deg=tilt,
             top_model_error_m=abs(top_z-expected_top_z),full_6d_pose_measured=False)
 
-    def collision_estimate(self, packet, scene, tcp_position, tcp_rotation,max_drop_m=0.,reference_position_m=None):
+    def collision_estimate(self, packet, scene, tcp_position, tcp_rotation,max_drop_m=0.,reference_position_m=None,
+                           reference_rotation=None,allow_partial=False):
         """Bound a released upright cuboid from measured planes/visible extents.
 
-        Each XY coordinate needs a visible signed face or a complete known-size
-        span. TCP supplies an orientation hypothesis and a consistency gate,
-        never the returned translation. Missing constraints reject retreat.
+        The default needs a visible signed face or complete span for each XY
+        coordinate. The release-only opt-in accepts a broad top patch and
+        encloses every compatible hidden centre instead of inventing one.
+        The frozen pre-release rotation is a hypothesis, not a new measurement;
+        the arm cannot carry the released obstacle along during retreat.
         Top/bottom semantics remain unresolved until unobstructed reobservation.
         An explicit bounded post-release drop permits downward motion only;
         the returned translation still comes from CURRENT surfaces.
@@ -147,6 +150,14 @@ class HeldSurfaceTracker:
             if expected.shape!=(3,) or not np.isfinite(expected).all():
                 raise ValueError('Released reference must be a finite visual centre')
         predicted_rotation=np.asarray(tcp_rotation)@self.relative_rotation
+        if reference_rotation is not None:
+            predicted_rotation=np.asarray(reference_rotation,float)
+            if (predicted_rotation.shape!=(3,3) or not np.isfinite(predicted_rotation).all() or
+                    not np.allclose(predicted_rotation.T@predicted_rotation,np.eye(3),atol=1e-6) or
+                    not np.isclose(np.linalg.det(predicted_rotation),1.,atol=1e-6)):
+                raise ValueError('Released reference rotation must be proper and finite')
+        if allow_partial and (scene.frame!='workcell' or abs(scene.observation_time_s-packet.observation_time_s)>1e-6 or
+                not 0<=packet.assembled_time_s-packet.observation_time_s<=.15):return None
         fit_centre=expected.copy()
         if max_drop_m:
             tops=[]
@@ -166,9 +177,9 @@ class HeldSurfaceTracker:
             # A measured fit origin, not a replacement robot state or commanded
             # carton position. Whole-instance surface checks below remain.
             fit_centre[2]=float(np.median(tops))-predicted_rotation[2,2]*self.size[2]/2
-        # Retreat additionally requires an independent observed constraint for
-        # BOTH XY coordinates below. A half-face width is not that constraint.
-        evidence=self._surface_evidence(packet,scene,fit_centre,predicted_rotation,False)
+        # The default independently constrains both XY coordinates. The opt-in
+        # keeps unresolved coordinates as finite intervals in the collision box.
+        evidence=self._surface_evidence(packet,scene,fit_centre,predicted_rotation,allow_partial,require_side=not allow_partial)
         if evidence is None: return None
         yaw=math.atan2(predicted_rotation[1,0],predicted_rotation[0,0])
         c,s=math.cos(yaw),math.sin(yaw)
@@ -184,7 +195,7 @@ class HeldSurfaceTracker:
             normal_points.append(pts);normals.append(ns)
         points=np.concatenate(points);normal_points=np.concatenate(normal_points);normals=np.concatenate(normals)
         local=points@rotation;normal_local=normals@rotation;plane_local=normal_points@rotation
-        coordinates=[];constraints=[]
+        coordinates=[];constraints=[];intervals=[]
         for axis in (0,1):
             values=[]
             for sign in (-1.,1.):
@@ -198,17 +209,44 @@ class HeldSurfaceTracker:
             if abs(span-self.size[axis]) <= .006:
                 values.append(float((low+high)/2))
                 constraints.append(dict(axis=axis,source='complete_observed_extent',span_m=float(span)))
-            if not values or np.ptp(values) > .004: return None
-            coordinates.append(float(np.mean(values)))
+            if not values:
+                if not allow_partial or span<self.size[axis]*.5:return None
+                # Every compatible centre must contain the CURRENT visible patch.
+                # Keep the entire interval; do not fill the hidden coordinate
+                # with the old box centre or the post-open moving TCP.
+                lower=float(high-self.size[axis]/2-.003)
+                upper=float(low+self.size[axis]/2+.003)
+                if lower>upper:return None
+                midpoint=(lower+upper)/2
+                coordinates.append(midpoint);intervals.append((lower,upper))
+                constraints.append(dict(axis=axis,source='visible_patch_centre_interval',
+                    observed_span_m=float(span),interval_m=[lower,upper]))
+            else:
+                if np.ptp(values) > .004:return None
+                value=float(np.mean(values));coordinates.append(value);intervals.append((value,value))
         centre=rotation@np.array([*coordinates,evidence['observed_top_z_m']-self.size[2]/2])
         delta=centre-expected
-        if max_drop_m:
+        if allow_partial:
+            local_expected=expected@rotation
+            distance=np.maximum(np.asarray(intervals)[:,0]-local_expected[:2],0)+np.maximum(local_expected[:2]-np.asarray(intervals)[:,1],0)
+            if np.linalg.norm(distance)>.008 or not -max_drop_m-.003<=delta[2]<=.008:return None
+        elif max_drop_m:
             if np.linalg.norm(delta[:2])>.008 or not -max_drop_m<=delta[2]<=.008:return None
         elif np.linalg.norm(delta) > .008:return None
         local=(points-centre)@rotation;half=self.size/2
         inside=np.all(np.abs(local) <= half+.006,axis=1)
         on_surface=np.min(np.abs(np.abs(local)-half),axis=1) <= .006
         if float((inside & on_surface).mean()) < .95: return None
+        extra={}
+        if allow_partial:
+            intervals.append((float(centre[2]),float(centre[2])))
+            bounds=np.asarray(intervals)
+            collision_size=np.abs(rotation.T@predicted_rotation)@self.size+(bounds[:,1]-bounds[:,0])
+            extra=dict(released_bounded=True,geometric_pose_measured=False,grasp_constrained=False,
+                reference_constrained=False,status='RELEASE_BOUNDED',known_size_m=self.size.tolist(),
+                centre_intervals_local_m=bounds.tolist(),collision_size_m=collision_size.tolist(),
+                reference_position_m=expected.tolist(),reference_rotation=predicted_rotation.tolist(),
+                assumption='pre-release orientation remains consistent with current broad top patch; geometry is a collision envelope, not placement acceptance')
         return dict(position_m=tuple(float(v) for v in centre),axis_yaw_rad=yaw,
                     uncertainty_m=.003,coordinate_constraints=constraints,
                     mask_refs=evidence['mask_refs'],top_bottom_semantics='UNKNOWN',
@@ -217,7 +255,35 @@ class HeldSurfaceTracker:
                     **{key:evidence[key] for key in ('time_s','surface_inlier_ratio',
                         'top_coverage','side_points','plane_residual_m','surface_tilt_deg')},
                     post_release_drop_bound_m=float(max_drop_m),observed_downward_shift_m=float(-delta[2]),
-                    source='current RGB-D planes/extents + known size + validated pre-lift orientation hypothesis')
+                    source='current RGB-D planes/extents + known size + validated pre-release orientation hypothesis',**extra)
+
+
+def released_bound_supported(measurement,time_s):
+    """Current collision envelope only; never independent pose/placement proof."""
+    if (measurement.get('status')!='RELEASE_BOUNDED' or measurement.get('released_bounded') is not True or
+            measurement.get('geometric_pose_measured') is not False or measurement.get('grasp_constrained') is not False or
+            measurement.get('reference_constrained') is not False or not measurement.get('mask_refs')):return False
+    values=np.asarray([measurement.get(k,float('nan')) for k in
+        ('time_s','surface_inlier_ratio','top_coverage','plane_residual_m','surface_tilt_deg','uncertainty_m')])
+    if (not np.isfinite(values).all() or abs(values[0]-time_s)>1e-6 or not .95<=values[1]<=1. or
+            values[2]<.3 or not 0<=values[3]<=.002 or not 0<=values[4]<=8 or not .003<=values[5]<=.008):return False
+    bounds=np.asarray(measurement.get('centre_intervals_local_m'),float)
+    size=np.asarray(measurement.get('known_size_m'),float);collision=np.asarray(measurement.get('collision_size_m'),float)
+    if (bounds.shape!=(3,2) or size.shape!=(3,) or collision.shape!=(3,) or
+            not all(np.isfinite(x).all() for x in (bounds,size,collision)) or np.any(size<=0) or
+            np.any(bounds[:,1]<bounds[:,0]) or np.any(collision<size-1e-5)):return False
+    centre=np.asarray(measurement.get('position_m'),float)
+    rotation=np.asarray(measurement.get('reference_rotation'),float)
+    yaw=measurement.get('axis_yaw_rad',float('nan'))
+    if (centre.shape!=(3,) or rotation.shape!=(3,3) or not np.isfinite(centre).all() or
+            not np.isfinite(rotation).all() or not np.isfinite(yaw) or
+            not np.allclose(rotation.T@rotation,np.eye(3),atol=1e-6) or
+            not np.isclose(np.linalg.det(rotation),1.,atol=1e-6)):return False
+    c,s=math.cos(yaw),math.sin(yaw);rz=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+    width=bounds[:,1]-bounds[:,0]
+    return bool(np.all(width<=size*.5+.006+1e-6) and
+        np.allclose(centre@rz,bounds.mean(axis=1),atol=1e-6,rtol=0) and
+        np.allclose(collision,np.abs(rz.T@rotation)@size+width,atol=1e-6,rtol=0))
 
 
 class CuboidHoldingTracker:
