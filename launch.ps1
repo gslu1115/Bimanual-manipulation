@@ -3,6 +3,7 @@ param(
     [string]$Mode = 'scene',
     [string]$IsaacRoot = '',
     [int]$Seed = 6,
+    [ValidateSet('mixed','uniform')][string]$BoxSet,
     [switch]$Headless,
     [switch]$Livestream,
     [string]$StreamHost = '127.0.0.1',
@@ -45,6 +46,7 @@ if (-not $PSBoundParameters.ContainsKey('IsaacRoot') -and
 $pythonEntry = Join-Path $IsaacRoot $(if ($onWindows) { 'python.bat' } else { 'python.sh' })
 if (-not (Test-Path -LiteralPath $pythonEntry)) { throw "Isaac Sim Python launcher not found: $pythonEntry" }
 $runArgs = @('-u', '-m', 'workstation', '--mode', $Mode, '--seed', "$Seed")
+if ($BoxSet) { $runArgs += @('--box-set',$BoxSet) }
 if ($Headless) { $runArgs += '--headless' } else { $runArgs += '--keep-open' }
 if ($Livestream) { $runArgs += @('--livestream', '--stream-host', $StreamHost) }
 if ($NoSensors) { $runArgs += '--no-sensors' }

@@ -41,13 +41,20 @@ class BoxState:
     orientation_wxyz: list
     linear_velocity: list
     angular_velocity: list
+    size_m: list | None = None
+    mass_kg: float | None = None
+    variant: str | None = None
 
     def to_dict(self):
-        return asdict(self)
+        # Keep legacy single-size recordings compatible with the old schema.
+        return {key:value for key,value in asdict(self).items() if value is not None}
 
 
 def release_states(c, seed):
     """Non-intersecting release poses, not manually designed settled poses."""
+    if c['boxes'].get('size_set','uniform')=='mixed':
+        from workstation.simulation.cartons import mixed_release_states
+        return mixed_release_states(c,seed)
     rng = random.Random(seed)
     u, b = c['upstream'], c['boxes']
     # Pack release points into low layers instead of a tall column. Bounding
@@ -84,14 +91,17 @@ def validate(c):
     finite_tree(c)
     if c['schema_version'] != 2: raise ValueError('Expected schema version 2')
     b, u, belt = c['boxes'], c['upstream'], c['conveyor']
+    from workstation.simulation.cartons import validate_cartons
+    validate_cartons(b)
     if type(b['count']) is not int or not 1 <= b['count'] <= 18:
         raise ValueError('Box count must be 1..18')
     for dims in (b['size'], c['table']['size'], belt['size'], belt['slot_size_xy'], u['release_size_xy']):
         if not all(v > 0 for v in dims): raise ValueError('Dimensions must be positive')
     if b['mass_kg'] <= 0 or not 0 < c['physics']['dt'] <= 1/60:
         raise ValueError('Invalid mass or physics dt')
-    if u['layer_gap'] <= norm(b['size']) or u['release_clearance'] <= norm(b['size'])/2:
+    if b.get('size_set','uniform')=='uniform' and (u['layer_gap'] <= norm(b['size']) or u['release_clearance'] <= norm(b['size'])/2):
         raise ValueError('Release layers must not intersect, for any orientation')
+    if u['layer_gap']<=0 or u['release_clearance']<=0:raise ValueError('Release spacing must be positive')
     if len(belt['slots_xy']) != 3 or len(c['robots']) != 2:
         raise ValueError('This task requires three slots and two arms')
     if b['size'][1] >= .08: raise ValueError('Default Panda gripper requires box width < 80 mm')
@@ -172,8 +182,9 @@ def validate(c):
 
 
 def slot_errors(box, xy, c):
+    from workstation.simulation.cartons import box_size
     tilt, yaw = orientation_error(box.orientation_wxyz)
-    expected_z = c['conveyor']['top_z'] + c['boxes']['size'][2]/2
+    expected_z = c['conveyor']['top_z'] + box_size(box,c)[2]/2
     return {'xy_m': math.hypot(box.position[0]-xy[0], box.position[1]-xy[1]),
             'z_m': abs(box.position[2]-expected_z), 'tilt_deg': tilt, 'axis_yaw_deg': yaw,
             'linear_speed': norm(box.linear_velocity), 'angular_speed': norm(box.angular_velocity)}
@@ -223,6 +234,7 @@ class IndexingConveyor:
         self.events = []
 
     def update(self, boxes, dt, safe_to_index=True):
+        from workstation.simulation.cartons import box_size
         if self.state == 'FAULT': return 0.
         by_name = {b.name: b for b in boxes}
         if self.state == 'INDEXING':
@@ -233,7 +245,7 @@ class IndexingConveyor:
             self.elapsed += dt
             self.distance += self.c['conveyor']['speed']*dt
             cleared = all(n in by_name and by_name[n].position[0] -
-                          sum(abs(rotation(by_name[n].orientation_wxyz)[0][j])*self.c['boxes']['size'][j]/2 for j in range(3))
+                          sum(abs(rotation(by_name[n].orientation_wxyz)[0][j])*box_size(by_name[n],self.c)[j]/2 for j in range(3))
                           > self.c['conveyor']['clearance_x'] and
                           abs(by_name[n].position[1]-self.c['conveyor']['center_xy'][1]) < self.c['conveyor']['size'][1]/2 and
                           by_name[n].position[2] > self.c['conveyor']['top_z'] for n in self.batch)
@@ -260,7 +272,7 @@ class IndexingConveyor:
         foreign = False
         for b in boxes:
             r = rotation(b.orientation_wxyz)
-            extent = [sum(abs(r[i][j])*self.c['boxes']['size'][j]/2 for j in range(3)) for i in range(3)]
+            extent = [sum(abs(r[i][j])*box_size(b,self.c)[j]/2 for j in range(3)) for i in range(3)]
             if b.name not in occupants and any(
                 all(abs(b.position[j]-xy[j]) < self.c['conveyor']['slot_size_xy'][j]/2+extent[j] for j in range(2))
                 and abs(b.position[2]-self.c['conveyor']['top_z']) < extent[2]+.15

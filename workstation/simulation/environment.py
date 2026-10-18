@@ -77,6 +77,7 @@ class SortingEnvironment:
         if visual_fixture is not None:
             from workstation.simulation.visual_fixtures import initial_cartons
             self.initial_states=initial_cartons(config,visual_fixture)
+        self.box_metadata={state.name:state for state in self.initial_states}
         for state in self.initial_states:
             self._box(state)
         self.boxes = RigidPrim(self.box_paths)
@@ -152,7 +153,9 @@ class SortingEnvironment:
             # Coordinate targets only: no renderable geometry, collider, or
             # semantic label. RGB, depth and instance masks cannot see these.
             target = UsdGeom.Xform.Define(self.stage, f'/World/Targets/slot_{i}')
-            target.AddTranslateOp().Set(Gf.Vec3d(*xy, belt['top_z']+c['boxes']['size'][2]/2))
+            # Mixed-size targets mark the support plane; no shared centre height.
+            target_z=belt['top_z']+(c['boxes']['size'][2]/2 if c['boxes'].get('size_set','uniform')=='uniform' else 0.)
+            target.AddTranslateOp().Set(Gf.Vec3d(*xy,target_z))
             target.GetPrim().CreateAttribute('target:sizeXY', Sdf.ValueTypeNames.Double2).Set(Gf.Vec2d(*belt['slot_size_xy']))
             target.GetPrim().CreateAttribute('target:yawSymmetryDegrees', Sdf.ValueTypeNames.Double).Set(180.)
         # Catch tray at belt exit, including a floor and three sides.
@@ -200,7 +203,8 @@ class SortingEnvironment:
         xf.AddOrientOp(UsdGeom.XformOp.PrecisionDouble).Set(Gf.Quatd(state.orientation_wxyz[0], Gf.Vec3d(*state.orientation_wxyz[1:])))
         body = UsdPhysics.RigidBodyAPI.Apply(xf.GetPrim())
         body.CreateVelocityAttr(Gf.Vec3f(*state.linear_velocity))
-        UsdPhysics.MassAPI.Apply(xf.GetPrim()).CreateMassAttr(self.c['boxes']['mass_kg'])
+        UsdPhysics.MassAPI.Apply(xf.GetPrim()).CreateMassAttr(
+            state.mass_kg if state.mass_kg is not None else self.c['boxes']['mass_kg'])
         physx = PhysxSchema.PhysxRigidBodyAPI.Apply(xf.GetPrim())
         physx.CreateEnableCCDAttr(True)
         # A belt starting below a sleeping body need not wake that body. Keep
@@ -209,13 +213,9 @@ class SortingEnvironment:
         physx.CreateSleepThresholdAttr(0.)
         physx.CreateSolverPositionIterationCountAttr(16)
         physx.CreateSolverVelocityIterationCountAttr(4)
-        sx, sy, sz = self.c['boxes']['size']
-        self._cube(path+'/Cardboard', [0, 0, 0], [sx, sy, sz], [.56, .34, .16], True)
-        # Natural packaging feature; no QR, direction arrow or fiducial.
-        self._cube(path+'/TopTape', [0, 0, sz/2+.00010], [sx*.97, .012, .00018], [.69, .49, .27])
-        self._cube(path+'/TopSeam', [0, 0, sz/2+.00021], [sx*.97, .0007, .00010], [.25, .16, .08])
-        for i, x in enumerate([-sx/2-.0001, sx/2+.0001]):
-            self._cube(path+f'/TapeFold_{i}', [x, 0, sz*.30], [.00018, .012, sz*.4], [.69, .49, .27])
+        from workstation.simulation.cartons import box_size,visual_parts
+        for name,position,size,color,collision in visual_parts(box_size(state,self.c)):
+            self._cube(path+'/'+name,position,size,color,collision)
         from isaacsim.core.experimental.utils.semantics import add_labels
         add_labels(xf.GetPrim(), labels=['carton'])
         xf.GetPrim().SetCustomDataByKey('box_id', state.name)
@@ -289,8 +289,12 @@ class SortingEnvironment:
     def observe_ground_truth(self):
         p, q = self.boxes.get_world_poses()
         v, w = self.boxes.get_velocities()
-        return [BoxState(path.rsplit('/', 1)[1], pi.tolist(), qi.tolist(), vi.tolist(), wi.tolist())
-                for path, pi, qi, vi, wi in zip(self.boxes.paths, p.numpy(), q.numpy(), v.numpy(), w.numpy())]
+        result=[]
+        for path,pi,qi,vi,wi in zip(self.boxes.paths,p.numpy(),q.numpy(),v.numpy(),w.numpy()):
+            name=path.rsplit('/',1)[1];metadata=self.box_metadata[name]
+            result.append(BoxState(name,pi.tolist(),qi.tolist(),vi.tolist(),wi.tolist(),
+                size_m=metadata.size_m,mass_kg=metadata.mass_kg,variant=metadata.variant))
+        return result
 
     def step(self, monitor_conveyor=True, render=True):
         dt = self.c['physics']['dt']

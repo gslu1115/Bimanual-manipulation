@@ -24,6 +24,8 @@ def build_parser():
     parser.add_argument("--config", type=Path, default=PROJECT_ROOT/"config"/"scene.json")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--seed", type=int)
+    parser.add_argument('--box-set',choices=('mixed','uniform'),
+                        help='scene: mixed carton sizes by default; uniform restores the original nine-box fixture')
     parser.add_argument("--headless", action="store_true")
     parser.add_argument("--livestream", action="store_true", help="WebRTC GUI without a local window; keeps the app open")
     parser.add_argument("--stream-host", default="127.0.0.1", help="WebRTC endpoint address (SSH relay: 127.0.0.1)")
@@ -93,6 +95,18 @@ def load_config(args, parser):
     if args.mode=='visual-adjust' and args.grasp_backend!='graspgen':
         parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
+    requested_boxes=getattr(args,'box_set',None)
+    if requested_boxes=='mixed' and args.mode!='scene':
+        parser.error('--box-set mixed currently requires --mode scene; manipulation/vision fixtures use the reference size')
+    config['boxes']['size_set']=(requested_boxes or config['boxes'].get('size_set','uniform')) if args.mode=='scene' else 'uniform'
+    from workstation.simulation.cartons import validate_cartons
+    validate_cartons(config['boxes'])
+    if config['boxes']['size_set']=='mixed':
+        # Slots remain non-rendered targets, large enough for the biggest carton.
+        variants=config['boxes'].get('variants',[])
+        if variants:
+            config['conveyor']['slot_size_xy']=[max(config['conveyor']['slot_size_xy'][j],
+                max(v['size_m'][j] for v in variants)+.02) for j in range(2)]
     motion_backend=getattr(args,'motion_backend','legacy')
     if motion_backend=='cumotion' and (args.mode!='visual-pnp' or args.grasp_backend!='graspgen'):
         parser.error('--motion-backend cumotion requires visual-pnp --grasp-backend graspgen')
@@ -246,7 +260,7 @@ def main(argv=None):
         config['seed']=capture_seeds[0]
     if args.validate_only:
         print(f"Configuration valid: {args.mode}, {config['boxes']['count']} cartons, "
-              "2 Panda arms, 3 formal cameras.")
+              f"{config['boxes']['size_set']} sizes, 2 Panda arms, 3 formal cameras.")
         return
     output_root = Path(os.environ.get('WORKSTATION_OUTPUT_ROOT', str(PROJECT_ROOT/'outputs')))
     output = (args.output or output_root/(

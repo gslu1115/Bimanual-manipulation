@@ -60,6 +60,15 @@
   ],
   "boxes": {
     "count": 9,
+    "size_set": "mixed",
+    "variants": [
+      {"name": "small_reference", "group": "small", "size_m": [0.100, 0.055, 0.045], "count": 2},
+      {"name": "small_medium", "group": "small", "size_m": [0.110, 0.060, 0.050], "count": 2},
+      {"name": "small_wide", "group": "small", "size_m": [0.120, 0.065, 0.055], "count": 2},
+      {"name": "large_a", "group": "large", "size_m": [0.130, 0.100, 0.090], "count": 1},
+      {"name": "large_b", "group": "large", "size_m": [0.145, 0.110, 0.095], "count": 1},
+      {"name": "large_c", "group": "large", "size_m": [0.160, 0.120, 0.100], "count": 1}
+    ],
     "size": [
       0.1,
       0.055,

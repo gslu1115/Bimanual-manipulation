@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-18",
+  "scope": "mixed-size scene construction and CPU validation; no Isaac/RTX settling or manipulation trial",
+  "default_mode": "scene",
+  "carton_count": 9,
+  "recipe": [
+    {
+      "name": "small_reference",
+      "group": "small",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "count": 2
+    },
+    {
+      "name": "small_medium",
+      "group": "small",
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "count": 2
+    },
+    {
+      "name": "small_wide",
+      "group": "small",
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "count": 2
+    },
+    {
+      "name": "large_a",
+      "group": "large",
+      "size_m": [
+        0.13,
+        0.1,
+        0.09
+      ],
+      "count": 1
+    },
+    {
+      "name": "large_b",
+      "group": "large",
+      "size_m": [
+        0.145,
+        0.11,
+        0.095
+      ],
+      "count": 1
+    },
+    {
+      "name": "large_c",
+      "group": "large",
+      "size_m": [
+        0.16,
+        0.12,
+        0.1
+      ],
+      "count": 1
+    }
+  ],
+  "mass_model": "reference 80 g scaled by cardboard surface area",
+  "physical_gripper_opening_m": 0.08,
+  "large_minimum_edge_m": 0.09,
+  "same_appearance": true,
+  "tape_width_m": 0.012,
+  "seam_width_m": 0.0007,
+  "camera_installations_unchanged": true,
+  "mixed_slot_size_xy": [
+    0.18,
+    0.13999999999999999
+  ],
+  "release_checks": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "minimum_separating_axis_clearance_m": 0.011999999999999886,
+    "maximum_initial_top_z_m": 1.406529441982077,
+    "physics_settling_tested": false
+  },
+  "cpu_tests": 533,
+  "legacy_fixture_mode": "uniform",
+  "linux_only": true,
+  "server_not_started": true
+}
