@@ -30,7 +30,7 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
              root/'workstation/diagnostics/depth_error_audit.py',
              *(root/'workstation/simulation'/name for name in
                ('robot_driver.py','environment.py','visual_fixtures.py','station_priors.py','display_refresh.py'))]
-    sources.extend((root/'workstation/diagnostics'/name for name in ('visual_run.py','vision_check.py','identity_capture.py','presentation_video.py')))
+    sources.extend((root/'workstation/diagnostics'/name for name in ('visual_run.py','vision_check.py','identity_capture.py','presentation_video.py','mp4_duration.py')))
     for directory in ('observations','perception','planning','skills','models'):
         sources.extend((root/'workstation'/directory).glob('*.py'))
     env._write_json('online_source_hashes.json',{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest()

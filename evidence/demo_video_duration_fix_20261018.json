@@ -1,0 +1,77 @@
+{
+  "original_file": "E:\\nju\\智能机器人\\展示视频\\单盒抓放演示_中号盒68度_20261018.mp4",
+  "original_metadata": {
+    "mvhd": {
+      "timescale": 20,
+      "duration_ticks": 4294967295,
+      "seconds": 214748364.75
+    },
+    "mdhd": {
+      "timescale": 20,
+      "duration_ticks": 4294967295,
+      "seconds": 214748364.75
+    }
+  },
+  "original_decode": {
+    "metadata_frames": 4294967295.0,
+    "decoded_frames": 482,
+    "fps": 20.0,
+    "first_pts_ms": 0.0,
+    "last_pts_ms": 24050.0,
+    "pixel_sha256": "da05fac5e625652f4940055d64e4085c25b48f0fa832abfc54b0d2e07d1f17df"
+  },
+  "corrected_file": "E:\\nju\\智能机器人\\展示视频\\单盒抓放演示_中号盒68度_20261018_时长修正版.mp4",
+  "corrected_metadata": {
+    "mvhd": {
+      "timescale": 1000,
+      "duration_ticks": 24100,
+      "seconds": 24.1
+    },
+    "mdhd": {
+      "timescale": 10240,
+      "duration_ticks": 246784,
+      "seconds": 24.1
+    }
+  },
+  "corrected_decode": {
+    "metadata_frames": 482.0,
+    "decoded_frames": 482,
+    "fps": 20.0,
+    "first_pts_ms": 0.0,
+    "last_pts_ms": 24050.0,
+    "pixel_sha256": "da05fac5e625652f4940055d64e4085c25b48f0fa832abfc54b0d2e07d1f17df"
+  },
+  "corrected_bytes": 43223271,
+  "corrected_sha256": "d41a4a466709dbbefb8d52d83fa84990dbfa8f2d83e63f31098dcaeea61277b7",
+  "lossless_pixel_identity": true,
+  "native_export_repair": {
+    "frames": 482,
+    "fps": 20.0,
+    "duration_s": 24.1,
+    "sample_clock_verified": true,
+    "previous_duration_ticks": {
+      "mvhd": 4294967295,
+      "tkhd": 4294967295,
+      "mdhd": 4294967295
+    },
+    "correction": "duration headers only; encoded frames and sample timestamps retained"
+  },
+  "native_export_repair_decode": {
+    "metadata_frames": 482.0,
+    "decoded_frames": 482,
+    "fps": 20.0,
+    "first_pts_ms": 0.0,
+    "last_pts_ms": 24050.0,
+    "pixel_sha256": "da05fac5e625652f4940055d64e4085c25b48f0fa832abfc54b0d2e07d1f17df"
+  },
+  "server_started": false,
+  "cloud_original_not_replaced": true,
+  "user_reported_player_duration": "12:19:23",
+  "prior_verification_gap": "Only decoded frame count / fps were checked; container duration and metadata frame count were not checked.",
+  "validation": {
+    "cpu_tests": 574,
+    "targeted_tests": 17,
+    "same_original_file_native_repair": true
+  },
+  "cloud_state": "Original cloud video remains unchanged. Corrected remux is local; server was not contacted/restarted during this fix."
+}

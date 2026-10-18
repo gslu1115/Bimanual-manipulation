@@ -71,9 +71,15 @@ class PresentationVideo:
                     if not self.encoder.encode_next_frame_from_buffer(self.last_frame):raise RuntimeError('Video end hold failed')
         finally:
             self.encoder.finalize_encoding()
-            self.rgb.detach([self.product]);self.product.destroy()
-            self.env.stage.RemovePrim(self.path)
+            from workstation.diagnostics.mp4_duration import finalize_isaac_mp4_duration
+            try:
+                duration=finalize_isaac_mp4_duration(self.env.output/'pick_place_demo.mp4',
+                    len(self.frames)+(round(self.fps) if self.frames else 0),self.fps)
+            finally:
+                self.rgb.detach([self.product]);self.product.destroy()
+                self.env.stage.RemovePrim(self.path)
             report=dict(file='pick_place_demo.mp4',fps=self.fps,resolution_wh=[1280,720],
+                container_timing=duration,
                 frames=self.frames,end_hold_frames=round(self.fps) if self.frames else 0,
                 playback='1x simulation time with computation waits omitted; wall-clock overlay retained',
                 formal_cameras_unchanged=True,actor_input=False,eye_m=self.eye,target_m=self.target)
