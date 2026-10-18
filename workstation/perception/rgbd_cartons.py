@@ -286,7 +286,9 @@ class CartonEstimator:
             'current measured cuboid; hidden local top direction remains unresolved') for sign in
             ((1.,1.,1.),(-1.,-1.,1.),(1.,-1.,-1.),(-1.,1.,-1.)))
         dt=measured['time_s']-previous.time_s
-        velocity=tuple((centre-previous.position_m)/dt) if 1e-6<dt<=self.priors.max_age_s else None
+        # Both poses are measured; their separation is not current frame age.
+        # Use the existing 3-second association horizon, never stale RGB-D.
+        velocity=tuple((centre-previous.position_m)/dt) if 1e-6<dt<=3. else None
         quality={**obj.quality,'independent_cuboid_pose':1.,
             'footprint_coverage':min(1.,float(cv2.contourArea(cv2.convexHull(points.astype(np.float32))))/float(np.prod(size[horizontal]))),
             'footprint_error_m':float(np.max(np.abs(spans-size[horizontal]))),
@@ -348,7 +350,9 @@ class CartonEstimator:
             'current measured cuboid geometry; '+evidence+'; 180-degree axis symmetry')
             for label in labels for sign in (1.,-1.))
         dt=measured['time_s']-previous.time_s
-        velocity=tuple((centre-previous.position_m)/dt) if 1e-6<dt<=self.priors.max_age_s else None
+        # Association history may span the slow observation interval while
+        # this frame still passes the independent 150ms freshness check.
+        velocity=tuple((centre-previous.position_m)/dt) if 1e-6<dt<=3. else None
         return replace(obj,position_m=tuple(centre),axis_yaw_rad=yaw,posture=posture,velocity_m_s=velocity,
             hypotheses=hypotheses,visibility='OBSERVED_CUBOID',uncertainty_m=measured['uncertainty_m'],
             valid_depth_ratio=min(float(packet.cameras[ref.split('/')[0]].valid_depth[scene.masks[ref]].mean())

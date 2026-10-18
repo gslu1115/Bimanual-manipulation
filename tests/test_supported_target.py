@@ -66,13 +66,18 @@ class SupportedTargetTests(unittest.TestCase):
         scene=replace(self.scene,objects=(original,))
         self.assertIs(self.est.associate_supported_target(scene,self.target,self.proof),scene)
 
-    def test_reconciled_partial_track_stays_matchable_on_next_observation(self):
+    def test_reconciled_track_velocity_uses_new_complete_geometry_not_clipped_alias(self):
         result=self.est.associate_supported_target(self.scene,self.target,self.proof)
         obj=result.objects[0]
         self.est._detect=lambda frame,segmentation=None:([replace(obj,track_id='',time_s=1.2)],self.scene.masks)
         current=self.est.estimate(packet(time=1.2,yaw=0.))
         self.assertEqual(current.objects[0].track_id,self.target)
-        self.assertIsNone(current.objects[0].velocity_m_s)
+        # The current RGB-D independently reconstructs the full box here.
+        # Velocity uses that position and the previous complete anchor, never
+        # the alias's clipped .93m height. A 200ms interval is not stale imagery.
+        self.assertTrue(current.objects[0].measured_cuboid['geometric_pose_measured'])
+        self.assertIsNotNone(current.objects[0].velocity_m_s)
+        self.assertLess(sum(v*v for v in current.objects[0].velocity_m_s),1e-6)
 
 
 if __name__=='__main__':unittest.main()

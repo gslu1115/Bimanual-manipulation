@@ -45,6 +45,24 @@ class MeasuredFragmentIdentityTests(unittest.TestCase):
         self.assertEqual(obj.measured_cuboid['time_s'],self.packet.observation_time_s)
         np.testing.assert_allclose(obj.measured_cuboid['position_m'],CENTRE,atol=.002)
 
+    def test_observation_spacing_is_not_the_age_of_the_current_frame(self):
+        from tests.test_holding_reference import at_time
+        current,scene=at_time(self.with_current_tape(),self.scene,3.)
+        scene=replace(scene,objects=tuple(replace(o,time_s=3.) for o in scene.objects))
+        for interval in (.2,1.,2.):
+            previous=replace(self.anchor,time_s=3.-interval)
+            result=self.associate(packet=current,scene=scene,anchors=[previous]);obj=result.objects[0]
+            self.assertEqual(obj.posture,'UPRIGHT');self.assertEqual(obj.time_s,3.)
+            self.assertIsNotNone(obj.velocity_m_s)
+            np.testing.assert_allclose(obj.velocity_m_s,(np.asarray(obj.position_m)-previous.position_m)/interval)
+            self.assertEqual(previous.time_s,3.-interval)
+
+    def test_longer_velocity_interval_does_not_accept_stale_current_images(self):
+        current=self.with_current_tape()
+        result=self.associate(packet=replace(current,assembled_time_s=1.2),anchors=[replace(self.anchor,time_s=0.)])
+        self.assertEqual(len(result.objects),len(self.scene.objects))
+        self.assertTrue(all(obj.measured_cuboid is None for obj in result.objects))
+
     def test_collision_bound_uses_measured_cuboid_without_asserting_upright(self):
         from workstation.planning.collision import scene_obstacles,sphere_box_clearance
         result=self.associate();obj=result.objects[0]

@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-18",
+  "source_runtime_commit": "6177804cc895a1463150df58497b2928e321a3b7",
+  "scope": "saved current RGB-D geometry/packaging and original measured source pose; unchanged model grasp, no box truth",
+  "before_rejection": "MODEL_TARGET_CHANGED",
+  "old_velocity_m_s": null,
+  "new_velocity_m_s": [
+    -1.6353794985650217e-05,
+    7.934858015729354e-05,
+    0.0005824887456367459
+  ],
+  "interval_s": 2.0166666666667563,
+  "current_frame_age_s": 0.0,
+  "revalidation": {
+    "time_s": 5.8166666666667455,
+    "sequence_ids": {
+      "scene_camera": 74,
+      "left_wrist_camera": 74,
+      "right_wrist_camera": 74
+    },
+    "position_change_m": 0.001185993389726351,
+    "axis_change_rad": 0.0012677401316918413,
+    "body_rotation_change_rad": 0.0012678505639705613,
+    "original_pose_retained": true,
+    "opening": {
+      "projected_span_m": 0.05884798916620748,
+      "centre_offset_m": -0.0014406879194292527,
+      "visual_uncertainty_m": 0.005250863812611466,
+      "source": "current visual cuboid orientation + known size; not a model output"
+    }
+  },
+  "original_pose_retained": true
+}

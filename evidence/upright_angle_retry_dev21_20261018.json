@@ -1,0 +1,60 @@
+{
+  "angle_deg": 135,
+  "source_commit": "6177804cc895a1463150df58497b2928e321a3b7",
+  "success": false,
+  "failure_reason": "MODEL_TARGET_CHANGED",
+  "motion_start_to_failure_s": 5.595474720001221,
+  "process_start_to_result_s": 44.876580476760864,
+  "phases": [
+    {
+      "phase": "PREGRASP",
+      "epoch": 1792301007.7775762,
+      "elapsed_from_start_s": 38.0850784778595
+    },
+    {
+      "phase": "FAILED",
+      "epoch": 1792301013.373051,
+      "elapsed_from_start_s": 43.68055319786072
+    }
+  ],
+  "controller_timing": {
+    "motion_through_home_wall_s": 4.066412682999726,
+    "controller_sim_s": 1.7833333333333319,
+    "controller_and_state_wall_s": 0.5839699359912629,
+    "controller_calls": 107,
+    "phase_at_exit": "DESCEND_PICK"
+  },
+  "initial_state": [
+    {
+      "name": "box_00",
+      "position": [
+        -0.22268897610158897,
+        -0.056236772516897356,
+        0.7865
+      ],
+      "orientation_wxyz": [
+        0.38268343236508984,
+        0.0,
+        0.0,
+        0.9238795325112867
+      ],
+      "linear_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angular_velocity": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "archive": "/home/featurize/work/isaac-support/graspgen/reports/20261018-upright-angles-dev21/yaw135-seed413-attempt01/output",
+  "archive_files": 81,
+  "archive_bytes": 25406300,
+  "date": "2026-10-18",
+  "diagnosis": "MODEL_TARGET_CHANGED due to velocity=None after independent geometry recovery compared 2.0167s observation spacing with .15s frame age; current image age zero, displacement 1.186mm",
+  "archive_sha256_verified": true,
+  "full_task_completed": false
+}
