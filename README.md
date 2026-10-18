@@ -50,10 +50,11 @@ bash /home/featurize/work/isaac-support/scripts/run-standalone.sh -m workstation
   --mode visual-pnp --headless --save-images \
   --visual-fixture upright --visual-carton-variant small_medium --visual-yaw-deg 108 --seed 413 \
   --grasp-backend centered --motion-backend cumotion \
-  --output /home/featurize/work/isaac-support/graspgen/reports/MY_UNIQUE_RUN/output
+  --output /home/featurize/isaac-runtime/output/MY_UNIQUE_RUN \
+  --archive-output /home/featurize/work/isaac-support/graspgen/reports/MY_UNIQUE_RUN/output
 ~~~
 
-每次使用新的输出目录；headless为后台验证。当前源码默认仍是旧geometry/legacy，因此使用上述显式组合。centered不需要GraspGen模型服务或assets参数，仍需Isaac 6.1环境与三路RGB-D。要直播时沿用下方已有WebRTC恢复/中继流程，把headless替换为livestream相关参数；本轮后台测试没有切换侧栏的旧直播现场。
+每次使用新的输出和归档目录；headless为后台验证。此命令先向临时盘写完整记录，任务结束及环境关闭后自动复制到云盘、逐文件校验SHA256，云盘的 _archive_manifest.json 标记已验证完成；不删除临时原件。失败任务也归档，归档异常使进程失败并保留本地 archive_failure.txt，没有完成清单时不能归还机器。归档耗时另计，不计入动作开始到DONE。该选项只支持显式headless输出，不影响现有直播；直播不加 --archive-output。当前源码默认仍是旧geometry/legacy，因此使用上述显式组合。centered不需要GraspGen模型服务或assets参数，仍需Isaac 6.1环境与三路RGB-D。要直播时沿用下方已有WebRTC恢复/中继流程，把headless替换为livestream相关参数；本轮后台测试没有切换侧栏的旧直播现场。
 
 
 cuMotion 单盒松爪后的撤手复核允许当前大块顶面加已确认盒体尺寸/释放前朝向提供有界碰撞范围，不再强求侧面与两个完整水平边同时可见。隐藏盒心保持为区间并扩大障碍范围，标为 RELEASE_BOUNDED；撤开后重观察，最终落位验收仍读取新 RGB-D。仅直立受控释放启用，三路相机与运动到位范围保持。539 项 CPU、原 dev17 失败帧回放通过；dev18 / seed413 完整抓放及最终视觉验收通过，开始运动至完成 63.684 秒、含启动准备并扣除等待 145.212 秒。此轮释放时两个水平坐标均有当前约束，隐藏轴区间由回放验证；单次开发案例不代表任意角度成功率。结果见 evidence/cumotion_dev18_20261018.json 和交接 20.47。

@@ -24,6 +24,8 @@ def build_parser():
     parser.add_argument("--mode", choices=MODES, default="scene")
     parser.add_argument("--config", type=Path, default=PROJECT_ROOT/"config"/"scene.json")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--archive-output", type=Path,
+                        help='Headless run: verify-copy completed output to a new persistent directory; retain source')
     parser.add_argument("--seed", type=int)
     parser.add_argument('--box-set',choices=('mixed','uniform'),
                         help='scene: mixed carton sizes by default; uniform restores the original nine-box fixture')
@@ -92,6 +94,12 @@ def build_parser():
 
 
 def load_config(args, parser):
+    if getattr(args,'archive_output',None) is not None:
+        if not args.headless or args.keep_open or args.livestream or args.output is None:
+            parser.error('--archive-output requires --headless --output and no interactive session')
+        from workstation.diagnostics.output_archive import validate_archive_paths
+        try:validate_archive_paths(args.output,args.archive_output,before_run=True)
+        except (ValueError,OSError) as error:parser.error(str(error))
     if args.headless and args.keep_open:
         parser.error("--keep-open requires a GUI")
     if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','visual-pnp','visual-adjust'):
@@ -413,6 +421,17 @@ def main(argv=None):
             if env is not None:
                 env.close()
         finally:
+            if args.archive_output is not None:
+                try:
+                    from workstation.diagnostics.output_archive import archive_run
+                    archived=archive_run(output,args.archive_output)
+                    print('[archived] '+str(args.archive_output)+' ('+str(len(archived['files']))+' verified files)',flush=True)
+                except Exception:
+                    archive_failure=traceback.format_exc()
+                    failure=(failure or '')+'\nArchive failed; local evidence retained:\n'+archive_failure
+                    print(archive_failure,file=sys.stderr,flush=True)
+                    output.mkdir(parents=True,exist_ok=True)
+                    (output/'archive_failure.txt').write_text(archive_failure,encoding='utf-8')
             app.close(wait_for_replicator=False, exit_code=1 if failure else 0)
     if failure:
         raise RuntimeError("Simulation failed; see "+str(output/"failure.txt"))
