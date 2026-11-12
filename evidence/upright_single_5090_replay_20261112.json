@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-12",
+  "source_commit": "8ece84ed45e530a59e9aa105aeb551747d74377c",
+  "scope": "Reproduction of one previously successful case on one RTX 5090, Isaac Sim 6.1.0. Browser livestream enabled.",
+  "variant": "small_medium",
+  "size_m": [
+    0.11,
+    0.06,
+    0.05
+  ],
+  "yaw_deg": 68,
+  "seed": 2902,
+  "target_xy_m": [
+    -0.2,
+    -0.4
+  ],
+  "success": true,
+  "motion_pregrasp_to_done_wall_s": 38.84487205700043,
+  "offline_final_xy_m": [
+    -0.20030121505260468,
+    -0.39705589413642883
+  ],
+  "offline_final_center_error_xy_mm": [
+    -0.3012150526046642,
+    2.944105863571189
+  ],
+  "offline_planar_error_mm": 2.9594745891509002,
+  "offline_axis_yaw_error_deg": 0.13329409583095378
+}

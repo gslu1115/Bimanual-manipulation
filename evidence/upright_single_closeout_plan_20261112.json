@@ -1,0 +1,46 @@
+{
+  "protocol": "upright-single-closeout-20261112",
+  "source_commit": "8ece84ed45e530a59e9aa105aeb551747d74377c",
+  "fixture": "upright",
+  "target_xy_m": [
+    -0.2,
+    -0.4
+  ],
+  "grasp_backend": "centered",
+  "motion_backend": "cumotion",
+  "headless": true,
+  "cases": [
+    {
+      "variant": "small_reference",
+      "yaw_deg": 27,
+      "seed": 111201
+    },
+    {
+      "variant": "small_medium",
+      "yaw_deg": 79,
+      "seed": 111202
+    },
+    {
+      "variant": "small_wide",
+      "yaw_deg": 137,
+      "seed": 111203
+    },
+    {
+      "variant": "small_reference",
+      "yaw_deg": 291,
+      "seed": 111204
+    },
+    {
+      "variant": "small_medium",
+      "yaw_deg": 327,
+      "seed": 111205
+    },
+    {
+      "variant": "small_wide",
+      "yaw_deg": 184,
+      "seed": 111206
+    }
+  ],
+  "timing": "Monotonic wall seconds from PREGRASP to DONE or FAILED; excludes startup. Report startup failures separately.",
+  "evaluation": "Report first attempts, initial position, final visual verdict, independent final X/Y error against the target, and action elapsed time. Keep failures and reruns distinct."
+}
