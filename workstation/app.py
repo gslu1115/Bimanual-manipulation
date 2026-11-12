@@ -16,7 +16,8 @@ from workstation.runtime_paths import isaac_root
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-adjust", "visual-sort",
-         "model-worker", "model-prepare", "model-eval", "model-capture", "model-train", "graspgen-proxy", "graspgen-check")
+         "model-worker", "model-prepare", "model-eval", "model-capture", "model-train", "graspgen-proxy", "graspgen-check",
+         "graspgen-pair-pregrasp")
 
 
 def build_parser():
@@ -40,8 +41,9 @@ def build_parser():
     parser.add_argument('--num-grasps',type=int,default=64)
     parser.add_argument('--visual-observation-period-s',type=float,
                         help='Upright GraspGen stable-translation/empty-travel vision interval, 0.1..2 seconds; default 1; contact phases/reorientation stay at 0.1 seconds')
-    parser.add_argument('--graspgen-assets',type=Path,help='Official source assets for measured static TCP verification')
-    parser.add_argument('--grasp-backend',choices=('geometry','graspgen','centered'),default='geometry',
+    parser.add_argument('--graspgen-assets',type=Path,default=os.environ.get('WORKSTATION_GRASPGEN_ASSETS'),
+                        help='Official source assets for measured static TCP verification')
+    parser.add_argument('--grasp-backend',choices=('geometry','graspgen','centered'),
                         help='Candidate backend for graspgen-check or controlled visual-pnp')
     parser.add_argument('--motion-backend',choices=('legacy','cumotion'),default='legacy',
                         help='Opt-in Isaac 6.1 controller for single upright graspgen/centered pick/place')
@@ -63,7 +65,7 @@ def build_parser():
     parser.add_argument('--capture-seeds',help='model-capture only: comma-separated independent initial scenes')
     parser.add_argument('--epochs',type=int,default=80)
     parser.add_argument('--teacher-capture',action='store_true',help='Offline truth-baseline supervision, model-capture upright only')
-    parser.add_argument('--visual-fixture',choices=('upright','side','inverted','separated-upright','separated','clutter'),
+    parser.add_argument('--visual-fixture',choices=('upright','upright-pair','side','inverted','separated-upright','separated','clutter'),
                         help='Explicit diagnostic INITIAL condition for visual-pnp; seed then changes XY/yaw')
     parser.add_argument('--visual-yaw-deg',type=float,
                         help='Initial upright single-carton yaw only; preserves seed-generated position, never an online pose input')
@@ -94,6 +96,13 @@ def build_parser():
 
 
 def load_config(args, parser):
+    pair_mode=args.mode=='graspgen-pair-pregrasp'
+    if args.grasp_backend is None:
+        args.grasp_backend='graspgen' if pair_mode or args.visual_fixture=='upright-pair' and args.mode=='graspgen-check' else 'geometry'
+    if pair_mode:
+        if args.grasp_backend!='graspgen' or args.visual_fixture not in (None,'upright-pair'):
+            parser.error('graspgen-pair-pregrasp requires two upright cartons and GraspGen')
+        args.visual_fixture='upright-pair'
     if getattr(args,'archive_output',None) is not None:
         if not args.headless or args.keep_open or args.livestream or args.output is None:
             parser.error('--archive-output requires --headless --output and no interactive session')
@@ -102,7 +111,7 @@ def load_config(args, parser):
         except (ValueError,OSError) as error:parser.error(str(error))
     if args.headless and args.keep_open:
         parser.error("--keep-open requires a GUI")
-    if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','visual-pnp','visual-adjust'):
+    if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','graspgen-pair-pregrasp','visual-pnp','visual-adjust'):
         parser.error('--grasp-backend graspgen requires graspgen-check or controlled visual-pnp')
     if args.grasp_backend=='graspgen' and not args.graspgen_assets:
         parser.error('--grasp-backend graspgen requires --graspgen-assets for frame verification')
@@ -176,8 +185,12 @@ def load_config(args, parser):
             parser.error('Below3mm requires --depth-backboard and separate saved calibration audit')
         config['diagnostic_optical_depth_error_margin_m']=args.optical_depth_margin_mm/1000.
     if args.visual_fixture:
-        if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'): parser.error('--visual-fixture requires a visual mode')
-        config['boxes']['count']=9 if args.visual_fixture == 'clutter' else 3 if args.visual_fixture.startswith('separated') else 1
+        if args.visual_fixture=='upright-pair':
+            if not (pair_mode or args.mode=='vision-check' or (args.mode=='graspgen-check' and args.grasp_backend=='graspgen')):
+                parser.error('upright-pair requires vision-check or graspgen-check --grasp-backend graspgen')
+        elif args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'):
+            parser.error('--visual-fixture requires a visual mode')
+        config['boxes']['count']={'upright-pair':2,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
         config['diagnostic_visual_fixture']=args.visual_fixture
     if args.visual_yaw_deg is not None:
         if args.mode!='visual-pnp' or args.visual_fixture!='upright':
@@ -333,7 +346,7 @@ def main(argv=None):
         env.record_video = args.record_video
         env.livestream = args.livestream
         env.start()
-        if args.mode == 'graspgen-check':
+        if args.mode in ('graspgen-check','graspgen-pair-pregrasp'):
             from workstation.diagnostics.graspgen_check import check
             check(env,args)
         elif args.mode == "sensor-check":

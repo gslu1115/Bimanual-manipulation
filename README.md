@@ -6,6 +6,18 @@
 
 当前具备九盒释放与沉降、三路 RGB-D 输入接口，以及直立抓放和倒置交接两个真值物理基线。已新增独立 RGB-D `SceneEstimate V1`、候选排序、采样路径检查与受控单盒视觉技能；实现及实测边界见 [项目交接文档](项目路线与当前状态交接.md)。多盒整理、侧放/倒置视觉技能、通用避碰和真机适配仍待完成。协作前阅读 [AGENTS.md](AGENTS.md)。
 
+## 正放纸盒双臂并行开发
+
+两臂共用三个固定 RGB-D 机位。输入场景为两个分开的正放小盒，两臂分别从不同视觉轨迹的点云申请 Panda GraspGen 候选。需要已启动的官方模型服务和项目代理；`WORKSTATION_GRASPGEN_ASSETS` 指向官方 GraspGen 源码根目录。先在单张空闲 GPU 上运行：
+
+```bash
+export WORKSTATION_GRASPGEN_ASSETS=/path/to/GraspGen
+./run-project.sh --mode graspgen-check --visual-fixture upright-pair --headless --num-grasps 256
+./run-project.sh --mode graspgen-pair-pregrasp --headless --num-grasps 256
+```
+
+`run-project.sh` 为 5090 部署目录的启动器，其他机器可从仓库根目录用 Isaac 的 `python.sh -m workstation` 运行相同参数。第一条命令检查冻结快照；第二条在新的 RGB-D 观测上复核原始模型抓姿，在同一物理时钟驱动两只空爪接近。结果写入 `graspgen_pair_check.json`，记录目标、候选、采样球体间距和编码器运动重叠。当前物理入口止于预抓位置。双臂闭爪、持盒避碰、共享放置位和输送带清位仍待集成与实测。
+
 ## 许可
 
 本项目的代码与文档采用 [PolyForm Noncommercial License 1.0.0](LICENSE)，以完整许可文本为准。SPDX 标识符：`PolyForm-Noncommercial-1.0.0`。

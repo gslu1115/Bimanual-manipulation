@@ -50,6 +50,9 @@ def check(env,args):
     packet=env.get_observation_packet(refresh=True)
     scene=estimator.estimate(packet)
     save_observation(env.output,'graspgen_source',packet,scene)
+    if getattr(args,'visual_fixture',None)=='upright-pair':
+        from workstation.diagnostics.graspgen_pair import check_pair
+        return check_pair(env,args,packet,scene,estimator)
     targets=[o for o in scene.objects if not o.failures and o.visibility=='COMPLETE_TOP']
     if not targets:raise RuntimeError('No unambiguous visually observed target for GraspGen diagnostic')
     target=targets[0]
