@@ -44,7 +44,7 @@ def build_parser():
     parser.add_argument('--graspgen-assets',type=Path,default=os.environ.get('WORKSTATION_GRASPGEN_ASSETS'),
                         help='Official source assets for measured static TCP verification')
     parser.add_argument('--grasp-backend',choices=('geometry','graspgen','centered'),
-                        help='Candidate backend for graspgen-check or controlled visual-pnp')
+                        help='Visual pick/place and model diagnostics default to GraspGen; the paired mode requires it')
     parser.add_argument('--motion-backend',choices=('legacy','cumotion'),default='legacy',
                         help='Opt-in Isaac 6.1 controller for single upright graspgen/centered pick/place')
     parser.add_argument('--wait-for-start',action='store_true',
@@ -98,7 +98,10 @@ def build_parser():
 def load_config(args, parser):
     pair_mode=args.mode=='graspgen-pair-pregrasp'
     if args.grasp_backend is None:
-        args.grasp_backend='graspgen' if pair_mode or args.visual_fixture=='upright-pair' and args.mode=='graspgen-check' else 'geometry'
+        model_modes=('visual-pnp','visual-adjust','graspgen-check','graspgen-pair-pregrasp')
+        args.grasp_backend='graspgen' if args.mode in model_modes else 'geometry'
+        if args.grasp_backend=='graspgen' and args.graspgen_assets is None:
+            args.graspgen_assets=isaac_root().parent/'graspgen'/'source'
     if pair_mode:
         if args.grasp_backend!='graspgen' or args.visual_fixture not in (None,'upright-pair'):
             parser.error('graspgen-pair-pregrasp requires two upright cartons and GraspGen')

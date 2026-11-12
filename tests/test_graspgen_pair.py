@@ -10,6 +10,17 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_model_is_default_for_single_and_mandatory_for_pair(self):
+        import contextlib, io
+        from workstation.app import build_parser, load_config
+        parser=build_parser()
+        for mode in ('visual-pnp','graspgen-pair-pregrasp'):
+            args=parser.parse_args(['--mode',mode])
+            self.assertEqual(load_config(args,parser)['grasp_backend'],'graspgen')
+        args=parser.parse_args(['--mode','graspgen-pair-pregrasp','--grasp-backend','centered'])
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            load_config(args,parser)
+
     def test_both_commands_share_one_physics_tick_and_overlap_uses_encoders(self):
         arms=('panda_left','panda_right')
         measured={a:np.zeros(7) for a in arms}

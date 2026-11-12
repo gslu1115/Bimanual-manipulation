@@ -113,7 +113,7 @@ class CuMotionAdapterTests(unittest.TestCase):
     def test_backend_requires_controlled_model_skill(self):
         parser=build_parser()
         for options in (['--motion-backend','cumotion'],
-                        ['--mode','visual-pnp','--motion-backend','cumotion']):
+                        ['--mode','visual-pnp','--grasp-backend','geometry','--motion-backend','cumotion']):
             with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
                 load_config(parser.parse_args(options),parser)
 

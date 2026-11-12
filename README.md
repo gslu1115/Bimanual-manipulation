@@ -8,7 +8,7 @@
 
 ## 正放纸盒双臂并行开发
 
-两臂共用三个固定 RGB-D 机位。输入场景为两个分开的正放小盒，两臂分别从不同视觉轨迹的点云申请 Panda GraspGen 候选。需要已启动的官方模型服务和项目代理；`WORKSTATION_GRASPGEN_ASSETS` 指向官方 GraspGen 源码根目录。先在单张空闲 GPU 上运行：
+单盒视觉抓放和模型诊断默认使用 GraspGen，双臂预抓入口要求使用 GraspGen。两臂共用三个固定 RGB-D 机位。输入场景为两个分开的正放小盒，两臂分别从不同视觉轨迹的点云申请 Panda GraspGen 候选。需要已启动的官方模型服务和项目代理；`WORKSTATION_GRASPGEN_ASSETS` 指向官方 GraspGen 源码根目录。先在单张空闲 GPU 上运行：
 
 ```bash
 export WORKSTATION_GRASPGEN_ASSETS=/path/to/GraspGen
