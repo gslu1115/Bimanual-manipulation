@@ -246,6 +246,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     parked={tuple(p['xy']):p for p in report.get('parked_before_pick',[])}
     initially_occupied={tuple(s['xy']) for s in report['slots_initial'] if s['state']=='occupied'}
     partial_keepout={}
+    transfer_top_seen={}
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
     trackers = {}
     release_trackers = {}
@@ -426,13 +427,18 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     component=None
                     if not patch and not ids and 0<age<=20.:
                         component=parked_depth_top(packet,parked[xy],(),allow_partial=True)
-                    occluded=age<=8. and not patch and shadow
+                    recent_transfer_top=(report['last_phase']=='align' and xy in transfer_top_seen
+                        and seen<=transfer_top_seen[xy]<packet.observation_time_s)
+                    occluded=shadow and not patch and (age<=8. or recent_transfer_top)
                     if patch or component is not None or occluded:
+                        if component is not None and report['last_phase']=='transfer':
+                            transfer_top_seen[xy]=packet.observation_time_s
                         enclosed.add(xy)
                         parked_ids.update(ids)
                         report.setdefault('parked_occlusion_checks',[]).append(dict(
                             xy=list(xy),mask_refs=refs,time_s=packet.observation_time_s,last_surface_s=seen,
                             depth_component=component[0] if component is not None else None,
+                            prior_transfer_top_s=transfer_top_seen.get(xy) if occluded else None,
                             source=('current top-depth patch' if patch or component is not None else 'foreground occlusion in current depth views')
                                    +' and continuously protected collision envelope'))
                         continue
