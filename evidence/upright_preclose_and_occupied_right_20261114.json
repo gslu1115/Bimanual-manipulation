@@ -1,0 +1,1410 @@
+{
+  "scope": "Headless Isaac Sim 6.1. Right conveyor slot already physically occupied in paired scenes; two cartons start on the table and are placed into left and centre slots. Single-arm 8074 used the right lane. All model calls used Panda GraspGen or replay of its saved poses, as indicated.",
+  "changes": {
+    "preclose_current_signed_face": "2235f08",
+    "closure_and_complementary_views": "0bc4205",
+    "independent_depth_component": "2922fb1",
+    "current_mask_during_alignment": "b804785"
+  },
+  "timing": "Action wall seconds include sensing and computation from motion start to completion/failure. Initial proposals and application startup are excluded. Transfer overlap is measured encoder motion in simulation seconds.",
+  "evaluation": "Each moving carton is matched offline by source XY to its initial body and scored against its own destination. The parked carton's displacement is horizontal initial-to-final distance, not peak excursion or a contact measurement. No simulator truth is supplied to the policy.",
+  "matched_replays": "8066, 8075, 8078 and 8081 retain original model proposals. 8066's first successful replay used the one-shot same-time full closure proof. The subsequent deployed revision binds reuse to the exact input packet object. Keep all intermediate stops; fresh-scene results span different revisions.",
+  "first_try_scope": "This turn introduced five new paired seeds 8072,8075,8078,8081,8084; 8072 completed on first exposure. Three subsequent seeds completed under matched replay after fixes. 8084 remains open. Single-arm 8074 completed first try.",
+  "open": {
+    "seed": 8084,
+    "phase": "transfer overhead",
+    "diagnosis": "No parked-carton instance in the transfer observation. Two cameras had foreground in front of all 99 inner-footprint test samples; the third did not cover the sampled points. A small separate raw top patch existed but no current mask or earlier protected transfer-start envelope qualified. Actor stopped before lowering. Investigate an observed occupied-slot keepout from before transfer with continuous clearance verification."
+  },
+  "runs": [
+    {
+      "run": "parkedrays-20261114-030110-pair-8066",
+      "success": false,
+      "failure": "PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.2021535443600809,
+            -0.06127320875074629
+          ],
+          "yaw_deg": 112.07
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18542530110293914,
+            -0.010651212128941788
+          ],
+          "yaw_deg": 11.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 23.635,
+      "transport_overlap_sim_s": null,
+      "physical_retry": false,
+      "historical_proposals": [],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.05,
+        "final_orientation_difference_deg": 0.0008,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [],
+      "online_final_parked": null
+    },
+    {
+      "run": "sideinterior-20261114-031111-pair-8066",
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.2021535443600809,
+            -0.06127320875074629
+          ],
+          "yaw_deg": 112.07
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18542530110293914,
+            -0.010651212128941788
+          ],
+          "yaw_deg": 11.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 78.735,
+      "transport_overlap_sim_s": 8.966666666666667,
+      "physical_retry": false,
+      "historical_proposals": [
+        "ae6ae5e1c96a475fbb85062ee5c8e6ba:157:panda_left",
+        "58d4095a35224c4280f379a688ce7c8d:182:panda_right"
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.11,
+        "final_orientation_difference_deg": 0.001,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [],
+      "online_final_parked": null
+    },
+    {
+      "run": "sideinterior-20261114-031111-pair-8072",
+      "success": true,
+      "failure": null,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.2069085328077513,
+            -0.03959663339338559
+          ],
+          "yaw_deg": 75.52
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.1943954460230337,
+            -0.07604862562043685
+          ],
+          "yaw_deg": 120.65
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 119.808,
+      "transport_overlap_sim_s": 7.716666666666667,
+      "physical_retry": false,
+      "historical_proposals": [],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "offline_error_mm": {
+        "panda_left": {
+          "x": -0.484,
+          "y": 1.347,
+          "radius": 1.431
+        },
+        "panda_right": {
+          "x": -0.219,
+          "y": -0.749,
+          "radius": 0.78
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1646,
+        "final_orientation_difference_deg": 0.0011,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "parked_bounds": [
+        {
+          "track_id": "visual_0031",
+          "fragment_tracks": [
+            "visual_0031",
+            "visual_0032"
+          ],
+          "time_s": 20.79999999999946,
+          "mask_refs": [
+            "scene_camera/120/component_3",
+            "right_wrist_camera/120/component_1"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": 1,
+          "offset_interval_m": [
+            -0.0042665583306257145,
+            0.004572168586542098
+          ],
+          "collision_center_m": [
+            0.20000380421912498,
+            -0.39975445418176614,
+            0.7880990566264716
+          ],
+          "collision_size_m": [
+            0.12839761940562408,
+            0.082237080155267,
+            0.06339638639672261
+          ]
+        }
+      ],
+      "online_final_parked": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0049",
+          "position_m": [
+            0.19989043474197388,
+            -0.39968499541282654,
+            0.7875000157648223
+          ],
+          "centre_change_m": 0.00022251987189211866
+        }
+      ]
+    },
+    {
+      "run": "sideinterior-20261114-031111-small_wide-8074",
+      "success": true,
+      "failure": null,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.176667412348621,
+            -0.09357176054166685
+          ],
+          "yaw_deg": 108
+        }
+      ],
+      "action_wall_s": 52.88,
+      "physical_retry": false,
+      "slots": [
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "offline_error_mm": {
+        "panda_right": {
+          "x": 0.014,
+          "y": -0.399,
+          "radius": 0.399
+        }
+      },
+      "offline_initial_body": {
+        "panda_right": "box_00"
+      }
+    },
+    {
+      "run": "sidepark-20261114-031904-pair-8066",
+      "success": false,
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_left",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.2021535443600809,
+            -0.06127320875074629
+          ],
+          "yaw_deg": 112.07
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18542530110293914,
+            -0.010651212128941788
+          ],
+          "yaw_deg": 11.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 27.569,
+      "transport_overlap_sim_s": null,
+      "physical_retry": false,
+      "historical_proposals": [
+        "ae6ae5e1c96a475fbb85062ee5c8e6ba:157:panda_left",
+        "58d4095a35224c4280f379a688ce7c8d:182:panda_right"
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.0527,
+        "final_orientation_difference_deg": 0.0008,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [],
+      "online_final_parked": null
+    },
+    {
+      "run": "sidepark-20261114-031904-pair-8075",
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.19981572082561894,
+            -0.015150079054074915
+          ],
+          "yaw_deg": -37.88
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.19871863789948271,
+            -0.07164430585131658
+          ],
+          "yaw_deg": 120.44
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 62.56,
+      "transport_overlap_sim_s": 8.016666666666666,
+      "physical_retry": false,
+      "historical_proposals": [],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.0877,
+        "final_orientation_difference_deg": 0.0009,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [],
+      "online_final_parked": null
+    },
+    {
+      "run": "sideclose-20261114-032316-pair-8066",
+      "success": true,
+      "failure": null,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.2021535443600809,
+            -0.06127320875074629
+          ],
+          "yaw_deg": 112.07
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18542530110293914,
+            -0.010651212128941788
+          ],
+          "yaw_deg": 11.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 133.05,
+      "transport_overlap_sim_s": 8.983333333333333,
+      "physical_retry": false,
+      "historical_proposals": [
+        "ae6ae5e1c96a475fbb85062ee5c8e6ba:157:panda_left",
+        "58d4095a35224c4280f379a688ce7c8d:182:panda_right"
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 2.033,
+          "y": -0.038,
+          "radius": 2.033
+        },
+        "panda_right": {
+          "x": 0.1,
+          "y": 0.647,
+          "radius": 0.655
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1795,
+        "final_orientation_difference_deg": 0.0012,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "parked_bounds": [
+        {
+          "track_id": "visual_0037",
+          "fragment_tracks": [
+            "visual_0037"
+          ],
+          "time_s": 31.508333333332185,
+          "mask_refs": [
+            "left_wrist_camera/144/component_6"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": 1,
+          "offset_interval_m": [
+            -0.03623086723028736,
+            0.004173260326122936
+          ],
+          "collision_center_m": [
+            0.2000040392313204,
+            -0.41593609271673904,
+            0.7875000252096903
+          ],
+          "collision_size_m": [
+            0.12800184243868512,
+            0.11340620713342223,
+            0.063
+          ]
+        }
+      ],
+      "online_final_parked": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0051",
+          "position_m": [
+            0.19990119338035583,
+            -0.3996776342391968,
+            0.7874998899952936
+          ],
+          "centre_change_m": 0.00022965677105210637
+        }
+      ]
+    },
+    {
+      "run": "siderefit-20261114-032700-pair-8075",
+      "success": true,
+      "failure": null,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.19981572082561894,
+            -0.015150079054074915
+          ],
+          "yaw_deg": -37.88
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.19871863789948271,
+            -0.07164430585131658
+          ],
+          "yaw_deg": 120.44
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 120.271,
+      "transport_overlap_sim_s": 7.916666666666667,
+      "physical_retry": false,
+      "historical_proposals": [
+        "1779f626ea00415e9a11d9b8556ae06f:147:panda_left",
+        "174591a8ea5647dbb12eaaf320ca291c:117:panda_right"
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.224,
+          "y": 0.67,
+          "radius": 0.706
+        },
+        "panda_right": {
+          "x": -0.203,
+          "y": 0.326,
+          "radius": 0.384
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1671,
+        "final_orientation_difference_deg": 0.0011,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "parked_bounds": [
+        {
+          "track_id": "visual_0031",
+          "fragment_tracks": [
+            "visual_0031",
+            "visual_0035"
+          ],
+          "time_s": 25.133333333332548,
+          "mask_refs": [
+            "right_wrist_camera/132/component_1",
+            "left_wrist_camera/132/component_2"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": null,
+          "offset_interval_m": null,
+          "collision_center_m": [
+            0.2000036334088747,
+            -0.39958845131167847,
+            0.787989826086581
+          ],
+          "collision_size_m": [
+            0.1279788608249332,
+            0.07297962302672682,
+            0.06297785877180746
+          ]
+        }
+      ],
+      "online_final_parked": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0052",
+          "position_m": [
+            0.19990113377571106,
+            -0.39968380331993103,
+            0.787499930010977
+          ],
+          "centre_change_m": 0.00022348764592078292
+        }
+      ]
+    },
+    {
+      "run": "siderefit-20261114-032700-pair-8078",
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.1776293191824872,
+            -0.016696606363231954
+          ],
+          "yaw_deg": 6.15
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.2195472829433763,
+            -0.048749010930637424
+          ],
+          "yaw_deg": -110.68
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 79.945,
+      "transport_overlap_sim_s": 8.6,
+      "physical_retry": false,
+      "historical_proposals": [],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1084,
+        "final_orientation_difference_deg": 0.001,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [],
+      "online_final_parked": null
+    },
+    {
+      "run": "sidedepth-20261114-033429-pair-8078",
+      "success": true,
+      "failure": null,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.1776293191824872,
+            -0.016696606363231954
+          ],
+          "yaw_deg": 6.15
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.2195472829433763,
+            -0.048749010930637424
+          ],
+          "yaw_deg": -110.68
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 149.191,
+      "transport_overlap_sim_s": 8.616666666666667,
+      "physical_retry": false,
+      "historical_proposals": [
+        "01007afdc9a14effb7cc30dde56e01c1:198:panda_left",
+        "4079b6f3dd18418a8ea5a2ab55b094cf:80:panda_right"
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.627,
+          "y": 0.083,
+          "radius": 0.633
+        },
+        "panda_right": {
+          "x": -0.062,
+          "y": 0.801,
+          "radius": 0.803
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1814,
+        "final_orientation_difference_deg": 0.0012,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "parked_bounds": [
+        {
+          "track_id": "visual_0037",
+          "fragment_tracks": [
+            "visual_0037"
+          ],
+          "time_s": 31.099999999998875,
+          "mask_refs": [
+            "scene_camera/144/component_2"
+          ],
+          "additional_depth_component": "right_wrist_camera/144/depth_plane",
+          "observed_face_axes": [
+            2
+          ],
+          "bounded_axis": null,
+          "offset_interval_m": null,
+          "collision_center_m": [
+            0.19980886725274616,
+            -0.4000196449090548,
+            0.7875028719161913
+          ],
+          "collision_size_m": [
+            0.1281244189500407,
+            0.07315590785012455,
+            0.0631147407530796
+          ]
+        }
+      ],
+      "online_final_parked": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0050",
+          "position_m": [
+            0.19990114867687225,
+            -0.39967674016952515,
+            0.7875001003519487
+          ],
+          "centre_change_m": 0.00023052102548454454
+        }
+      ]
+    },
+    {
+      "run": "sidedepth-20261114-033429-pair-8081",
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.21741415076797996,
+            -0.02746139020734801
+          ],
+          "yaw_deg": -145.11
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.20362332667813213,
+            -0.018449214917138447
+          ],
+          "yaw_deg": 92.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 96.5,
+      "transport_overlap_sim_s": 8.908333333333333,
+      "physical_retry": false,
+      "historical_proposals": [],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1162,
+        "final_orientation_difference_deg": 0.001,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [
+        {
+          "track_id": "visual_0030",
+          "fragment_tracks": [
+            "visual_0030"
+          ],
+          "time_s": 24.599999999999245,
+          "mask_refs": [
+            "right_wrist_camera/132/component_1"
+          ],
+          "additional_depth_component": null,
+          "observed_face_axes": [
+            0,
+            1,
+            2
+          ],
+          "bounded_axis": null,
+          "offset_interval_m": null,
+          "collision_center_m": [
+            0.20000358071955263,
+            -0.4001315203649154,
+            0.7881260095056197
+          ],
+          "collision_size_m": [
+            0.12828009815334934,
+            0.07327762367913845,
+            0.06328529290431002
+          ]
+        }
+      ],
+      "online_final_parked": null
+    },
+    {
+      "run": "sidemask-20261114-034425-pair-8081",
+      "success": true,
+      "failure": null,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.21741415076797996,
+            -0.02746139020734801
+          ],
+          "yaw_deg": -145.11
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.20362332667813213,
+            -0.018449214917138447
+          ],
+          "yaw_deg": 92.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 137.79,
+      "transport_overlap_sim_s": 8.866666666666667,
+      "physical_retry": false,
+      "historical_proposals": [
+        "788581e01caa40598e182776aebd7b97:228:panda_left",
+        "08c5d67f8d1f4f7a9300719c81460e69:183:panda_right"
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "offline_error_mm": {
+        "panda_left": {
+          "x": -0.341,
+          "y": 1.238,
+          "radius": 1.284
+        },
+        "panda_right": {
+          "x": -0.681,
+          "y": -0.045,
+          "radius": 0.683
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1818,
+        "final_orientation_difference_deg": 0.0012,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "parked_bounds": [
+        {
+          "track_id": "visual_0030",
+          "fragment_tracks": [
+            "visual_0030"
+          ],
+          "time_s": 24.566666666665913,
+          "mask_refs": [
+            "right_wrist_camera/132/component_1"
+          ],
+          "additional_depth_component": null,
+          "observed_face_axes": [
+            0,
+            1,
+            2
+          ],
+          "bounded_axis": null,
+          "offset_interval_m": null,
+          "collision_center_m": [
+            0.20000386299491305,
+            -0.40013152604857793,
+            0.7881326765752592
+          ],
+          "collision_size_m": [
+            0.12830700873190107,
+            0.07330474443199628,
+            0.06331186353539514
+          ]
+        }
+      ],
+      "online_final_parked": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0049",
+          "position_m": [
+            0.1998904049396515,
+            -0.39967650175094604,
+            0.7875000782954041
+          ],
+          "centre_change_m": 0.00023100558829741895
+        }
+      ]
+    },
+    {
+      "run": "sidemask-20261114-034425-pair-8084",
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.214833108126405,
+            -0.05575247948199434
+          ],
+          "yaw_deg": -144.77
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.17717113977012788,
+            -0.021505609703781035
+          ],
+          "yaw_deg": -47.89
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "action_wall_s": 75.446,
+      "transport_overlap_sim_s": 9.233333333333333,
+      "physical_retry": false,
+      "historical_proposals": [],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1092,
+        "final_orientation_difference_deg": 0.001,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "parked_bounds": [],
+      "online_final_parked": null
+    }
+  ]
+}
