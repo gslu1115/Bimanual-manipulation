@@ -21,6 +21,43 @@ class GraspConstrainedCarryTests(unittest.TestCase):
     def fit(self,p,s,**kwargs):
         return fit_cuboid_pose(p,s,CENTRE,np.eye(3),SIZE,PRIORS,**kwargs)
 
+    def test_clipped_parked_carton_encloses_hidden_axis_and_blocks_nearby_lanes(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_surface_envelope
+        p,s=self.partial()
+        obj=visual_object(s,np.eye(3))
+        reference=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        distant=[(CENTRE[0]+.3,CENTRE[1])]
+        bounded,proof=parked_surface_envelope(p,s,reference,[obj],PRIORS,distant)
+        self.assertEqual(proof['bounded_axis'],0)
+        self.assertGreater(bounded.size_m[0],SIZE[0]+.02)
+        self.assertIsNone(bounded.measured_cuboid)
+        self.assertIsNone(parked_surface_envelope(p,s,reference,[obj],PRIORS,[CENTRE[:2]]))
+        self.assertIsNone(parked_surface_envelope(p,s,reference,[replace(obj,mask_refs=())],PRIORS,distant))
+        self.assertIsNone(parked_surface_envelope(p,s,reference,[obj,obj],PRIORS,distant))
+
+    def test_visible_parked_top_requires_current_metric_depth_at_the_reference(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_top_still_visible
+        p,_=self.partial()
+        r=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        self.assertTrue(parked_top_still_visible(p,r))
+        self.assertFalse(parked_top_still_visible(p,dict(r,position_m=CENTRE+[0,0,.1])))
+        self.assertFalse(parked_top_still_visible(replace(p,observation_time_s=2.),r))
+
+    def test_occlusion_requires_foreground_in_multiple_views_and_no_contradictory_ray(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_top_occluded
+        p,_=self.partial()
+        frame=next(f for f in p.cameras.values() if f is not None)
+        r=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        def view(depth):
+            return replace(frame,depth_m=np.full_like(frame.depth_m,depth),valid_depth=np.ones_like(frame.valid_depth))
+        def packet(depths):
+            return SimpleNamespace(observation_time_s=p.observation_time_s,
+                cameras={str(i):view(d) for i,d in enumerate(depths)},
+                camera_status={str(i):'OK' for i in range(len(depths))})
+        self.assertTrue(parked_top_occluded(packet([.05,.05]),r))
+        self.assertFalse(parked_top_occluded(packet([.05,4.]),r))
+        self.assertFalse(parked_top_occluded(packet([.05]),r))
+
     def test_partial_translation_is_explicit_and_never_full_measurement(self):
         p,s=self.partial()
         self.assertEqual(self.fit(p,s)['status'],'UNKNOWN')

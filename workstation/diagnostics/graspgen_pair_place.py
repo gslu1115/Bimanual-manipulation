@@ -47,6 +47,107 @@ def stationary_slot_tracks(workspace, scene, positions):
     return tracks
 
 
+def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
+    """Enclose all centres consistent with a clipped stationary carton at its observed lane."""
+    from workstation.perception.cuboid_pose import fit_cuboid_pose, reference_constrained_cuboid_supported
+    from workstation.perception.rgbd_cartons import deproject
+    yaw=reference['axis_yaw_rad'];c,s=math.cos(yaw),math.sin(yaw)
+    prior_rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+    size=np.asarray(reference['size_m'])
+    fit=fit_cuboid_pose(packet,scene,reference['position_m'],prior_rotation,size,priors,
+                        allow_reference_translation=True)
+    masks=[ref for obj in fragments for ref in obj.mask_refs]
+    if (not fragments or not reference_constrained_cuboid_supported(fit,packet.observation_time_s)
+            or len(fit['observed_face_axes'])<2 or set(fit['mask_refs'])!=set(masks)
+            or len(masks)!=len(set(masks)) or len({r.split('/')[0] for r in masks})!=len(masks)):return None
+    rotation=np.asarray(fit['rotation']);centre=np.asarray(fit['position_m'])
+    axis,=fit['predicted_translation_axes']
+    values=[]
+    for ref in fit['mask_refs']:
+        frame=packet.cameras[ref.split('/')[0]]
+        points=deproject(frame)[scene.masks[ref]&frame.valid_depth]
+        values.append((points-centre)@rotation[:,axis])
+    low,high=np.quantile(np.concatenate(values),[.002,.998])
+    margin=fit['uncertainty_m']
+    lower,upper=high-size[axis]/2-margin,low+size[axis]/2+margin
+    if lower>upper or lower>margin or upper < -margin:return None
+    centre=centre+rotation[:,axis]*(lower+upper)/2
+    extent=size.copy();extent[axis]+=upper-lower
+    world=np.abs(rotation)@(extent+2*margin)
+    # A proven X separation from BOTH destination corridors, including the
+    # 90 mm slot query radius, even at the extremes of the hidden coordinate.
+    if any(abs(centre[0]-g[0])<=world[0]/2+.09 for g in goals):return None
+    obj=fragments[0]
+    bounded=replace(obj,position_m=tuple(centre),axis_yaw_rad=0.,posture='UNKNOWN',mask_refs=tuple(masks),
+        visibility='PARKED_COLLISION_ENVELOPE',size_m=tuple(world),hypotheses=(),measured_cuboid=None,
+        quality={**obj.quality,'geometric_length_m':world[0],'geometric_width_m':world[1],
+                 'observed_height_m':world[2]})
+    return bounded,dict(track_id=obj.track_id,fragment_tracks=[o.track_id for o in fragments],
+        time_s=packet.observation_time_s,mask_refs=fit['mask_refs'],
+        observed_face_axes=fit['observed_face_axes'],bounded_axis=axis,offset_interval_m=[lower,upper],
+        collision_center_m=centre.tolist(),collision_size_m=world.tolist())
+
+
+def parked_top_still_visible(packet,reference,mask_refs=(),masks=None):
+    """Require a connected depth patch at the previously observed top inside its footprint."""
+    import cv2
+    from workstation.perception.rgbd_cartons import deproject
+    centre=np.asarray(reference['position_m']);size=np.asarray(reference['size_m'])
+    yaw=reference['axis_yaw_rad'];c,s=math.cos(yaw),math.sin(yaw)
+    rz=np.array([[c,-s],[s,c]])
+    confirmed=False
+    selected={ref.split('/')[0]:ref for ref in mask_refs}
+    if len(selected)!=len(mask_refs):return False
+    if any(name not in packet.cameras for name in selected):return False
+    for name,f in packet.cameras.items():
+        if selected and name not in selected:continue
+        if f is None or packet.camera_status.get(name)!='OK' or f.sample_time_s!=packet.observation_time_s:
+            if selected:return False
+            continue
+        xyz=deproject(f)
+        local=(xyz[:,:,:2]-centre[:2])@rz
+        mask=(f.valid_depth & np.all(np.abs(local)<=size[:2]/2,axis=2)
+              & (np.abs(xyz[:,:,2]-centre[2]-size[2]/2)<.001))
+        if selected:
+            instance=masks[selected[name]]
+            if not instance.any() or f.valid_depth[instance].mean()<.9:return False
+            observed=np.column_stack((local[instance&f.valid_depth],xyz[:,:,2][instance&f.valid_depth]-centre[2]))
+            residual=np.abs(observed)-size/2
+            if np.mean((residual.max(axis=1)<=.004)&(np.abs(residual).min(axis=1)<=.004))<.95:return False
+            mask&=instance
+        count,labels,stats,_=cv2.connectedComponentsWithStats(mask.astype(np.uint8),connectivity=8)
+        for index in range(1,count):
+            if stats[index,cv2.CC_STAT_AREA]<9:continue
+            patch=xyz[labels==index]
+            if np.ptp(np.quantile(patch[:,2],[.05,.95]))<.001 and np.min(np.ptp(patch[:,:2],axis=0))>.003:
+                confirmed=True
+    return confirmed
+
+
+def parked_top_occluded(packet,reference):
+    """All valid rays into the inner top footprint must terminate in front of it."""
+    u,v=np.meshgrid(np.linspace(-.42,.42,11),np.linspace(-.42,.42,9))
+    size=np.asarray(reference['size_m']);yaw=reference['axis_yaw_rad']
+    c,s=math.cos(yaw),math.sin(yaw)
+    local=np.column_stack((u.ravel()*size[0],v.ravel()*size[1]))
+    world=np.tile(reference['position_m'],(u.size,1))
+    world[:,:2]+=local@np.array([[c,s],[-s,c]])
+    world[:,2]+=size[2]/2
+    views=0
+    for name,f in packet.cameras.items():
+        if f is None or packet.camera_status.get(name)!='OK' or f.sample_time_s!=packet.observation_time_s:return False
+        camera=(world-f.T_workcell_from_camera_cv[:3,3])@f.T_workcell_from_camera_cv[:3,:3]
+        uv=camera@f.K.T
+        pixels=np.rint(uv[:,:2]/np.maximum(camera[:,2:],1e-8)).astype(int)
+        x,y=pixels.T;h,w=f.depth_m.shape
+        inside=(camera[:,2]>0)&(x>=0)&(x<w)&(y>=0)&(y<h)
+        if not inside.any():continue
+        x,y=x[inside],y[inside]
+        if not f.valid_depth[y,x].all() or np.any(f.depth_m[y,x]>=camera[inside,2]-.008):return False
+        views+=int(inside.all())
+    return views>=2
+
+
 def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
@@ -55,6 +156,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     unused=[xy for xy in slots.positions if xy not in goals.values()]
     parked={tuple(p['xy']):p for p in report.get('parked_before_pick',[])}
     initially_occupied={tuple(s['xy']) for s in report['slots_initial'] if s['state']=='occupied'}
+    partial_keepout={}
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
     trackers = {}
     release_trackers = {}
@@ -88,6 +190,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             centre = pos + rot @ t.offset
             extent = np.abs(rot @ t.relative_rotation) @ (t.size + 2*t.uncertainty_m)
             box = AABB(objects[arm].track_id, centre, extent)
+            for keepout,_ in partial_keepout.values():
+                if (np.all(np.abs(centre-keepout.centre)<=(extent+keepout.size)/2+.008) or
+                        any(sphere_box_clearance(p,r,keepout)<.008 for _,p,r in robot.spheres(arm,q))):
+                    raise RuntimeError('PARKED_CARTON_CLEARANCE')
             if any(sphere_box_clearance(c, r, box) < .002 for _, c, r in robot.spheres(other, other_q)):
                 raise RuntimeError('PAYLOAD_OTHER_ARM_COLLISION')
             boxes.append(box)
@@ -182,15 +288,57 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 first_s=first,second_s=packet.observation_time_s))
         return packet
 
-    def parked_unchanged(current):
-        return (current.keys()==parked.keys()==initially_occupied and
+    def parked_unchanged(current,enclosed=()):
+        return ((current.keys()|set(enclosed))==parked.keys()==initially_occupied and
                 all(np.linalg.norm(np.subtract(o.position_m,parked[k]['position_m']))<=.005 and
                     np.allclose(o.size_m,parked[k]['size_m'],atol=.002,rtol=0) for k,o in current.items()))
 
     def verify_slots(packet):
+        nonlocal scene
         # Reconcile BOTH carried cartons before testing the slot underneath
         # either one. Register the current arm-specific payload to explain its
         # shadow using saved free depth rays, never using ownership as clearance.
+        current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
+        parked_ids={o.track_id for o in current.values()}
+        carried_ids={objects[a].track_id for a in arms}
+        enclosed=set()
+        if env.conveyor.state=='WAITING' and not env.safe_to_index:
+            if report['last_phase']=='transfer' and parked_unchanged(current):
+                for xy,o in current.items():
+                    c,s=math.cos(o.axis_yaw_rad),math.sin(o.axis_yaw_rad)
+                    R=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+                    box=AABB('parked_carton',np.asarray(o.position_m),np.abs(R)@np.asarray(o.size_m)+.016)
+                    partial_keepout[xy]=(box,packet.observation_time_s)
+                    robot.stationary_payload_keepout=box
+            for xy in parked.keys()-current.keys():
+                ids=robot.observed_workspace.slot(xy)['observed_objects']
+                fragments=[o for o in scene.objects if o.track_id in ids]
+                if carried_ids.intersection(ids):continue
+                if xy in partial_keepout and report['last_phase']=='align':
+                    box,seen=partial_keepout[xy]
+                    refs=[ref for obj in fragments for ref in obj.mask_refs]
+                    fresh=0<packet.observation_time_s-seen<=8.
+                    patch=fresh and parked_top_still_visible(packet,parked[xy],refs,scene.masks)
+                    occluded=fresh and not ids and not patch and parked_top_occluded(packet,parked[xy])
+                    if patch or occluded:
+                        enclosed.add(xy)
+                        parked_ids.update(ids)
+                        report.setdefault('parked_occlusion_checks',[]).append(dict(
+                            xy=list(xy),mask_refs=refs,time_s=packet.observation_time_s,last_surface_s=seen,
+                            source=('current top-depth patch' if patch else 'foreground occlusion in current depth views')
+                                   +' and continuously protected collision envelope'))
+                        continue
+                if not fragments:continue
+                bound=parked_surface_envelope(packet,scene,parked[xy],fragments,priors,goals.values())
+                if bound is None:continue
+                proxy,proof=bound
+                box=AABB('parked_carton',np.asarray(proxy.position_m),np.asarray(proxy.size_m))
+                partial_keepout[xy]=(box,packet.observation_time_s)
+                robot.stationary_payload_keepout=box
+                scene=replace(scene,objects=tuple(o for o in scene.objects if o.track_id not in ids)+(proxy,))
+                report.setdefault('parked_surface_bounds',[]).append(proof)
+                parked_ids.add(proxy.track_id);enclosed.add(xy)
+        supported=parked_unchanged(current,enclosed)
         for arm in arms:
             t=trackers[arm]
             robot.set_observation(packet,scene,priors)
@@ -200,10 +348,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
             xy=goals[arm]
             view=robot.observed_workspace.slot(xy)
-            carried_ids={objects[a].track_id for a in arms}
-            current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
-            parked_ids={o.track_id for o in current.values()}
-            accounted=(len(carried_ids)==2 and parked_unchanged(current) and carried_ids.isdisjoint(parked_ids) and
+            accounted=(len(carried_ids)==2 and supported and carried_ids.isdisjoint(parked_ids) and
                        {o.track_id for o in scene.objects}==carried_ids|parked_ids and
                        all(measurements[a]['time_s']==packet.observation_time_s and
                            measurements[a]['position_m'][2]-np.linalg.norm(trackers[a].size)/2>

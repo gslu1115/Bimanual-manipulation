@@ -228,7 +228,7 @@ def check_pair(env, args, packet, scene, estimator):
     from workstation.diagnostics.graspgen_pair_place import stationary_slot_tracks
     parked=stationary_slot_tracks(robot.observed_workspace,scene,slots.positions)
     report['parked_before_pick']=[dict(xy=list(k),track_id=o.track_id,position_m=list(o.position_m),
-        size_m=list(o.size_m)) for k,o in parked.items()]
+        axis_yaw_rad=o.axis_yaw_rad,size_m=list(o.size_m)) for k,o in parked.items()]
     available = [xy for xy in destinations if slots.states[xy] == 'free']
     if len(available) < 2:fail('TWO_OBSERVED_FREE_SLOTS_REQUIRED')
     calibration=verify(env,robot,isaac_root(),args.graspgen_assets)
@@ -461,7 +461,11 @@ def check_pair(env, args, packet, scene, estimator):
                     best=next((r.candidate for r in verified if r.feasible),None)
                     if best is None:raise RuntimeError('NO_FEASIBLE_REGRASP')
                     return best
-                place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample)
+                old_keepout=getattr(robot,'stationary_payload_keepout',None)
+                try:
+                    place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample)
+                finally:
+                    robot.stationary_payload_keepout=old_keepout
         except RuntimeError as error:
             fail(str(error))
         finally:
