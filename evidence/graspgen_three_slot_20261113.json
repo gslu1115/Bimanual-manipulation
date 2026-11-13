@@ -3,6 +3,7 @@
   "single": [
     {
       "run": "study-20261113-074921-small_medium-5714",
+      "cohort": "development",
       "seed": 5714,
       "variant": "small_medium",
       "yaw_deg": 116,
@@ -18,6 +19,7 @@
     },
     {
       "run": "study-20261113-074921-small_medium-5717",
+      "cohort": "development",
       "seed": 5717,
       "variant": "small_medium",
       "yaw_deg": 21,
@@ -33,6 +35,7 @@
     },
     {
       "run": "study-20261113-074921-small_reference-5713",
+      "cohort": "development",
       "seed": 5713,
       "variant": "small_reference",
       "yaw_deg": 38,
@@ -48,6 +51,7 @@
     },
     {
       "run": "study-20261113-074921-small_reference-5716",
+      "cohort": "development",
       "seed": 5716,
       "variant": "small_reference",
       "yaw_deg": 147,
@@ -63,6 +67,7 @@
     },
     {
       "run": "study-20261113-074921-small_wide-5715",
+      "cohort": "development",
       "seed": 5715,
       "variant": "small_wide",
       "yaw_deg": 79,
@@ -78,6 +83,7 @@
     },
     {
       "run": "study-20261113-074921-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -93,6 +99,7 @@
     },
     {
       "run": "study-20261113-080020-small_medium-5714",
+      "cohort": "development",
       "seed": 5714,
       "variant": "small_medium",
       "yaw_deg": 116,
@@ -108,6 +115,7 @@
     },
     {
       "run": "study-20261113-080020-small_medium-5717",
+      "cohort": "development",
       "seed": 5717,
       "variant": "small_medium",
       "yaw_deg": 21,
@@ -123,6 +131,7 @@
     },
     {
       "run": "study-20261113-080825-small_medium-5714",
+      "cohort": "development",
       "seed": 5714,
       "variant": "small_medium",
       "yaw_deg": 116,
@@ -138,6 +147,7 @@
     },
     {
       "run": "study-20261113-080825-small_reference-5713",
+      "cohort": "development",
       "seed": 5713,
       "variant": "small_reference",
       "yaw_deg": 38,
@@ -153,6 +163,7 @@
     },
     {
       "run": "study-20261113-080825-small_wide-5715",
+      "cohort": "development",
       "seed": 5715,
       "variant": "small_wide",
       "yaw_deg": 79,
@@ -168,6 +179,7 @@
     },
     {
       "run": "study-20261113-080825-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -183,6 +195,7 @@
     },
     {
       "run": "study-20261113-081657-small_wide-5715",
+      "cohort": "development",
       "seed": 5715,
       "variant": "small_wide",
       "yaw_deg": 79,
@@ -198,6 +211,7 @@
     },
     {
       "run": "study-20261113-081657-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -213,6 +227,7 @@
     },
     {
       "run": "study-20261113-082515-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -228,6 +243,7 @@
     },
     {
       "run": "study-20261113-082746-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -243,6 +259,7 @@
     },
     {
       "run": "study-20261113-083634-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -258,6 +275,7 @@
     },
     {
       "run": "study-20261113-083953-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -273,6 +291,7 @@
     },
     {
       "run": "study-20261113-084455-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -288,6 +307,7 @@
     },
     {
       "run": "study-20261113-084926-small_wide-5718",
+      "cohort": "development",
       "seed": 5718,
       "variant": "small_wide",
       "yaw_deg": 164,
@@ -299,6 +319,54 @@
       "terminal_xy_error_mm": [
         0.34,
         0.04
+      ]
+    },
+    {
+      "run": "study-20261113-085126-small_medium-5932",
+      "cohort": "heldout_first_attempt",
+      "seed": 5932,
+      "variant": "small_medium",
+      "yaw_deg": 132,
+      "passed": true,
+      "reason": null,
+      "action_to_verification_or_stop_wall_s": 45.226738180965185,
+      "motion_to_home_or_stop_wall_s": 42.32754123513587,
+      "max_visual_lift_m": 0.18102888347881552,
+      "terminal_xy_error_mm": [
+        -1.87,
+        -0.12
+      ]
+    },
+    {
+      "run": "study-20261113-085126-small_reference-5931",
+      "cohort": "heldout_first_attempt",
+      "seed": 5931,
+      "variant": "small_reference",
+      "yaw_deg": 68,
+      "passed": false,
+      "reason": "UNOBSERVED_PATH_SPACE",
+      "action_to_verification_or_stop_wall_s": 21.482405894901603,
+      "motion_to_home_or_stop_wall_s": 19.714509272947907,
+      "max_visual_lift_m": 0.12990347697350713,
+      "terminal_xy_error_mm": [
+        21.61,
+        355.33
+      ]
+    },
+    {
+      "run": "study-20261113-085126-small_wide-5933",
+      "cohort": "heldout_first_attempt",
+      "seed": 5933,
+      "variant": "small_wide",
+      "yaw_deg": 173,
+      "passed": false,
+      "reason": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "action_to_verification_or_stop_wall_s": 33.031416677171364,
+      "motion_to_home_or_stop_wall_s": 31.353621763875708,
+      "max_visual_lift_m": 0.16906996019314635,
+      "terminal_xy_error_mm": [
+        0.32,
+        -1.69
       ]
     }
   ],
@@ -1105,6 +1173,52 @@
           "panda_right",
           0.2,
           5
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-085126-pair-10",
+      "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "action_wall_s": null,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "phase": null,
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
+      "planned_slots": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          1
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          1
+        ],
+        [
+          "panda_right",
+          0,
+          1
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          1
         ]
       ]
     }
