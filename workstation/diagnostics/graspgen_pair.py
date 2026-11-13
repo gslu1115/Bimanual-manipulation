@@ -247,7 +247,9 @@ def check_pair(env, args, packet, scene, estimator):
         fail('PAIR_REQUIRES_TWO_OBSERVED_UPRIGHT_TRACKS')
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if not execute:env.timeline.pause()
-    robot=from_environment(env)
+    armature_floor=.01 if execute else None
+    robot=from_environment(env,paired_armature_floor=armature_floor)
+    report['shoulder_drive_armature_floor_kg_m2']=armature_floor
     estimator.robot_point_filter=robot.observed_robot_points
     estimator.robot_filter_factory=robot.prepare_observed_robot_filter
     robot.set_observation(packet,scene,ScenePriors.from_config(env.c))

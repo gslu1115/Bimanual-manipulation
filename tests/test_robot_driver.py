@@ -5,6 +5,29 @@ from workstation.simulation.robot_driver import RobotMotion
 
 
 class RobotDriveTests(unittest.TestCase):
+    def test_paired_armature_preserves_higher_values_and_uses_native_indices(self):
+        from types import SimpleNamespace
+        from unittest.mock import Mock, patch
+        from workstation.observations.observation_packet import PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
+        from workstation.simulation.robot_driver import from_environment
+
+        names = PANDA_ARM_JOINT_NAMES + PANDA_FINGER_JOINT_NAMES
+        arms = {'left': Mock(dof_names=names), 'right': Mock(dof_names=names[::-1])}
+        env = SimpleNamespace(arms=arms, c={}, observe_robot_states=Mock())
+        for arm in arms.values():
+            arm.get_dof_armatures.return_value.numpy.return_value = np.array([[0., .02]])
+        with patch('workstation.simulation.robot_driver.RobotMotion'):
+            from_environment(env)
+            for arm in arms.values():
+                arm.set_dof_armatures.assert_not_called()
+            from_environment(env, paired_armature_floor=.01)
+        for arm in arms.values():
+            indices = [arm.dof_names.index(joint) for joint in ('panda_joint1', 'panda_joint3')]
+            arm.get_dof_armatures.assert_called_once_with(dof_indices=indices)
+            args, kwargs = arm.set_dof_armatures.call_args
+            self.assertEqual(kwargs['dof_indices'], indices)
+            np.testing.assert_allclose(args[0], [[.01, .02]])
+
     def test_cartesian_refines_continuous_high_joint_gradient_without_relaxing_jump(self):
         driver=RobotMotion.__new__(RobotMotion);driver.dt=.1;driver.speed=.2
         start=np.zeros(7)

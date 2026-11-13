@@ -831,12 +831,18 @@ class RobotMotion:
         self.hold(.3)
 
 
-def from_environment(env):
+def from_environment(env,*,paired_armature_floor=None):
     # Native<->canonical name mapping lives only in this simulator drive adapter.
     names=PANDA_ARM_JOINT_NAMES+PANDA_FINGER_JOINT_NAMES
     maps={name:tuple(arm.dof_names.index(joint) for joint in names) for name,arm in env.arms.items()}
     for name,arm in env.arms.items():
         PandaJointMap(tuple(arm.dof_names))
+        if paired_armature_floor is not None:
+            # At a straight shoulder, axes 1 and 3 nearly coincide. Supply
+            # reflected actuator inertia for this lightly modelled drive pair.
+            axes=[maps[name][0],maps[name][2]]
+            original=arm.get_dof_armatures(dof_indices=axes).numpy()
+            arm.set_dof_armatures(np.maximum(original,paired_armature_floor),dof_indices=axes)
         fingers=list(maps[name][7:])
         arm.set_dof_max_efforts([30.,30.],dof_indices=fingers)
         arm.set_dof_gains(stiffnesses=[2000.,2000.],dampings=[100.,100.],dof_indices=fingers)
