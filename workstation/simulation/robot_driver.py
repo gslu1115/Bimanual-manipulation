@@ -295,6 +295,8 @@ class RobotMotion:
         other=next(name for name in states if name != arm)
         other_spheres=self.spheres(other,states[other].joint_positions_rad)
         obstacles=list(self.static)+scene_obstacles(scene,target_id)
+        keepout=getattr(self,'stationary_payload_keepout',None)
+        if keepout is not None:obstacles.append(keepout)
         # Selected contact object retains measured position uncertainty. The
         # extra neighbour keep-out padding would erase the narrow Panda palm/
         # box gap even when only fingers are intended to touch. Body checks

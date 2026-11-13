@@ -339,6 +339,18 @@ class CuboidHoldingTracker:
         self.relative_rotation=self.hypotheses[0][1]
         self.initial_z=float(obj.position_m[2]);self.last_failure=None
         self._fit_reference=None
+        self._transfer_reference=None
+
+    def remember_transfer_geometry(self,tcp,rotation,measurement):
+        """Preserve the lift waypoint fit as a second correspondence hint."""
+        from workstation.perception.cuboid_pose import measured_cuboid_supported,grasp_constrained_cuboid_supported
+        self._transfer_reference=None
+        time_s=measurement['time_s']
+        if (measured_cuboid_supported(measurement,time_s) or
+                (self.allow_grasp_translation and grasp_constrained_cuboid_supported(measurement,time_s))):
+            self._transfer_reference=dict(time_s=time_s,source=measurement['status'],
+                offset=rotation.T@(np.asarray(measurement['position_m'])-tcp),
+                relative_rotation=rotation.T@np.asarray(measurement['rotation']))
 
     def observe(self,packet,scene,tcp_position,tcp_rotation,require_motion_extent=True):
         from workstation.perception.cuboid_pose import fit_cuboid_pose
@@ -350,6 +362,21 @@ class CuboidHoldingTracker:
         hint=tcp+r@offset;body_hint=r@relative
         measured=fit_cuboid_pose(packet,scene,hint,body_hint,self.size,self.priors,
                                 allow_grasp_translation=self.allow_grasp_translation)
+        backup=getattr(self,'_transfer_reference',None)
+        if (measured['status']=='UNKNOWN' and backup is not None and
+                0<packet.observation_time_s-backup['time_s']<=5.):
+            # Reacquire all six coordinates from this same image. An earlier
+            # fit may initialize correspondence, never substitute for it.
+            retry=fit_cuboid_pose(packet,scene,tcp+r@backup['offset'],r@backup['relative_rotation'],
+                                  self.size,self.priors)
+            if retry['status']=='GEOMETRY_OBSERVED':
+                from workstation.perception.cuboid_pose import measured_cuboid_supported
+                if (measured_cuboid_supported(retry,packet.observation_time_s) and
+                        np.linalg.norm(np.asarray(retry['position_m'])-hint)<=.008):
+                    retry['reacquired_from_lift_time_s']=backup['time_s']
+                    retry['lift_hint_source']=backup['source']
+                    reference=backup
+                    measured=retry
         if measured['status'] not in ('GEOMETRY_OBSERVED','GRASP_CONSTRAINED'):
             self.last_failure=measured;return None
         self.last_failure=None
@@ -357,7 +384,8 @@ class CuboidHoldingTracker:
         # independently of the newer geometric correspondence reference.
         correction=np.asarray(measured['rotation'])@(r@self.relative_rotation).T
         measured['correspondence_reference_time_s']=None if reference is None else reference['time_s']
-        measured['correspondence_reference_source']='closure_relation' if reference is None else 'last_independent_current_geometry'
+        measured['correspondence_reference_source']=('closure_relation' if reference is None else
+            'lift_waypoint' if 'reacquired_from_lift_time_s' in measured else 'last_independent_current_geometry')
         if self.allow_grasp_translation and measured['geometric_pose_measured']:
             # A fresh complete visual pose can correct the search reference.
             # Never accumulate hidden-axis predictions into another prediction.

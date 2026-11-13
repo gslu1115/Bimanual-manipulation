@@ -31,7 +31,7 @@ class GapReobserve:
                 samples.append(dict(executed=False,reason='INSPECTION_CAMERA_UNAVAILABLE'));break
             try:
                 self.robot.motion_started=False
-                check=self.robot.execute_camera_view(arm,frame,position,aim,scene,target.track_id)
+                check=self.robot.execute_camera_view(arm,frame,position,aim,scene,target.track_id if target is not None else None)
                 executed=True;scene=self.observe(('pregrasp_observer_' if prepared else 'gap_reobserve_')+str(len(samples)))
                 self.robot.hold(.2);scene=self.observe()
                 # The proposed observer must really see the point. A free ray

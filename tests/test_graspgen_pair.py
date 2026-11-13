@@ -10,6 +10,26 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_resampling_uses_distinct_nearby_arms_and_actual_side_points(self):
+        from workstation.diagnostics.graspgen_pair import preferred_assignments,balance_visible_surfaces
+        from workstation.models.graspgen_client import VisualClouds
+        def carton(name,x):
+            return SimpleNamespace(track_id=name,position_m=[x,0,0],size_m=[.12,.06,.05],
+                posture='UPRIGHT',visibility='COMPLETE_TOP',axis_yaw_rad=0.)
+        a,b=carton('a',-.18),carton('b',.18)
+        bases={'panda_left':{'base_xyz':[-.6,0,0]},'panda_right':{'base_xyz':[.6,0,0]}}
+        self.assertEqual(preferred_assignments([b,a],bases),{'a':'panda_left','b':'panda_right'})
+        rng=np.random.default_rng(4)
+        top=rng.uniform([-.055,-.025,.025],[.055,.025,.025],(4000,3))
+        side=rng.uniform([-.055,.03,-.020],[.055,.03,.020],(150,3))
+        points=np.r_[top,side]+a.position_m
+        clouds=VisualClouds(points,points,1.)
+        chosen=balance_visible_surfaces(clouds,a)
+        self.assertLess(len(chosen.target_m),len(points))
+        self.assertGreater(np.mean(chosen.target_m[:,1]==.03),.30)
+        self.assertTrue(set(map(tuple,chosen.target_m)).issubset(set(map(tuple,points))))
+        self.assertIs(chosen.scene_m,points)
+
     def test_rotated_inference_preserves_observed_contact_in_world(self):
         from workstation.models.graspgen_client import VisualClouds, infer_rotated_view
         points=np.array([[.21,.15,.8],[.24,.19,.82],[.25,.10,.81]],np.float32)

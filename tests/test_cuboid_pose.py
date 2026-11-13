@@ -213,6 +213,22 @@ def visual_object(scene,r,ambiguous=False):
 
 
 class CuboidHoldingIntegrationTests(unittest.TestCase):
+    def test_lift_hint_requires_new_full_pose_near_latest_prediction(self):
+        from unittest.mock import patch
+        p,s=synthetic_observation(np.eye(3))
+        tracker=CuboidHoldingTracker(visual_object(s,np.eye(3)),CENTRE,np.eye(3),SIZE,PRIORS)
+        proof=tracker.observe(p,s,CENTRE,np.eye(3))
+        tracker.remember_transfer_geometry(CENTRE,np.eye(3),dict(proof,time_s=.5))
+        self.assertIsNotNone(tracker._transfer_reference)
+        unknown=dict(status='UNKNOWN',reason='VISIBLE_PLANES_UNRESOLVED')
+        with patch('workstation.perception.cuboid_pose.fit_cuboid_pose',side_effect=[unknown,proof.copy()]):
+            seen=tracker.observe(p,s,CENTRE,np.eye(3))
+            self.assertEqual(seen['correspondence_reference_source'],'lift_waypoint')
+        with patch('workstation.perception.cuboid_pose.fit_cuboid_pose',side_effect=[unknown,unknown]):
+            self.assertIsNone(tracker.observe(p,s,CENTRE,np.eye(3)))
+        with patch('workstation.perception.cuboid_pose.fit_cuboid_pose',side_effect=[unknown,proof.copy()]):
+            self.assertIsNone(tracker.observe(p,s,CENTRE+[.03,0,0],np.eye(3)))
+
     def test_current_rotated_geometry_and_semantic_alternatives_are_retained(self):
         p,s=synthetic_observation(turn(0,90));obj=visual_object(s,turn(0,90),True)
         tracker=CuboidHoldingTracker(obj,CENTRE,np.eye(3),SIZE,PRIORS)

@@ -59,6 +59,26 @@ class PreCloseTarget:
         return dict(proof,supported=True,reason='CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET',
             full_pose_measured=measured['geometric_pose_measured'])
 
+    def renewed(self,scene,proof):
+        """Refresh geometry age only from a full fit consistent with the original pick."""
+        if (proof.get('phase')!='approach' or proof.get('target_id')!=self.obj.track_id or
+                not preclose_supported(proof,scene.observation_time_s) or not proof['full_pose_measured']):
+            return self
+        original=getattr(self,'original',self)
+        measured=proof['surface']
+        rotation=np.asarray(measured['rotation'])
+        angle=np.arccos(np.clip((np.trace(original.rotation.T@rotation)-1)/2,-1,1))
+        if np.linalg.norm(np.asarray(measured['position_m'])-original.obj.position_m)>.002 or angle>math.radians(3):
+            return self
+        matches=[o for o in scene.objects if o.track_id==self.obj.track_id and o.visibility=='OBSERVED_CUBOID']
+        if len(matches)!=1:return self
+        obj=matches[0]
+        obj=replace(obj,posture='UPRIGHT',hypotheses=tuple(h for h in obj.hypotheses if h.label=='UPRIGHT'))
+        try:new=PreCloseTarget(obj,scene,self.priors)
+        except ValueError:return self
+        new.original=original
+        return new
+
 
 def preclose_supported(proof,time_s):
     if proof.get('supported') is not True or not proof.get('target_id') or proof.get('grasp_proven') is not False:

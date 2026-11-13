@@ -56,7 +56,9 @@ class CuMotionPickPlace(VisualPickPlace):
         self.preclose_checks.append(proof);self.preclose_proof=proof
         if not proof['supported']:
             raise RuntimeError('PRECLOSE_SURFACE_CHECK:'+proof['reason'])
-        return reconcile_preclose_target(self.estimator,scene,proof)
+        scene=reconcile_preclose_target(self.estimator,scene,proof)
+        self.preclose_reference=self.preclose_reference.renewed(scene,proof)
+        return scene
 
     def latch_closed_payload(self,result,model,preload=True):
         """Reuse current visible geometry without requiring the full top again."""
@@ -222,6 +224,9 @@ class CuMotionPickPlace(VisualPickPlace):
                                 if measurement is not None:break
                         if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
                         if self.max_visual_lift < .08:raise RuntimeError('NO_VISUAL_LIFT_PROOF')
+                        if label=='lifted':
+                            tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
+                            self.hold_tracker.remember_transfer_geometry(tcp,rotation,measurement)
                         relation=self.robot.held_visual_geometry
                         release_gap=release_gap_with_uncertainty(self.release_gap_m,self.hold_tracker.uncertainty_m)
                         place,place_rotation=placement_goal(slot,self.robot.place_support_z,obj.size_m,
@@ -236,7 +241,21 @@ class CuMotionPickPlace(VisualPickPlace):
                         transfer=driver.phase=='APPROACH_PLACE'
                         self.event('TRANSFER' if transfer else 'LOWER')
                         if transfer:
-                            self._phase_path(place+[0.,0.,.18],place_rotation,contact=False)
+                            try:
+                                self._phase_path(place+[0.,0.,.18],place_rotation,contact=False)
+                            except RuntimeError as error:
+                                if str(error)!='UNOBSERVED_PATH_SPACE' or candidate.source!='graspgen':raise
+                                check=self.robot.last_plan_check
+                                point=check.get('workspace',{}).get('last_unknown_sample_m')
+                                if point is None:raise
+                                measurement=self._inspect_transfer_gap(point,measurement,driver,result)
+                                relation=self.robot.held_visual_geometry
+                                place,place_rotation=placement_goal(slot,self.robot.place_support_z,obj.size_m,
+                                    release_gap_with_uncertainty(self.release_gap_m,self.hold_tracker.uncertainty_m),
+                                    measurement['rotation'],relation['offset'],relation['relative_rotation'])
+                                driver.update_place_from_measurement(place,place_rotation)
+                                self._phase_path(place+[0.,0.,.18],place_rotation,contact=False)
+                                used_cartesian=True  # discard the command proposed before inspection
                         else:
                             self._cartesian_segment(driver,place,place_rotation,contact=True)
                             used_cartesian=True
@@ -291,12 +310,39 @@ class CuMotionPickPlace(VisualPickPlace):
             self.event('HOME')
             self.robot.command_velocities(self.arm,np.zeros(9))
             self.robot.execute_joint(self.arm,self.robot.home,self.scene,candidate.target_id)
+            for observer in sorted(self.observer_arms):
+                self.observe('before_observer_home_'+observer)
+                self.robot.execute_joint(observer,self.robot.home,self.scene,None)
+                self.observe('observer_home_'+observer)
         finally:
             self.robot.record_control_step=None
             self.robot.command_velocities(self.arm,np.zeros(9))
             result['controller_timing']=dict(motion_through_home_wall_s=time.perf_counter()-motion_start,
                 controller_sim_s=driver.time_s,controller_and_state_wall_s=driver.controller_wall_s,
                 controller_calls=driver.calls,phase_at_exit=driver.phase)
+
+    def _inspect_transfer_gap(self,point,measurement,driver,result):
+        from workstation.planning.collision import AABB
+        from workstation.skills.camera_reobserve import GapReobserve
+        state=self.robot.read_states()[self.arm]
+        self.robot.command_velocities(self.arm,np.zeros(9))
+        self.robot.targets[self.arm][:7]=state.joint_positions_rad
+        # The open observer plans around the entire currently supported carton,
+        # even when this exposure assigned only part of the carton a track ID.
+        box=AABB('stationary_held_carton',measurement['position_m'],
+                 np.abs(measurement['rotation'])@(self.hold_tracker.size+2*measurement['uncertainty_m']))
+        self.robot.stationary_payload_keepout=box
+        try:
+            self.scene,report=GapReobserve(self.robot,self.observe,lambda:self.packet,self.priors).run(
+                self.arm,point,None,self.scene)
+        finally:self.robot.stationary_payload_keepout=None
+        result['transfer_gap_inspection']=report
+        if not report['success']:raise RuntimeError('TRANSFER_GAP_OBSERVATION_FAILED')
+        self.observer_arms.add(report['observer_arm'])
+        measured=self.holding_measurement()
+        if measured is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
+        driver.resync_after_cartesian(self.packet.observation_time_s-state.sample_time_s)
+        return measured
 
     def _cartesian_segment(self,driver,target,rotation,contact,approach=False):
         self.robot.command_velocities(self.arm,np.zeros(9))

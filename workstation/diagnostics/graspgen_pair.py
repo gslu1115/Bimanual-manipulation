@@ -14,6 +14,34 @@ from workstation.planning.selection import assess
 from workstation.planning.task_targets import ConveyorSlots
 
 
+def preferred_assignments(targets, bases):
+    """Assign both cartons to distinct arms with the shortest total XY reach."""
+    left,right=sorted(bases)
+    def distance(arm,obj):
+        return np.linalg.norm(np.asarray(bases[arm]['base_xyz'])[:2]-np.asarray(obj.position_m)[:2])
+    a,b=targets
+    if distance(left,b)+distance(right,a)<distance(left,a)+distance(right,b):
+        a,b=b,a
+    return {a.track_id:left,b.track_id:right}
+
+
+def balance_visible_surfaces(clouds,obj):
+    """Reduce top-view pixel density while retaining actual measured side surfaces."""
+    from workstation.planning.graspgen_candidates import upright_body_rotation
+    points=clouds.target_m
+    local=(points-np.asarray(obj.position_m))@upright_body_rotation(obj)
+    _,indices=np.unique(np.floor(local/.0015).astype(int),axis=0,return_index=True)
+    indices=np.sort(indices)
+    residual=np.abs(np.abs(local[indices])-np.asarray(obj.size_m)/2)
+    closest=np.argmin(residual,axis=1)
+    side=indices[closest!=2]
+    top=indices[closest==2]
+    if len(side)<40 or len(indices)<200:return clouds
+    budget=min(len(top),max(200-len(side),2*len(side)))
+    selected=np.sort(np.r_[side,top[np.linspace(0,len(top)-1,budget,dtype=int)]])
+    return replace(clouds,target_m=points[selected])
+
+
 def synchronized_knots(left, right, max_step=.025):
     """Preserve both path corners and sample a common normalized approach clock."""
     paths = [np.asarray(path, dtype=float) for path in (left, right)]
@@ -70,7 +98,7 @@ def paired_pregrasp(robot, rows, states, scene):
     return None, rejected
 
 
-def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025):
+def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
@@ -97,8 +125,13 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025)
         robot.tick()
         states=robot.read_states()
         measured=np.array([states[a].joint_positions_rad for a in arms])
-        if not np.isfinite(measured).all() or np.max(np.abs(measured-desired))>.04:
-            raise RuntimeError('PAIR_JOINT_TRACKING_ERROR')
+        if not np.isfinite(measured).all():
+            raise RuntimeError('PAIR_JOINT_TRACKING_ERROR: nonfinite encoders')
+        errors=np.abs(measured-desired)
+        if np.max(errors)>.04:
+            i,j=np.unravel_index(np.argmax(errors),errors.shape)
+            raise RuntimeError(f'PAIR_JOINT_TRACKING_ERROR: {arms[i]} joint {j+1} '
+                               f'error {errors[i,j]:.4f} rad at tick {ticks}')
         reason,_=check_spheres(robot.spheres(arms[0],measured[0]),robot.spheres(arms[1],measured[1]),[],None)
         if reason:raise RuntimeError('PAIR_MEASURED_'+reason)
         if payload_guard:payload_guard(*measured)
@@ -108,7 +141,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025)
         ticks+=1
         trace.append(dict(tick=ticks,measured_max_joint_speed_rad_s=speed.tolist()))
         previous=measured
-    for pair in synchronized_knots(*paths,max_step=min(.025,robot.joint_speed*robot.dt)):
+    for pair in synchronized_knots(*paths,max_step=min(.025,speed_fraction*robot.joint_speed*robot.dt)):
         desired=np.asarray(pair)
         advance(desired)
         # Let the physical drives catch up before advancing the common clock.
@@ -169,16 +202,68 @@ def check_pair(env, args, packet, scene, estimator):
         if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
             pick_failures[c.candidate_id]=result
         return result
-    for attempt in range(1,4):
-        for obj in targets:
-            result=infer_rotated_view(proxy,visual_clouds(packet,scene,obj.track_id),args.num_grasps,
-                                      (0.,math.pi/4,-math.pi/4)[attempt-1])
+    for attempt in range(1,8):
+        preferred=preferred_assignments(targets,robot.base_config)
+        feasible={(r.candidate.target_id,r.candidate.arm) for r in rows if r.feasible}
+        missing=[o for o in targets if (o.track_id,preferred[o.track_id]) not in feasible]
+        if execute and attempt==5 and len(missing)==1:
+            target=missing[0]
+            centre=np.asarray(target.position_m)
+            arm=preferred[target.track_id]
+            camera='left_wrist_camera' if arm=='panda_left' else 'right_wrist_camera'
+            observation=dict(arm=arm,target_id=target.track_id,executed=False,trials=[])
+            report['extra_view']=observation
+            for side in (1.,-1.):
+                lateral=np.array([-math.sin(target.axis_yaw_rad),math.cos(target.axis_yaw_rad),0.])
+                goal=centre+side*.18*lateral+[0.,0.,.19]
+                try:
+                    view=robot.execute_camera_view(arm,packet.cameras[camera],goal,centre,scene,target.track_id)
+                except RuntimeError as error:
+                    observation['trials'].append(str(error))
+                    if robot.motion_started:fail('INSPECTION_MOTION:'+str(error))
+                    continue
+                observation.update(executed=True,view=view)
+                packet=env.get_observation_packet(refresh=True)
+                scene=estimator.estimate(packet)
+                robot.hold(.10)
+                packet=env.get_observation_packet(refresh=True)
+                scene=estimator.estimate(packet)
+                robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
+                states=robot.read_states()
+                slots.observe(robot.observed_workspace)
+                available=[xy for xy in slots.positions if slots.states[xy]=='free']
+                targets=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and pose_is_observed(o,scene)]
+                if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
+                rows.clear()
+                pick_failures.clear()
+                seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
+                missing=[]
+                break
+        requested=missing or targets
+        candidates={}
+        for obj in requested:
+            # A distant camera and a near wrist see different faces. On retry
+            # draw from different actual views of the missing carton, keeping
+            # the feasible results for every previously sampled carton.
+            refs=obj.mask_refs
+            if attempt==2:
+                chosen=[ref for ref in refs if ref.startswith('scene_camera/')]
+                if chosen and sum(np.count_nonzero(scene.masks[ref]) for ref in chosen)>=200:
+                    refs=chosen
+            source_scene=replace(scene,objects=tuple(replace(o,mask_refs=tuple(refs))
+                if o.track_id==obj.track_id else o for o in scene.objects))
+            yaw=(0.,-obj.axis_yaw_rad,math.pi/2-obj.axis_yaw_rad,math.pi/4,-math.pi/4,
+                 math.pi-obj.axis_yaw_rad,-math.pi/2-obj.axis_yaw_rad)[attempt-1]
+            clouds=visual_clouds(packet,source_scene,obj.track_id)
+            if attempt>=3:clouds=balance_visible_surfaces(clouds,obj)
+            result=infer_rotated_view(proxy,clouds,args.num_grasps,yaw)
             proposals=candidates_from_result(result,obj,states,calibration,seq)
             candidates[obj.track_id]=[
                 replace(c,rejection_reasons=c.rejection_reasons+('UNSUPPORTED_UPRIGHT_APPROACH',))
                 if -c.approach_direction[2] < math.cos(math.radians(10)) else c for c in proposals]
             report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
-                                                 raw_grasps=len(result['scores'])))
+                                                 attempt=attempt,mask_refs=list(refs),basis_yaw_rad=yaw,
+                                                 observed_input_points=len(clouds.target_m),raw_grasps=len(result['scores'])))
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
@@ -229,7 +314,15 @@ def check_pair(env, args, packet, scene, estimator):
             report.update(pair=current,scope='physical_empty_arm_pregrasp_only',physical_execution=True)
             env._write_json('graspgen_pair_check.json',report)
             action_start=time.monotonic()
-            report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'])
+            report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
+            for selected,path in zip(current['selection'],current['pregrasp_knots']):
+                arm=selected['arm']
+                expected,orientation=robot.fk(arm,np.asarray(path[-1]))
+                actual,measured=robot.fk(arm)
+                position_error=float(np.linalg.norm(actual-expected))
+                angle_error=float(np.arccos(np.clip((np.trace(measured.T@orientation)-1)/2,-1.,1.)))
+                report['motion'].setdefault('endpoint_errors',{})[arm]=dict(position_m=position_error,angle_rad=angle_error)
+                if position_error>.005 or angle_error>math.radians(3):raise RuntimeError('PAIR_PREGRASP_GOAL_MISSED:'+arm)
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'

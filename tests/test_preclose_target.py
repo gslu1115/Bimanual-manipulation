@@ -80,6 +80,18 @@ class PreCloseTargetTests(unittest.TestCase):
                 robot_state_at_frame={arm:replace(state,sample_time_s=.7) for arm,state in f.robot_state_at_frame.items()})
         self.assertFalse(self.check.confirm(replace(self.packet,cameras=cameras),self.scene)['supported'])
 
+    def test_only_full_current_geometry_renews_stationary_reference(self):
+        partial=self.check.confirm(self.packet,self.scene)
+        self.assertIs(self.check.renewed(self.scene,partial),self.check)
+        packet,scene=synthetic_observation(np.eye(3))
+        obj=replace(self.reference,time_s=1.,mask_refs=tuple(scene.masks))
+        scene=replace(scene,objects=(obj,))
+        proof=self.check.confirm(packet,scene)
+        reconciled=reconcile_preclose_target(CartonEstimator(self.priors),scene,proof)
+        new=self.check.renewed(reconciled,proof)
+        self.assertEqual(new.obj.time_s,1.)
+        self.assertIs(new.original,self.check)
+
     def test_fragment_merge_retains_other_objects_and_old_anchor_time(self):
         objects=tuple(replace(self.reference,time_s=1.,track_id=self.reference.track_id if i==0 else 'alias',
             mask_refs=(ref,),cameras=(ref.split('/')[0],),posture='UNKNOWN',
