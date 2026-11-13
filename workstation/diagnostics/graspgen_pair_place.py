@@ -58,9 +58,18 @@ def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
                         allow_reference_translation=True)
     masks=[ref for obj in fragments for ref in obj.mask_refs]
     if (not masks or len(set(masks))!=len(masks) or len({r.split('/')[0] for r in masks})!=len(masks)):return None
+    depth_ref=None
+    if fit['status']=='UNKNOWN':
+        extra=parked_depth_top(packet,reference,masks)
+        if extra is not None:
+            ref,mask=extra
+            extended=replace(scene,masks={**scene.masks,ref:mask})
+            measured=fit_cuboid_pose(packet,extended,reference['position_m'],prior_rotation,size,priors)
+            if measured_cuboid_supported(measured,packet.observation_time_s) and set(measured['mask_refs'])==set(masks)|{ref}:
+                fit=measured;depth_ref=ref
     full=measured_cuboid_supported(fit,packet.observation_time_s)
     if full or reference_constrained_cuboid_supported(fit,packet.observation_time_s):
-        if set(fit['mask_refs'])!=set(masks):return None
+        if set(fit['mask_refs'])!=set(masks)|({depth_ref} if depth_ref else set()):return None
         rotation=np.asarray(fit['rotation']);centre=np.asarray(fit['position_m'])
         if full:
             if np.linalg.norm(centre-reference['position_m'])>.005:return None
@@ -98,9 +107,31 @@ def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
         quality={**obj.quality,'geometric_length_m':world[0],'geometric_width_m':world[1],
                  'observed_height_m':world[2]})
     return bounded,dict(track_id=obj.track_id,fragment_tracks=[o.track_id for o in fragments],
-        time_s=packet.observation_time_s,mask_refs=masks,
+        time_s=packet.observation_time_s,mask_refs=masks,additional_depth_component=depth_ref,
         observed_face_axes=face_axes,bounded_axis=axis,offset_interval_m=interval,
         collision_center_m=centre.tolist(),collision_size_m=world.tolist())
+
+
+def parked_depth_top(packet,reference,instance_refs):
+    """Recover a complete top in another view without clipping its component to the prior footprint."""
+    import cv2
+    from workstation.perception.rgbd_cartons import deproject
+    centre=np.asarray(reference['position_m']);size=np.asarray(reference['size_m'])
+    yaw=reference['axis_yaw_rad'];c,s=math.cos(yaw),math.sin(yaw)
+    basis=np.array([[c,-s],[s,c]])
+    used={ref.split('/')[0] for ref in instance_refs}
+    for name,frame in packet.cameras.items():
+        if name in used or frame is None or packet.camera_status.get(name)!='OK' or frame.sample_time_s!=packet.observation_time_s:continue
+        xyz=deproject(frame);top=frame.valid_depth & (np.abs(xyz[:,:,2]-centre[2]-size[2]/2)<.0015)
+        count,labels,stats,_=cv2.connectedComponentsWithStats(top.astype(np.uint8),connectivity=8)
+        for i in range(1,count):
+            if stats[i,cv2.CC_STAT_AREA]<100:continue
+            mask=labels==i;local=(xyz[mask,:2]-centre[:2])@basis
+            bounds=np.quantile(local,[.002,.998],axis=0)
+            if np.max(np.abs(bounds-[-size[:2]/2,size[:2]/2]))>.004:continue
+            if cv2.contourArea(cv2.convexHull(local.astype(np.float32)))<.8*np.prod(size[:2]):continue
+            return f'{name}/{frame.sequence_id}/depth_plane',mask
+    return None
 
 
 def parked_side_with_top(packet,scene,reference,refs,priors):

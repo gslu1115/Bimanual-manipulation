@@ -53,6 +53,13 @@ class GraspConstrainedCarryTests(unittest.TestCase):
         reference=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
         def bound(packet):return parked_surface_envelope(packet,s,reference,[obj],PRIORS,[(.3,-.1)])
         proxy,proof=bound(p)
+        self.assertIsNone(proof['bounded_axis'])
+        self.assertTrue(proof['additional_depth_component'].startswith('scene_camera/'))
+        # With only a partial top in the second camera, keep the unknown
+        # side coordinate bounded instead of reporting a complete measurement.
+        cameras=dict(p.cameras);top=cameras['scene_camera'];q=deproject(top)
+        cameras['scene_camera']=replace(top,valid_depth=top.valid_depth & (q[:,:,0]<CENTRE[0]))
+        proxy,proof=bound(replace(p,cameras=cameras))
         self.assertEqual(proof['bounded_axis'],1)
         self.assertIsNone(proxy.measured_cuboid)
         cameras=dict(p.cameras);cameras['scene_camera']=None
