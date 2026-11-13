@@ -146,7 +146,7 @@ class GraspGenExecutionTests(unittest.TestCase):
         skill.grasp_source=None
         self.assertEqual(skill._monitor_period_steps(),24)
 
-    def generate_with_fresh_changes(self,changes):
+    def generate_with_fresh_changes(self,changes,**options):
         clock=[self.obj.time_s];observations=[];holds=[]
         def hold(seconds):holds.append(seconds);clock[0]+=seconds
         robot=SimpleNamespace(hold=hold,read_states=lambda:{name:
@@ -162,10 +162,24 @@ class GraspGenExecutionTests(unittest.TestCase):
         source=GraspGenSource(SimpleNamespace(infer=None),self.calibration)
         with patch('workstation.models.graspgen_source.ThreadPoolExecutor',return_value=pool),patch(
                 'workstation.models.graspgen_source.visual_clouds',return_value=SimpleNamespace(time_s=self.obj.time_s)):
-            rows=source.generate(SimpleNamespace(cameras={'cam':SimpleNamespace(sequence_id=1)}),self.scene,robot,refresh)
+            rows=source.generate(SimpleNamespace(cameras={'cam':SimpleNamespace(sequence_id=1)}),self.scene,robot,refresh,**options)
         self.assertEqual(pool.__enter__.return_value.submit.call_count,1)
         self.assertEqual(len(source.requests),1)
         return source,rows,observations,holds
+
+    def test_oblique_retry_uses_visual_heading_and_current_revalidation(self):
+        source,rows,_,_=self.generate_with_fresh_changes([{}],oblique=True)
+        request=source.requests[-1]
+        self.assertAlmostEqual(request['inference_basis_yaw_rad'],-self.obj.axis_yaw_rad)
+        self.assertAlmostEqual(request['inference_basis_pitch_rad'],np.pi/3)
+        self.assertTrue(any(c.validated_time_s>c.observation_time_s for c in rows))
+        from workstation.observations.camera_geometry import pose_matrix
+        swapped=next(c for c in rows if 'jaw_swap_from_candidate_id' in c.metadata)
+        original=next(c for c in rows if c.candidate_id==swapped.metadata['jaw_swap_from_candidate_id'])
+        tcp=pose_matrix(original.position_m,original.orientation_wxyz)
+        rotated=pose_matrix(swapped.position_m,swapped.orientation_wxyz)
+        np.testing.assert_allclose(rotated,tcp@np.diag([-1.,-1.,1.,1.]),atol=1e-6)
+        self.assertEqual(original.validated_time_s,swapped.validated_time_s)
 
     def test_transient_packaging_ambiguity_uses_new_positive_frame_and_original_pose(self):
         source,rows,frames,holds=self.generate_with_fresh_changes([{'posture':'UNKNOWN'},{}])

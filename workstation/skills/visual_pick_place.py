@@ -67,13 +67,14 @@ class VisualPickPlace:
         if self.release_gap_m!=UPRIGHT_RELEASE_GAP_M:kwargs['release_gap_m']=self.release_gap_m
         return self.robot.feasibility(candidate,obj,scene,slot,**kwargs)
 
-    def _assess(self,feasibility):
+    def _assess(self,feasibility,*,oblique=False):
         provider=None
         if self.grasp_source is not None:
             def refresh():
                 self.observe('after_model_inference')
                 return self.packet,self.scene
-            rows=self.grasp_source.generate(self.packet,self.scene,self.robot,refresh)
+            options={'oblique':True} if oblique else {}
+            rows=self.grasp_source.generate(self.packet,self.scene,self.robot,refresh,**options)
             provider=lambda obj,states:[c for c in rows if c.target_id==obj.track_id]
         return assess(self.scene,self.robot.read_states(),feasibility,self.robot.home,
             failure_history=self.failure_history,eligible=self.eligible,candidate_provider=provider,
@@ -354,7 +355,11 @@ class VisualPickPlace:
             if self.grasp_source is not None:
                 result['candidate_attempts']=[result['assessments']]
                 # Bounded fresh-observation attempts, never a geometry fallback.
-                for attempt in range(2):
+                for attempt in range(3):
+                    oblique=(attempt==2)
+                    if oblique and (chosen is not None or self.accepted_postures!=('UPRIGHT',)
+                                    or getattr(self.grasp_source,'backend',None)!='graspgen'):
+                        break
                     # A pinch near the end of the long axis gives the carton a
                     # large lever arm. Sample another model batch before moving.
                     if chosen is not None:
@@ -365,7 +370,7 @@ class VisualPickPlace:
                     else:
                         previous=None
                     self.robot.hold(.1);self.observe('model_retry_'+str(attempt+1))
-                    assessments=self._assess(full_task)
+                    assessments=self._assess(full_task,oblique=oblique)
                     if previous is not None:
                         # Preserve a previously feasible option only if the
                         # original pose and its full path pass this fresh frame.

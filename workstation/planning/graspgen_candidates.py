@@ -129,6 +129,14 @@ def candidates_from_result(result,obj,arms,calibration,sequence_ids):
     return output
 
 
+def swap_panda_jaws(candidate):
+    """Exchange the two pad positions about the proposed TCP approach axis."""
+    rotation=pose_matrix(candidate.position_m,candidate.orientation_wxyz)[:3,:3]@np.diag([-1.,-1.,1.])
+    return replace(candidate,candidate_id=candidate.candidate_id+':swapped',
+        orientation_wxyz=tuple(quaternion_from_matrix(rotation)),yaw_rad=math.atan2(rotation[1,0],rotation[0,0]),
+        metadata={**candidate.metadata,'jaw_swap_from_candidate_id':candidate.candidate_id})
+
+
 def revalidate_candidate(candidate,obj,scene,sequence_ids,accepted_postures=('UPRIGHT',)):
     """Retain the ORIGINAL world pose only when fresh visual geometry agrees."""
     original=candidate.metadata['source_visual_object']

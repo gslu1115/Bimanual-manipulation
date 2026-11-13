@@ -4,11 +4,13 @@ from dataclasses import replace
 import math
 import time
 from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
-from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate,refine_pinch_contact
+from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate,refine_pinch_contact,swap_panda_jaws
 from workstation.perception.scene_estimate import pose_is_observed
 
 
 class GraspGenSource:
+    backend='graspgen'
+
     def __init__(self,proxy,calibration,num_grasps=256,accepted_postures=('UPRIGHT',),assigned_arm=None):
         self.proxy,self.calibration,self.num_grasps=proxy,calibration,num_grasps
         self.accepted_postures=tuple(accepted_postures)
@@ -17,15 +19,22 @@ class GraspGenSource:
         self.requests=[]
         self.assigned_arm=assigned_arm
 
-    def generate(self,packet,scene,robot,refresh):
+    def generate(self,packet,scene,robot,refresh,*,oblique=False):
         candidates=[]
         targets=[obj for obj in scene.objects if not obj.failures and obj.posture in self.accepted_postures and pose_is_observed(obj,scene)]
         for obj in targets:
             clouds=visual_clouds(packet,scene,obj.track_id)
             started=time.monotonic();before=robot.read_states()
             with ThreadPoolExecutor(max_workers=1) as pool:
-                yaw=(0.,math.pi/4,-math.pi/4)[len(self.requests)%3] if obj.posture=='UPRIGHT' else 0.
-                pending=pool.submit(infer_rotated_view,self.proxy,clouds,self.num_grasps,yaw)
+                yaw=pitch=0.
+                if obj.posture=='UPRIGHT':
+                    if oblique:
+                        # After three unsuccessful level views, present the same
+                        # measured surfaces obliquely along the visual long axis.
+                        yaw,pitch=-obj.axis_yaw_rad,math.pi/3
+                    else:
+                        yaw=(0.,math.pi/4,-math.pi/4)[len(self.requests)%3]
+                pending=pool.submit(infer_rotated_view,self.proxy,clouds,self.num_grasps,yaw,pitch)
                 while not pending.done():
                     robot.hold(.025)
                 result=pending.result()
@@ -45,6 +54,8 @@ class GraspGenSource:
                     metadata={**row.metadata,'supported_skill':'side_adjustment' if obj.posture=='SIDE' else 'upright_pick_place',
                               'approach_tilt_deg':tilt,'maximum_supported_tilt_deg':10.})
                 prepared.append(row)
+                if oblique and obj.posture=='UPRIGHT' and not reasons:
+                    prepared.append(swap_panda_jaws(row))
             samples=[]
             for observation in range(3):
                 # Always take a later physics sample, even for an instant reply.
@@ -79,6 +90,7 @@ class GraspGenSource:
                 response_wall_time_s=time.monotonic()-started,proxy_round_trip_s=result['round_trip_s'],
                 fresh_observation_time_s=fresh_scene.observation_time_s,
                 simulation_advanced_s=min(after[n].sample_time_s-before[n].sample_time_s for n in before),
+                inference_basis_yaw_rad=yaw,inference_basis_pitch_rad=pitch,
                 raw_grasps=len(result['scores']),arm_candidates=len(checked),
                 revalidation_observations=samples,additional_passive_hold_s=.025*(len(samples)-1),
                 supported_and_revalidated=sum(not c.rejection_reasons for c in checked)))
