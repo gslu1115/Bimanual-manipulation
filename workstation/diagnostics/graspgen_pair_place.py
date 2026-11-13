@@ -6,7 +6,7 @@ import numpy as np
 from workstation.observations.camera_geometry import pose_matrix, quaternion_from_matrix
 from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
-from workstation.perception.scene_estimate import ScenePriors
+from workstation.perception.scene_estimate import ScenePriors, pose_is_observed
 from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres
 from workstation.skills.cumotion_pick_place import placement_goal
 from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps, synchronized_knots
@@ -33,11 +33,28 @@ def transfer_schedule(robot,paths,payload_guard):
     raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
 
 
+def stationary_slot_tracks(workspace, scene, positions):
+    """Identify a single observed, supported, settled carton per occupied slot."""
+    tracks={}
+    for xy in positions:
+        ids=workspace.slot(xy)['observed_objects']
+        if len(ids)!=1:continue
+        obj=next((o for o in scene.objects if o.track_id==ids[0]),None)
+        if (obj is not None and not obj.failures and obj.posture=='UPRIGHT' and pose_is_observed(obj,scene)
+                and obj.velocity_m_s is not None and np.linalg.norm(obj.velocity_m_s)<=.015
+                and abs(obj.position_m[2]-workspace.priors.support_z_m-obj.size_m[2]/2)<=.008):
+            tracks[xy]=obj
+    return tracks
+
+
 def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
     selected = dict(zip(arms, pair['selection']))
     goals = dict(zip(arms, pair['slots']))
+    unused=[xy for xy in slots.positions if xy not in goals.values()]
+    parked={tuple(p['xy']):p for p in report.get('parked_before_pick',[])}
+    initially_occupied={tuple(s['xy']) for s in report['slots_initial'] if s['state']=='occupied'}
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
     trackers = {}
     release_trackers = {}
@@ -155,6 +172,21 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         t.uncertainty_m=max(t.uncertainty_m,observed['uncertainty_m'])
         return observed
 
+    def observe_destinations():
+        packet=observe()
+        if initially_occupied and stationary_slot_tracks(robot.observed_workspace,scene,unused).keys()!=initially_occupied:
+            first=packet.observation_time_s
+            robot.hold(.1)
+            packet=observe()
+            report.setdefault('parked_rechecks',[]).append(dict(phase=report['last_phase'],
+                first_s=first,second_s=packet.observation_time_s))
+        return packet
+
+    def parked_unchanged(current):
+        return (current.keys()==parked.keys()==initially_occupied and
+                all(np.linalg.norm(np.subtract(o.position_m,parked[k]['position_m']))<=.005 and
+                    np.allclose(o.size_m,parked[k]['size_m'],atol=.002,rtol=0) for k,o in current.items()))
+
     def verify_slots(packet):
         # Reconcile BOTH carried cartons before testing the slot underneath
         # either one. Register the current arm-specific payload to explain its
@@ -169,15 +201,18 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             xy=goals[arm]
             view=robot.observed_workspace.slot(xy)
             carried_ids={objects[a].track_id for a in arms}
-            accounted=(len(carried_ids)==2 and len(scene.objects)==2 and
-                       {o.track_id for o in scene.objects}==carried_ids and
+            current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
+            parked_ids={o.track_id for o in current.values()}
+            accounted=(len(carried_ids)==2 and parked_unchanged(current) and carried_ids.isdisjoint(parked_ids) and
+                       {o.track_id for o in scene.objects}==carried_ids|parked_ids and
                        all(measurements[a]['time_s']==packet.observation_time_s and
                            measurements[a]['position_m'][2]-np.linalg.norm(trackers[a].size)/2>
                            robot.place_support_z+.04 for a in arms))
             evidence=slots.approach_clearance(arm,xy,view,before_transfer.get(xy),accounted_for=accounted,
                 stationary_belt=env.conveyor.state=='WAITING' and not env.safe_to_index)
             report.setdefault('destination_checks',[]).append(dict(arm=arm,phase=report['last_phase'],
-                evidence=evidence,prior=before_transfer.get(xy),both_cartons_accounted_for=accounted,**view))
+                evidence=evidence,prior=before_transfer.get(xy),both_cartons_accounted_for=accounted,
+                observed_parked_tracks=sorted(parked_ids),**view))
             if evidence is None:
                 from workstation.diagnostics.vision_check import save_observation
                 save_observation(env.output,'pair_slot_'+arm+'_'+report['last_phase'],packet,scene)
@@ -486,7 +521,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
         overhead[a]=(centre-rot@t.offset,rot)
     move('transfer',overhead)
-    packet=observe()
+    packet=observe_destinations()
     for a in arms:
         observed=measure_held(a,packet)
         t=trackers[a]
@@ -495,7 +530,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     verify_slots(packet)
     robot.set_observation(packet,scene,priors)
     move('align',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()})
-    packet=observe()
+    packet=observe_destinations()
     for a in arms:
         observed=measure_held(a,packet)
         t=trackers[a]
@@ -573,13 +608,20 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 placements[a]=dict(initial_track=selected[a]['target_id'],grasp_track=objects[a].track_id,observed_track=o.track_id,
                     goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())
         ids=tuple(p['observed_track'] for p in placements.values())
-        if len(set(ids))!=2 or ids!=previous_ids:
+        current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
+        ready=len(set(ids))==2 and parked_unchanged(current)
+        if not ready:
+            stable_since=None
+        elif stable_since is None or ids!=previous_ids:
             stable_since=scene.observation_time_s
         previous_ids=ids
-        if len(set(ids))==2 and scene.observation_time_s-stable_since>=.5:
+        if ready and scene.observation_time_s-stable_since>=.5:
             for a,p in placements.items():
                 slots.confirm_placement(a,goals[a],p['observed_track'])
             report['placements']=placements
+            report['parked_after_placement']=[dict(xy=list(k),track_id=o.track_id,position_m=list(o.position_m),
+                centre_change_m=float(np.linalg.norm(np.subtract(o.position_m,parked[k]['position_m']))))
+                for k,o in current.items()]
             break
     else:
         from workstation.diagnostics.vision_check import save_observation

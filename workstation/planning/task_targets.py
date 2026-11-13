@@ -54,7 +54,7 @@ class ConveyorSlots:
                 and bool(observed_track) and self.observed_tracks.get(xy) == (observed_track,))
 
     def approach_clearance(self,arm,xy,current,prior,*,accounted_for,stationary_belt):
-        """An exclusive two-carton scene can retain a recently inspected slot during occlusion."""
+        """Reuse a recent free view only while all cartons are accounted for on a stopped belt."""
         if self.owners.get(xy)!=arm:return None
         if current['free']:return 'current_depth'
         if (stationary_belt and accounted_for and prior is not None and prior['free']

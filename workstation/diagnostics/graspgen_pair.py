@@ -26,6 +26,15 @@ def renew_view_candidate(candidate,scene,seq):
     return revalidate_candidate(replace(candidate,target_id=matches[0].track_id),matches[0],scene,seq)
 
 
+def source_cartons(scene, table):
+    """Select visible cartons on the pickup table; keep belt objects in the obstacle map."""
+    centre=np.asarray(table['center_xy'])
+    half=np.asarray(table['size'][:2])/2
+    return [o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures
+            and np.all(np.abs(np.asarray(o.position_m[:2])-centre)<=half)
+            and pose_is_observed(o,scene)]
+
+
 def preferred_assignments(targets, bases):
     """Assign both cartons to distinct arms with the shortest total XY reach."""
     left,right=sorted(bases)
@@ -200,7 +209,7 @@ def check_pair(env, args, packet, scene, estimator):
         report['failure_reason'] = reason
         env._write_json('graspgen_pair_check.json', report)
         raise RuntimeError(reason)
-    targets = [o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and pose_is_observed(o,scene)]
+    targets=source_cartons(scene,env.c['table'])
     if len(targets)!=2 or len({o.track_id for o in targets})!=2:
         fail('PAIR_REQUIRES_TWO_OBSERVED_UPRIGHT_TRACKS')
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
@@ -216,6 +225,10 @@ def check_pair(env, args, packet, scene, estimator):
     report['eligible_destinations']=destinations
     slots.observe(robot.observed_workspace)
     report['slots_initial'] = slots.report()
+    from workstation.diagnostics.graspgen_pair_place import stationary_slot_tracks
+    parked=stationary_slot_tracks(robot.observed_workspace,scene,slots.positions)
+    report['parked_before_pick']=[dict(xy=list(k),track_id=o.track_id,position_m=list(o.position_m),
+        size_m=list(o.size_m)) for k,o in parked.items()]
     available = [xy for xy in destinations if slots.states[xy] == 'free']
     if len(available) < 2:fail('TWO_OBSERVED_FREE_SLOTS_REQUIRED')
     calibration=verify(env,robot,isaac_root(),args.graspgen_assets)
@@ -267,7 +280,7 @@ def check_pair(env, args, packet, scene, estimator):
                 states=robot.read_states()
                 slots.observe(robot.observed_workspace)
                 available=[xy for xy in destinations if slots.states[xy]=='free']
-                targets=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and pose_is_observed(o,scene)]
+                targets=source_cartons(scene,env.c['table'])
                 if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
                 matches=[o for o in targets if np.linalg.norm(np.asarray(o.position_m)-centre)<=.002
                          and np.allclose(o.size_m,target.size_m,atol=1e-6,rtol=0)

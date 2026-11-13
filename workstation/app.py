@@ -204,6 +204,8 @@ def load_config(args, parser):
         elif args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'):
             parser.error('--visual-fixture requires a visual mode')
         config['boxes']['count']={'upright-pair':2,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
+        if args.visual_fixture=='upright-pair' and config.get('diagnostic_occupied_slot') is not None:
+            config['boxes']['count']+=1
         config['diagnostic_visual_fixture']=args.visual_fixture
     if args.visual_yaw_deg is not None:
         if args.mode!='visual-pnp' or args.visual_fixture!='upright':

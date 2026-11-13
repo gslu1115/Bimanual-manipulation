@@ -130,6 +130,34 @@ class PairTests(unittest.TestCase):
         cfg['diagnostic_pair_carton_variants']=['small_medium','missing']
         with self.assertRaises(ValueError):initial_cartons(cfg,'upright-pair')
 
+    def test_parked_carton_is_physical_but_only_the_two_table_cartons_are_pick_targets(self):
+        from workstation.diagnostics.graspgen_pair import source_cartons
+        cfg=json.loads((Path(__file__).resolve().parents[1]/'config/scene.json').read_text())
+        cfg['seed']=8041
+        for index,xy in enumerate(cfg['conveyor']['slots_xy']):
+            cfg['diagnostic_occupied_slot']=index
+            boxes=initial_cartons(cfg,'upright-pair')
+            self.assertEqual(boxes[2].position[:2],xy)
+            self.assertEqual(boxes[2].size_m,boxes[0].size_m)
+            scene=SimpleNamespace(objects=[SimpleNamespace(track_id=b.name,position_m=b.position,
+                posture='UPRIGHT',failures=(),visibility='COMPLETE_TOP') for b in boxes])
+            self.assertEqual([o.track_id for o in source_cartons(scene,cfg['table'])],['box_00','box_01'])
+            self.assertEqual(len(scene.objects),3)
+
+    def test_parked_track_requires_a_single_supported_stationary_observation(self):
+        from workstation.diagnostics.graspgen_pair_place import stationary_slot_tracks
+        xy=(0.,-.4)
+        o=SimpleNamespace(track_id='t',position_m=[*xy,.785],size_m=[.11,.06,.05],failures=(),
+            posture='UPRIGHT',visibility='COMPLETE_TOP',velocity_m_s=[0.,0.,0.])
+        ids=['t'];scene=SimpleNamespace(objects=[o])
+        w=SimpleNamespace(slot=lambda _:dict(observed_objects=ids),priors=SimpleNamespace(support_z_m=.76))
+        self.assertEqual(stationary_slot_tracks(w,scene,[xy]),{xy:o})
+        ids.append('fragment')
+        self.assertFalse(stationary_slot_tracks(w,scene,[xy]))
+        ids.pop()
+        o.velocity_m_s=[.02,0.,0.]
+        self.assertFalse(stationary_slot_tracks(w,scene,[xy]))
+
     def test_both_paths_preserve_corners_and_limit_displacement(self):
         left=np.zeros((3,7)); left[1,0]=.21
         right=np.zeros((4,7)); right[:,0]=[0,.16,.08,.04]

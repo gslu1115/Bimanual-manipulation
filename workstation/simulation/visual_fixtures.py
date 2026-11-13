@@ -43,6 +43,13 @@ def initial_cartons(config, fixture):
                     not isinstance(name,str) or name not in by_name for name in variants):
                 raise ValueError('Pair fixture requires two configured small-carton variant names')
             pair=[by_name[name] for name in variants]
+        occupied=config.get('diagnostic_occupied_slot')
+        if occupied is not None:
+            slots=config['conveyor']['slots_xy']
+            if type(occupied) is not int or not 0<=occupied<len(slots):
+                raise ValueError('Occupied slot must index a configured conveyor slot')
+            entries.append(('upright',slots[occupied],0.))
+            pair.append(pair[0])
     for index,(posture,xy,yaw_deg) in enumerate(entries):
         if fixture=='upright-pair':spec=pair[index]
         size=spec['size_m'] if spec else config['boxes']['size']
@@ -51,7 +58,8 @@ def initial_cartons(config, fixture):
         height=size[1 if posture == 'side' else 2]
         q=[math.cos(yaw/2)*math.cos(roll/2),math.cos(yaw/2)*math.sin(roll/2),
            math.sin(yaw/2)*math.sin(roll/2),math.sin(yaw/2)*math.cos(roll/2)]
-        state=BoxState(f'box_{index:02d}',[*xy,config['table']['top_z']+height/2+.004],
+        support=config['conveyor' if fixture=='upright-pair' and index==2 else 'table']['top_z']
+        state=BoxState(f'box_{index:02d}',[*xy,support+height/2+.004],
                        q,[0.,0.,0.],[0.,0.,0.])
         if spec:
             from workstation.simulation.cartons import surface_area
