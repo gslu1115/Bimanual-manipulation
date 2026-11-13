@@ -116,6 +116,20 @@ class PairTests(unittest.TestCase):
                 self.assertLess(box.size_m[1],.08)
             self.assertGreater(b.position[0]-a.position[0],.34)
 
+    def test_equal_size_fixture_preserves_distinct_instances_and_seeded_poses(self):
+        cfg=json.loads((Path(__file__).resolve().parents[1]/'config/scene.json').read_text())
+        cfg['seed']=8022
+        previous=initial_cartons(cfg,'upright-pair')
+        cfg['diagnostic_pair_carton_variants']=['small_medium','small_medium']
+        current=initial_cartons(cfg,'upright-pair')
+        self.assertNotEqual(current[0].name,current[1].name)
+        self.assertEqual(current[0].size_m,current[1].size_m)
+        for a,b in zip(previous,current):
+            self.assertEqual(a.position[:2],b.position[:2])
+            self.assertEqual(a.orientation_wxyz,b.orientation_wxyz)
+        cfg['diagnostic_pair_carton_variants']=['small_medium','missing']
+        with self.assertRaises(ValueError):initial_cartons(cfg,'upright-pair')
+
     def test_both_paths_preserve_corners_and_limit_displacement(self):
         left=np.zeros((3,7)); left[1,0]=.21
         right=np.zeros((4,7)); right[:,0]=[0,.16,.08,.04]

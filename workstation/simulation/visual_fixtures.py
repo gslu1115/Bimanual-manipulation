@@ -36,6 +36,13 @@ def initial_cartons(config, fixture):
         if len(catalogue)<2:raise ValueError('The upright pair needs two small variants')
         offset=int(config['seed'])%len(catalogue)
         pair=[catalogue[offset],catalogue[(offset+1)%len(catalogue)]]
+        variants=config.get('diagnostic_pair_carton_variants')
+        if variants is not None:
+            by_name={v['name']:v for v in catalogue}
+            if not isinstance(variants,list) or len(variants)!=2 or any(
+                    not isinstance(name,str) or name not in by_name for name in variants):
+                raise ValueError('Pair fixture requires two configured small-carton variant names')
+            pair=[by_name[name] for name in variants]
     for index,(posture,xy,yaw_deg) in enumerate(entries):
         if fixture=='upright-pair':spec=pair[index]
         size=spec['size_m'] if spec else config['boxes']['size']
