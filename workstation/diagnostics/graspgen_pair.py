@@ -288,6 +288,15 @@ def check_pair(env, args, packet, scene, estimator):
     if execute:
         action_start=None
         try:
+            returned=report.get('extra_view',{}).get('executed',False)
+            if returned:
+                observer=report['extra_view']['arm']
+                # Keep the grasps inferred from the side view, but leave the
+                # folded inspection posture through a checked empty-hand path.
+                robot.execute_joint(observer,robot.home,scene,None)
+                fresh=env.get_observation_packet(refresh=True)
+                estimator.estimate(fresh)
+                robot.hold(.10)
             robot.hold(.025)
             fresh=env.get_observation_packet(refresh=True)
             updated=estimator.estimate(fresh)
@@ -299,6 +308,17 @@ def check_pair(env, args, packet, scene, estimator):
                 c=a.candidate
                 if c.candidate_id not in selected or a.terms['slot_xy']!=assigned_slots[c.arm]:continue
                 matches=[o for o in updated.objects if o.track_id==c.target_id]
+                if returned and not matches:
+                    # IDs may expire while the empty wrist returns. Admit one
+                    # unique measured, stationary carton at the original 3-D
+                    # centre and size; revalidate its full angle and velocity.
+                    source=c.metadata['source_visual_object']
+                    matches=[o for o in updated.objects if
+                        np.linalg.norm(np.asarray(o.position_m)-source['position_m'])<=.002
+                        and np.allclose(o.size_m,source['size_m'],atol=1e-6,rtol=0)]
+                    if len(matches)==1:
+                        report.setdefault('reidentified_after_view',{})[c.target_id]=matches[0].track_id
+                        c=replace(c,target_id=matches[0].track_id)
                 if len(matches)!=1:raise RuntimeError('PAIR_TARGET_LOST')
                 new[c.target_id]=[revalidate_candidate(c,matches[0],updated,seq)]
             slots.observe(robot.observed_workspace)
@@ -322,7 +342,9 @@ def check_pair(env, args, packet, scene, estimator):
                 position_error=float(np.linalg.norm(actual-expected))
                 angle_error=float(np.arccos(np.clip((np.trace(measured.T@orientation)-1)/2,-1.,1.)))
                 report['motion'].setdefault('endpoint_errors',{})[arm]=dict(position_m=position_error,angle_rad=angle_error)
-                if position_error>.005 or angle_error>math.radians(3):raise RuntimeError('PAIR_PREGRASP_GOAL_MISSED:'+arm)
+                # This waypoint is in free air. The descent is replanned from
+                # measured FK and separately checked to 5 mm at actual contact.
+                if position_error>.008 or angle_error>math.radians(1.5):raise RuntimeError('PAIR_PREGRASP_GOAL_MISSED:'+arm)
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
