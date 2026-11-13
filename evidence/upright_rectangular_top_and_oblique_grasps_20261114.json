@@ -1,0 +1,448 @@
+{
+  "scope": "Headless Isaac Sim 6.1, upright cartons, Panda GraspGen. Development trials; includes matched diagnostic replays and independent fresh model calls.",
+  "code": {
+    "rectangle": "9118749",
+    "oblique_and_jaw_swap": "ba47238"
+  },
+  "timing": "Wall seconds from action start to completion including sensing and computation. Null when no action started. Transport overlap is measured in simulation seconds from encoders.",
+  "scoring": "Final body centres read only for offline XY evaluation. Online checks use RGB-D, known carton sizes and image-time robot state.",
+  "matched_7971": {
+    "pools": 3,
+    "hold_steps": [
+      27,
+      26,
+      26
+    ],
+    "visible_top_dimensions_mm": [
+      98.61,
+      54.6
+    ],
+    "top_hull_fraction": 0.9667,
+    "robust_long_axis_span_mm": 78.3,
+    "change": "Recognize the current rectangular top as heading evidence for an already latched grasp; one in-plane coordinate remains conditional on grip."
+  },
+  "matched_7981": {
+    "baseline": "Three live requests, 768 proposals, no acceptable gripper opening.",
+    "oblique": "First three requests replayed with their original timing. Live fourth request returned four candidates passing visual checks. Original jaw assignments failed path checks.",
+    "jaw_swap": "All four pools replayed with their original timing. Same contacts and approach, swapped jaws on proposal 192 passed path checks. Fresh 7993 did not require rescue."
+  },
+  "trials": [
+    {
+      "run": "dwelltilt-20261114-012730-small_reference-7971",
+      "seed": 7971,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.20710228259749358,
+            -0.03851398720864121
+          ],
+          "yaw_deg": 118
+        }
+      ],
+      "pose_ids": [
+        "6f4734c76476414296710eb7169e15b7:226:panda_left"
+      ],
+      "success": false,
+      "failure": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "FAILED"
+      ],
+      "action_wall_s": 38.681,
+      "transfer_overlap_sim_s": null,
+      "placements": {}
+    },
+    {
+      "run": "dwellrect-20261114-014258-pair-7983",
+      "seed": 7983,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.19091580496609276,
+            -0.09276439116601681
+          ],
+          "yaw_deg": -18.35
+        },
+        {
+          "variant": "small_medium",
+          "dimensions_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0.21727155079158234,
+            -0.05939619169623315
+          ],
+          "yaw_deg": 78
+        }
+      ],
+      "pose_ids": [
+        "92150c215737437682563fa3bfb8aa13:170:panda_left",
+        "6a4302a7186b4a5c93440fdde443c4de:82:panda_right"
+      ],
+      "success": true,
+      "failure": null,
+      "events": [],
+      "action_wall_s": 118.312,
+      "transfer_overlap_sim_s": 7.583333333333333,
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            0,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.477,
+            -0.698
+          ],
+          "radial_mm": 0.845
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.118,
+            1.014
+          ],
+          "radial_mm": 1.021
+        }
+      }
+    },
+    {
+      "run": "dwellrect-20261114-014258-small_reference-7971",
+      "seed": 7971,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.20710228259749358,
+            -0.03851398720864121
+          ],
+          "yaw_deg": 118
+        }
+      ],
+      "pose_ids": [
+        "6f4734c76476414296710eb7169e15b7:226:panda_left"
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "action_wall_s": 45.526,
+      "transfer_overlap_sim_s": null,
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.017,
+            -0.753
+          ],
+          "radial_mm": 0.753
+        }
+      }
+    },
+    {
+      "run": "dwellrect-20261114-014258-small_reference-7981",
+      "seed": 7981,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.19611800214986339,
+            -0.021118609519193497
+          ],
+          "yaw_deg": 121
+        }
+      ],
+      "pose_ids": [],
+      "success": false,
+      "failure": "NO_FEASIBLE_DIRECT_GRASP",
+      "events": [
+        "FAILED"
+      ],
+      "action_wall_s": null,
+      "transfer_overlap_sim_s": null,
+      "placements": {}
+    },
+    {
+      "run": "dwellrect-20261114-014258-small_wide-7982",
+      "seed": 7982,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.22262468627166615,
+            -0.07085446346980495
+          ],
+          "yaw_deg": 243
+        }
+      ],
+      "pose_ids": [
+        "2b93846438cf4e15be81f68ebd439d8a:161:panda_right"
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "action_wall_s": 54.97,
+      "transfer_overlap_sim_s": null,
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.29,
+            -1.31
+          ],
+          "radial_mm": 1.342
+        }
+      }
+    },
+    {
+      "run": "dwelloblique-20261114-015004-small_medium-7991",
+      "seed": 7991,
+      "initial": [
+        {
+          "variant": "small_medium",
+          "dimensions_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.20943963898486218,
+            -0.09288706330611804
+          ],
+          "yaw_deg": 303
+        }
+      ],
+      "pose_ids": [
+        "34f27a833bd04d37ac380b8c020ddcd9:115:panda_left"
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "action_wall_s": 49.659,
+      "transfer_overlap_sim_s": null,
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.37,
+            0.033
+          ],
+          "radial_mm": 0.371
+        }
+      }
+    },
+    {
+      "run": "dwelloblique-20261114-015004-small_reference-7981",
+      "seed": 7981,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.19611800214986339,
+            -0.021118609519193497
+          ],
+          "yaw_deg": 121
+        }
+      ],
+      "pose_ids": [],
+      "success": false,
+      "failure": "NO_FEASIBLE_DIRECT_GRASP",
+      "events": [
+        "FAILED"
+      ],
+      "action_wall_s": null,
+      "transfer_overlap_sim_s": null,
+      "placements": {}
+    },
+    {
+      "run": "dwelljaw-20261114-015237-small_reference-7981",
+      "seed": 7981,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.19611800214986339,
+            -0.021118609519193497
+          ],
+          "yaw_deg": 121
+        }
+      ],
+      "pose_ids": [
+        "9b3c5967ba6d44f3996f29c8cf78b999:192:panda_left:swapped"
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "action_wall_s": 47.641,
+      "transfer_overlap_sim_s": null,
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.282,
+            -0.578
+          ],
+          "radial_mm": 0.643
+        }
+      }
+    },
+    {
+      "run": "dwelljaw-20261114-015237-small_reference-7993",
+      "seed": 7993,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.17875374270986835,
+            -0.030686130139734473
+          ],
+          "yaw_deg": 124
+        }
+      ],
+      "pose_ids": [
+        "fc70d41396564ba28a4eb2216aa471cd:115:panda_left"
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "action_wall_s": 47.747,
+      "transfer_overlap_sim_s": null,
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -1.563,
+            -0.446
+          ],
+          "radial_mm": 1.626
+        }
+      }
+    }
+  ]
+}
