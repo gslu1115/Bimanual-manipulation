@@ -95,7 +95,9 @@ class PairTests(unittest.TestCase):
             read_states=lambda:{a:SimpleNamespace(joint_positions_rad=q) for a,q in measured.items()},
             spheres=lambda a,q:[(0,np.array([q[0],float(a==arms[0]),0]),.02)])
         paths=[[np.zeros(7),np.full(7,.12)] for a in arms]
-        result=drive_empty_pregrasps(robot,paths)
+        elapsed=[]
+        result=drive_empty_pregrasps(robot,paths,progress_check=elapsed.append)
+        np.testing.assert_allclose(elapsed,np.arange(1,result['ticks']+1)*robot.dt)
         self.assertGreater(result['overlap_sim_s'],.15)
         for a in arms:
             measured[a]=np.zeros(7)

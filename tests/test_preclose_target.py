@@ -74,6 +74,19 @@ class PreCloseTargetTests(unittest.TestCase):
         m['top_rectangle']['measured_xy_m']=[SIZE[0]-.012,SIZE[1]]
         self.assertFalse(reference_constrained_cuboid_supported(m,1.))
 
+    def test_two_views_can_reacquire_shifted_top_but_one_view_cannot(self):
+        from workstation.perception.held_surface import reacquire_tilted_top
+        def reacquire(scene, shift):
+            return reacquire_tilted_top(self.packet, scene, CENTRE+[0,0,shift],
+                                        np.eye(3), SIZE, self.priors, allow_grasp_translation=True)
+        fit = reacquire(self.scene, .011)
+        self.assertIsNotNone(fit)
+        self.assertTrue(grasp_constrained_cuboid_supported(fit, 1.))
+        self.assertAlmostEqual(fit['normal_offset_m'], -.011, places=3)
+        one_view = replace(self.scene, masks=dict([next(iter(self.scene.masks.items()))]))
+        self.assertIsNone(reacquire(one_view, .011))
+        self.assertIsNone(reacquire(self.scene, .014))
+
     def test_visible_motion_and_tilt_are_rejected(self):
         for centre,rotation in ((CENTRE+[0,.006,0],None),(CENTRE,turn(1,20))):
             p,s=self.partial(centre,rotation)

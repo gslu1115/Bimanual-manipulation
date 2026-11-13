@@ -161,7 +161,7 @@ def paired_pregrasp(robot, rows, states, scene):
 
 
 def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.,
-                          require_overlap=True,loaded_transfer=False):
+                          require_overlap=True,loaded_transfer=False,progress_check=None):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
@@ -210,6 +210,8 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         ticks+=1
         trace.append(dict(tick=ticks,measured_max_joint_speed_rad_s=speed.tolist()))
         previous=measured
+        if progress_check is not None:
+            progress_check(ticks*robot.dt)
     for pair in synchronized_knots(*paths,max_step=min(.025,speed_fraction*robot.joint_speed*robot.dt)):
         desired=np.asarray(pair)
         advance(desired)

@@ -166,6 +166,23 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                 save_observation(env.output,'pair_slot_'+arm+'_'+report['last_phase'],packet,scene)
                 raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+arm+':'+str(view['reason']))
 
+    def refresh_approach_references(elapsed):
+        nonlocal packet,scene,next_approach_check
+        if elapsed < next_approach_check:
+            return
+        next_approach_check=elapsed+3.
+        packet=observe()
+        for arm in arms:
+            prior=references[arm]
+            proof=prior.confirm(packet,scene)
+            if preclose_supported(proof,packet.observation_time_s) and proof['full_pose_measured']:
+                scene=reconcile_preclose_target(estimator,scene,proof)
+                references[arm]=prior.renewed(scene,proof)
+            report.setdefault('approach_reference_checks',[]).append(dict(
+                arm=arm,time_s=packet.observation_time_s,reason=proof['reason'],
+                renewed=references[arm] is not prior))
+        robot.set_observation(packet,scene,priors)
+
     def move(phase, destinations, contact=False):
         report['last_phase'] = phase
         paths = []
@@ -201,7 +218,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             report[phase+'_schedule']=schedule
         phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer,
-                                              speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer)
+                                              speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
+                                              progress_check=refresh_approach_references if phase=='approach' else None)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
@@ -252,6 +270,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                     hypotheses=tuple(h for h in measured.hypotheses if h.label==prior.posture))
                 references[a]=PreCloseTarget(same_face,scene,priors)
     robot.set_observation(packet,scene,priors)
+    next_approach_check=3.
     move('approach', poses, True)
     packet = observe()
     for a in arms:

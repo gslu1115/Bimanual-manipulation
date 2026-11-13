@@ -312,14 +312,19 @@ def reacquire_tilted_top(packet,scene,centre,rotation,size,priors,*,allow_grasp_
         skew=np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
         corrected=(np.eye(3)+skew+skew@skew/(1+axis@normal))@rotation
         displacement=float(np.median((samples[keep]-centre)@normal)-size[2]/2)
-        if abs(displacement)>.010:continue
+        # The final fit already bounds the total centre correction at 12 mm.
+        # Near that boundary require support from two distinct cameras.
+        if abs(displacement)>.012:continue
         proof=fit_cuboid_pose(packet,scene,centre+displacement*normal,corrected,size,priors,
                               allow_grasp_translation=allow_grasp_translation)
         supported=measured_cuboid_supported(proof,packet.observation_time_s)
         if allow_grasp_translation:supported |= grasp_constrained_cuboid_supported(proof,packet.observation_time_s)
+        supporting_cameras={ref.split('/')[0] for ref in proof.get('mask_refs',())}
+        if abs(displacement)>.010 and len(supporting_cameras)<2:continue
         if (supported and
                 np.linalg.norm(np.asarray(proof['position_m'])-centre)<=.012):
             proof['normal_reacquisition_mask']=ref
+            proof['normal_offset_m']=displacement
             proof['prior_angle_correction_deg']=float(np.degrees(np.arccos(np.clip(axis@normal,-1,1))))
             return proof
     return None
