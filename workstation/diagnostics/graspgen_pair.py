@@ -402,7 +402,15 @@ def check_pair(env, args, packet, scene, estimator):
             for a in rows:
                 c=a.candidate
                 if c.candidate_id not in selected or a.terms['slot_xy']!=assigned_slots[c.arm]:continue
-                renewed=renew_view_candidate(c,updated,seq)
+                try:
+                    renewed=renew_view_candidate(c,updated,seq)
+                except RuntimeError as error:
+                    from workstation.diagnostics.vision_check import save_observation
+                    save_observation(env.output,'pair_target_revalidation',fresh,updated)
+                    report['target_revalidation_failure']=dict(arm=c.arm,target_id=c.target_id,
+                        candidate_id=c.candidate_id,source=c.metadata['source_visual_object'],
+                        returned_from_extra_view=returned,reason=str(error))
+                    raise
                 if renewed.target_id!=c.target_id:
                     report.setdefault('reidentified_after_view',{})[c.target_id]=renewed.target_id
                 new[renewed.target_id]=[renewed]
