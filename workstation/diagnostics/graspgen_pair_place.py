@@ -83,6 +83,22 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         t=trackers[arm]
         pos,rot=robot.fk(arm)
         observed=t.observe(packet,scene,pos,rot,reacquire_tilt=held)
+        if observed is None and report['last_phase'] in ('initial_lift','regrasp_initial_lift'):
+            # An already slipping carton can leave the nominal FK search band.
+            # Search down along gravity only during the test lift. Two current
+            # views must independently supply masks on the fitted cuboid.
+            from workstation.perception.held_surface import reacquire_tilted_top
+            hint=pos+rot@t.offset
+            for drop in (.010,.020):
+                fit=reacquire_tilted_top(packet,scene,hint-[0,0,drop],rot@t.relative_rotation,
+                    t.size,priors,allow_grasp_translation=True)
+                if fit is None or len({ref.split('/')[0] for ref in fit['mask_refs']})<2:continue
+                delta=np.asarray(fit['position_m'])-hint
+                if not -.027<=delta[2]<0 or np.linalg.norm(delta[:2])>.008:continue
+                fit['height_gain_m']=fit['position_m'][2]-t.initial_z
+                fit['test_lift_search_drop_m']=drop
+                observed=fit
+                break
         if observed is None and report['last_phase'] in ('align','lower','regrasp_lower'):
             # A carton may settle onto the stationary belt before the hand
             # opens. Search at support height, keeping the grasp's XY prior:
@@ -167,13 +183,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 save_observation(env.output,'pair_slot_'+arm+'_'+report['last_phase'],packet,scene)
                 raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+arm+':'+str(view['reason']))
 
-    def refresh_approach_references(elapsed):
+    def refresh_approach_references(elapsed,active):
         nonlocal packet,scene,next_approach_check
         if elapsed < next_approach_check:
             return
         next_approach_check=elapsed+3.
         packet=observe()
-        for arm in arms:
+        for arm in active:
             prior=references[arm]
             proof=prior.confirm(packet,scene)
             if preclose_supported(proof,packet.observation_time_s) and proof['full_pose_measured']:
@@ -185,6 +201,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         robot.set_observation(packet,scene,priors)
 
     def move(phase, destinations, contact=False,*,active=arms,carrying=None):
+        nonlocal next_approach_check
         report['last_phase'] = phase
         paths = []
         for arm in arms:
@@ -252,10 +269,12 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             paths,schedule=transfer_schedule(robot,paths,carried_clearance)
             report[phase+'_schedule']=schedule
         both_loaded=held and (carrying is None or set(carrying)==set(arms))
+        renew_reference=phase in ('approach','regrasp_pregrasp','regrasp_approach')
+        if renew_reference:next_approach_check=3.
         phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if both_loaded else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
                                               speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
-                                              progress_check=refresh_approach_references if phase=='approach' else None)
+                                              progress_check=(lambda elapsed:refresh_approach_references(elapsed,active)) if renew_reference else None)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
@@ -373,6 +392,23 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 fingers(False,(a,))
                 tcp,rot=robot.fk(a)
                 packet=observe()
+                released=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+                    max_drop_m=max(0.,gap+m['uncertainty_m']),reference_position_m=m['position_m'],
+                    reference_rotation=m['rotation'],allow_partial=True)
+                if released is None:
+                    from workstation.perception.cuboid_pose import fit_cuboid_pose,reference_constrained_cuboid_supported,measured_cuboid_supported
+                    centre=np.asarray(m['position_m']).copy()
+                    centre[2]=priors.support_z_m+trackers[a].size[2]/2
+                    fit=fit_cuboid_pose(packet,scene,centre,np.asarray(m['rotation']),trackers[a].size,priors,
+                        allow_reference_translation=True)
+                    if (measured_cuboid_supported(fit,packet.observation_time_s) or
+                            reference_constrained_cuboid_supported(fit,packet.observation_time_s)):
+                        released=fit
+                if released is None:raise RuntimeError('REGRASP_RELEASED_TARGET_UNCONFIRMED')
+                scene=estimator.associate_supported_target(scene,objects[a].track_id,released)
+                if not any(o.track_id==objects[a].track_id and set(o.mask_refs)==set(released['mask_refs'])
+                           for o in scene.objects):raise RuntimeError('REGRASP_RELEASED_TRACK_UNRESOLVED')
+                robot.set_observation(packet,scene,priors)
                 move('regrasp_retreat',{a:(tcp+[0,0,.16],rot)},True,active=(a,),carrying=(other,))
                 robot.hold(.12)
                 packet=observe()
