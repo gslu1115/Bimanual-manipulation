@@ -69,6 +69,25 @@ def tcp_poses(base_poses,T_graspgen_base_from_project_tcp,calibration_verified=F
     return np.asarray(base_poses)@transform[0]
 
 
+def infer_rotated_view(proxy, clouds, count, yaw):
+    """Resample the same observed object in a rotated horizontal basis."""
+    if yaw==0:
+        return proxy.infer(clouds,count)
+    from dataclasses import replace
+    c,s=np.cos(yaw),np.sin(yaw)
+    rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+    centre=clouds.target_m.mean(axis=0)
+    def rotate(points):
+        return ((points-centre)@rotation.T+centre).astype(np.float32)
+    reply=proxy.infer(replace(clouds,target_m=rotate(clouds.target_m),
+                              scene_m=rotate(clouds.scene_m)),count)
+    poses=np.array(reply['base_poses_workcell'],copy=True)
+    poses[:,:3,3]=(poses[:,:3,3]-centre)@rotation+centre
+    poses[:,:3,:3]=rotation.T@poses[:,:3,:3]
+    return dict(reply,base_poses_workcell=poses,
+                metadata={**reply['metadata'],'inference_basis_yaw_rad':float(yaw)})
+
+
 class GraspGenClient:
     def __init__(self,endpoint='tcp://127.0.0.1:5557',timeout_ms=3000):
         self.endpoint,self.timeout_ms=endpoint,timeout_ms

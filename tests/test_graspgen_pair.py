@@ -10,6 +10,21 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_rotated_inference_preserves_observed_contact_in_world(self):
+        from workstation.models.graspgen_client import VisualClouds, infer_rotated_view
+        points=np.array([[.21,.15,.8],[.24,.19,.82],[.25,.10,.81]],np.float32)
+        def predict(clouds,count):
+            pose=np.eye(4)
+            axis=clouds.target_m[1]-clouds.target_m[0]
+            pose[:3,0]=axis/np.linalg.norm(axis)
+            pose[:3,3]=clouds.target_m[0]
+            return dict(base_poses_workcell=pose[None],metadata={})
+        clouds=VisualClouds(points,points.copy(),.5)
+        proxy=SimpleNamespace(infer=predict)
+        expected=predict(clouds,1)['base_poses_workcell'][0]
+        actual=infer_rotated_view(proxy,clouds,1,np.pi/4)['base_poses_workcell'][0]
+        np.testing.assert_allclose(actual[:3,[0,3]],expected[:3,[0,3]],atol=2e-6)
+
     def test_model_is_default_for_single_and_mandatory_for_pair(self):
         import contextlib, io
         from workstation.app import build_parser, load_config

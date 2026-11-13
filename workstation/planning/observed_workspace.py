@@ -453,7 +453,8 @@ class ObservedWorkspace:
         size=np.array([length+.04,width+.04,height+.02])
         centre=np.array([*xy,self.priors.support_z_m+size[2]/2])
         objects=[o.track_id for o in self.scene.objects if
-                 np.linalg.norm(np.asarray(o.position_m[:2])-xy)<.09]
+                 np.linalg.norm(np.asarray(o.position_m[:2])-xy)<.09
+                 and o.position_m[2]-np.linalg.norm(o.size_m)/2-o.uncertainty_m <= centre[2]+size[2]/2]
         reason='OBSERVED_SLOT_OCCUPIED' if objects else self.check_box(centre,size)
         return dict(xy=list(xy),free=reason is None,reason=reason,observed_objects=objects,
                     observation_time_s=self.packet.observation_time_s)

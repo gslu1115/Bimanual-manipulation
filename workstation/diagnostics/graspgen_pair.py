@@ -77,18 +77,23 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None):
     if any(np.max(np.abs(q-np.asarray(path[0])))>.01 for q,path in zip(previous,paths)):
         raise RuntimeError('PAIR_START_STATE_CHANGED')
     start=np.array(previous)
+    commanded=start.copy()
     overlap=0
     ticks=0
     trace=[]
     def advance(desired):
-        nonlocal previous,overlap,ticks
+        nonlocal previous,overlap,ticks,commanded
         # Also check tracking lag, not just the nominal synchronized paths.
         for left,right in synchronized_knots([previous[0],desired[0]],[previous[1],desired[1]]):
             if payload_guard:payload_guard(left,right)
             reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None)
             if reason:raise RuntimeError('PAIR_COMMAND_'+reason)
-        for a,q in zip(arms,desired):
+        for i,(a,q) in enumerate(zip(arms,desired)):
             robot.targets[a][:7]=q
+            if hasattr(robot,'command_velocities'):
+                robot.command_velocities(a,np.r_[np.clip((q-commanded[i])/robot.dt,
+                    -robot.joint_speed,robot.joint_speed),0.,0.])
+        commanded=desired.copy()
         robot.tick()
         states=robot.read_states()
         measured=np.array([states[a].joint_positions_rad for a in arms])
@@ -108,9 +113,11 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None):
         advance(desired)
         # Let the physical drives catch up before advancing the common clock.
         for _ in range(math.ceil(.25/robot.dt)):
-            if np.max(np.abs(previous-desired))<=.009:break
+            if np.max(np.abs(previous-desired))<=.025:break
             advance(desired)
-        else:raise RuntimeError('PAIR_JOINT_TRACKING_ERROR')
+        else:
+            errors=np.max(np.abs(previous-desired),axis=1)
+            raise RuntimeError('PAIR_JOINT_TRACKING_ERROR: '+str(dict(zip(arms,errors.tolist()))))
     for _ in range(math.ceil(.3/robot.dt)):
         advance(np.asarray([p[-1] for p in paths]))
     moved=np.max(np.abs(previous-start),axis=1)
@@ -121,7 +128,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None):
 
 def check_pair(env, args, packet, scene, estimator):
     from workstation.diagnostics.graspgen_calibration import verify
-    from workstation.models.graspgen_client import visual_clouds
+    from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
     from workstation.models.graspgen_proxy import GraspGenProxy
     from workstation.runtime_paths import isaac_root
     from workstation.simulation.robot_driver import from_environment
@@ -153,7 +160,8 @@ def check_pair(env, args, packet, scene, estimator):
     report['slot_assessments']=[]
     for attempt in range(1,4):
         for obj in targets:
-            result=proxy.infer(visual_clouds(packet,scene,obj.track_id),args.num_grasps)
+            result=infer_rotated_view(proxy,visual_clouds(packet,scene,obj.track_id),args.num_grasps,
+                                      (0.,math.pi/4,-math.pi/4)[attempt-1])
             proposals=candidates_from_result(result,obj,states,calibration,seq)
             candidates[obj.track_id]=[
                 replace(c,rejection_reasons=c.rejection_reasons+('UNSUPPORTED_UPRIGHT_APPROACH',))
@@ -181,6 +189,7 @@ def check_pair(env, args, packet, scene, estimator):
     slots.reserve_pair(assigned_slots)
     report['slots_reserved']=slots.report()
     if execute:
+        action_start=None
         try:
             robot.hold(.025)
             fresh=env.get_observation_packet(refresh=True)
@@ -212,12 +221,15 @@ def check_pair(env, args, packet, scene, estimator):
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
-                try:
-                    place_pair(env,robot,estimator,updated,current,slots,report)
-                finally:
-                    report['action_wall_s']=time.monotonic()-action_start
-                    env._write_json('graspgen_pair_check.json',report)
+                place_pair(env,robot,estimator,updated,current,slots,report)
         except RuntimeError as error:
             fail(str(error))
+        finally:
+            if action_start is not None:
+                report['action_wall_s']=time.monotonic()-action_start
+                for arm in states:
+                    robot.command_velocities(arm,np.zeros(9))
+                    robot.targets[arm][:7]=robot.read_states()[arm].joint_positions_rad
+                env._write_json('graspgen_pair_check.json',report)
     report['success']=True
     env._write_json('graspgen_pair_check.json',report)

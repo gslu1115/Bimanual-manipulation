@@ -8,6 +8,7 @@
       "yaw_deg": 116,
       "passed": false,
       "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": null,
       "max_visual_lift_m": 0,
       "terminal_xy_error_mm": [
@@ -22,6 +23,7 @@
       "yaw_deg": 21,
       "passed": false,
       "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": null,
       "max_visual_lift_m": 0,
       "terminal_xy_error_mm": [
@@ -36,6 +38,7 @@
       "yaw_deg": 38,
       "passed": false,
       "reason": "IK_DISCONTINUITY",
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": 5.45102633186616,
       "max_visual_lift_m": 0,
       "terminal_xy_error_mm": [
@@ -50,6 +53,7 @@
       "yaw_deg": 147,
       "passed": true,
       "reason": null,
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": 43.84524192404933,
       "max_visual_lift_m": 0.18921417033804222,
       "terminal_xy_error_mm": [
@@ -64,6 +68,7 @@
       "yaw_deg": 79,
       "passed": false,
       "reason": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": 30.28389005502686,
       "max_visual_lift_m": 0.17748795864870182,
       "terminal_xy_error_mm": [
@@ -78,6 +83,7 @@
       "yaw_deg": 164,
       "passed": false,
       "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": null,
       "max_visual_lift_m": 0,
       "terminal_xy_error_mm": [
@@ -92,6 +98,7 @@
       "yaw_deg": 116,
       "passed": false,
       "reason": "HELD_CARTON_OWN_BODY_COLLISION",
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": 17.426465180004016,
       "max_visual_lift_m": 0.10165160882172919,
       "terminal_xy_error_mm": [
@@ -106,11 +113,102 @@
       "yaw_deg": 21,
       "passed": true,
       "reason": null,
+      "action_to_verification_or_stop_wall_s": null,
       "motion_to_home_or_stop_wall_s": 44.57098497916013,
       "max_visual_lift_m": 0.18360535742791095,
       "terminal_xy_error_mm": [
         -0.16,
         2.92
+      ]
+    },
+    {
+      "run": "study-20261113-080825-small_medium-5714",
+      "seed": 5714,
+      "variant": "small_medium",
+      "yaw_deg": 116,
+      "passed": true,
+      "reason": null,
+      "action_to_verification_or_stop_wall_s": 49.068277202080935,
+      "motion_to_home_or_stop_wall_s": 45.80959564098157,
+      "max_visual_lift_m": 0.18476775384771937,
+      "terminal_xy_error_mm": [
+        -2.15,
+        -0.71
+      ]
+    },
+    {
+      "run": "study-20261113-080825-small_reference-5713",
+      "seed": 5713,
+      "variant": "small_reference",
+      "yaw_deg": 38,
+      "passed": true,
+      "reason": null,
+      "action_to_verification_or_stop_wall_s": 44.61738945590332,
+      "motion_to_home_or_stop_wall_s": 41.82353620301001,
+      "max_visual_lift_m": 0.18607210628467052,
+      "terminal_xy_error_mm": [
+        0.28,
+        -0.79
+      ]
+    },
+    {
+      "run": "study-20261113-080825-small_wide-5715",
+      "seed": 5715,
+      "variant": "small_wide",
+      "yaw_deg": 79,
+      "passed": false,
+      "reason": "CURRENT_ROTATING_PAYLOAD_GEOMETRY_UNSUPPORTED",
+      "action_to_verification_or_stop_wall_s": 21.393812207039446,
+      "motion_to_home_or_stop_wall_s": 19.656858908943832,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        14.08,
+        329.67
+      ]
+    },
+    {
+      "run": "study-20261113-080825-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "action_to_verification_or_stop_wall_s": null,
+      "motion_to_home_or_stop_wall_s": null,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        13.33,
+        309.68
+      ]
+    },
+    {
+      "run": "study-20261113-081657-small_wide-5715",
+      "seed": 5715,
+      "variant": "small_wide",
+      "yaw_deg": 79,
+      "passed": true,
+      "reason": null,
+      "action_to_verification_or_stop_wall_s": 52.18601322895847,
+      "motion_to_home_or_stop_wall_s": 49.27136202901602,
+      "max_visual_lift_m": 0.18731946189658166,
+      "terminal_xy_error_mm": [
+        0.55,
+        -0.5
+      ]
+    },
+    {
+      "run": "study-20261113-081657-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "action_to_verification_or_stop_wall_s": null,
+      "motion_to_home_or_stop_wall_s": null,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        13.33,
+        309.68
       ]
     }
   ],
@@ -118,6 +216,7 @@
     {
       "run": "study-20261113-074921-pair-6",
       "scope": "physical_empty_arm_pregrasp_only",
+      "action_wall_s": null,
       "passed": false,
       "reason": "PAIR_JOINT_TRACKING_ERROR",
       "phase": null,
@@ -170,6 +269,7 @@
     {
       "run": "study-20261113-074921-pair-7",
       "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "action_wall_s": null,
       "passed": false,
       "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
       "phase": null,
@@ -213,6 +313,7 @@
     {
       "run": "study-20261113-075810-pair-6",
       "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "action_wall_s": null,
       "passed": false,
       "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
       "phase": null,
@@ -256,6 +357,7 @@
     {
       "run": "study-20261113-075810-pair-8",
       "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "action_wall_s": null,
       "passed": false,
       "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
       "phase": null,
@@ -293,6 +395,220 @@
           "panda_right",
           0.2,
           2
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-080248-pair-6",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 63.43716841889545,
+      "passed": false,
+      "reason": "PAIR_JOINT_TRACKING_ERROR",
+      "phase": "approach",
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 30.983333333333334,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          1
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          1
+        ],
+        [
+          "panda_right",
+          0,
+          5
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          5
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-080248-pair-9",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 64.92671220796183,
+      "passed": false,
+      "reason": "PAIR_JOINT_TRACKING_ERROR",
+      "phase": "approach",
+      "planned_slots": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 36.34166666666667,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          2
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          2
+        ],
+        [
+          "panda_right",
+          0,
+          4
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          4
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-081306-pair-6",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 5.133124911924824,
+      "passed": false,
+      "reason": "PAIR_PREGRASP_TARGET_CHANGED:panda_left",
+      "phase": null,
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.6416666666666666,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          3
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          3
+        ],
+        [
+          "panda_right",
+          0,
+          2
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          2
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-081306-pair-9",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 13.592105870135128,
+      "passed": false,
+      "reason": "PAIR_PRECLOSE_UNSUPPORTED:panda_left",
+      "phase": "approach",
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.7333333333333334,
+      "phase_overlap_sim_s": {
+        "approach": 2.3
+      },
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          2
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          2
+        ],
+        [
+          "panda_right",
+          0,
+          6
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          6
         ]
       ]
     }

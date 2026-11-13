@@ -27,7 +27,12 @@ def opening_from_visual_box(tcp,obj):
     centre=(np.asarray(obj.position_m)-tcp[:3,3])@tcp[:3,:3]
     radii=np.abs(tcp[:3,:3].T@upright_body_rotation(obj))@(np.asarray(obj.size_m)/2)
     margin=float(obj.uncertainty_m)
-    width=2*(abs(centre[1])+radii[1]+margin+.003)
+    # Prefer 3 mm extra clearance per finger. Near the opening limit, a
+    # complete upright footprint may use 1.5 mm residual clearance beyond
+    # the full visual uncertainty envelope. The gripper still opens to 80 mm.
+    envelope=2*(abs(centre[1])+radii[1]+margin)
+    minimum_clearance=.0015 if obj.posture=='UPRIGHT' and obj.visibility=='COMPLETE_TOP' else .003
+    width=min(.080,envelope+.006) if envelope+2*minimum_clearance<=.080 else envelope+.006
     closing=max(0.,2*radii[1]-.004)
     reasons=[]
     if not np.isfinite(width) or width>.080:reasons.append('GRIPPER_SPACE_INSUFFICIENT')
@@ -35,6 +40,7 @@ def opening_from_visual_box(tcp,obj):
     if abs(centre[1])>.004:reasons.append('GRASP_OFF_CENTRE')
     return width,closing,dict(projected_span_m=float(2*radii[1]),
         centre_offset_m=float(centre[1]),visual_uncertainty_m=margin,
+        available_clearance_per_finger_m=float((.080-envelope)/2),
         source='current visual cuboid orientation + known size; not a model output'),tuple(reasons)
 
 

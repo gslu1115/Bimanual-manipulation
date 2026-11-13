@@ -36,6 +36,16 @@ class WorkspaceTests(unittest.TestCase):
     def test_clear_depth_and_support_evidence_allows_slot(self):
         ws=self.workspace();self.assertTrue(ws.slot((0,0))['free'])
 
+    def test_elevated_carton_still_requires_independent_clear_slot_depth(self):
+        carton=SimpleNamespace(track_id='carried',position_m=(0,0,1.05),
+                               size_m=(.1,.055,.045),uncertainty_m=.003)
+        for valid in (True,False):
+            ws=self.workspace(valid=valid)
+            ws.scene.objects=(carton,)
+            self.assertEqual(ws.slot((0,0))['free'],valid)
+        carton.position_m=(0,0,.825)
+        self.assertEqual(ws.slot((0,0))['observed_objects'],['carried'])
+
     def test_no_detection_is_not_empty_when_depth_missing(self):
         ws=self.workspace(valid=False)
         self.assertEqual(ws.slot((0,0))['reason'],'UNOBSERVED_PATH_SPACE')

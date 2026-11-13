@@ -351,7 +351,18 @@ def main(argv=None):
         env.start()
         if args.mode in ('graspgen-check','graspgen-pair-pregrasp','graspgen-pair-place'):
             from workstation.diagnostics.graspgen_check import check
-            check(env,args)
+            try:
+                check(env,args)
+            finally:
+                if args.mode=='graspgen-pair-place':
+                    # Evaluation only, after the actor has returned or stopped.
+                    states=env.observe_ground_truth()
+                    env._write_json('pair_final_truth.json',dict(
+                        scope='offline_final_centers_at_actor_exit',
+                        states=[b.to_dict() for b in states],
+                        error_xy_m_to_each_slot={b.name:[
+                            [float(b.position[0]-x),float(b.position[1]-y)]
+                            for x,y in env.c['conveyor']['slots_xy']] for b in states}))
         elif args.mode == "sensor-check":
             from workstation.diagnostics.sensor_check import check
             check(env)

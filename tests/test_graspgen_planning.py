@@ -46,6 +46,16 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertIn('GRASP_OFF_CENTRE',reject)
         np.testing.assert_array_equal(self.pose[:3,3],self.obj.position_m)
 
+    def test_full_opening_retains_uncertainty_and_minimum_clearance(self):
+        full=replace(self.obj,posture='UPRIGHT',visibility='COMPLETE_TOP',
+                     size_m=(.12,.070,.055),uncertainty_m=.003)
+        width,_,evidence,reasons=opening_from_visual_box(self.pose,full)
+        self.assertEqual(width,.080)
+        self.assertGreaterEqual(evidence['available_clearance_per_finger_m'],.0015)
+        self.assertFalse(reasons)
+        for obj in (replace(full,visibility='PARTIAL_OR_UNCERTAIN'),replace(full,size_m=(.12,.073,.055))):
+            self.assertIn('GRIPPER_SPACE_INSUFFICIENT',opening_from_visual_box(self.pose,obj)[3])
+
     def test_stale_wrong_service_and_uncalibrated_candidates_cannot_reach_ik(self):
         for bad in ({**self.result,'observation_time_s':self.obj.time_s-1},
                     {**self.result,'metadata':{'gripper_name':'robotiq'}}):

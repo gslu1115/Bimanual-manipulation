@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 import math
 import time
-from workstation.models.graspgen_client import visual_clouds
+from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
 from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate
 from workstation.perception.scene_estimate import pose_is_observed
 
@@ -23,7 +23,8 @@ class GraspGenSource:
             clouds=visual_clouds(packet,scene,obj.track_id)
             started=time.monotonic();before=robot.read_states()
             with ThreadPoolExecutor(max_workers=1) as pool:
-                pending=pool.submit(self.proxy.infer,clouds,self.num_grasps)
+                yaw=(0.,math.pi/4,-math.pi/4)[len(self.requests)%3] if obj.posture=='UPRIGHT' else 0.
+                pending=pool.submit(infer_rotated_view,self.proxy,clouds,self.num_grasps,yaw)
                 while not pending.done():
                     robot.hold(.025)
                 result=pending.result()

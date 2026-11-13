@@ -3,8 +3,8 @@ import math
 import numpy as np
 
 from workstation.observations.camera_geometry import pose_matrix, quaternion_from_matrix
-from workstation.perception.held_surface import HeldSurfaceTracker
-from workstation.perception.preclose_target import PreCloseTarget, preclose_supported
+from workstation.perception.held_surface import CuboidHoldingTracker
+from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors
 from workstation.planning.collision import AABB, sphere_box_clearance
 from workstation.skills.cumotion_pick_place import placement_goal
@@ -17,8 +17,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     selected = dict(zip(arms, pair['selection']))
     goals = dict(zip(arms, pair['slots']))
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
-    references = {a: PreCloseTarget(o, scene, priors) for a, o in objects.items()}
     trackers = {}
+    measurements = {}
     held = False
     phases = report['phases'] = {}
 
@@ -29,6 +29,15 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         robot.set_observation(packet, scene, priors)
         slots.observe(robot.observed_workspace)
         return packet
+
+    def confirm_target(arm,packet,closed=False):
+        from workstation.diagnostics.vision_check import save_observation
+        proof=references[arm].confirm(packet,scene,closed=closed)
+        report.setdefault('preclose_evidence',[]).append(proof)
+        if not preclose_supported(proof,packet.observation_time_s):
+            save_observation(env.output,'pair_'+arm+'_'+report['last_phase'],packet,scene)
+            raise RuntimeError('PAIR_TARGET_UNSUPPORTED:'+arm+':'+proof['reason'])
+        return proof
 
     def carried_clearance(left, right):
         boxes = []
@@ -45,6 +54,22 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         if np.all(np.abs(a.centre-b.centre) <= (a.size+b.size)/2+.002):
             raise RuntimeError('PAYLOAD_PAYLOAD_COLLISION')
 
+    def measure_held(arm,packet):
+        t=trackers[arm]
+        pos,rot=robot.fk(arm)
+        observed=t.observe(packet,scene,pos,rot)
+        if observed is None:
+            report['held_surface_failure']=dict(arm=arm,measurement=t.last_failure)
+            raise RuntimeError('PAIR_HELD_SURFACE_UNCONFIRMED:'+arm)
+        measurements[arm]=observed
+        # Only a fully measured center can move the collision proxy away
+        # from its previous reference. Keep the uncertainty of a partial fit.
+        if observed.get('geometric_pose_measured'):
+            t.offset=rot.T@(np.asarray(observed['position_m'])-pos)
+            t.relative_rotation=rot.T@np.asarray(observed['rotation'])
+        t.uncertainty_m=max(t.uncertainty_m,observed['uncertainty_m'])
+        return observed
+
     def move(phase, destinations, contact=False):
         report['last_phase'] = phase
         paths = []
@@ -58,12 +83,21 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             if held:
                 t = trackers[arm]
                 robot.held_visual_geometry = dict(arm=arm, target_id=o.track_id, offset=t.offset,
-                    relative_rotation=t.relative_rotation, uncertainty_m=t.uncertainty_m)
+                    relative_rotation=t.relative_rotation, uncertainty_m=t.uncertainty_m,allow_grasp_translation=True)
+                if not robot.confirm_payload_observation(o.track_id,t,measurements[arm],packet):
+                    raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
             robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if held else None,
                 support_contact=contact and held, target_contact=contact and not held,
                 check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach')
             paths.append(path)
         phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None)
+        for arm,(goal,goal_rot) in destinations.items():
+            pos,rot=robot.fk(arm)
+            error=float(np.linalg.norm(pos-goal))
+            angle=float(np.arccos(np.clip((np.trace(rot.T@goal_rot)-1.)/2.,-1.,1.)))
+            phases[phase].setdefault('tcp_errors',{})[arm]=dict(position_m=error,angle_rad=angle)
+            if error>.005 or angle>math.radians(3):
+                raise RuntimeError('PAIR_TCP_GOAL_MISSED:'+arm)
 
     def fingers(close):
         steps = math.ceil(.6/robot.dt)
@@ -77,26 +111,41 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
 
     poses = {a:(np.asarray(c['position_m']),pose_matrix(c['position_m'],c['orientation_wxyz'])[:3,:3])
              for a,c in selected.items()}
+    # The empty approach can outlive the visual reference horizon. Confirm
+    # both original poses at the pregrasp waypoint before descending.
+    references={a:PreCloseTarget(objects[a],scene,priors) for a in arms}
+    report['last_phase']='pregrasp_recheck'
+    packet=observe()
+    for a in arms:
+        prior=objects[a]
+        matches=[o for o in scene.objects if o.track_id==prior.track_id and o.posture=='UPRIGHT'
+                 and not o.failures and np.linalg.norm(np.asarray(o.position_m)-prior.position_m)<=.002
+                 and abs((o.axis_yaw_rad-prior.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(3)
+                 and np.allclose(o.size_m,prior.size_m,atol=1e-6,rtol=0)]
+        if len(matches)==1:
+            references[a]=PreCloseTarget(matches[0],scene,priors)
+        else:
+            proof=confirm_target(a,packet)
+            scene=reconcile_preclose_target(estimator,scene,proof)
+    robot.set_observation(packet,scene,priors)
     move('approach', poses, True)
     packet = observe()
     for a in arms:
-        if not preclose_supported(references[a].confirm(packet,scene), packet.observation_time_s):
-            raise RuntimeError('PAIR_PRECLOSE_UNSUPPORTED:'+a)
+        confirm_target(a,packet)
     report['last_phase']='close'
     fingers(True)
     packet = observe()
     for a in arms:
-        proof = references[a].confirm(packet,scene,closed=True)
-        if not preclose_supported(proof, packet.observation_time_s):
-            raise RuntimeError('PAIR_POSTCLOSE_UNSUPPORTED:'+a)
-        trackers[a] = HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
+        proof = confirm_target(a,packet,closed=True)
+        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors)
+        measure_held(a,packet)
     held = True
     move('lift',{a:(robot.fk(a)[0]+[0.,0.,.18],robot.fk(a)[1]) for a in arms},True)
     packet = observe()
     places = {}
     for a in arms:
         t = trackers[a]
-        support = t.observe(packet,scene,*robot.fk(a))
+        support = measure_held(a,packet)
         if support is None or support['height_gain_m'] < .08:
             raise RuntimeError('PAIR_LIFT_UNCONFIRMED:'+a)
         phases.setdefault('lift_evidence',{})[a]=support
@@ -106,32 +155,46 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     move('transfer',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()})
     packet=observe()
     for a in arms:
-        if trackers[a].observe(packet,scene,*robot.fk(a)) is None:
-            raise RuntimeError('PAIR_TRANSFER_UNCONFIRMED:'+a)
+        measure_held(a,packet)
         if slots.states[goals[a]]!='reserved':
             raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+a)
     move('lower',places,True)
     packet=observe()
     for a in arms:
-        if trackers[a].observe(packet,scene,*robot.fk(a)) is None:
-            raise RuntimeError('PAIR_PRERELEASE_UNCONFIRMED:'+a)
+        measure_held(a,packet)
     report['last_phase']='release'
     fingers(False)
     held=False
     robot.held_visual_geometry=None
     observe()
     move('retreat',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()},True)
-    robot.hold(.5)
-    observe()
-    report['placements']={}
-    for a in arms:
-        xy=goals[a]
-        matches=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and
-                 np.linalg.norm(np.array(o.position_m[:2])-xy)<=.018 and
-                 np.allclose(o.size_m,objects[a].size_m,atol=.002,rtol=0)]
-        if len(matches)!=1:raise RuntimeError('PAIR_RELEASED_CARTON_UNCONFIRMED:'+a)
-        o,=matches
-        slots.confirm_placement(a,xy,o.track_id)
-        report['placements'][a]=dict(initial_track=objects[a].track_id,observed_track=o.track_id,
-            goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())
+    report['last_phase']='verify'
+    stable_since=None
+    previous_ids=None
+    for _ in range(20):
+        robot.hold(.1)
+        observe()
+        placements={}
+        for a in arms:
+            xy=goals[a]
+            matches=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and
+                     np.linalg.norm(np.array(o.position_m[:2])-xy)<=.018 and
+                     abs(o.position_m[2]-robot.place_support_z-o.size_m[2]/2)<=.008 and
+                     abs((o.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(8) and
+                     o.velocity_m_s is not None and np.linalg.norm(o.velocity_m_s)<=.015 and
+                     np.allclose(o.size_m,objects[a].size_m,atol=.002,rtol=0)]
+            if len(matches)==1:
+                o,=matches
+                placements[a]=dict(initial_track=objects[a].track_id,observed_track=o.track_id,
+                    goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())
+        ids=tuple(p['observed_track'] for p in placements.values())
+        if len(set(ids))!=2 or ids!=previous_ids:
+            stable_since=scene.observation_time_s
+        previous_ids=ids
+        if len(set(ids))==2 and scene.observation_time_s-stable_since>=.5:
+            for a,p in placements.items():
+                slots.confirm_placement(a,goals[a],p['observed_track'])
+            report['placements']=placements
+            break
+    else:raise RuntimeError('PAIR_RELEASED_CARTONS_NOT_STABLE')
     report['slots_final']=slots.report()

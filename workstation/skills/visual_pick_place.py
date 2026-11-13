@@ -6,6 +6,7 @@ inherit its truth reads, physical-hand pose reads or truth success predicates.
 from __future__ import annotations
 from dataclasses import asdict, replace
 import math
+from time import monotonic
 import numpy as np
 from workstation.perception.rgbd_cartons import CartonEstimator, axis_error
 from workstation.planning.selection import (assess, select_skill, upright_grasp_position,
@@ -158,6 +159,10 @@ class VisualPickPlace:
 
     def event(self,phase):
         event=dict(phase=phase,time_s=self.scene.observation_time_s if self.scene else None)
+        if phase=='PREGRASP':
+            self._action_wall_start=monotonic()
+        if hasattr(self,'_action_wall_start'):
+            event['action_wall_s']=monotonic()-self._action_wall_start
         if self.arm:
             event['measured_fingers_m']=self.robot.read_states()[self.arm].finger_positions_m.tolist()
             if hasattr(self.robot,'targets'):
