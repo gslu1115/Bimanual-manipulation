@@ -69,6 +69,7 @@ def verify(env,robot,isaac_root,graspgen_root):
         candidate_execution_authorized=False,
         T_graspgen_base_from_panda_hand=transform.tolist(),T_panda_hand_from_project_tcp=hand_tcp.tolist(),
         T_graspgen_base_from_project_tcp=(transform@hand_tcp).tolist(),mesh_checks=checks,fk_check=fk_check,
+        fingertip_reach_past_tcp_m=float(.0584+stl_vertices(paths['robot']['finger'])[:,2].max()-hand_tcp[2,3]),
         gripper_config_sha256=hashlib.sha256(config_path.read_bytes()).hexdigest(),
         asset_sha256={side:{name:hashlib.sha256(path.read_bytes()).hexdigest() for name,path in group.items()}
                       for side,group in paths.items()},physical_execution=False,real_robot_calibration=False)

@@ -200,6 +200,17 @@ class CuMotionPickPlace(VisualPickPlace):
                         label='lifted' if driver.phase=='APPROACH_PLACE' else 'transferred'
                         self.observe(label)
                         measurement=self.holding_measurement()
+                        if measurement is None and label=='transferred':
+                            # At the overhead waypoint a wide carton may still
+                            # be swinging. Hold the measured arm and existing
+                            # finger preload, then require a fresh surface fit.
+                            self.robot.command_velocities(self.arm,np.zeros(9))
+                            self.robot.targets[self.arm][:7]=self.robot.read_states()[self.arm].joint_positions_rad
+                            for _ in range(3):
+                                self.robot.hold(.12)
+                                self.observe('transfer_settle')
+                                measurement=self.holding_measurement()
+                                if measurement is not None:break
                         if measurement is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
                         if self.max_visual_lift < .08:raise RuntimeError('NO_VISUAL_LIFT_PROOF')
                         relation=self.robot.held_visual_geometry
@@ -296,8 +307,16 @@ class CuMotionPickPlace(VisualPickPlace):
         """One fresh preflight per segment; each actual RMP command is also guarded."""
         state=self.robot.read_states()[self.arm]
         tcp,current_r=self.robot.fk(self.arm,state.joint_positions_rad)
-        path=self.robot.cartesian_knots(self.arm,tcp,target,0.,0.,.15,state.joint_positions_rad,
-            orientation0=quaternion_from_matrix(current_r),orientation1=quaternion_from_matrix(rotation))
+        try:
+            path=self.robot.cartesian_knots(self.arm,tcp,target,0.,0.,.15,state.joint_positions_rad,
+                orientation0=quaternion_from_matrix(current_r),orientation1=quaternion_from_matrix(rotation))
+        except RuntimeError as error:
+            if str(error)!='IK_DISCONTINUITY' or not self.held or contact or approach:raise
+            # In free transfer the official controller uses joint feedback and
+            # may follow a curved TCP path. Check an alternative joint sweep
+            # to the same full-pose goal with the measured payload geometry.
+            goal=self.robot.solve_pose(self.arm,target,quaternion_from_matrix(rotation),state.joint_positions_rad)
+            path=self.robot.joint_knots(state.joint_positions_rad,goal)
         self.robot.validate_path(self.arm,path,self.scene,self.candidate.target_id,
             held_size=self.hold_tracker.size if self.held else None,support_contact=contact,
             target_contact=contact and not self.held,check_approach_corridor=approach)

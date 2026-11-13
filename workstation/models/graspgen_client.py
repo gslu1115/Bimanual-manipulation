@@ -79,7 +79,12 @@ def infer_rotated_view(proxy, clouds, count, yaw):
     centre=clouds.target_m.mean(axis=0)
     def rotate(points):
         return ((points-centre)@rotation.T+centre).astype(np.float32)
-    reply=proxy.infer(replace(clouds,target_m=rotate(clouds.target_m),
+    # On retry, reduce perspective-driven oversampling by the nearest wrist.
+    # Keep actual measured points, including thin visible side faces.
+    cells=np.floor((clouds.target_m-centre)/.0015).astype(np.int32)
+    _,indices=np.unique(cells,axis=0,return_index=True)
+    target=clouds.target_m[np.sort(indices)] if len(indices)>=200 else clouds.target_m
+    reply=proxy.infer(replace(clouds,target_m=rotate(target),
                               scene_m=rotate(clouds.scene_m)),count)
     poses=np.array(reply['base_poses_workcell'],copy=True)
     poses[:,:3,3]=(poses[:,:3,3]-centre)@rotation+centre

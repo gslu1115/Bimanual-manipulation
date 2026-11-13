@@ -57,6 +57,14 @@ class PreCloseTargetTests(unittest.TestCase):
         for p,s in cases:
             with self.subTest():self.assertFalse(self.check.confirm(p,s)['supported'])
 
+    def test_stationary_reference_accepts_measured_rectangular_top_but_not_a_short_patch(self):
+        m=dict(self.check.confirm(self.packet,self.scene)['surface'],tape_direction=None,
+               top_rectangle=dict(measured_xy_m=list(SIZE[:2]),hull_fraction=.92))
+        self.assertTrue(reference_constrained_cuboid_supported(m,1.))
+        self.assertFalse(measured_cuboid_supported(m,1.))
+        m['top_rectangle']['measured_xy_m']=[SIZE[0]-.012,SIZE[1]]
+        self.assertFalse(reference_constrained_cuboid_supported(m,1.))
+
     def test_visible_motion_and_tilt_are_rejected(self):
         for centre,rotation in ((CENTRE+[0,.006,0],None),(CENTRE,turn(1,20))):
             p,s=self.partial(centre,rotation)

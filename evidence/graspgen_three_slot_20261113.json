@@ -210,6 +210,66 @@
         13.33,
         309.68
       ]
+    },
+    {
+      "run": "study-20261113-082515-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "UNOBSERVED_PATH_SPACE",
+      "action_to_verification_or_stop_wall_s": 23.039135767146945,
+      "motion_to_home_or_stop_wall_s": 21.288998225005344,
+      "max_visual_lift_m": 0.1798017280712484,
+      "terminal_xy_error_mm": [
+        14.71,
+        310.64
+      ]
+    },
+    {
+      "run": "study-20261113-082746-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "IK_DISCONTINUITY",
+      "action_to_verification_or_stop_wall_s": 25.00033036386594,
+      "motion_to_home_or_stop_wall_s": 23.060648197075352,
+      "max_visual_lift_m": 0.1691405182965694,
+      "terminal_xy_error_mm": [
+        14.03,
+        314.38
+      ]
+    },
+    {
+      "run": "study-20261113-083634-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "action_to_verification_or_stop_wall_s": null,
+      "motion_to_home_or_stop_wall_s": null,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        13.33,
+        309.68
+      ]
+    },
+    {
+      "run": "study-20261113-083953-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "action_to_verification_or_stop_wall_s": 29.76041898992844,
+      "motion_to_home_or_stop_wall_s": 28.16719768801704,
+      "max_visual_lift_m": 0.17985603862775457,
+      "terminal_xy_error_mm": [
+        -1.45,
+        1.94
+      ]
     }
   ],
   "pair": [
@@ -220,6 +280,8 @@
       "passed": false,
       "reason": "PAIR_JOINT_TRACKING_ERROR",
       "phase": null,
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": [
         [
           -0.2,
@@ -273,6 +335,8 @@
       "passed": false,
       "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
       "phase": null,
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": null,
       "pregrasp_overlap_sim_s": null,
       "phase_overlap_sim_s": {},
@@ -317,6 +381,8 @@
       "passed": false,
       "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
       "phase": null,
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": null,
       "pregrasp_overlap_sim_s": null,
       "phase_overlap_sim_s": {},
@@ -361,6 +427,8 @@
       "passed": false,
       "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
       "phase": null,
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": null,
       "pregrasp_overlap_sim_s": null,
       "phase_overlap_sim_s": {},
@@ -405,6 +473,8 @@
       "passed": false,
       "reason": "PAIR_JOINT_TRACKING_ERROR",
       "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": [
         [
           -0.2,
@@ -458,6 +528,8 @@
       "passed": false,
       "reason": "PAIR_JOINT_TRACKING_ERROR",
       "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": [
         [
           0,
@@ -511,6 +583,8 @@
       "passed": false,
       "reason": "PAIR_PREGRASP_TARGET_CHANGED:panda_left",
       "phase": null,
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": [
         [
           -0.2,
@@ -564,6 +638,8 @@
       "passed": false,
       "reason": "PAIR_PRECLOSE_UNSUPPORTED:panda_left",
       "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
       "planned_slots": [
         [
           -0.2,
@@ -594,6 +670,290 @@
           "panda_left",
           0,
           2
+        ],
+        [
+          "panda_right",
+          0,
+          6
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          6
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-081909-pair-6",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 15.262676887912676,
+      "passed": false,
+      "reason": "PAIR_TARGET_UNSUPPORTED:panda_right:TRANSLATION_AXIS_UNOBSERVED:0",
+      "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.3583333333333334,
+      "phase_overlap_sim_s": {
+        "approach": 3.0833333333333335
+      },
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          1
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          1
+        ],
+        [
+          "panda_right",
+          0,
+          2
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          2
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-081909-pair-9",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 14.569451860152185,
+      "passed": false,
+      "reason": "PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED",
+      "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.3166666666666664,
+      "phase_overlap_sim_s": {
+        "approach": 3.675
+      },
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          3
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          3
+        ],
+        [
+          "panda_right",
+          0,
+          7
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          7
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-082746-pair-6",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 11.423804863123223,
+      "passed": false,
+      "reason": "PAIR_JOINT_TRACKING_ERROR: {'panda_left': 0.03093159491660924, 'panda_right': 0.0027881929606490274}",
+      "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.25,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          5
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          5
+        ],
+        [
+          "panda_right",
+          0,
+          7
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          7
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-083225-pair-6",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 10.062202502973378,
+      "passed": false,
+      "reason": "PAIR_JOINT_TRACKING_ERROR: {'panda_left': 0.031588939637258506, 'panda_right': 0.01357270506235847}",
+      "phase": "approach",
+      "closed_targets": [],
+      "simultaneous_grasp_verified": false,
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.25,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          5
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          5
+        ],
+        [
+          "panda_right",
+          0,
+          7
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          7
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-083634-pair-9",
+      "scope": "two_cartons_same_physics_scene",
+      "action_wall_s": 17.70493551599793,
+      "passed": false,
+      "reason": "STATIC_PATH_BLOCKED:visual_0018",
+      "phase": "lift",
+      "closed_targets": [
+        "visual_0002",
+        "visual_0001"
+      ],
+      "simultaneous_grasp_verified": false,
+      "planned_slots": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.5,
+      "phase_overlap_sim_s": {
+        "approach": 3.7583333333333333
+      },
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          5
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          5
         ],
         [
           "panda_right",

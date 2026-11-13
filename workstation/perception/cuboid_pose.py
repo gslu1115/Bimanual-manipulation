@@ -89,6 +89,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             axes[axis]=normal/np.linalg.norm(normal)
     if not axes:return unknown('VISIBLE_PLANES_UNRESOLVED')
     tape_direction=None
+    top_rectangle=None
     if len(axes)>=2:
         order=sorted(axes,key=lambda axis:sum(len(f['points']) for f in faces if f['axis']==axis),reverse=True)
         a,b=order[:2]
@@ -128,6 +129,9 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             for index,edge in zip(tangent,permutation):
                 direction=basis@(edges[edge]/lengths[edge])
                 measured[:,index]=direction if direction@r[:,index]>=0 else -direction
+            if axis==2 and any(f['axis']==2 and f['sign']==1 for f in faces):
+                top_rectangle=dict(measured_xy_m=lengths[list(permutation)].tolist(),
+                    hull_fraction=float(cv2.contourArea(hull)/np.prod(size[:2])))
     angle=math.degrees(math.acos(np.clip((np.trace(measured.T@r)-1)/2,-1,1)))
     if np.linalg.det(measured)<.999 or angle>8:return unknown('POSE_HINT_CONFLICT')
     # Extents come from measured, signed planar patches, not isolated mask
@@ -158,10 +162,27 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
                 aggregation='union of per-view validated planar quantiles',
                 mask_refs=sorted({patch['mask_ref'] for patch in extent_patches})))
         if not values:
+            if (axis in (0,1) and set(axes)=={2} and tape_direction is None
+                    and (allow_reference_translation or allow_grasp_translation)
+                    and any(f['axis']==2 and f['sign']==1 for f in faces)):
+                # Rotation may already be measurable from the top rectangle
+                # while robust edge quantiles leave one translation unknown.
+                # Check the actual stripe before using the existing prior.
+                from workstation.perception.packaging_evidence import tape_axis_evidence, tape_axis_supported
+                normal=measured[:,2]
+                level=np.median(np.concatenate([f['points'] for f in faces])@normal)
+                views=[]
+                for points,rgb in zip(instances,instance_rgb):
+                    on_plane=np.abs(points@normal-level)<.003
+                    views.append((points[on_plane],rgb[on_plane]))
+                stripe=tape_axis_evidence(views,centre,measured,normal,size)
+                if tape_axis_supported(stripe,measured):tape_direction=stripe
             # A latched grasp can carry one hidden in-plane coordinate. Keep
             # current planes/rotation and label the coordinate as predicted,
             # never as an independently measured pose or a fabricated edge.
-            if (allow_grasp_translation or allow_reference_translation) and axis in (0,1) and (len(axes)>=2 or tape_direction is not None) and not predicted_axes:
+            orientation_supported=(len(axes)>=2 or tape_direction is not None or
+                                   (allow_reference_translation and _rectangle_supported(top_rectangle,size)))
+            if (allow_grasp_translation or allow_reference_translation) and axis in (0,1) and orientation_supported and not predicted_axes:
                 values.append(float(centre@measured[:,axis]));predicted_axes.append(axis)
                 constraints.append(dict(axis=axis,source='stationary_reference_prediction' if allow_reference_translation else 'grasp_relation_prediction',
                     observed_span_m=span,expected_span_m=float(size[axis])))
@@ -204,10 +225,17 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         orientation_difference_from_hint_deg=angle,geometric_pose_measured=not predicted_axes,semantic_pose_unique=False,
         grasp_constrained=bool(predicted_axes and allow_grasp_translation),reference_constrained=reference_constrained,
         predicted_translation_axes=predicted_axes,
-        tape_direction=tape_direction,visual_height_lower_bound_m=min(height_bound,float(fitted[2])),
+        tape_direction=tape_direction,top_rectangle=top_rectangle,visual_height_lower_bound_m=min(height_bound,float(fitted[2])),
         evidence=('current RGB-D planes/rotation plus stationary visual reference for one hidden in-plane coordinate; conditional on stationary target'
                   if reference_constrained else 'current RGB-D planes/rotation plus latched grasp prediction for one hidden in-plane coordinate; uncertainty conditional on no axial slip'
                   if predicted_axes else 'current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes'))
+
+
+def _rectangle_supported(rect,size):
+    if not rect:return False
+    dims=np.asarray(rect.get('measured_xy_m'),float)
+    return (dims.shape==(2,) and np.max(np.abs(dims-size[:2]))<=.006 and
+            dims[0]-dims[1]>.02 and .72<=rect.get('hull_fraction',0.)<=1.12)
 
 
 def measured_cuboid_supported(measurement,time_s):
@@ -263,8 +291,9 @@ def _cuboid_supported(measurement,time_s,grasp_constrained,reference=False):
         if reference and measurement.get('grasp_constrained') is not False:return False
         if len(measurement.get('observed_face_axes',()))<2:
             from workstation.perception.packaging_evidence import tape_axis_supported
-            if (measurement.get('observed_face_axes')!=[2] or
-                    not tape_axis_supported(measurement.get('tape_direction'),r)):return False
+            if measurement.get('observed_face_axes')!=[2]:return False
+            if not (tape_axis_supported(measurement.get('tape_direction'),r) or
+                    (reference and _rectangle_supported(measurement.get('top_rectangle'),size))):return False
         measured_axes={item.get('axis') for item in constraints if item.get('source') in sources}
         prediction_source='stationary_reference_prediction' if reference else 'grasp_relation_prediction'
         prediction_axes={item.get('axis') for item in constraints if item.get('source')==prediction_source}

@@ -56,6 +56,14 @@ def candidates_from_result(result,obj,arms,calibration,sequence_ids):
     output=[]
     for index,(pose,base,score) in enumerate(zip(transformed,poses,scores)):
         width,closing,evidence,reasons=opening_from_visual_box(pose,obj)
+        if obj.posture=='UPRIGHT' and 'fingertip_reach_past_tcp_m' in calibration:
+            tip_z=pose[2,3]+pose[2,2]*calibration['fingertip_reach_past_tcp_m']
+            # Use the higher of the two inner fingertips for a tilted hand.
+            tip_z+=abs(pose[2,1])*width/2
+            engagement=float(obj.position_m[2]+obj.size_m[2]/2-tip_z)
+            evidence['estimated_tip_engagement_m']=engagement
+            if engagement<obj.uncertainty_m+.002:
+                reasons+=('FINGERTIPS_ABOVE_GRASP_BAND',)
         # GraspGen supplies base +Z approach. Full TCP quaternion is retained.
         for arm in arms:
             output.append(GraspCandidate(obj.track_id,arm,tuple(pose[:3,3]),

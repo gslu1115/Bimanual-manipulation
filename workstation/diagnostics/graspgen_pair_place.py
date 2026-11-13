@@ -1,5 +1,6 @@
 """Two independently grasped cartons, joint commands on a shared physics clock."""
 import math
+from dataclasses import replace
 import numpy as np
 
 from workstation.observations.camera_geometry import pose_matrix, quaternion_from_matrix
@@ -55,6 +56,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             raise RuntimeError('PAYLOAD_PAYLOAD_COLLISION')
 
     def measure_held(arm,packet):
+        nonlocal scene
         t=trackers[arm]
         pos,rot=robot.fk(arm)
         observed=t.observe(packet,scene,pos,rot)
@@ -62,6 +64,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             report['held_surface_failure']=dict(arm=arm,measurement=t.last_failure)
             raise RuntimeError('PAIR_HELD_SURFACE_UNCONFIRMED:'+arm)
         measurements[arm]=observed
+        # The wrist can split the carried carton into new visual IDs. Reconcile
+        # only the masks supported by this arm's current measured surfaces.
+        scene=estimator.associate_supported_target(scene,objects[arm].track_id,observed)
         # Only a fully measured center can move the collision proxy away
         # from its previous reference. Keep the uncertainty of a partial fit.
         if observed.get('geometric_pose_measured'):
@@ -74,7 +79,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         report['last_phase'] = phase
         paths = []
         for arm in arms:
-            c, o = selected[arm], objects[arm]
+            o = objects[arm]
             q = robot.read_states()[arm].joint_positions_rad
             pos, rot = robot.fk(arm, q)
             goal, goal_rot = destinations[arm]
@@ -90,7 +95,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                 support_contact=contact and held, target_contact=contact and not held,
                 check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach')
             paths.append(path)
-        phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None)
+        # Final Cartesian contact is verified below in metres/radians. The
+        # per-step 0.04 rad stop and actual two-arm collision checks stay active.
+        phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None,
+                                              following_band=.035 if contact else .025)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
@@ -127,6 +135,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         else:
             proof=confirm_target(a,packet)
             scene=reconcile_preclose_target(estimator,scene,proof)
+            # A complete current 6-D fit (including all three translations)
+            # can renew the stationary reference. A hidden-axis prior cannot.
+            if proof['surface']['geometric_pose_measured']:
+                measured=next(o for o in scene.objects if o.track_id==prior.track_id)
+                same_face=replace(measured,posture=prior.posture,
+                    hypotheses=tuple(h for h in measured.hypotheses if h.label==prior.posture))
+                references[a]=PreCloseTarget(same_face,scene,priors)
     robot.set_observation(packet,scene,priors)
     move('approach', poses, True)
     packet = observe()
@@ -137,8 +152,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     packet = observe()
     for a in arms:
         proof = confirm_target(a,packet,closed=True)
+        scene=reconcile_preclose_target(estimator,scene,proof)
         trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors)
         measure_held(a,packet)
+    robot.set_observation(packet,scene,priors)
     held = True
     move('lift',{a:(robot.fk(a)[0]+[0.,0.,.18],robot.fk(a)[1]) for a in arms},True)
     packet = observe()
@@ -151,6 +168,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         phases.setdefault('lift_evidence',{})[a]=support
         places[a] = placement_goal(goals[a],robot.place_support_z,t.size,.012,
                                    robot.fk(a)[1]@t.relative_rotation,t.offset,t.relative_rotation)
+    robot.set_observation(packet,scene,priors)
     report['simultaneous_grasp_verified']=phases['lift']['overlap_ticks']>0
     move('transfer',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()})
     packet=observe()
@@ -158,10 +176,15 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         measure_held(a,packet)
         if slots.states[goals[a]]!='reserved':
             raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+a)
+    robot.set_observation(packet,scene,priors)
     move('lower',places,True)
     packet=observe()
     for a in arms:
-        measure_held(a,packet)
+        measurement=measure_held(a,packet)
+        rotation=np.asarray(measurement['rotation'])
+        height=np.asarray(measurement['position_m'])[2]-np.abs(rotation[2])@(trackers[a].size/2)
+        upper_gap=height-robot.place_support_z+measurement['uncertainty_m']
+        if upper_gap>.020:raise RuntimeError('PAIR_RELEASE_HEIGHT_UNSUPPORTED:'+a)
     report['last_phase']='release'
     fingers(False)
     held=False

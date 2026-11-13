@@ -70,7 +70,7 @@ def paired_pregrasp(robot, rows, states, scene):
     return None, rejected
 
 
-def drive_empty_pregrasps(robot, paths, payload_guard=None):
+def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
@@ -113,7 +113,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None):
         advance(desired)
         # Let the physical drives catch up before advancing the common clock.
         for _ in range(math.ceil(.25/robot.dt)):
-            if np.max(np.abs(previous-desired))<=.025:break
+            if np.max(np.abs(previous-desired))<=following_band:break
             advance(desired)
         else:
             errors=np.max(np.abs(previous-desired),axis=1)
@@ -158,6 +158,15 @@ def check_pair(env, args, packet, scene, estimator):
     seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
     rows=[]
     report['slot_assessments']=[]
+    pick_failures={}
+    def check_destination(c,o,s,slot):
+        # Pick IK, empty approach and finger closure do not depend on the
+        # downstream slot. Reuse their failure only for this frozen snapshot.
+        if c.candidate_id in pick_failures:return pick_failures[c.candidate_id]
+        result=robot.feasibility(c,o,s,slot)
+        if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
+            pick_failures[c.candidate_id]=result
+        return result
     for attempt in range(1,4):
         for obj in targets:
             result=infer_rotated_view(proxy,visual_clouds(packet,scene,obj.track_id),args.num_grasps,
@@ -169,7 +178,7 @@ def check_pair(env, args, packet, scene, estimator):
             report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
                                                  raw_grasps=len(result['scores'])))
         for slot in available:
-            scored=assess(scene,states,lambda c,o,s:robot.feasibility(c,o,s,slot),robot.home,
+            scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
             for row in scored:
                 row.terms['slot_xy']=slot
