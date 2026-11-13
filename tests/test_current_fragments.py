@@ -9,6 +9,18 @@ from workstation.perception.scene_estimate import ScenePriors
 
 
 class CurrentFragmentTests(unittest.TestCase):
+    def test_one_image_component_can_contain_two_physically_separated_depth_groups(self):
+        from workstation.perception.rgbd_cartons import split_separated_depths
+        xyz=np.zeros((12,12,3));mask=np.ones((12,12),bool)
+        xyz[:6,:,0]=.15;xyz[6:,:,0]=-.06;xyz[:6,:,2]=.78;xyz[6:,:,2]=.95
+        parts=split_separated_depths(mask,mask,xyz,.16)
+        self.assertEqual([part.sum() for part in parts],[72,72])
+        np.testing.assert_array_equal(parts[0]|parts[1],mask)
+        self.assertFalse(np.any(parts[0]&parts[1]))
+        self.assertEqual(len(split_separated_depths(mask,mask,xyz,.3)),1)
+        xyz[6:,:,2]=.79
+        self.assertEqual(len(split_separated_depths(mask,mask,xyz,.16)),1)
+
     def setUp(self):
         self.est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)))
         self.packet=packet(yaw=0.)

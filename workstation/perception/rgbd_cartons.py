@@ -30,6 +30,25 @@ def deproject(frame):
     return frame.points_workcell_m if isinstance(frame, CameraFrame) else deproject_depth(frame)
 
 
+def split_separated_depths(mask,valid,xyz,max_carton_diagonal):
+    """Split an image component only when the two measured groups cannot share a carton."""
+    rows,cols=np.nonzero(mask & valid)
+    if len(rows)<120:return [mask]
+    points=xyz[rows,cols]
+    if np.max(np.ptp(points,axis=0))<=max_carton_diagonal:return [mask]
+    heights=np.sort(points[:,2]);cut=int(np.argmax(np.diff(heights)))
+    if heights[cut+1]-heights[cut]<.03:return [mask]
+    lower=points[:,2]<=heights[cut]
+    if min(lower.sum(),(~lower).sum())<60:return [mask]
+    a,b=points[lower],points[~lower]
+    gap=np.maximum(0.,np.maximum(a.min(axis=0)-b.max(axis=0),b.min(axis=0)-a.max(axis=0)))
+    if np.linalg.norm(gap)<=max_carton_diagonal:return [mask]
+    parts=[]
+    for group in (lower,~lower):
+        part=np.zeros_like(mask);part[rows[group],cols[group]]=True;parts.append(part)
+    return parts
+
+
 class CartonEstimator:
     def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None,
                  robot_filter_factory=None,camera_workers=3,track_retention_s=.6,
@@ -700,6 +719,9 @@ class CartonEstimator:
             count, labels, stats, _ = cv2.connectedComponentsWithStats(binary, 8)
             proposals=[(labels == index, None) for index in range(1,count)
                        if stats[index,cv2.CC_STAT_AREA] >= 80]
+            diagonal=max(np.linalg.norm(size) for size in (p.carton_size_catalog_m or (p.carton_size_m,)))
+            proposals=[(part,None) for mask,_ in proposals for part in
+                       split_separated_depths(mask,proposal,xyz,diagonal+2*p.optical_depth_error_margin_m)]
         else:
             segmentation.validate_for(frame)
             # Same prediction supplies instance masks and boxes. No colour gate,
