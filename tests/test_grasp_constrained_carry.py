@@ -76,6 +76,20 @@ class GraspConstrainedCarryTests(unittest.TestCase):
         self.assertEqual(set(proxy.mask_refs),set(s.masks))
         self.assertIsNone(parked_surface_envelope(p,s,reference,fragments,PRIORS,[CENTRE[:2]]))
 
+    def test_broad_partial_top_corroborates_keepout_without_becoming_a_complete_top(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_depth_top
+        p,_=synthetic_observation(np.eye(3),views=([0.,-.101,1.35],))
+        f=p.cameras['scene_camera'];xyz=deproject(f)
+        r=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        def clipped(max_y):
+            cameras=dict(p.cameras)
+            cameras['scene_camera']=replace(f,valid_depth=f.valid_depth & (xyz[:,:,1]<CENTRE[1]+max_y))
+            return replace(p,cameras=cameras)
+        broad=clipped(.015)
+        self.assertIsNotNone(parked_depth_top(broad,r,(),allow_partial=True))
+        self.assertIsNone(parked_depth_top(broad,r,()))
+        self.assertIsNone(parked_depth_top(clipped(-.01),r,(),allow_partial=True))
+
     def test_occlusion_requires_foreground_in_multiple_views_and_no_contradictory_ray(self):
         from workstation.diagnostics.graspgen_pair_place import parked_top_occluded
         p,_=self.partial()

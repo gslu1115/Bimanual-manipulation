@@ -112,8 +112,8 @@ def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
         collision_center_m=centre.tolist(),collision_size_m=world.tolist())
 
 
-def parked_depth_top(packet,reference,instance_refs):
-    """Recover a complete top in another view without clipping its component to the prior footprint."""
+def parked_depth_top(packet,reference,instance_refs,*,allow_partial=False):
+    """Use an uncut depth component; a clipped top can corroborate an existing keepout."""
     import cv2
     from workstation.perception.rgbd_cartons import deproject
     centre=np.asarray(reference['position_m']);size=np.asarray(reference['size_m'])
@@ -128,8 +128,14 @@ def parked_depth_top(packet,reference,instance_refs):
             if stats[i,cv2.CC_STAT_AREA]<100:continue
             mask=labels==i;local=(xyz[mask,:2]-centre[:2])@basis
             bounds=np.quantile(local,[.002,.998],axis=0)
-            if np.max(np.abs(bounds-[-size[:2]/2,size[:2]/2]))>.004:continue
-            if cv2.contourArea(cv2.convexHull(local.astype(np.float32)))<.8*np.prod(size[:2]):continue
+            errors=np.abs(bounds-[-size[:2]/2,size[:2]/2])
+            if allow_partial:
+                if (np.mean(np.all(np.abs(local)<=size[:2]/2+.004,axis=1))<.99 or
+                        np.min(np.max(errors,axis=0))>.004 or
+                        np.min((bounds[1]-bounds[0])/size[:2])<.65):continue
+            elif np.max(errors)>.004:continue
+            coverage=cv2.contourArea(cv2.convexHull(local.astype(np.float32)))/np.prod(size[:2])
+            if not (.65 if allow_partial else .8)<=coverage<=1.12:continue
             return f'{name}/{frame.sequence_id}/depth_plane',mask
     return None
 
@@ -417,13 +423,17 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     shadow=not ids and 0<age<=20. and parked_top_occluded(packet,parked[xy])
                     patch=(0<age<=(20. if refs or shadow else 8.) and
                            parked_top_still_visible(packet,parked[xy],refs,scene.masks))
+                    component=None
+                    if not patch and not ids and 0<age<=20.:
+                        component=parked_depth_top(packet,parked[xy],(),allow_partial=True)
                     occluded=age<=8. and not patch and shadow
-                    if patch or occluded:
+                    if patch or component is not None or occluded:
                         enclosed.add(xy)
                         parked_ids.update(ids)
                         report.setdefault('parked_occlusion_checks',[]).append(dict(
                             xy=list(xy),mask_refs=refs,time_s=packet.observation_time_s,last_surface_s=seen,
-                            source=('current top-depth patch' if patch else 'foreground occlusion in current depth views')
+                            depth_component=component[0] if component is not None else None,
+                            source=('current top-depth patch' if patch or component is not None else 'foreground occlusion in current depth views')
                                    +' and continuously protected collision envelope'))
                         continue
                 if not fragments:continue
