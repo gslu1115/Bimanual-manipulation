@@ -104,6 +104,18 @@ class GraspConstrainedCarryTests(unittest.TestCase):
         self.assertTrue(parked_top_occluded(packet([.05,.05]),r))
         self.assertFalse(parked_top_occluded(packet([.05,4.]),r))
         self.assertFalse(parked_top_occluded(packet([.05]),r))
+        global_view=view(.05)
+        transform=global_view.T_workcell_from_camera_cv.copy();transform[0,3]+=4.
+        away=replace(global_view,T_workcell_from_camera_cv=transform)
+        cameras={'scene_camera':global_view,'left_wrist_camera':away,'right_wrist_camera':away}
+        observation=SimpleNamespace(cameras=cameras,camera_status={k:'OK' for k in cameras},
+                                    observation_time_s=p.observation_time_s)
+        self.assertFalse(parked_top_occluded(observation,r))
+        self.assertTrue(parked_top_occluded(observation,r,allow_wrist_out_of_view=True))
+        cameras['right_wrist_camera']=view(4.)
+        self.assertFalse(parked_top_occluded(observation,r,allow_wrist_out_of_view=True))
+        cameras['right_wrist_camera']=None
+        self.assertFalse(parked_top_occluded(observation,r,allow_wrist_out_of_view=True))
 
     def test_partial_translation_is_explicit_and_never_full_measurement(self):
         p,s=self.partial()

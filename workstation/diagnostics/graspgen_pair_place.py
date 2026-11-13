@@ -213,7 +213,7 @@ def parked_top_still_visible(packet,reference,mask_refs=(),masks=None,*,exclude_
     return confirmed
 
 
-def parked_top_occluded(packet,reference):
+def parked_top_occluded(packet,reference,*,allow_wrist_out_of_view=False):
     """All valid rays into the inner top footprint must terminate in front of it."""
     u,v=np.meshgrid(np.linspace(-.42,.42,11),np.linspace(-.42,.42,9))
     size=np.asarray(reference['size_m']);yaw=reference['axis_yaw_rad']
@@ -223,6 +223,8 @@ def parked_top_occluded(packet,reference):
     world[:,:2]+=local@np.array([[c,s],[-s,c]])
     world[:,2]+=size[2]/2
     views=0
+    global_covered=False
+    if allow_wrist_out_of_view and set(packet.cameras)!={'scene_camera','left_wrist_camera','right_wrist_camera'}:return False
     for name,f in packet.cameras.items():
         if f is None or packet.camera_status.get(name)!='OK' or f.sample_time_s!=packet.observation_time_s:return False
         camera=(world-f.T_workcell_from_camera_cv[:3,3])@f.T_workcell_from_camera_cv[:3,:3]
@@ -234,7 +236,8 @@ def parked_top_occluded(packet,reference):
         x,y=x[inside],y[inside]
         if not f.valid_depth[y,x].all() or np.any(f.depth_m[y,x]>=camera[inside,2]-.008):return False
         views+=int(inside.all())
-    return views>=2
+        if name=='scene_camera' and inside.all():global_covered=True
+    return views>=2 or (allow_wrist_out_of_view and global_covered)
 
 
 def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
@@ -384,8 +387,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
 
     def parked_unchanged(current,enclosed=()):
         return ((current.keys()|set(enclosed))==parked.keys()==initially_occupied and
-                all(np.linalg.norm(np.subtract(o.position_m,parked[k]['position_m']))<=.005 and
-                    np.allclose(o.size_m,parked[k]['size_m'],atol=.002,rtol=0) for k,o in current.items()))
+                all(matches_parked_reference(k,o) for k,o in current.items()))
+
+    def matches_parked_reference(xy,obj):
+        return (xy in parked and np.linalg.norm(np.subtract(obj.position_m,parked[xy]['position_m']))<=.005
+                and np.allclose(obj.size_m,parked[xy]['size_m'],atol=.002,rtol=0))
 
     def protect_stationary(current,time_s):
         if env.conveyor.state!='WAITING' or env.safe_to_index or not parked_unchanged(current):return
@@ -403,7 +409,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         # Reconcile BOTH carried cartons before testing the slot underneath
         # either one. Register the current arm-specific payload to explain its
         # shadow using saved free depth rays, never using ownership as clearance.
-        current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
+        observed=stationary_slot_tracks(robot.observed_workspace,scene,unused)
+        current={xy:o for xy,o in observed.items() if matches_parked_reference(xy,o)}
         parked_ids={o.track_id for o in current.values()}
         carried_ids={objects[a].track_id for a in arms}
         enclosed=set()
@@ -430,7 +437,17 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     recent_transfer_top=(report['last_phase']=='align' and xy in transfer_top_seen
                         and seen<=transfer_top_seen[xy]<packet.observation_time_s)
                     occluded=shadow and not patch and (age<=8. or recent_transfer_top)
-                    if patch or component is not None or occluded:
+                    # During a protected transfer both wrists can look away.
+                    # Require the global view to witness occlusion of the full
+                    # grid and reject any contrary depth in either wrist view.
+                    lift_proof=next((p for p in reversed(report.get('parked_protection',[]))
+                                     if tuple(p['xy'])==xy and p['phase']=='lift'),None)
+                    if (not ids and not patch and component is None and not occluded and lift_proof
+                            and 0<packet.observation_time_s-lift_proof['time_s']<=20.):
+                        occluded=parked_top_occluded(packet,parked[xy],allow_wrist_out_of_view=True)
+                    # A catalogue/centre conflict on a nominally complete observation
+                    # requires the explicit cuboid fit below, even with a visible top.
+                    if xy not in observed and (patch or component is not None or occluded):
                         if component is not None and report['last_phase']=='transfer':
                             transfer_top_seen[xy]=packet.observation_time_s
                         enclosed.add(xy)
