@@ -274,8 +274,12 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             extent = np.abs(rot @ t.relative_rotation) @ (t.size + 2*t.uncertainty_m)
             box = AABB(objects[arm].track_id, centre, extent)
             for keepout,_ in partial_keepout.values():
-                if (np.all(np.abs(centre-keepout.centre)<=(extent+keepout.size)/2+.008) or
-                        any(sphere_box_clearance(p,r,keepout)<.008 for _,p,r in robot.spheres(arm,q))):
+                payload_gap=float(np.max(np.abs(centre-keepout.centre)-(extent+keepout.size)/2))
+                robot_gap=min(sphere_box_clearance(p,r,keepout) for _,p,r in robot.spheres(arm,q))
+                stats=report.setdefault('parked_clearances',{}).setdefault(arm,{})
+                for label,gap in [('carton_axis_gap_m',payload_gap),('arm_surface_gap_m',robot_gap)]:
+                    stats[label]=min(stats.get(label,gap),float(gap))
+                if payload_gap<=.008 or robot_gap<.008:
                     raise RuntimeError('PARKED_CARTON_CLEARANCE')
             if any(sphere_box_clearance(c, r, box) < .002 for _, c, r in robot.spheres(other, other_q)):
                 raise RuntimeError('PAYLOAD_OTHER_ARM_COLLISION')
@@ -376,6 +380,17 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 all(np.linalg.norm(np.subtract(o.position_m,parked[k]['position_m']))<=.005 and
                     np.allclose(o.size_m,parked[k]['size_m'],atol=.002,rtol=0) for k,o in current.items()))
 
+    def protect_stationary(current,time_s):
+        if env.conveyor.state!='WAITING' or env.safe_to_index or not parked_unchanged(current):return
+        for xy,o in current.items():
+            c,s=math.cos(o.axis_yaw_rad),math.sin(o.axis_yaw_rad)
+            R=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+            box=AABB('parked_carton',np.asarray(o.position_m),np.abs(R)@np.asarray(o.size_m)+.016)
+            partial_keepout[xy]=(box,time_s)
+            robot.stationary_payload_keepout=box
+            report.setdefault('parked_protection',[]).append(dict(phase=report['last_phase'],time_s=time_s,
+                xy=list(xy),track_id=o.track_id,centre_m=list(o.position_m),size_m=box.size.tolist()))
+
     def verify_slots(packet):
         nonlocal scene
         # Reconcile BOTH carried cartons before testing the slot underneath
@@ -386,27 +401,23 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         carried_ids={objects[a].track_id for a in arms}
         enclosed=set()
         if env.conveyor.state=='WAITING' and not env.safe_to_index:
-            if report['last_phase']=='transfer' and parked_unchanged(current):
-                for xy,o in current.items():
-                    c,s=math.cos(o.axis_yaw_rad),math.sin(o.axis_yaw_rad)
-                    R=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
-                    box=AABB('parked_carton',np.asarray(o.position_m),np.abs(R)@np.asarray(o.size_m)+.016)
-                    partial_keepout[xy]=(box,packet.observation_time_s)
-                    robot.stationary_payload_keepout=box
+            if report['last_phase']=='transfer':protect_stationary(current,packet.observation_time_s)
             for xy in parked.keys()-current.keys():
                 ids=robot.observed_workspace.slot(xy)['observed_objects']
                 fragments=[o for o in scene.objects if o.track_id in ids]
                 if carried_ids.intersection(ids):continue
-                if xy in partial_keepout and report['last_phase']=='align':
+                if xy in partial_keepout:
                     box,seen=partial_keepout[xy]
                     refs=[ref for obj in fragments for ref in obj.mask_refs]
                     age=packet.observation_time_s-seen
                     # A currently matched whole instance corroborates the protected
                     # obstacle throughout the same 20 s reserved-slot inspection.
-                    # Pure foreground occlusion or unsegmented top rays retain 8 s.
-                    patch=(0<age<=(20. if refs else 8.) and
+                    # Beyond 8 s an unsegmented patch also needs foreground
+                    # occlusion across the sampled interior of the guarded box.
+                    shadow=not ids and 0<age<=20. and parked_top_occluded(packet,parked[xy])
+                    patch=(0<age<=(20. if refs or shadow else 8.) and
                            parked_top_still_visible(packet,parked[xy],refs,scene.masks))
-                    occluded=0<age<=8. and not ids and not patch and parked_top_occluded(packet,parked[xy])
+                    occluded=age<=8. and not patch and shadow
                     if patch or occluded:
                         enclosed.add(xy)
                         parked_ids.update(ids)
@@ -729,7 +740,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             finally:robot.stationary_payload_keepout=None
     robot.set_observation(packet,scene,priors)
     move('lift',raised,True)
-    packet = observe()
+    packet = observe_destinations()
     places = {}
     for a in arms:
         t = trackers[a]
@@ -744,6 +755,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     report['simultaneous_grasp_verified']=phases['lift']['overlap_ticks']>0
     robot.anchor_observation()
     before_transfer={xy:robot.observed_workspace.slot(xy) for xy in goals.values()}
+    protect_stationary(stationary_slot_tracks(robot.observed_workspace,scene,unused),packet.observation_time_s)
     # Carry without simultaneously rotating the carton. Aim the BOX centre
     # above its lane using the measured grasp offset before changing attitude.
     overhead={}
