@@ -205,10 +205,17 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
             balance=visual_pinch_balance(candidate,obj)
             terms['visual_pinch_balance']=balance
             terms['upright_contact_cost']=upright_contact_cost(candidate,obj)
+            palm=path.get('lift_palm_clearance_m')
+            terms['lift_palm_clearance_m']=palm
+            # Leave headroom above the 2 mm collision stop for changes in
+            # the measured carton pose and uncertainty under finger loading.
+            palm_cost=(float(np.clip((.008-palm)/.006,0.,1.)) if palm is not None
+                       and candidate.source=='graspgen' and obj.posture=='UPRIGHT' else 0.)
+            terms['lift_palm_cost']=palm_cost
             utility = (2*terms['geometry_quality']+min(clearance,.10)*5
                        +min(terms['path_clearance_m'],.05)*5
                        +terms['task_priority']*.2+terms['valid_depth_ratio']*.3
-                       -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5-balance['penalty']-terms['upright_contact_cost']
+                       -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5-balance['penalty']-terms['upright_contact_cost']-palm_cost
                        +(.2*float(np.clip(candidate.model_score,0,1)) if candidate.model_score is not None else 0.))
             results.append(CandidateAssessment(candidate,not all_reasons,all_reasons,terms,utility))
     return sorted(results,key=lambda item:(not item.feasible,-item.score,item.candidate.target_id,item.candidate.arm))

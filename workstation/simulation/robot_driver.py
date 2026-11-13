@@ -317,6 +317,7 @@ class RobotMotion:
         if workspace is None and getattr(self,'require_observed_workspace',False):
             raise RuntimeError('MISSING_WORKSPACE_OBSERVATION')
         minimum=float('inf'); samples=0;checked_samples=set()
+        palm_clearance=None
         refresh_display=getattr(self,'refresh_display',None)
         # Include actual segment starts and interpolated command trajectory samples.
         for start,end in zip(knots,knots[1:]):
@@ -422,6 +423,8 @@ class RobotMotion:
                         # world AABB creates false palm collisions at yaw != 0.
                         local=body_rotation.T@(np.asarray(centre)-centre_box)
                         clearance=float(np.linalg.norm(np.maximum(np.abs(local)-local_half,0))-radius)
+                        if link==8:
+                            palm_clearance=clearance if palm_clearance is None else min(palm_clearance,clearance)
                         if clearance < .002:
                             self.last_plan_check=dict(rejection='HELD_CARTON_OWN_BODY_COLLISION',
                                 link_index=link,clearance_m=clearance,
@@ -432,6 +435,7 @@ class RobotMotion:
                                     np.abs(local)-np.asarray(held_size)/2,0))-radius))
                             raise RuntimeError('HELD_CARTON_OWN_BODY_COLLISION')
         self.last_plan_check=dict(samples=samples,unique_samples=len(checked_samples),clearance_m=minimum,
+            palm_clearance_m=palm_clearance,
             model='official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs',
             observed_space_body_model='Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks',
             whole_arm_unknown_space_verified=False,
@@ -610,6 +614,7 @@ class RobotMotion:
             source='visual object/TCP nominal preflight relation; NOT a holding measurement')
         previous=getattr(self,'held_visual_geometry',None)
         phase='PREGRASP';phases=[];self.last_plan_check={}
+        lift_palm_clearance=None
         try:
             q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
                                  pregrasp_hint,orientation_wxyz=orientation)
@@ -648,6 +653,8 @@ class RobotMotion:
                         target_boxes_override=released if not held else None,
                         finger_positions=np.full(2,candidate.closing_width_m/2 if held else .04),
                         check_local_unknown=False,check_approach_corridor=phase!='RETREAT'))
+                    if phase=='LIFT':
+                        lift_palm_clearance=self.last_plan_check.get('palm_clearance_m')
                     if phase=='LOWER':
                         phase='OPEN'
                         for width in np.linspace(candidate.closing_width_m,.08,count+1):
@@ -664,6 +671,7 @@ class RobotMotion:
                 joint_plans['HOME']=self.last_plan_check.copy()
             return dict(reasons=(),joint_cost=float(np.linalg.norm(q-start)),path_clearance_m=minimum,
                 full_pose_checked=True,checked_phases=phases,whole_task_template_checked=slot_xy is not None,
+                lift_palm_clearance_m=lift_palm_clearance,
                 whole_task_check_scope='full model SE(3); sampled project-robot collisions; future local visibility deferred',
                 pending_observation_phases=['LIFT','TRANSFER','LOWER','OPEN','RETREAT'] if slot_xy is not None else [],
                 joint_plans=joint_plans,pregrasp_joint_positions_rad=q.tolist(),

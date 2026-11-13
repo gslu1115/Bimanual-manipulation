@@ -46,6 +46,19 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertIn('GRASP_OFF_CENTRE',reject)
         np.testing.assert_array_equal(self.pose[:3,3],self.obj.position_m)
 
+    def test_upright_ranking_prefers_more_lift_clearance_among_feasible_grasps(self):
+        c=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        tight=replace(c,candidate_id='tight',model_score=.99)
+        clear=replace(c,candidate_id='clear',model_score=.90)
+        def forecast(candidate,obj,scene):
+            return dict(reasons=(),joint_cost=0.,path_clearance_m=.02,
+                        lift_palm_clearance_m=.003 if candidate is tight else .010)
+        rows=assess(self.scene,self.states,forecast,np.zeros(9),
+                    candidate_provider=lambda *_:[tight,clear])
+        self.assertTrue(all(row.feasible for row in rows))
+        self.assertEqual(rows[0].candidate.candidate_id,'clear')
+        self.assertEqual(rows[0].terms['lift_palm_cost'],0.)
+
     def test_contact_margin_ranks_oblique_corner_pinch_below_parallel_sides(self):
         from workstation.planning.selection import upright_contact_cost,distinct_pinches
         c=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
