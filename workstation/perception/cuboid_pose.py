@@ -181,7 +181,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             # current planes/rotation and label the coordinate as predicted,
             # never as an independently measured pose or a fabricated edge.
             orientation_supported=(len(axes)>=2 or tape_direction is not None or
-                                   (allow_reference_translation and _rectangle_supported(top_rectangle,size)))
+                                   _rectangle_supported(top_rectangle,size))
             if (allow_grasp_translation or allow_reference_translation) and axis in (0,1) and orientation_supported and not predicted_axes:
                 values.append(float(centre@measured[:,axis]));predicted_axes.append(axis)
                 constraints.append(dict(axis=axis,source='stationary_reference_prediction' if allow_reference_translation else 'grasp_relation_prediction',
@@ -293,7 +293,7 @@ def _cuboid_supported(measurement,time_s,grasp_constrained,reference=False):
             from workstation.perception.packaging_evidence import tape_axis_supported
             if measurement.get('observed_face_axes')!=[2]:return False
             if not (tape_axis_supported(measurement.get('tape_direction'),r) or
-                    (reference and _rectangle_supported(measurement.get('top_rectangle'),size))):return False
+                    _rectangle_supported(measurement.get('top_rectangle'),size)):return False
         measured_axes={item.get('axis') for item in constraints if item.get('source') in sources}
         prediction_source='stationary_reference_prediction' if reference else 'grasp_relation_prediction'
         prediction_axes={item.get('axis') for item in constraints if item.get('source')==prediction_source}

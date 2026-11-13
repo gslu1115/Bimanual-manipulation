@@ -74,6 +74,18 @@ class PreCloseTargetTests(unittest.TestCase):
         m['top_rectangle']['measured_xy_m']=[SIZE[0]-.012,SIZE[1]]
         self.assertFalse(reference_constrained_cuboid_supported(m,1.))
 
+    def test_latched_grasp_can_use_full_top_rectangle_for_orientation(self):
+        from workstation.perception.cuboid_pose import fit_cuboid_pose
+        m=fit_cuboid_pose(self.packet,self.scene,CENTRE,np.eye(3),SIZE,self.priors,
+                          allow_grasp_translation=True)
+        rectangle=dict(measured_xy_m=list(SIZE[:2]),hull_fraction=.96)
+        evidence=dict(m,tape_direction=None,top_rectangle=rectangle)
+        self.assertTrue(grasp_constrained_cuboid_supported(evidence,1.))
+        self.assertFalse(measured_cuboid_supported(evidence,1.))
+        self.assertFalse(grasp_constrained_cuboid_supported(evidence,1.2))
+        self.assertFalse(grasp_constrained_cuboid_supported(
+            dict(evidence,top_rectangle=dict(rectangle,hull_fraction=.6)),1.))
+
     def test_two_views_can_reacquire_shifted_top_but_one_view_cannot(self):
         from workstation.perception.held_surface import reacquire_tilted_top
         def reacquire(scene, shift):
