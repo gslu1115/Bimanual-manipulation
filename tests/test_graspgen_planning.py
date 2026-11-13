@@ -46,6 +46,20 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertIn('GRASP_OFF_CENTRE',reject)
         np.testing.assert_array_equal(self.pose[:3,3],self.obj.position_m)
 
+    def test_wrist_view_change_renews_pose_only_for_one_stationary_carton(self):
+        from workstation.diagnostics.graspgen_pair import renew_view_candidate
+        c=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        t=self.obj.time_s+.1
+        obj=replace(self.obj,track_id='new',time_s=t,velocity_m_s=(0.,0.,0.))
+        scene=replace(self.scene,objects=(obj,),observation_time_s=t,assembled_time_s=t)
+        refreshed=renew_view_candidate(c,scene,{'scene_camera':18})
+        self.assertEqual((refreshed.target_id,refreshed.validated_time_s),('new',t))
+        self.assertEqual((refreshed.position_m,refreshed.candidate_id),(c.position_m,c.candidate_id))
+        with self.assertRaisesRegex(RuntimeError,'PAIR_TARGET_LOST'):
+            renew_view_candidate(c,replace(scene,objects=(obj,replace(obj,track_id='other'))),{})
+        with self.assertRaisesRegex(RuntimeError,'MODEL_TARGET_CHANGED'):
+            renew_view_candidate(c,replace(scene,objects=(replace(obj,velocity_m_s=(.1,0,0)),)),{})
+
     def test_full_opening_retains_uncertainty_and_minimum_clearance(self):
         full=replace(self.obj,posture='UPRIGHT',visibility='COMPLETE_TOP',
                      size_m=(.12,.070,.055),uncertainty_m=.003)

@@ -14,6 +14,18 @@ from workstation.planning.selection import assess
 from workstation.planning.task_targets import ConveyorSlots
 
 
+def renew_view_candidate(candidate,scene,seq):
+    """Reconnect a model pose to a unique fresh observation after wrist motion."""
+    source=candidate.metadata['source_visual_object']
+    matches=[o for o in scene.objects if o.track_id==candidate.target_id]
+    if not matches:
+        matches=[o for o in scene.objects if
+            np.linalg.norm(np.asarray(o.position_m)-source['position_m'])<=.002
+            and np.allclose(o.size_m,source['size_m'],atol=1e-6,rtol=0)]
+    if len(matches)!=1:raise RuntimeError('PAIR_TARGET_LOST')
+    return revalidate_candidate(replace(candidate,target_id=matches[0].track_id),matches[0],scene,seq)
+
+
 def preferred_assignments(targets, bases):
     """Assign both cartons to distinct arms with the shortest total XY reach."""
     left,right=sorted(bases)
@@ -194,9 +206,11 @@ def check_pair(env, args, packet, scene, estimator):
     estimator.robot_filter_factory=robot.prepare_observed_robot_filter
     robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
     slots = ConveyorSlots(env.c)
+    destinations=[slots.positions[i] for i in env.c.get('pair_slot_indices',range(len(slots.positions)))]
+    report['eligible_destinations']=destinations
     slots.observe(robot.observed_workspace)
     report['slots_initial'] = slots.report()
-    available = [xy for xy in slots.positions if slots.states[xy] == 'free']
+    available = [xy for xy in destinations if slots.states[xy] == 'free']
     if len(available) < 2:fail('TWO_OBSERVED_FREE_SLOTS_REQUIRED')
     calibration=verify(env,robot,isaac_root(),args.graspgen_assets)
     proxy=GraspGenProxy(args.graspgen_proxy)
@@ -215,6 +229,7 @@ def check_pair(env, args, packet, scene, estimator):
             pick_failures[c.candidate_id]=result
         return result
     for attempt in range(1,8):
+        retained={}
         preferred=preferred_assignments(targets,robot.base_config)
         feasible={(r.candidate.target_id,r.candidate.arm) for r in rows if r.feasible}
         missing=[o for o in targets if (o.track_id,preferred[o.track_id]) not in feasible]
@@ -243,16 +258,22 @@ def check_pair(env, args, packet, scene, estimator):
                 robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
                 states=robot.read_states()
                 slots.observe(robot.observed_workspace)
-                available=[xy for xy in slots.positions if slots.states[xy]=='free']
+                available=[xy for xy in destinations if slots.states[xy]=='free']
                 targets=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and pose_is_observed(o,scene)]
                 if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
+                old={row.candidate.candidate_id:row.candidate for row in rows if row.feasible}
                 rows.clear()
                 pick_failures.clear()
                 seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
-                missing=[]
+                for candidate in old.values():
+                    try:renewed=renew_view_candidate(candidate,scene,seq)
+                    except RuntimeError:continue
+                    retained.setdefault(renewed.target_id,[]).append(renewed)
+                observation['revalidated_prior_proposals']=sum(map(len,retained.values()))
+                missing=[o for o in targets if o.track_id not in retained]
                 break
         requested=missing or targets
-        candidates={}
+        candidates=retained
         for obj in requested:
             # A distant camera and a near wrist see different faces. On retry
             # draw from different actual views of the missing carton, keeping
@@ -268,8 +289,14 @@ def check_pair(env, args, packet, scene, estimator):
                  math.pi-obj.axis_yaw_rad,-math.pi/2-obj.axis_yaw_rad)[attempt-1]
             clouds=visual_clouds(packet,source_scene,obj.track_id)
             if attempt>=3:clouds=balance_visible_surfaces(clouds,obj)
-            result=infer_rotated_view(proxy,clouds,args.num_grasps,yaw)
-            proposals=candidates_from_result(result,obj,states,calibration,seq)
+            proposals=[]
+            for sample in range(3):
+                basis=yaw+sample*math.pi*2/3
+                result=infer_rotated_view(proxy,clouds,args.num_grasps,basis)
+                proposals.extend(candidates_from_result(result,obj,states,calibration,seq))
+                report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
+                    attempt=attempt,mask_refs=list(refs),basis_yaw_rad=basis,
+                    observed_input_points=len(clouds.target_m),raw_grasps=len(result['scores'])))
             checked=[]
             for c in proposals:
                 reasons=c.rejection_reasons
@@ -280,10 +307,19 @@ def check_pair(env, args, packet, scene, estimator):
                     if balance['offset_m']>.5*balance['half_extent_m']:
                         reasons+=('ECCENTRIC_PAIRED_LIFT',)
                 checked.append(replace(c,rejection_reasons=reasons))
-            candidates[obj.track_id]=checked
-            report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
-                                                 attempt=attempt,mask_refs=list(refs),basis_yaw_rad=yaw,
-                                                 observed_input_points=len(clouds.target_m),raw_grasps=len(result['scores'])))
+            # Each full-pose check forecasts approach, lift and placement.
+            # Try balanced pinches first on the nearer arm. Keep the other
+            # arm eligible in later rounds when the local lane has failed.
+            allowed=[c for c in checked if not c.rejection_reasons]
+            def pinch_cost(c):
+                opening=c.metadata['opening']
+                offset=visual_pinch_balance(c,obj)['penalty']
+                depth=opening.get('estimated_tip_engagement_m',0.)/obj.size_m[2]
+                return offset+abs(depth-.45)+abs(opening['centre_offset_m'])/.02
+            for arm in states:
+                if attempt<=4 and arm!=preferred.get(obj.track_id):continue
+                ordered=sorted((c for c in allowed if c.arm==arm),key=pinch_cost)
+                candidates.setdefault(obj.track_id,[]).extend(ordered[:4])
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
@@ -327,20 +363,10 @@ def check_pair(env, args, packet, scene, estimator):
             for a in rows:
                 c=a.candidate
                 if c.candidate_id not in selected or a.terms['slot_xy']!=assigned_slots[c.arm]:continue
-                matches=[o for o in updated.objects if o.track_id==c.target_id]
-                if returned and not matches:
-                    # IDs may expire while the empty wrist returns. Admit one
-                    # unique measured, stationary carton at the original 3-D
-                    # centre and size; revalidate its full angle and velocity.
-                    source=c.metadata['source_visual_object']
-                    matches=[o for o in updated.objects if
-                        np.linalg.norm(np.asarray(o.position_m)-source['position_m'])<=.002
-                        and np.allclose(o.size_m,source['size_m'],atol=1e-6,rtol=0)]
-                    if len(matches)==1:
-                        report.setdefault('reidentified_after_view',{})[c.target_id]=matches[0].track_id
-                        c=replace(c,target_id=matches[0].track_id)
-                if len(matches)!=1:raise RuntimeError('PAIR_TARGET_LOST')
-                new[c.target_id]=[revalidate_candidate(c,matches[0],updated,seq)]
+                renewed=renew_view_candidate(c,updated,seq)
+                if renewed.target_id!=c.target_id:
+                    report.setdefault('reidentified_after_view',{})[c.target_id]=renewed.target_id
+                new[renewed.target_id]=[renewed]
             slots.observe(robot.observed_workspace)
             if any(slots.states[xy]!='reserved' for xy in assigned_slots.values()):
                 raise RuntimeError('RESERVED_SLOT_CHANGED')

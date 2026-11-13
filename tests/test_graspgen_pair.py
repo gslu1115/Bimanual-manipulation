@@ -72,6 +72,18 @@ class PairTests(unittest.TestCase):
         with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
             load_config(args,parser)
 
+    def test_pair_slot_subset_preserves_physical_conveyor_and_requires_distinct_lanes(self):
+        import contextlib, io
+        from workstation.app import build_parser,load_config
+        parser=build_parser()
+        args=parser.parse_args(['--mode','graspgen-pair-place','--pair-slots','0','1'])
+        config=load_config(args,parser)
+        self.assertEqual(config['pair_slot_indices'],[0,1])
+        self.assertEqual(len(config['conveyor']['slots_xy']),3)
+        args.pair_slots=[1,1]
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            load_config(args,parser)
+
     def test_both_commands_share_one_physics_tick_and_overlap_uses_encoders(self):
         arms=('panda_left','panda_right')
         measured={a:np.zeros(7) for a in arms}

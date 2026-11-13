@@ -76,6 +76,8 @@ def build_parser():
     parser.add_argument('--wrist-focal-length-mm',type=float,
                         help='INITIAL optics experiment for both existing wrist cameras, 10..30mm')
     parser.add_argument('--max-items',type=int,default=3,help='visual-sort only: requested number of visually verified slots')
+    parser.add_argument('--pair-slots',nargs=2,type=int,metavar=('FIRST','SECOND'),
+                        help='Paired modes: restrict destinations to two distinct zero-based conveyor slot indices')
     parser.add_argument('--scene-view',choices=('front','rear','overhead','west'),default='front',
                         help='Explicit INITIAL camera installation experiment; no runtime camera pose writes')
     parser.add_argument('--right-wrist-view',choices=('default','cross-left','cross-left-offset'),default='default',
@@ -121,6 +123,11 @@ def load_config(args, parser):
     if args.mode=='visual-adjust' and args.grasp_backend!='graspgen':
         parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
+    if args.pair_slots is not None:
+        indices=args.pair_slots
+        if not pair_mode or len(set(indices))!=2 or any(i<0 or i>=len(config['conveyor']['slots_xy']) for i in indices):
+            parser.error('--pair-slots requires paired mode and two distinct configured slot indices')
+        config['pair_slot_indices']=indices
     requested_boxes=getattr(args,'box_set',None)
     if getattr(args,'save_showcase',False) and args.mode!='scene':
         parser.error('--save-showcase requires --mode scene')
