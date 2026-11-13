@@ -49,7 +49,7 @@ def stationary_slot_tracks(workspace, scene, positions):
 
 def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
     """Enclose all centres consistent with a clipped stationary carton at its observed lane."""
-    from workstation.perception.cuboid_pose import fit_cuboid_pose, reference_constrained_cuboid_supported
+    from workstation.perception.cuboid_pose import fit_cuboid_pose, measured_cuboid_supported, reference_constrained_cuboid_supported
     from workstation.perception.rgbd_cartons import deproject
     yaw=reference['axis_yaw_rad'];c,s=math.cos(yaw),math.sin(yaw)
     prior_rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
@@ -57,22 +57,37 @@ def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
     fit=fit_cuboid_pose(packet,scene,reference['position_m'],prior_rotation,size,priors,
                         allow_reference_translation=True)
     masks=[ref for obj in fragments for ref in obj.mask_refs]
-    if (not fragments or not reference_constrained_cuboid_supported(fit,packet.observation_time_s)
-            or len(fit['observed_face_axes'])<2 or set(fit['mask_refs'])!=set(masks)
-            or len(masks)!=len(set(masks)) or len({r.split('/')[0] for r in masks})!=len(masks)):return None
-    rotation=np.asarray(fit['rotation']);centre=np.asarray(fit['position_m'])
-    axis,=fit['predicted_translation_axes']
-    values=[]
-    for ref in fit['mask_refs']:
-        frame=packet.cameras[ref.split('/')[0]]
-        points=deproject(frame)[scene.masks[ref]&frame.valid_depth]
-        values.append((points-centre)@rotation[:,axis])
-    low,high=np.quantile(np.concatenate(values),[.002,.998])
-    margin=fit['uncertainty_m']
-    lower,upper=high-size[axis]/2-margin,low+size[axis]/2+margin
-    if lower>upper or lower>margin or upper < -margin:return None
-    centre=centre+rotation[:,axis]*(lower+upper)/2
-    extent=size.copy();extent[axis]+=upper-lower
+    if (not masks or len(set(masks))!=len(masks) or len({r.split('/')[0] for r in masks})!=len(masks)):return None
+    full=measured_cuboid_supported(fit,packet.observation_time_s)
+    if full or reference_constrained_cuboid_supported(fit,packet.observation_time_s):
+        if set(fit['mask_refs'])!=set(masks):return None
+        rotation=np.asarray(fit['rotation']);centre=np.asarray(fit['position_m'])
+        if full:
+            if np.linalg.norm(centre-reference['position_m'])>.005:return None
+            axis=None
+        else:
+            if len(fit['observed_face_axes'])<2:return None
+            axis,=fit['predicted_translation_axes']
+        margin=fit['uncertainty_m']
+        face_axes=fit['observed_face_axes']
+    else:
+        side=parked_side_with_top(packet,scene,reference,masks,priors)
+        if side is None:return None
+        centre,rotation,axis,margin=side
+        face_axes=[1-axis,2]
+    extent=size.copy();interval=None
+    if axis is not None:
+        values=[]
+        for ref in masks:
+            frame=packet.cameras[ref.split('/')[0]]
+            points=deproject(frame)[scene.masks[ref]&frame.valid_depth]
+            values.append((points-centre)@rotation[:,axis])
+        low,high=np.quantile(np.concatenate(values),[.002,.998])
+        lower,upper=high-size[axis]/2-margin,low+size[axis]/2+margin
+        if lower>upper or lower>margin or upper < -margin:return None
+        centre=centre+rotation[:,axis]*(lower+upper)/2
+        extent[axis]+=upper-lower
+        interval=[lower,upper]
     world=np.abs(rotation)@(extent+2*margin)
     # A proven X separation from BOTH destination corridors, including the
     # 90 mm slot query radius, even at the extremes of the hidden coordinate.
@@ -83,12 +98,48 @@ def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
         quality={**obj.quality,'geometric_length_m':world[0],'geometric_width_m':world[1],
                  'observed_height_m':world[2]})
     return bounded,dict(track_id=obj.track_id,fragment_tracks=[o.track_id for o in fragments],
-        time_s=packet.observation_time_s,mask_refs=fit['mask_refs'],
-        observed_face_axes=fit['observed_face_axes'],bounded_axis=axis,offset_interval_m=[lower,upper],
+        time_s=packet.observation_time_s,mask_refs=masks,
+        observed_face_axes=face_axes,bounded_axis=axis,offset_interval_m=interval,
         collision_center_m=centre.tolist(),collision_size_m=world.tolist())
 
 
-def parked_top_still_visible(packet,reference,mask_refs=(),masks=None):
+def parked_side_with_top(packet,scene,reference,refs,priors):
+    """A whole vertical side patch and a separate camera's top returns bound a parked obstacle."""
+    from workstation.perception.cuboid_pose import _plane_patch
+    from workstation.perception.rgbd_cartons import deproject
+    if (scene.observation_time_s!=packet.observation_time_s or
+            not 0<=packet.assembled_time_s-packet.observation_time_s<=priors.max_age_s):return None
+    if len(refs)!=1:return None
+    ref,=refs;name=ref.split('/')[0];frame=packet.cameras.get(name)
+    if frame is None or packet.camera_status.get(name)!='OK' or frame.sample_time_s!=packet.observation_time_s:return None
+    mask=scene.masks[ref]
+    if not mask.any() or frame.valid_depth[mask].mean()<.95:return None
+    points=deproject(frame)[mask&frame.valid_depth]
+    centre=np.array(reference['position_m']);size=np.asarray(reference['size_m'])
+    yaw=reference['axis_yaw_rad'];c,s=math.cos(yaw),math.sin(yaw)
+    prior=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+    local=(points-centre)@prior
+    margin=max(.004,priors.optical_depth_error_margin_m)
+    if np.mean(np.all(np.abs(local)<=size/2+margin,axis=1))<.95:return None
+    for axis in (0,1):
+        fit=_plane_patch(points,prior[:,axis])
+        if fit is None:continue
+        normal,residual=fit
+        if residual>.001 or abs(normal[2])>.035 or normal@prior[:,axis]<math.cos(math.radians(3)):continue
+        direction=normal.copy();direction[2]=0;direction/=np.linalg.norm(direction)
+        up=np.array([0.,0.,1.])
+        rotation=(np.column_stack((direction,np.cross(up,direction),up)) if axis==0 else
+                  np.column_stack((np.cross(direction,up),direction,up)))
+        offsets=(points-centre)@rotation
+        level=np.median(offsets[:,axis])
+        if abs(abs(level)-size[axis]/2)>margin:continue
+        if np.any(np.ptp(np.quantile(offsets[:,[1-axis,2]],[.05,.95],axis=0),axis=0)<.012):continue
+        if not parked_top_still_visible(packet,reference,exclude_camera=name):continue
+        return centre+direction*(level-np.sign(level)*size[axis]/2),rotation,1-axis,margin
+    return None
+
+
+def parked_top_still_visible(packet,reference,mask_refs=(),masks=None,*,exclude_camera=None):
     """Require a connected depth patch at the previously observed top inside its footprint."""
     import cv2
     from workstation.perception.rgbd_cartons import deproject
@@ -100,6 +151,7 @@ def parked_top_still_visible(packet,reference,mask_refs=(),masks=None):
     if len(selected)!=len(mask_refs):return False
     if any(name not in packet.cameras for name in selected):return False
     for name,f in packet.cameras.items():
+        if name==exclude_camera:continue
         if selected and name not in selected:continue
         if f is None or packet.camera_status.get(name)!='OK' or f.sample_time_s!=packet.observation_time_s:
             if selected:return False
@@ -521,7 +573,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     for a in arms:
         proof = confirm_target(a,packet,closed=True)
         scene=reconcile_preclose_target(estimator,scene,proof)
-        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors)
+        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors,packet=packet)
         release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
         measure_held(a,packet)
     robot.set_observation(packet,scene,priors)
@@ -626,7 +678,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 proof=confirm_target(a,packet,closed=True)
                 scene=reconcile_preclose_target(estimator,scene,proof)
                 objects[a]=references[a].obj
-                trackers[a]=CuboidHoldingTracker.from_preclose_support(objects[a],proof,*robot.fk(a),priors)
+                trackers[a]=CuboidHoldingTracker.from_preclose_support(objects[a],proof,*robot.fk(a),priors,packet=packet)
                 release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
                 for b in arms:measure_held(b,packet)
                 tcp,rot=robot.fk(a)

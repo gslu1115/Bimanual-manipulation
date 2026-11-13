@@ -43,6 +43,32 @@ class GraspConstrainedCarryTests(unittest.TestCase):
         self.assertFalse(parked_top_still_visible(p,dict(r,position_m=CENTRE+[0,0,.1])))
         self.assertFalse(parked_top_still_visible(replace(p,observation_time_s=2.),r))
 
+    def test_one_side_mask_needs_a_separate_current_top_view(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_surface_envelope
+        p,s=synthetic_observation(np.eye(3),views=([0.,-.101,1.35],[-.32,-.10,1.08]))
+        ref=next(ref for ref in s.masks if not ref.startswith('scene_camera/'))
+        frame=p.cameras[ref.split('/')[0]];xyz=deproject(frame)
+        mask=s.masks[ref] & (np.abs(xyz[:,:,0]-CENTRE[0]+SIZE[0]/2)<.001) & (xyz[:,:,2]<CENTRE[2]+.015)
+        s=replace(s,masks={ref:mask});obj=visual_object(s,np.eye(3))
+        reference=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        def bound(packet):return parked_surface_envelope(packet,s,reference,[obj],PRIORS,[(.3,-.1)])
+        proxy,proof=bound(p)
+        self.assertEqual(proof['bounded_axis'],1)
+        self.assertIsNone(proxy.measured_cuboid)
+        cameras=dict(p.cameras);cameras['scene_camera']=None
+        status=dict(p.camera_status);status['scene_camera']='MISSING'
+        self.assertIsNone(bound(replace(p,cameras=cameras,camera_status=status)))
+
+    def test_two_fragments_may_independently_measure_the_whole_parked_pose(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_surface_envelope
+        p,s=synthetic_observation(np.eye(3),views=([0.,-.45,1.28],[-.32,-.10,1.08]))
+        reference=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        fragments=[replace(visual_object(s,np.eye(3)),track_id=ref,mask_refs=(ref,)) for ref in s.masks]
+        proxy,proof=parked_surface_envelope(p,s,reference,fragments,PRIORS,[(.3,-.1)])
+        self.assertIsNone(proof['bounded_axis'])
+        self.assertEqual(set(proxy.mask_refs),set(s.masks))
+        self.assertIsNone(parked_surface_envelope(p,s,reference,fragments,PRIORS,[CENTRE[:2]]))
+
     def test_occlusion_requires_foreground_in_multiple_views_and_no_contradictory_ray(self):
         from workstation.diagnostics.graspgen_pair_place import parked_top_occluded
         p,_=self.partial()

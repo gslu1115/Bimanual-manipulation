@@ -186,6 +186,19 @@ class PreCloseTargetTests(unittest.TestCase):
         return replace(self.packet,cameras={name:None for name in self.packet.cameras},
             camera_status={name:'MISSING' for name in self.packet.cameras})
 
+    def test_postclose_full_pose_is_reused_only_for_the_same_exposure_once(self):
+        p,s=synthetic_observation(np.eye(3))
+        check=PreCloseTarget(self.reference,self.reference_scene,self.priors)
+        proof=check.confirm(p,s,closed=True)
+        self.assertTrue(proof['full_pose_measured'])
+        tcp=CENTRE+[0.,0.,.009];rotation=np.diag([1.,-1.,-1.])
+        def tracker():
+            return CuboidHoldingTracker.from_preclose_support(self.reference,proof,tcp,rotation,self.priors,packet=p)
+        t=tracker()
+        self.assertTrue(t.observe(p,s,tcp,rotation)['current_postclose_surface_reused'])
+        self.assertFalse(t.observe(p,s,tcp,rotation).get('current_postclose_surface_reused',False))
+        self.assertIsNone(tracker().observe(self.missing_packet(),s,tcp,rotation))
+
     def test_current_packaging_conflict_and_ambiguous_reference_rejected(self):
         conflict=replace(self.reference,time_s=1.,posture='SIDE')
         self.assertFalse(self.check.confirm(self.packet,replace(self.scene,objects=(conflict,)))['supported'])

@@ -339,7 +339,7 @@ class CuboidHoldingTracker:
     This supplements the accepted upright observer; it does not replace it.
     """
     @classmethod
-    def from_preclose_support(cls,reference,proof,tcp_position,tcp_rotation,priors):
+    def from_preclose_support(cls,reference,proof,tcp_position,tcp_rotation,priors,*,packet=None):
         """Latch only after physical close, retaining the stationary-axis assumption."""
         from workstation.perception.preclose_target import preclose_supported
         from workstation.planning.graspgen_candidates import upright_body_rotation
@@ -359,6 +359,8 @@ class CuboidHoldingTracker:
             'pregrasp semantic hypothesis; current close surfaces support geometry') for hyp in reference.hypotheses)
         tracker.relative_rotation=r.T@body;tracker.initial_z=float(centre[2])
         tracker.uncertainty_m=max(tracker.uncertainty_m,m['uncertainty_m'])
+        if packet is not None and m['geometric_pose_measured'] and m['time_s']==packet.observation_time_s:
+            tracker._closed_surface=(packet,m)
         return tracker
 
     def __init__(self,obj,tcp_position,tcp_rotation,size_m,priors,*,allow_grasp_translation=False):
@@ -384,6 +386,7 @@ class CuboidHoldingTracker:
         self.initial_z=float(obj.position_m[2]);self.last_failure=None
         self._fit_reference=None
         self._transfer_reference=None
+        self._closed_surface=None
 
     def remember_transfer_geometry(self,tcp,rotation,measurement):
         """Preserve the lift waypoint fit as a second correspondence hint."""
@@ -404,8 +407,16 @@ class CuboidHoldingTracker:
         offset=self.offset if reference is None else reference['offset']
         relative=self.relative_rotation if reference is None else reference['relative_rotation']
         hint=tcp+r@offset;body_hint=r@relative
-        measured=fit_cuboid_pose(packet,scene,hint,body_hint,self.size,self.priors,
-                                allow_grasp_translation=self.allow_grasp_translation)
+        closed_surface=self._closed_surface
+        self._closed_surface=None
+        if (closed_surface is not None and closed_surface[0] is packet and packet.observation_time_s==scene.observation_time_s
+                and scene.frame=='workcell' and 0<=packet.assembled_time_s-packet.observation_time_s<=self.priors.max_age_s
+                and all(ref in scene.masks for ref in closed_surface[1]['mask_refs'])):
+            measured=dict(closed_surface[1])
+            measured['current_postclose_surface_reused']=True
+        else:
+            measured=fit_cuboid_pose(packet,scene,hint,body_hint,self.size,self.priors,
+                                    allow_grasp_translation=self.allow_grasp_translation)
         backup=getattr(self,'_transfer_reference',None)
         if (measured['status']=='UNKNOWN' and backup is not None and
                 0<packet.observation_time_s-backup['time_s']<=5.):

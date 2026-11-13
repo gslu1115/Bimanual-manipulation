@@ -71,7 +71,7 @@ class CuMotionPickPlace(VisualPickPlace):
             raise RuntimeError('CLOSED_TARGET_SURFACES_UNSUPPORTED')
         tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
         self.hold_tracker=CuboidHoldingTracker.from_preclose_support(self.preclose_reference.obj,proof,
-            tcp,rotation,self.priors)
+            tcp,rotation,self.priors,packet=self.packet)
         self.release_tracker=HeldSurfaceTracker.from_preclose_support(proof,tcp,rotation,self.packet.observation_time_s)
         self.robot.held_visual_geometry=dict(arm=self.arm,target_id=self.candidate.target_id,
             allow_grasp_translation=True,offset=self.hold_tracker.offset.copy(),
