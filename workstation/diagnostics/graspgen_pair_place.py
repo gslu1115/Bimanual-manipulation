@@ -7,9 +7,30 @@ from workstation.observations.camera_geometry import pose_matrix, quaternion_fro
 from workstation.perception.held_surface import CuboidHoldingTracker
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors
-from workstation.planning.collision import AABB, sphere_box_clearance
+from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres
 from workstation.skills.cumotion_pick_place import placement_goal
-from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps
+from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps, synchronized_knots
+
+
+def transfer_schedule(robot,paths,payload_guard):
+    """Choose a clear timing of the same two verified spatial paths before moving."""
+    arms=('panda_left','panda_right')
+    for delay,waiting in [(0.,0),(.35,0),(.35,1),(.7,0),(.7,1),(1.,0),(1.,1)]:
+        scheduled=list(paths)
+        if delay:
+            for i,path in enumerate(paths):
+                wait=[path[0] if i==waiting else path[-1]]*math.ceil((len(path)-1)*delay)
+                scheduled[i]=wait+list(path) if i==waiting else list(path)+wait
+        try:
+            for left,right in synchronized_knots(*scheduled,max_step=.015):
+                reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None,
+                                       margin=.008)
+                if reason:raise RuntimeError(reason)
+                payload_guard(left,right)
+        except RuntimeError:
+            continue
+        return scheduled,dict(delayed_arm=arms[waiting] if delay else None,delay_fraction=delay)
+    raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
 
 
 def place_pair(env, robot, estimator, scene, pair, slots, report):
@@ -104,8 +125,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             paths.append(path)
         # Final Cartesian contact is verified below in metres/radians. The
         # per-step 0.04 rad stop and actual two-arm collision checks stay active.
+        if phase=='transfer':
+            paths,report['transfer_schedule']=transfer_schedule(robot,paths,carried_clearance)
         phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None,
-                                              following_band=.035 if contact else .025)
+                                              following_band=.035 if contact else .025,require_overlap=phase!='transfer')
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))

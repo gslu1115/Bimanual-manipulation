@@ -65,7 +65,13 @@ def paired_pregrasp(robot, rows, states, scene):
     pairs = [(left, right) for left, right in product(*feasible)
              if left.candidate.target_id != right.candidate.target_id
              and ('slot_xy' not in left.terms or left.terms['slot_xy'] != right.terms['slot_xy'])]
-    pairs.sort(key=lambda pair: -(pair[0].score+pair[1].score))
+    def slot_cost(pair):
+        # Prefer independent lanes when free. The centre remains available
+        # to either arm when a side lane is occupied or unreachable.
+        return sum(abs(row.candidate.metadata.get('source_visual_object',{}).get(
+                       'position_m',row.candidate.position_m)[0]-row.terms['slot_xy'][0])
+                   for row in pair if row.terms.get('slot_xy') is not None)
+    pairs.sort(key=lambda pair: (slot_cost(pair),-(pair[0].score+pair[1].score)))
     paths = {}
     rejected = []
     for pair in pairs:
@@ -98,7 +104,8 @@ def paired_pregrasp(robot, rows, states, scene):
     return None, rejected
 
 
-def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.):
+def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.,
+                          require_overlap=True):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
@@ -119,7 +126,11 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         for i,(a,q) in enumerate(zip(arms,desired)):
             robot.targets[a][:7]=q
             if hasattr(robot,'command_velocities'):
-                robot.command_velocities(a,np.r_[np.clip((q-commanded[i])/robot.dt,
+                feedforward=(q-commanded[i])/robot.dt
+                # Follow the measured arm through the waypoint, including a
+                # bounded correction while its partner waits on the same tick.
+                correction=np.clip(6.*(commanded[i]-previous[i]),-.15,.15)
+                robot.command_velocities(a,np.r_[np.clip(feedforward+correction,
                     -robot.joint_speed,robot.joint_speed),0.,0.])
         commanded=desired.copy()
         robot.tick()
@@ -154,7 +165,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
     for _ in range(math.ceil(.3/robot.dt)):
         advance(np.asarray([p[-1] for p in paths]))
     moved=np.max(np.abs(previous-start),axis=1)
-    if not overlap or np.min(moved)<.04:raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
+    if (require_overlap and not overlap) or np.min(moved)<.04:raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
     return dict(ticks=ticks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
                 arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace)
 

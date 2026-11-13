@@ -10,6 +10,22 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_crossing_transfer_can_wait_and_rejects_blocked_endpoints(self):
+        from workstation.diagnostics.graspgen_pair_place import transfer_schedule
+        def spheres(arm,q):
+            p=[q[0],0,0] if arm=='panda_left' else [0,q[0],0]
+            return [(0,np.array(p),.025)]
+        robot=SimpleNamespace(spheres=spheres)
+        path=[np.full(7,x) for x in np.linspace(-.3,.3,21)]
+        scheduled,detail=transfer_schedule(robot,[path,path],lambda l,r:None)
+        self.assertGreater(detail['delay_fraction'],0.)
+        for original,timed in zip((path,path),scheduled):
+            np.testing.assert_array_equal(original[0],timed[0])
+            np.testing.assert_array_equal(original[-1],timed[-1])
+        blocked=path[:11]
+        with self.assertRaisesRegex(RuntimeError,'NO_CLEAR'):
+            transfer_schedule(robot,[blocked,blocked],lambda l,r:None)
+
     def test_resampling_uses_distinct_nearby_arms_and_actual_side_points(self):
         from workstation.diagnostics.graspgen_pair import preferred_assignments,balance_visible_surfaces
         from workstation.models.graspgen_client import VisualClouds
