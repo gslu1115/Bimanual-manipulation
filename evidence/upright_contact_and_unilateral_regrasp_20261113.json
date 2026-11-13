@@ -1,0 +1,1254 @@
+{
+  "date": "2026-11-13",
+  "last_controller_commit": "c06933e",
+  "scope": "Headless Isaac Sim 6.1, Panda GraspGen, one upright carton or two separated upright cartons. Controller changes were made during these development trials. Count the first scene attempt once, keep repeats separate.",
+  "batches": {
+    "212529": "GPU 0. Initial ranking, alternate approach and slip detection. Stopped when another user's workload appeared; exit 75 for the unstarted next case is not a manipulation failure.",
+    "213914": "GPU 1. Retained Cartesian setpoint during closing. Matched 456 original proposals for initial grasp, fresh model for a retry. Right-arm 7804 explicitly picks in the right half and places in the right lane. The original 7802 task uses the left lane and allows arm choice.",
+    "215140": "GPU 1. Measured oriented target collision box and table-height reacquisition. Fresh 7804 is an independent model draw.",
+    "215531": "GPU 1. Associate released carton identity on the current RGB-D frame before retreat.",
+    "215920": "GPU 1. Test-lift search along gravity using two views.",
+    "220331": "GPU 1. Post-release association accepts a current stationary-reference fit.",
+    "220829": "GPU 1. Independent visual reference renewal during the unilateral return to pregrasp and approach. Matched original 456 proposals, followed by actual online GraspGen sampling for right arm only."
+  },
+  "scoring": {
+    "single": "Four distinct first attempts. 7801 and 7803 passed at first attempt; 7802 and 7804 passed on later fresh runs after targeted changes. Three small sizes. Right-arm verification used the right lane for 7804.",
+    "pair": "456, 458 and 471 fresh online first attempts: 3/3. 456 and 458 are prior development scenes. The historical slip pose replay is excluded from this count.",
+    "timing": "Pair wall_s: first pregrasp motion through final placement verification or stop. Single single_action_to_verification_s: PREGRASP event through DONE/FAILED; wall_s for single ends at home/stop before placement verification. Excludes initial perception/planning.",
+    "comparison": "Historical 456 right-arm pinches scored 0.912 (slipped) and 0.074 (completed) on the new contact cost, both near-zero on prior eccentricity. This two-pose diagnostic does not estimate changes in success rate.",
+    "failure_replay": "The final matched run recovered after one right-only regrasp. Left-arm endpoint displacement per recovery motion segment was about 0.0034 rad. Original right slip lag was 10.07 then 10.75 mm, the replacement lag was 0.052 mm. Measured dual-arm transfer overlap 6.892 sim seconds. Earlier failed replays retained.",
+    "coverage_limits": "No physical trial in this cohort exercised alternate-candidate IK fallback before closure or stand-alone single-arm post-slip recovery. No fixed-version randomized comparison yet.",
+    "cpu_tests_passed": 601
+  },
+  "runs": [
+    {
+      "run": "study-20261113-212529-pair-456",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "wall_s": 124.88461101800203,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": 7.058333333333334,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          0.955,
+          0.831
+        ],
+        "panda_right": [
+          0.153,
+          0.691
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.05934573691982459,
+            "visual_rise_m": 0.05957095457260775,
+            "lag_m": -0.00022521765278316064,
+            "finger_gap_m": 0.0549558587372303,
+            "gap_change_m": -0.000011788681149482727,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05971103839555392,
+            "visual_rise_m": 0.059581882468677794,
+            "lag_m": 0.00012915592687612332,
+            "finger_gap_m": 0.06000075861811638,
+            "gap_change_m": -0.00009885802865028381,
+            "suspect": false
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 6,
+      "model_pose_ids": [
+        "d85f943f8d8c4641822304040d04f51f:200:panda_left",
+        "05b0d5a9a1af4faabe57506236b82db6:109:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-212529-pair-458",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "wall_s": 189.72806920087896,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": 10.283333333333333,
+      "goals_xy_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          0.113,
+          0.472
+        ],
+        "panda_right": [
+          0.346,
+          0.424
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_wide",
+          "position": [
+            -0.19420080909873255,
+            -0.07193327277826636,
+            0.7915
+          ],
+          "orientation": [
+            0.2794167817581032,
+            0,
+            0,
+            -0.9601699131257678
+          ]
+        },
+        {
+          "size": "small_reference",
+          "position": [
+            0.17959506655543034,
+            -0.01268933313435875,
+            0.7865
+          ],
+          "orientation": [
+            0.8913018155785359,
+            0,
+            0,
+            0.45341049121784277
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.05983414153403954,
+            "visual_rise_m": 0.06125243544625225,
+            "lag_m": -0.0014182939122127092,
+            "finger_gap_m": 0.06500500068068504,
+            "gap_change_m": -0.0000029355287551879883,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05970906236917428,
+            "visual_rise_m": 0.05899560941724258,
+            "lag_m": 0.0007134529519317034,
+            "finger_gap_m": 0.055433548986911774,
+            "gap_change_m": -0.0003605969250202179,
+            "suspect": false
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 6,
+      "model_pose_ids": [
+        "9b840f371f8f4db0af0a84b383e5d0e7:213:panda_left",
+        "b6e5036d73e74b1384fad22b3508b436:107:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-212529-small_medium-7802",
+      "first_placement": false,
+      "success": false,
+      "failure": "CUMOTION:DESCEND_PICK timed out after 5.000 s (position error 0.0047 m, orientation error 0.0081 rad).",
+      "last_phase": "FAILED",
+      "wall_s": 15.151724725961685,
+      "single_action_to_verification_s": 17.334153058938682,
+      "active_arms": [
+        "panda_left"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_medium",
+          "position": [
+            0.21406645125033683,
+            -0.08516026675915603,
+            0.789
+          ],
+          "orientation": [
+            0.5299192642332049,
+            0,
+            0,
+            0.848048096156426
+          ]
+        }
+      ],
+      "initial_grip_checks": null,
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 1,
+      "model_pose_ids": [
+        "74f2567380584ccbb6c8e055bcda1ed6:20:panda_left"
+      ]
+    },
+    {
+      "run": "study-20261113-212529-small_reference-7801",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "DONE",
+      "wall_s": 48.703492134809494,
+      "single_action_to_verification_s": 52.009412162937224,
+      "active_arms": [
+        "panda_left"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          0.263,
+          0.791
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.1887925236575033,
+            -0.0885996922906622,
+            0.7865
+          ],
+          "orientation": [
+            0.9455185755993168,
+            0,
+            0,
+            0.3255681544571567
+          ]
+        }
+      ],
+      "initial_grip_checks": [
+        {
+          "tcp_rise_m": 0.05860864294222057,
+          "visual_rise_m": 0.06010099557210824,
+          "lag_m": -0.0014923526298876721,
+          "finger_gap_m": 0.055068761110305786,
+          "gap_change_m": -0.000004727393388748169,
+          "suspect": false
+        }
+      ],
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 1,
+      "model_pose_ids": [
+        "7cb79bb62f684dee90ab956cb0fe7c3c:206:panda_left"
+      ]
+    },
+    {
+      "run": "study-20261113-213914-matched-456",
+      "first_placement": false,
+      "success": false,
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "regrasp_lower",
+      "wall_s": 39.94781689485535,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.059895493598336125,
+            "visual_rise_m": 0.05986161686540381,
+            "lag_m": 0.00003387673293231419,
+            "finger_gap_m": 0.05490637756884098,
+            "gap_change_m": -9.741634130477905e-7,
+            "suspect": false
+          },
+          {
+            "tcp_rise_m": 0.05989510680141619,
+            "visual_rise_m": 0.059907662039337506,
+            "lag_m": -0.000012555237921318962,
+            "finger_gap_m": 0.05490642227232456,
+            "gap_change_m": -9.294599294662476e-7,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05965484993349002,
+            "visual_rise_m": 0.04958029511896789,
+            "lag_m": 0.01007455481452213,
+            "finger_gap_m": 0.06001449376344681,
+            "gap_change_m": -0.0015386659651994705,
+            "suspect": true
+          },
+          {
+            "tcp_rise_m": 0.05965370215644428,
+            "visual_rise_m": 0.04889915788127552,
+            "lag_m": 0.010754544275168754,
+            "finger_gap_m": 0.06002321280539036,
+            "gap_change_m": -0.0015299469232559204,
+            "suspect": true
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": {
+        "arm": "panda_right",
+        "parked_arm": "panda_left",
+        "success": false,
+        "original": "005414a95f164c6fa89fa9d8248a4243:0:panda_right"
+      },
+      "model_requests": 6,
+      "model_pose_ids": [
+        "9a7f384011684fcc986c295ae521fdef:0:panda_left",
+        "005414a95f164c6fa89fa9d8248a4243:0:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-213914-pair-471",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "wall_s": 171.34850693284534,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": 8.575,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          0.217,
+          -0.099
+        ],
+        "panda_right": [
+          0.314,
+          0.191
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20508102792918922,
+            -0.09887155554590499,
+            0.7865
+          ],
+          "orientation": [
+            0.3919180690289132,
+            0,
+            0,
+            -0.9200001234612135
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.22176562014857346,
+            -0.029600937194073466,
+            0.789
+          ],
+          "orientation": [
+            0.7827299142637739,
+            0,
+            0,
+            -0.622361535858881
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.0598237817547177,
+            "visual_rise_m": 0.06022986574768063,
+            "lag_m": -0.0004060839929629356,
+            "finger_gap_m": 0.05492960102856159,
+            "gap_change_m": 0.0000020489096641540527,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05988487070770809,
+            "visual_rise_m": 0.05940372750135481,
+            "lag_m": 0.000481143206353285,
+            "finger_gap_m": 0.05996432714164257,
+            "gap_change_m": -0.0002867095172405243,
+            "suspect": false
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 6,
+      "model_pose_ids": [
+        "cb60cd443a384985b610d84cc3039aba:208:panda_left",
+        "fa452eabc4a44b6b9aa1e8768acd577c:100:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-213914-small_medium-7802",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "DONE",
+      "wall_s": 52.31788240093738,
+      "single_action_to_verification_s": 55.78819208103232,
+      "active_arms": [
+        "panda_left"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          0.375,
+          -0.17
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_medium",
+          "position": [
+            0.21406645125033683,
+            -0.08516026675915603,
+            0.789
+          ],
+          "orientation": [
+            0.5299192642332049,
+            0,
+            0,
+            0.848048096156426
+          ]
+        }
+      ],
+      "initial_grip_checks": [
+        {
+          "tcp_rise_m": 0.05612848448291741,
+          "visual_rise_m": 0.05670302199558863,
+          "lag_m": -0.0005745375126712249,
+          "finger_gap_m": 0.06008145026862621,
+          "gap_change_m": -0.00048418156802654266,
+          "suspect": false
+        }
+      ],
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 2,
+      "model_pose_ids": [
+        "54839be951e34307b74508d55de283a1:113:panda_left"
+      ]
+    },
+    {
+      "run": "study-20261113-213914-small_reference-7804",
+      "first_placement": false,
+      "success": false,
+      "failure": "TARGET_BODY_COLLISION",
+      "last_phase": "DESCEND_PICK",
+      "wall_s": 14.972652950091287,
+      "single_action_to_verification_s": 17.005413646111265,
+      "active_arms": [
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            0.22091321096719924,
+            -0.04265604617305322,
+            0.7865
+          ],
+          "orientation": [
+            0.32556815445715676,
+            0,
+            0,
+            0.9455185755993167
+          ]
+        }
+      ],
+      "initial_grip_checks": null,
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 2,
+      "model_pose_ids": [
+        "b7d0e2e147cb43e1a07f12c33d178556:172:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-213914-small_wide-7803",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "DONE",
+      "wall_s": 57.44185646995902,
+      "single_action_to_verification_s": 61.027714600088075,
+      "active_arms": [
+        "panda_left"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          -0.358,
+          2.864
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_wide",
+          "position": [
+            -0.19507561735499107,
+            -0.023006638598075356,
+            0.7915
+          ],
+          "orientation": [
+            0.77162458338772,
+            0,
+            0,
+            0.636078220277764
+          ]
+        }
+      ],
+      "initial_grip_checks": [
+        {
+          "tcp_rise_m": 0.058034826107407844,
+          "visual_rise_m": 0.058170477148021815,
+          "lag_m": -0.00013565104061397104,
+          "finger_gap_m": 0.06503989174962044,
+          "gap_change_m": -0.000048357993364334106,
+          "suspect": false
+        }
+      ],
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 1,
+      "model_pose_ids": [
+        "86c25501754a49939bdbb51053f2bf80:125:panda_left"
+      ]
+    },
+    {
+      "run": "study-20261113-215140-matched-456",
+      "first_placement": false,
+      "success": false,
+      "failure": "STATIC_PATH_BLOCKED:visual_0023",
+      "last_phase": "regrasp_retreat",
+      "wall_s": 42.06169442599639,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.059895493598336125,
+            "visual_rise_m": 0.05990842944334607,
+            "lag_m": -0.000012935845009942604,
+            "finger_gap_m": 0.05490637756884098,
+            "gap_change_m": -9.741634130477905e-7,
+            "suspect": false
+          },
+          {
+            "tcp_rise_m": 0.05989510680141619,
+            "visual_rise_m": 0.05990765915957852,
+            "lag_m": -0.000012552358162332133,
+            "finger_gap_m": 0.05490642227232456,
+            "gap_change_m": -9.294599294662476e-7,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05965484993349002,
+            "visual_rise_m": 0.04958016882462457,
+            "lag_m": 0.010074681108865446,
+            "finger_gap_m": 0.06001449376344681,
+            "gap_change_m": -0.0015386659651994705,
+            "suspect": true
+          },
+          {
+            "tcp_rise_m": 0.05965370215644428,
+            "visual_rise_m": 0.04889728239637958,
+            "lag_m": 0.010756419760064695,
+            "finger_gap_m": 0.06002321280539036,
+            "gap_change_m": -0.0015299469232559204,
+            "suspect": true
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": {
+        "arm": "panda_right",
+        "parked_arm": "panda_left",
+        "success": false,
+        "original": "55c175031a364f2aa3a78d5769346a88:0:panda_right"
+      },
+      "model_requests": 6,
+      "model_pose_ids": [
+        "1b3c1c5cbb3d4140aca6dcccc0200dc5:0:panda_left",
+        "55c175031a364f2aa3a78d5769346a88:0:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-215140-small_reference-7804",
+      "first_placement": true,
+      "success": true,
+      "failure": null,
+      "last_phase": "DONE",
+      "wall_s": 65.66236725705676,
+      "single_action_to_verification_s": 70.49530800199136,
+      "active_arms": [
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_right": [
+          -0.241,
+          0.239
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            0.22091321096719924,
+            -0.04265604617305322,
+            0.7865
+          ],
+          "orientation": [
+            0.32556815445715676,
+            0,
+            0,
+            0.9455185755993167
+          ]
+        }
+      ],
+      "initial_grip_checks": [
+        {
+          "tcp_rise_m": 0.05872979982216231,
+          "visual_rise_m": 0.05805648068726388,
+          "lag_m": 0.0006733191348984313,
+          "finger_gap_m": 0.05496538057923317,
+          "gap_change_m": -0.0006359461694955826,
+          "suspect": false
+        }
+      ],
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 1,
+      "model_pose_ids": [
+        "296d114209034105b8491ae5c63f20fc:84:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-215531-matched-456",
+      "first_placement": false,
+      "success": false,
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "initial_lift",
+      "wall_s": 56.95618480513804,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.05989309019365985,
+            "visual_rise_m": 0.0599689447659183,
+            "lag_m": -0.00007585457225844916,
+            "finger_gap_m": 0.054901426658034325,
+            "gap_change_m": -0.0000018849968910217285,
+            "suspect": false
+          },
+          {
+            "tcp_rise_m": 0.05989260756570303,
+            "visual_rise_m": 0.059967829739447365,
+            "lag_m": -0.00007522217374433815,
+            "finger_gap_m": 0.05490138754248619,
+            "gap_change_m": -0.0000019241124391555786,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.059658932532533626,
+            "visual_rise_m": 0.04824666321476112,
+            "lag_m": 0.011412269317772505,
+            "finger_gap_m": 0.06001991778612137,
+            "gap_change_m": -0.0015829242765903473,
+            "suspect": true
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": null,
+      "model_requests": 6,
+      "model_pose_ids": [
+        "5a8da7ecba0d49ab81e48d835ebd9e2b:0:panda_left",
+        "b3ede74f961c4ba39cb08453eb7a34c4:0:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-215920-matched-456",
+      "first_placement": false,
+      "success": false,
+      "failure": "REGRASP_RELEASED_TARGET_UNCONFIRMED",
+      "last_phase": "regrasp_lower",
+      "wall_s": 69.45695636514574,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.059895493598336125,
+            "visual_rise_m": 0.05983211750940742,
+            "lag_m": 0.00006337608892870161,
+            "finger_gap_m": 0.05490637756884098,
+            "gap_change_m": -9.741634130477905e-7,
+            "suspect": false
+          },
+          {
+            "tcp_rise_m": 0.05989510680141619,
+            "visual_rise_m": 0.05990765987023605,
+            "lag_m": -0.000012553068819864954,
+            "finger_gap_m": 0.05490642227232456,
+            "gap_change_m": -9.294599294662476e-7,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05965484993349002,
+            "visual_rise_m": 0.049581684205233345,
+            "lag_m": 0.010073165728256672,
+            "finger_gap_m": 0.06001449376344681,
+            "gap_change_m": -0.0015386659651994705,
+            "suspect": true
+          },
+          {
+            "tcp_rise_m": 0.05965370215644428,
+            "visual_rise_m": 0.04890209773568166,
+            "lag_m": 0.010751604420762617,
+            "finger_gap_m": 0.06002321280539036,
+            "gap_change_m": -0.0015299469232559204,
+            "suspect": true
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": {
+        "arm": "panda_right",
+        "parked_arm": "panda_left",
+        "success": false,
+        "original": "8051b5f7bbfe4fe2b9551897c3cba283:0:panda_right"
+      },
+      "model_requests": 6,
+      "model_pose_ids": [
+        "98e5de41bd684360b84a15417524910e:0:panda_left",
+        "8051b5f7bbfe4fe2b9551897c3cba283:0:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-220331-matched-456",
+      "first_placement": false,
+      "success": false,
+      "failure": "PAIR_TARGET_UNSUPPORTED:panda_right:PRECLOSE_REFERENCE_EXPIRED",
+      "last_phase": "regrasp_pregrasp",
+      "wall_s": 125.67997433408163,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": null,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {},
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.059895493598336125,
+            "visual_rise_m": 0.06000126322926802,
+            "lag_m": -0.00010576963093189562,
+            "finger_gap_m": 0.05490637756884098,
+            "gap_change_m": -9.741634130477905e-7,
+            "suspect": false
+          },
+          {
+            "tcp_rise_m": 0.05989510680141619,
+            "visual_rise_m": 0.059924300826729726,
+            "lag_m": -0.000029194025313539207,
+            "finger_gap_m": 0.05490642227232456,
+            "gap_change_m": -9.294599294662476e-7,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05965484993349002,
+            "visual_rise_m": 0.04958454439145954,
+            "lag_m": 0.010070305542030478,
+            "finger_gap_m": 0.06001449376344681,
+            "gap_change_m": -0.0015386659651994705,
+            "suspect": true
+          },
+          {
+            "tcp_rise_m": 0.05965370215644428,
+            "visual_rise_m": 0.04893239553080775,
+            "lag_m": 0.010721306625636529,
+            "finger_gap_m": 0.06002321280539036,
+            "gap_change_m": -0.0015299469232559204,
+            "suspect": true
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": {
+        "arm": "panda_right",
+        "parked_arm": "panda_left",
+        "success": false,
+        "original": "386eef08cdd84be6aeef0014890f0196:0:panda_right",
+        "replacement": "d2779bce0b9f4acb970b0d0bd03e533d:240:panda_right"
+      },
+      "model_requests": 9,
+      "model_pose_ids": [
+        "5bfe66dc25674e54b9a965074c4b7255:0:panda_left",
+        "d2779bce0b9f4acb970b0d0bd03e533d:240:panda_right"
+      ]
+    },
+    {
+      "run": "study-20261113-220829-matched-456",
+      "first_placement": false,
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "wall_s": 325.37128784903325,
+      "single_action_to_verification_s": null,
+      "active_arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "motion_overlap_sim_s": 6.891666666666667,
+      "goals_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "final_error_xy_mm": {
+        "panda_left": [
+          0.607,
+          -0.139
+        ],
+        "panda_right": [
+          -4.669,
+          -0.003
+        ]
+      },
+      "initial_boxes": [
+        {
+          "size": "small_reference",
+          "position": [
+            -0.20151633778176173,
+            -0.05971102316585897,
+            0.7865
+          ],
+          "orientation": [
+            0.37994418025512977,
+            0,
+            0,
+            -0.9250094161089699
+          ]
+        },
+        {
+          "size": "small_medium",
+          "position": [
+            0.2127424990738055,
+            -0.012431039070737636,
+            0.789
+          ],
+          "orientation": [
+            0.25786748016436645,
+            0,
+            0,
+            -0.9661802951176763
+          ]
+        }
+      ],
+      "initial_grip_checks": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.059895493598336125,
+            "visual_rise_m": 0.06000126445949505,
+            "lag_m": -0.00010577086115892698,
+            "finger_gap_m": 0.05490637756884098,
+            "gap_change_m": -9.741634130477905e-7,
+            "suspect": false
+          },
+          {
+            "tcp_rise_m": 0.05989510680141619,
+            "visual_rise_m": 0.06000049428065268,
+            "lag_m": -0.00010538747923649616,
+            "finger_gap_m": 0.05490642227232456,
+            "gap_change_m": -9.294599294662476e-7,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05965484993349002,
+            "visual_rise_m": 0.04958066258069327,
+            "lag_m": 0.010074187352796748,
+            "finger_gap_m": 0.06001449376344681,
+            "gap_change_m": -0.0015386659651994705,
+            "suspect": true
+          },
+          {
+            "tcp_rise_m": 0.05965370215644428,
+            "visual_rise_m": 0.048899287006740955,
+            "lag_m": 0.010754415149703322,
+            "finger_gap_m": 0.06002321280539036,
+            "gap_change_m": -0.0015299469232559204,
+            "suspect": true
+          }
+        ]
+      },
+      "substitutions": null,
+      "recovery": {
+        "arm": "panda_right",
+        "parked_arm": "panda_left",
+        "success": true,
+        "original": "b69254423e7747f4958156da0fb0ee27:0:panda_right",
+        "replacement": "13d2cba94b754a6385f9cba18ae09b63:142:panda_right",
+        "recheck": {
+          "tcp_rise_m": 0.059722493720636205,
+          "visual_rise_m": 0.059670333035371614,
+          "lag_m": 0.00005216068526459061,
+          "finger_gap_m": 0.05991799756884575,
+          "gap_change_m": 0.000003520399332046509,
+          "suspect": false
+        }
+      },
+      "model_requests": 9,
+      "model_pose_ids": [
+        "4c0c89a456fc4fdf96fd4c59ac26435f:0:panda_left",
+        "13d2cba94b754a6385f9cba18ae09b63:142:panda_right"
+      ]
+    }
+  ]
+}
