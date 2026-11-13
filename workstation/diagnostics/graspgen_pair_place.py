@@ -568,7 +568,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                      abs((o.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(8) and
                      o.velocity_m_s is not None and np.linalg.norm(o.velocity_m_s)<=.015 and
                      np.allclose(o.size_m,objects[a].size_m,atol=.002,rtol=0)]
-            if len(matches)==1:
+            if len(matches)==1 and slots.placement_observed(a,xy,matches[0].track_id):
                 o,=matches
                 placements[a]=dict(initial_track=selected[a]['target_id'],grasp_track=objects[a].track_id,observed_track=o.track_id,
                     goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())

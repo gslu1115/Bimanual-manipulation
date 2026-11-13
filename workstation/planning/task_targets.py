@@ -45,10 +45,13 @@ class ConveyorSlots:
             self.states[xy] = 'reserved'
 
     def confirm_placement(self, arm, xy, observed_track):
-        if (self.owners.get(xy) != arm or self.states[xy] != 'occupied'
-                or not observed_track or self.observed_tracks[xy] != (observed_track,)):
+        if not self.placement_observed(arm, xy, observed_track):
             raise RuntimeError('PLACEMENT_NOT_CONFIRMED')
         del self.owners[xy]
+
+    def placement_observed(self, arm, xy, observed_track):
+        return (self.owners.get(xy) == arm and self.states.get(xy) == 'occupied'
+                and bool(observed_track) and self.observed_tracks.get(xy) == (observed_track,))
 
     def approach_clearance(self,arm,xy,current,prior,*,accounted_for,stationary_belt):
         """An exclusive two-carton scene can retain a recently inspected slot during occlusion."""

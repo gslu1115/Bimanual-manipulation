@@ -55,3 +55,20 @@ class ConveyorSlotTests(unittest.TestCase):
         observe()
         self.assertEqual(slots.states[middle], 'free')
         self.assertEqual(slots.owners[right], 'right')
+
+    def test_pair_dwell_can_wait_out_a_temporary_duplicate_in_one_slot(self):
+        left,right=(-.2,-.4),(.2,-.4)
+        slots=ConveyorSlots({'conveyor':{'slots_xy':[left,right]}})
+        def observe(time, tracks):
+            slots.observe(SimpleNamespace(slot=lambda xy:dict(free=not tracks[xy],
+                observed_objects=tracks[xy],observation_time_s=time)))
+        observe(1.,{left:[],right:[]})
+        slots.reserve_pair({'left':left,'right':right})
+        def confirmed():
+            return all(slots.placement_observed(arm,xy,arm+'-box')
+                       for arm,xy in [('left',left),('right',right)])
+        observe(2.,{left:['left-box'],right:['right-box','fragment']})
+        self.assertFalse(confirmed())
+        self.assertEqual(slots.owners,{left:'left',right:'right'})
+        observe(2.1,{left:['left-box'],right:['right-box']})
+        self.assertTrue(confirmed())
