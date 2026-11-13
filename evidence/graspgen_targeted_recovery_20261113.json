@@ -1,0 +1,1117 @@
+{
+  "date": "2026-11-13",
+  "physics": "Isaac Sim 6.1, one RTX 4090, headless, Panda GraspGen",
+  "scope": "Targeted recovery on previously failed scene seeds. Fresh diffusion samples per run. These repetitions span controller revisions and are not an independent success-rate estimate.",
+  "single_cases": {
+    "5931": "small_reference 68 deg",
+    "5932": "small_medium 132 deg",
+    "5933": "small_wide 173 deg"
+  },
+  "metric": "Single action_wall_s starts at PREGRASP and ends at DONE or failure, includes perception and placement verification. Paired action_wall_s starts after preflight at the first synchronized pregrasp command; early planning failures have no action time. Signed XY errors and listed offline states come from separate final simulator evaluation. Overlaps are encoder-measured simulated seconds.",
+  "wide_rgbd_replay": {
+    "run": "study-20261113-085126-small_wide-5933",
+    "method": "Re-fit original RGB-D/masks using lifted TCP-to-box correspondence as initial guess. Used nearest saved controller FK samples (8.33 to 33.33 ms away), independent cuboid fit; transferred, last settle and failure capture labels may refer to the same exposure. This is an offline replay; physical reruns draw different model grasps.",
+    "fit_status": "GEOMETRY_OBSERVED",
+    "translations_mm": [
+      3.442,
+      3.494,
+      3.494
+    ],
+    "angles_deg": [
+      6.31,
+      6.319,
+      6.319
+    ]
+  },
+  "limits": "No verified dual release or stable dual placement as of the final listed run. Identical seed fixes the scene, not the model sample. The held-gap observer did not trigger on the two successful single-carton reruns. All three slots are scheduler candidates; physical placement coverage is separate.",
+  "runs": [
+    {
+      "run": "study-20261113-085126-pair-10",
+      "success": false,
+      "stop": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "last_phase": null,
+      "action_wall_s": null,
+      "extra_wrist_view": false,
+      "model_requests": 6,
+      "selection": [],
+      "assigned_slots_m": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-085126-small_medium-5932",
+      "success": true,
+      "stop": null,
+      "last_action": "VERIFY",
+      "action_wall_s": 45.226738180965185,
+      "controller_through_home_or_exit_wall_s": 42.32754123513587,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        -1.873,
+        -0.118
+      ],
+      "final_z_m": 0.785,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-085126-small_reference-5931",
+      "success": false,
+      "stop": "UNOBSERVED_PATH_SPACE",
+      "last_action": "LIFT",
+      "action_wall_s": 21.482405894901603,
+      "controller_through_home_or_exit_wall_s": 19.714509272947907,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        21.607,
+        355.33
+      ],
+      "final_z_m": 0.91325,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-085126-small_wide-5933",
+      "success": false,
+      "stop": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "last_action": "TRANSFER",
+      "action_wall_s": 33.031416677171364,
+      "controller_through_home_or_exit_wall_s": 31.353621763875708,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        0.316,
+        -1.691
+      ],
+      "final_z_m": 0.97274,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-090831-pair-10",
+      "success": false,
+      "stop": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "last_phase": null,
+      "action_wall_s": null,
+      "extra_wrist_view": false,
+      "model_requests": 6,
+      "selection": [],
+      "assigned_slots_m": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-091031-small_wide-5933",
+      "success": false,
+      "stop": "UNOBSERVED_PATH_SPACE",
+      "last_action": "TRANSFER",
+      "action_wall_s": 22.959079899825156,
+      "controller_through_home_or_exit_wall_s": 21.269321303116158,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        -1.858,
+        343.403
+      ],
+      "final_z_m": 0.96676,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-091225-pair-10",
+      "success": false,
+      "stop": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "last_phase": null,
+      "action_wall_s": null,
+      "extra_wrist_view": false,
+      "model_requests": 9,
+      "selection": [],
+      "assigned_slots_m": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 9,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-091751-pair-10",
+      "success": false,
+      "stop": "PAIR_JOINT_TRACKING_ERROR: {'panda_left': 0.026910666528524113, 'panda_right': 0.0010348624802111184}",
+      "last_phase": null,
+      "action_wall_s": 3.7280966348480433,
+      "extra_wrist_view": true,
+      "model_requests": 7,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0004",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0003",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-091751-small_wide-5933",
+      "success": false,
+      "stop": "PRECLOSE_SURFACE_CHECK:PRECLOSE_REFERENCE_EXPIRED",
+      "last_action": "APPROACH",
+      "action_wall_s": 17.333318723132834,
+      "controller_through_home_or_exit_wall_s": 15.719441626919433,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        -2.24,
+        344.145
+      ],
+      "final_z_m": 0.7875,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-092236-pair-10",
+      "success": false,
+      "stop": "PAIR_JOINT_TRACKING_ERROR",
+      "last_phase": null,
+      "action_wall_s": 4.757911477005109,
+      "extra_wrist_view": true,
+      "model_requests": 8,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0004",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0003",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-092236-small_reference-5931",
+      "success": true,
+      "stop": null,
+      "last_action": "VERIFY",
+      "action_wall_s": 49.034094092901796,
+      "controller_through_home_or_exit_wall_s": 46.22026290604845,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        0.007,
+        -0.179
+      ],
+      "final_z_m": 0.7825,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-092236-small_wide-5933",
+      "success": true,
+      "stop": null,
+      "last_action": "VERIFY",
+      "action_wall_s": 47.191437802976,
+      "controller_through_home_or_exit_wall_s": 44.26448637805879,
+      "slot_xy_m": [
+        -0.2,
+        -0.4
+      ],
+      "final_xy_error_mm": [
+        0.431,
+        -0.025
+      ],
+      "final_z_m": 0.7875,
+      "transfer_gap_inspection": null
+    },
+    {
+      "run": "study-20261113-092901-pair-10",
+      "success": false,
+      "stop": "PAIR_JOINT_TRACKING_ERROR: {'panda_left': 0.03447530316384684, 'panda_right': 0.0009931624072563316}",
+      "last_phase": null,
+      "action_wall_s": 9.029415257042274,
+      "extra_wrist_view": true,
+      "model_requests": 9,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0004",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0003",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-093218-pair-10",
+      "success": false,
+      "stop": "PAIR_PREGRASP_GOAL_MISSED:panda_right",
+      "last_phase": null,
+      "action_wall_s": 13.869012454058975,
+      "extra_wrist_view": true,
+      "model_requests": 7,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 10.1,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0019408122367391514,
+          "angle_rad": 0.004658352517637938
+        },
+        "panda_right": {
+          "position_m": 0.005592622347724761,
+          "angle_rad": 0.013425997744667049
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-093520-pair-10",
+      "success": false,
+      "stop": "PAIR_JOINT_TRACKING_ERROR: panda_left joint 1 error 0.0409 rad at tick 356",
+      "last_phase": null,
+      "action_wall_s": 4.217174727004021,
+      "extra_wrist_view": true,
+      "model_requests": 9,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": null,
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.7875,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-093952-pair-10",
+      "success": false,
+      "stop": "PAIR_COMMAND_OTHER_ARM_COLLISION",
+      "last_phase": "transfer",
+      "action_wall_s": 35.400650451891124,
+      "extra_wrist_view": true,
+      "model_requests": 10,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.7916666666666665,
+      "phase_overlap_sim_s": {
+        "approach": 2.658333333333333,
+        "lift": 2.6916666666666664
+      },
+      "simultaneous_grasp_verified": true,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 178.25,
+        "panda_right": 178.98
+      },
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0030404033096271587,
+          "angle_rad": 0.00727645505516833
+        },
+        "panda_right": {
+          "position_m": 0.0005984319470314761,
+          "angle_rad": 0.001513883314716837
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.9719,
+          "tilt_deg": 6.18
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9742,
+          "tilt_deg": 7.83
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-094505-pair-10",
+      "success": false,
+      "stop": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "lift",
+      "action_wall_s": 23.128576849820092,
+      "extra_wrist_view": true,
+      "model_requests": 8,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 3.341666666666667,
+      "phase_overlap_sim_s": {
+        "approach": 2.3583333333333334,
+        "lift": 2.025
+      },
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 180.19
+      },
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0009270892935179951,
+          "angle_rad": 0.002235145178796424
+        },
+        "panda_right": {
+          "position_m": 0.0005119189980230455,
+          "angle_rad": 0.0012726129985221556
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.9636,
+          "tilt_deg": 1.7
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9491,
+          "tilt_deg": 30.5
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-094907-pair-9",
+      "success": false,
+      "stop": "PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED",
+      "last_phase": "pregrasp_recheck",
+      "action_wall_s": 11.74254648713395,
+      "extra_wrist_view": false,
+      "model_requests": 2,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0002",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0001",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 6.866666666666666,
+      "phase_overlap_sim_s": {},
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0005703811367087996,
+          "angle_rad": 0.0013691788373565998
+        },
+        "panda_right": {
+          "position_m": 0.00040222627714899483,
+          "angle_rad": 0.0009491174766158701
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.7825,
+          "tilt_deg": 0
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.785,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-095128-pair-10",
+      "success": false,
+      "stop": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "lift",
+      "action_wall_s": 24.416927712969482,
+      "extra_wrist_view": true,
+      "model_requests": 9,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.933333333333333,
+      "phase_overlap_sim_s": {
+        "approach": 3.183333333333333,
+        "lift": 2.5
+      },
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 179.29
+      },
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0006425292347706309,
+          "angle_rad": 0.0015896017822815394
+        },
+        "panda_right": {
+          "position_m": 0.00032672943510738377,
+          "angle_rad": 0.0007990885749515013
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.9638,
+          "tilt_deg": 1.67
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9618,
+          "tilt_deg": 9.55
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-095418-pair-9",
+      "success": false,
+      "stop": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "lift",
+      "action_wall_s": 30.801592939998955,
+      "extra_wrist_view": false,
+      "model_requests": 4,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0002",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0001",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 6.883333333333333,
+      "phase_overlap_sim_s": {
+        "approach": 3.3249999999999997,
+        "lift": 3.2416666666666667
+      },
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 180.47
+      },
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0006582653224350319,
+          "angle_rad": 0.0016186529643761754
+        },
+        "panda_right": {
+          "position_m": 0.00042469222159691693,
+          "angle_rad": 0.0010165426367688456
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.9621,
+          "tilt_deg": 1.51
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9598,
+          "tilt_deg": 14.62
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-095714-pair-10",
+      "success": false,
+      "stop": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_left",
+      "last_phase": "transfer",
+      "action_wall_s": 43.51788598508574,
+      "extra_wrist_view": true,
+      "model_requests": 9,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.9416666666666664,
+      "phase_overlap_sim_s": {
+        "approach": 2.775,
+        "initial_lift": 0.6,
+        "lift": 1.6583333333333332,
+        "transfer": 3.4583333333333335
+      },
+      "simultaneous_grasp_verified": true,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 179.09,
+        "panda_right": 177.19
+      },
+      "transfer_schedule": {
+        "delayed_arm": null,
+        "delay_fraction": 0
+      },
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0011847124920246683,
+          "angle_rad": 0.0028351556953391047
+        },
+        "panda_right": {
+          "position_m": 0.0003579229275134367,
+          "angle_rad": 0.0008936287462422302
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.972,
+          "tilt_deg": 11.08
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9668,
+          "tilt_deg": 29.31
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-100304-pair-10",
+      "success": false,
+      "stop": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "initial_lift",
+      "action_wall_s": 21.719509656075388,
+      "extra_wrist_view": true,
+      "model_requests": 9,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.7,
+      "phase_overlap_sim_s": {
+        "approach": 3.3333333333333335,
+        "initial_lift": 0.9166666666666666
+      },
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {},
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0006589824989965623,
+          "angle_rad": 0.001627376448721806
+        },
+        "panda_right": {
+          "position_m": 0.00043624910677897465,
+          "angle_rad": 0.0011336243678795215
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.8443,
+          "tilt_deg": 1.09
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.8422,
+          "tilt_deg": 8.91
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-100657-pair-10",
+      "success": false,
+      "stop": "PAIR_DESTINATION_UNCONFIRMED:panda_left",
+      "last_phase": "transfer",
+      "action_wall_s": 48.09091854584403,
+      "extra_wrist_view": true,
+      "model_requests": 7,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.8916666666666666,
+      "phase_overlap_sim_s": {
+        "approach": 2.4833333333333334,
+        "initial_lift": 0.675,
+        "lift": 1.7666666666666666,
+        "transfer": 5.458333333333333
+      },
+      "simultaneous_grasp_verified": true,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 179.53,
+        "panda_right": 178.82
+      },
+      "transfer_schedule": {
+        "delayed_arm": null,
+        "delay_fraction": 0
+      },
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.0007004861729610193,
+          "angle_rad": 0.001721613582627467
+        },
+        "panda_right": {
+          "position_m": 0.0008135208692857358,
+          "angle_rad": 0.0020636293327475764
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.9744,
+          "tilt_deg": 0.91
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9769,
+          "tilt_deg": 2.02
+        }
+      ]
+    },
+    {
+      "run": "study-20261113-101058-pair-10",
+      "success": false,
+      "stop": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "last_phase": "lift",
+      "action_wall_s": 28.379788861842826,
+      "extra_wrist_view": true,
+      "model_requests": 8,
+      "selection": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0006",
+          "source": "graspgen"
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0005",
+          "source": "graspgen"
+        }
+      ],
+      "assigned_slots_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": 2.775,
+      "phase_overlap_sim_s": {
+        "approach": 2.65,
+        "initial_lift": 0.75,
+        "lift": 1.9833333333333334
+      },
+      "simultaneous_grasp_verified": false,
+      "placements": null,
+      "rejected_pairs": 0,
+      "lift_rgbd_mm": {
+        "panda_left": 178.18
+      },
+      "transfer_schedule": null,
+      "endpoint_errors": {
+        "panda_left": {
+          "position_m": 0.001162246601918243,
+          "angle_rad": 0.002859907103120675
+        },
+        "panda_right": {
+          "position_m": 0.000550964003204175,
+          "angle_rad": 0.0014124157558502877
+        }
+      },
+      "offline_final_states": [
+        {
+          "box": "box_00",
+          "z_m": 0.9632,
+          "tilt_deg": 3.06
+        },
+        {
+          "box": "box_01",
+          "z_m": 0.9643,
+          "tilt_deg": 10.02
+        }
+      ]
+    }
+  ],
+  "paired_rgbd_replay": {
+    "case": "study-20261113-095714-pair-10",
+    "label": "pair_held_panda_left_transfer",
+    "initial_hint": "nominal slot overhead with upright orientation (offline sensitivity test)",
+    "independent_current_fit_m": [
+      -0.195849,
+      -0.400121,
+      0.973195
+    ],
+    "measured_top_tilt_deg": 11.0785,
+    "other_case": "The same procedure did not recover an independent pose on the right carton of study-20261113-100304-pair-10 with a nominal 60 mm lift hint."
+  },
+  "code_revision": "c3b6858 (final controller); chronological earlier runs used intermediate revisions"
+}
