@@ -10,6 +10,26 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_returned_view_rechecks_size_against_table_height_and_current_planes(self):
+        from dataclasses import replace
+        from tests.test_cuboid_pose import synthetic_observation,visual_object,CENTRE,SIZE,PRIORS
+        from workstation.diagnostics.graspgen_pair import recover_returned_carton
+        p,s=synthetic_observation(np.eye(3))
+        top=CENTRE[2]+SIZE[2]/2
+        o=replace(visual_object(s,np.eye(3)),size_m=(.11,.06,.05),velocity_m_s=(0.,0.,0.),
+                  quality={'observed_top_z_m':top})
+        s=replace(s,objects=(o,))
+        priors=replace(PRIORS,support_z_m=top-SIZE[2],carton_size_catalog_m=(tuple(SIZE),(.11,.06,.05)))
+        candidate=SimpleNamespace(metadata={'source_visual_object':dict(position_m=CENTRE,
+            body_rotation=np.eye(3),size_m=SIZE)})
+        result=recover_returned_carton(candidate,p,s,priors)
+        self.assertEqual(result.objects[0].size_m,tuple(SIZE))
+        self.assertEqual(result.objects[0].visibility,'OBSERVED_CUBOID')
+        ambiguous=replace(s,objects=(o,replace(o,track_id='neighbour')))
+        self.assertIsNone(recover_returned_carton(candidate,p,ambiguous,priors))
+        incompatible=replace(s,objects=(replace(o,quality={'observed_top_z_m':top+.005}),))
+        self.assertIsNone(recover_returned_carton(candidate,p,incompatible,priors))
+
     def test_crossing_transfer_can_wait_and_rejects_blocked_endpoints(self):
         from workstation.diagnostics.graspgen_pair_place import transfer_schedule
         def spheres(arm,q):

@@ -26,6 +26,34 @@ def renew_view_candidate(candidate,scene,seq):
     return revalidate_candidate(replace(candidate,target_id=matches[0].track_id),matches[0],scene,seq)
 
 
+def recover_returned_carton(candidate,packet,scene,priors):
+    """Resolve a clipped upright footprint after an inspection wrist returns home."""
+    from workstation.perception.cuboid_pose import fit_cuboid_pose, measured_cuboid_supported
+    from workstation.observations.camera_geometry import quaternion_from_matrix
+    src=candidate.metadata['source_visual_object']
+    near=[o for o in scene.objects if np.linalg.norm(np.subtract(o.position_m,src['position_m']))<.07]
+    if len(near)!=1:return None
+    obj,=near
+    if (obj.posture!='UPRIGHT' or obj.failures or obj.quality.get('packaging_conflict') or
+            obj.velocity_m_s is None or np.linalg.norm(obj.velocity_m_s)>.015):return None
+    # Both source and current target rest on the calibrated table. A smaller
+    # footprint cannot explain a top whose measured height matches another size.
+    observed_height=obj.quality.get('observed_top_z_m',float('nan'))-priors.support_z_m
+    sizes=[s for s in priors.carton_size_catalog_m if abs(s[2]-observed_height)<=.002]
+    if len(sizes)!=1 or not np.allclose(sizes[0],src['size_m'],rtol=0,atol=1e-6):return None
+    m=fit_cuboid_pose(packet,scene,src['position_m'],src['body_rotation'],sizes[0],priors,measure_side_interiors=True)
+    if (not measured_cuboid_supported(m,packet.observation_time_s) or set(m['mask_refs'])!=set(obj.mask_refs)
+            or len({ref.split('/')[0] for ref in m['mask_refs']})<2):return None
+    r=np.asarray(m['rotation'])
+    if r[2,2]<math.cos(math.radians(3)):return None
+    updated=replace(obj,position_m=tuple(m['position_m']),size_m=tuple(sizes[0]),
+        axis_yaw_rad=math.atan2(r[1,0],r[0,0]),measured_cuboid=m,visibility='OBSERVED_CUBOID',
+        hypotheses=tuple(replace(h,orientation_wxyz=tuple(quaternion_from_matrix(r))) for h in obj.hypotheses if h.label=='UPRIGHT'),
+        uncertainty_m=m['uncertainty_m'])
+    if not updated.hypotheses:return None
+    return replace(scene,objects=tuple(updated if o is obj else o for o in scene.objects))
+
+
 def source_cartons(scene, table):
     """Select visible cartons on the pickup table; keep belt objects in the obstacle map."""
     centre=np.asarray(table['center_xy'])
@@ -405,12 +433,22 @@ def check_pair(env, args, packet, scene, estimator):
                 try:
                     renewed=renew_view_candidate(c,updated,seq)
                 except RuntimeError as error:
-                    from workstation.diagnostics.vision_check import save_observation
-                    save_observation(env.output,'pair_target_revalidation',fresh,updated)
-                    report['target_revalidation_failure']=dict(arm=c.arm,target_id=c.target_id,
-                        candidate_id=c.candidate_id,source=c.metadata['source_visual_object'],
-                        returned_from_extra_view=returned,reason=str(error))
-                    raise
+                    recovered=None
+                    if returned and str(error)=='PAIR_TARGET_LOST':
+                        recovered=recover_returned_carton(c,fresh,updated,estimator.priors)
+                    if recovered is not None:
+                        renewed=renew_view_candidate(c,recovered,seq)
+                        updated=recovered
+                        robot.set_observation(fresh,updated,estimator.priors)
+                        report.setdefault('return_size_refits',[]).append(dict(arm=c.arm,
+                            source_track=c.target_id,current_track=renewed.target_id,time_s=fresh.observation_time_s))
+                    else:
+                        from workstation.diagnostics.vision_check import save_observation
+                        save_observation(env.output,'pair_target_revalidation',fresh,updated)
+                        report['target_revalidation_failure']=dict(arm=c.arm,target_id=c.target_id,
+                            candidate_id=c.candidate_id,source=c.metadata['source_visual_object'],
+                            returned_from_extra_view=returned,reason=str(error))
+                        raise
                 if renewed.target_id!=c.target_id:
                     report.setdefault('reidentified_after_view',{})[c.target_id]=renewed.target_id
                 new[renewed.target_id]=[renewed]
