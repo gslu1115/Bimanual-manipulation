@@ -1,0 +1,396 @@
+{
+  "date": "2026-11-13",
+  "commit": "6bd138f",
+  "scope": "Two separated upright cartons and two Panda arms in headless Isaac Sim 6.1. RGB-D, known dimensions and measured gripper kinematics drive the checks. Ground truth is used offline only.",
+  "source_failures": [
+    "study-20261113-141813-pair-456",
+    "study-20261113-141813-pair-458"
+  ],
+  "diagnostics": {
+    "seed456": "Original masks at sim 17.200 s: global and right wrist top-normal offsets measured independently at -10.057699 and -10.057706 mm. The old 10 mm gate stopped both. The new two-camera whole-mask fit succeeds, with one hidden planar coordinate conditioned on the latched grasp. Replaying either view alone rejects the correction. Original mask timestamp was paired with the FK hint from a matched baseline physical replay.",
+    "seed458": "Original pre-close age 6.933 s exceeded 6 s. Standalone fit to the original RGB-D returned full GEOMETRY_OBSERVED at 0.563 mm and 0.008 deg from the prior. Refresh at 3 s intervals during the approach requires a current independent full fit. The existing expiry and pose-consistency limits remain active.",
+    "matched_replay": "Both arms replay the same raw GraspGen pose matrices as the respective original failures. Seed 458 succeeded after the reference-refresh change. Seed 456 passed initial lift after both fixes; on the next lift the FK prediction was at z=0.965 m while the offline carton center was at z=0.826 m. This physical failure is retained."
+  },
+  "tests": "597 CPU tests passed. The paired driver test additionally checks elapsed callback times on the shared clock.",
+  "live_summary": {
+    "total": 5,
+    "passed": 4,
+    "new_scene_seeds": [
+      462,
+      463,
+      464
+    ],
+    "new_scene_passed": 3,
+    "unsuccessful_seed": 458,
+    "reason": "IK_DISCONTINUITY while building the approach path, before optical renewal or closure."
+  },
+  "runs": [
+    {
+      "run": "vision-baseline-456",
+      "status": "failed",
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "phase": "initial_lift",
+      "action_wall_s": 29.94,
+      "overlap_sim_s": null,
+      "refresh": [],
+      "proposal_ids": [
+        "a2bd43b855684c34918a2a0ed0aa9162:227:panda_left",
+        "841a23de5c6e48c29f47a9c93b7004ae:167:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        0.75,
+        0.75
+      ],
+      "held_reacquisition": {},
+      "placements": {}
+    },
+    {
+      "run": "vision-refresh-458",
+      "status": "passed",
+      "failure": null,
+      "phase": "verify",
+      "action_wall_s": 132.72,
+      "overlap_sim_s": 8.466666666666667,
+      "refresh": [
+        {
+          "arm": "panda_left",
+          "time_s": 10.40000000000005,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 10.40000000000005,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_left",
+          "time_s": 13.39999999999988,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 13.39999999999988,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        }
+      ],
+      "proposal_ids": [
+        "47c6677d0ca74a82bcf68a6b60f5c1fe:202:panda_left",
+        "7a9b52aadd574ad68f6644134259e2ba:134:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        0.75,
+        0.75
+      ],
+      "held_reacquisition": {},
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            -1.03,
+            0.565
+          ],
+          "offline_radial_error_mm": 1.175
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            -0.556,
+            0.885
+          ],
+          "offline_radial_error_mm": 1.045
+        }
+      }
+    },
+    {
+      "run": "vision-reacquire-456",
+      "status": "failed",
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "phase": "lift",
+      "action_wall_s": 38.65,
+      "overlap_sim_s": null,
+      "refresh": [
+        {
+          "arm": "panda_left",
+          "time_s": 14.149999999999837,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 14.149999999999837,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        }
+      ],
+      "proposal_ids": [
+        "a2bd43b855684c34918a2a0ed0aa9162:227:panda_left",
+        "841a23de5c6e48c29f47a9c93b7004ae:167:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        0.75,
+        1.683
+      ],
+      "held_reacquisition": {
+        "panda_right": {
+          "status": "GRASP_CONSTRAINED",
+          "mask_refs": [
+            "scene_camera/96/component_1",
+            "right_wrist_camera/96/component_1"
+          ],
+          "normal_offset_m": -0.01013323850699332,
+          "predicted_translation_axes": [
+            0
+          ],
+          "prior_angle_correction_deg": 4.070784383053833
+        }
+      },
+      "placements": {}
+    },
+    {
+      "run": "study-20261113-205602-pair-456",
+      "status": "passed",
+      "failure": null,
+      "phase": "verify",
+      "action_wall_s": 103.66,
+      "overlap_sim_s": 7.008333333333333,
+      "refresh": [
+        {
+          "arm": "panda_left",
+          "time_s": 10.016666666666739,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 10.016666666666739,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        }
+      ],
+      "proposal_ids": [
+        "ff99acbe7eb14a75b4addff327778dcb:227:panda_left",
+        "3027f7e091504aa7a5be1dcd82abe950:204:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        0.75,
+        0.75
+      ],
+      "held_reacquisition": {},
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            -0.054,
+            2.037
+          ],
+          "offline_radial_error_mm": 2.038
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            0.037,
+            0.742
+          ],
+          "offline_radial_error_mm": 0.743
+        }
+      }
+    },
+    {
+      "run": "study-20261113-205602-pair-458",
+      "status": "failed",
+      "failure": "IK_DISCONTINUITY",
+      "phase": "approach",
+      "action_wall_s": 8.37,
+      "overlap_sim_s": null,
+      "refresh": [],
+      "proposal_ids": [
+        "8c3936f80c3049fbb13f2f402c6e7bdc:230:panda_left",
+        "bb16070996414f48920d4ca6865fe52d:114:panda_right"
+      ],
+      "closed_reference_age_sim_s": [],
+      "held_reacquisition": {},
+      "placements": {}
+    },
+    {
+      "run": "study-20261113-205602-pair-462",
+      "status": "passed",
+      "failure": null,
+      "phase": "verify",
+      "action_wall_s": 128.62,
+      "overlap_sim_s": 8.016666666666666,
+      "refresh": [
+        {
+          "arm": "panda_left",
+          "time_s": 12.016666666666625,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 12.016666666666625,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        }
+      ],
+      "proposal_ids": [
+        "1ff268f576c6491f9e7376c270499a11:135:panda_left",
+        "83c77fbd441f473ab27a43507b7ce480:72:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        0.75,
+        0.75
+      ],
+      "held_reacquisition": {},
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            0.188,
+            -0.588
+          ],
+          "offline_radial_error_mm": 0.617
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            0.626,
+            1.471
+          ],
+          "offline_radial_error_mm": 1.598
+        }
+      }
+    },
+    {
+      "run": "study-20261113-205602-pair-463",
+      "status": "passed",
+      "failure": null,
+      "phase": "verify",
+      "action_wall_s": 121.12,
+      "overlap_sim_s": 6.5,
+      "refresh": [
+        {
+          "arm": "panda_left",
+          "time_s": 9.425000000000106,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 9.425000000000106,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        }
+      ],
+      "proposal_ids": [
+        "3660bf6d7bb34ebca91e692853f01fa9:146:panda_left",
+        "bc5bce14f01442e8bcdb13049de2046e:32:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        0.75,
+        0.75
+      ],
+      "held_reacquisition": {},
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            0.231,
+            -0.222
+          ],
+          "offline_radial_error_mm": 0.321
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            -0.451,
+            -0.3
+          ],
+          "offline_radial_error_mm": 0.542
+        }
+      }
+    },
+    {
+      "run": "study-20261113-205602-pair-464",
+      "status": "passed",
+      "failure": null,
+      "phase": "verify",
+      "action_wall_s": 101.76,
+      "overlap_sim_s": 7.858333333333333,
+      "refresh": [
+        {
+          "arm": "panda_left",
+          "time_s": 12.016666666666625,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": false
+        },
+        {
+          "arm": "panda_right",
+          "time_s": 12.016666666666625,
+          "reason": "CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET",
+          "renewed": true
+        }
+      ],
+      "proposal_ids": [
+        "01fb8944a43a4e1e8a1f7e2b087229bb:178:panda_left",
+        "f051040e2fb24fa3bc7ce59f038ab572:39:panda_right"
+      ],
+      "closed_reference_age_sim_s": [
+        4.058,
+        0.75
+      ],
+      "held_reacquisition": {},
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            -0.08,
+            1.842
+          ],
+          "offline_radial_error_mm": 1.844
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_error_xy_mm": [
+            0.053,
+            -0.035
+          ],
+          "offline_radial_error_mm": 0.064
+        }
+      }
+    }
+  ]
+}
