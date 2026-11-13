@@ -400,9 +400,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 if xy in partial_keepout and report['last_phase']=='align':
                     box,seen=partial_keepout[xy]
                     refs=[ref for obj in fragments for ref in obj.mask_refs]
-                    fresh=0<packet.observation_time_s-seen<=8.
-                    patch=fresh and parked_top_still_visible(packet,parked[xy],refs,scene.masks)
-                    occluded=fresh and not ids and not patch and parked_top_occluded(packet,parked[xy])
+                    age=packet.observation_time_s-seen
+                    # A currently matched whole instance corroborates the protected
+                    # obstacle throughout the same 20 s reserved-slot inspection.
+                    # Pure foreground occlusion or unsegmented top rays retain 8 s.
+                    patch=(0<age<=(20. if refs else 8.) and
+                           parked_top_still_visible(packet,parked[xy],refs,scene.masks))
+                    occluded=0<age<=8. and not ids and not patch and parked_top_occluded(packet,parked[xy])
                     if patch or occluded:
                         enclosed.add(xy)
                         parked_ids.update(ids)
