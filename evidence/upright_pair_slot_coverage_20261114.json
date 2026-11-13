@@ -1,0 +1,709 @@
+{
+  "scope": "Headless Isaac Sim 6.1. Fresh online Panda GraspGen inference for two separated upright cartons per paired trial, and one right-arm medium single carton. Each scene run once.",
+  "versions": {
+    "seeds_8011_through_8014": "2f7950e",
+    "seed_8021": "9d8ae8b",
+    "seed_8022": "34f161d"
+  },
+  "evaluation": "Box-to-arm identity for offline scoring matched source RGB-D centre to the initial body within 25 mm; any other initial centre must be at least 100 mm away. Follow the simulator body name to its final snapshot without matching by size or destination. The control path never receives these body labels or poses.",
+  "timing": "action_wall_s covers physical action start through final checks, including computation; excludes startup and initial proposal generation. Transport overlap is from measured joint velocities in simulation seconds.",
+  "scope_limits": "Pairs start separated in left and right source regions. Both arms choose distinct observed free slots. No test of an already occupied physical destination, cartons touching, or continuous belt indexing in this batch.",
+  "results": [
+    {
+      "run": "dwelljaw-20261114-015751-pair-8011",
+      "initial": [
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.18059734396170468,
+            -0.04049992249637357
+          ],
+          "yaw_deg": 151.29
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2075707694588548,
+            -0.03960410746728566
+          ],
+          "yaw_deg": 44.21
+        }
+      ],
+      "eligible_destinations": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "success": true,
+      "physical_retry": false,
+      "model_calls": 6,
+      "action_wall_s": 116.345,
+      "transport_overlap_sim_s": 8.791666666666666,
+      "simultaneous_grasp_verified": true,
+      "visual_placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0037",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.00019770562648774304,
+            0.0008670032024383767
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0038",
+          "goal_xy": [
+            0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.004193244501948357,
+            0.0016174256801605447
+          ]
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.198,
+          "y": 0.806,
+          "radius": 0.83
+        },
+        "panda_right": {
+          "x": -4.154,
+          "y": 1.549,
+          "radius": 4.434
+        }
+      },
+      "slot_states": [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 43.42499999999818
+        },
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 43.42499999999818
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "free",
+          "owner": null,
+          "observation_time_s": 43.42499999999818
+        }
+      ]
+    },
+    {
+      "run": "dwelljaw-20261114-015751-pair-8012",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.22402788482923902,
+            -0.0201575810699881
+          ],
+          "yaw_deg": 137.23
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.216728597291972,
+            -0.08564184139897858
+          ],
+          "yaw_deg": 14.34
+        }
+      ],
+      "eligible_destinations": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "success": true,
+      "physical_retry": false,
+      "model_calls": 6,
+      "action_wall_s": 106.593,
+      "transport_overlap_sim_s": 6.875,
+      "simultaneous_grasp_verified": true,
+      "visual_placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0038",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.003216308355331432,
+            0.0000963747501373513
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0039",
+          "goal_xy": [
+            0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.00011976361274718128,
+            0.00018023848533632592
+          ]
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 3.216,
+          "y": 0.094,
+          "radius": 3.218
+        },
+        "panda_right": {
+          "x": 0.249,
+          "y": 0.093,
+          "radius": 0.266
+        }
+      },
+      "slot_states": [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 41.38333333333163
+        },
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "free",
+          "owner": null,
+          "observation_time_s": 41.38333333333163
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 41.38333333333163
+        }
+      ]
+    },
+    {
+      "run": "dwelljaw-20261114-015751-pair-8013",
+      "initial": [
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.20160451389617542,
+            -0.033549947602106535
+          ],
+          "yaw_deg": -25.61
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0.21024931031653935,
+            -0.026297043559338963
+          ],
+          "yaw_deg": -136.12
+        }
+      ],
+      "eligible_destinations": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "slots": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "success": true,
+      "physical_retry": false,
+      "model_calls": 6,
+      "action_wall_s": 112.624,
+      "transport_overlap_sim_s": 8.691666666666666,
+      "simultaneous_grasp_verified": true,
+      "visual_placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0034",
+          "goal_xy": [
+            0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.0004271194338798523,
+            -0.00006437897682187721
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0033",
+          "goal_xy": [
+            0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.00035870373249052845,
+            0.0018466353416443093
+          ]
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "offline_error_mm": {
+        "panda_left": {
+          "x": -0.331,
+          "y": -0.705,
+          "radius": 0.779
+        },
+        "panda_right": {
+          "x": 0.398,
+          "y": 1.842,
+          "radius": 1.884
+        }
+      },
+      "slot_states": [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "free",
+          "owner": null,
+          "observation_time_s": 43.78333333333149
+        },
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 43.78333333333149
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 43.78333333333149
+        }
+      ]
+    },
+    {
+      "run": "dwelljaw-20261114-015751-small_medium-8014",
+      "initial": [
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0.22303930900695576,
+            -0.08323362000933925
+          ],
+          "yaw_deg": 76
+        }
+      ],
+      "slots": [
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "success": true,
+      "physical_retry": false,
+      "model_calls": 1,
+      "action_wall_s": 51.039,
+      "offline_initial_body": {
+        "panda_right": "box_00"
+      },
+      "offline_error_mm": {
+        "panda_right": {
+          "x": 0.567,
+          "y": 2.789,
+          "radius": 2.846
+        }
+      }
+    },
+    {
+      "run": "slotdwell-20261114-020859-pair-8021",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.21772074599131575,
+            -0.0929493075803488
+          ],
+          "yaw_deg": -157.54
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.19832422060687604,
+            -0.07006482855681763
+          ],
+          "yaw_deg": -7.8
+        }
+      ],
+      "eligible_destinations": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "success": true,
+      "physical_retry": false,
+      "model_calls": 6,
+      "action_wall_s": 97.861,
+      "transport_overlap_sim_s": 6.033333333333333,
+      "simultaneous_grasp_verified": true,
+      "visual_placements": {
+        "panda_left": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0035",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.005697476863861073,
+            0.000765347480773948
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0036",
+          "goal_xy": [
+            0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.00036036670207978405,
+            0.0011842191219330056
+          ]
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "offline_error_mm": {
+        "panda_left": {
+          "x": -5.697,
+          "y": 0.765,
+          "radius": 5.749
+        },
+        "panda_right": {
+          "x": -0.329,
+          "y": 0.795,
+          "radius": 0.861
+        }
+      },
+      "slot_states": [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 43.649999999998165
+        },
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "free",
+          "owner": null,
+          "observation_time_s": 43.649999999998165
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 43.649999999998165
+        }
+      ]
+    },
+    {
+      "run": "identicalpair-20261114-021228-pair-8022",
+      "initial": [
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.21387433052318222,
+            -0.021619545590808552
+          ],
+          "yaw_deg": 78.08
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0.1909029162799053,
+            -0.060418347107780435
+          ],
+          "yaw_deg": -18.21
+        }
+      ],
+      "eligible_destinations": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "success": true,
+      "physical_retry": false,
+      "model_calls": 6,
+      "action_wall_s": 110.21,
+      "transport_overlap_sim_s": 6.8999999999999995,
+      "simultaneous_grasp_verified": true,
+      "visual_placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0038",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.00020052790641783558,
+            0.0008355617523193581
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0039",
+          "goal_xy": [
+            0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.0006813600659370533,
+            0.00028228163719179467
+          ]
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "offline_error_mm": {
+        "panda_left": {
+          "x": -0.201,
+          "y": 0.803,
+          "radius": 0.827
+        },
+        "panda_right": {
+          "x": -0.594,
+          "y": 0.077,
+          "radius": 0.599
+        }
+      },
+      "slot_states": [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 49.80833333333115
+        },
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "free",
+          "owner": null,
+          "observation_time_s": 49.80833333333115
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 49.80833333333115
+        }
+      ]
+    }
+  ]
+}
