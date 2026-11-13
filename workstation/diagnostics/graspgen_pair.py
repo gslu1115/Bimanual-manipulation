@@ -145,6 +145,8 @@ def check_pair(env, args, packet, scene, estimator):
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if not execute:env.timeline.pause()
     robot=from_environment(env)
+    estimator.robot_point_filter=robot.observed_robot_points
+    estimator.robot_filter_factory=robot.prepare_observed_robot_filter
     robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
     slots = ConveyorSlots(env.c)
     slots.observe(robot.observed_workspace)
@@ -187,6 +189,7 @@ def check_pair(env, args, packet, scene, estimator):
                 assigned=[r for r in scored if r.candidate.arm==arm]
                 report['slot_assessments'].append(dict(attempt=attempt,slot_xy=slot,arm=arm,
                     feasible=sum(r.feasible for r in assigned),
+                    feasible_by_target=dict(Counter(r.candidate.target_id for r in assigned if r.feasible)),
                     reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
                     phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
         report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}

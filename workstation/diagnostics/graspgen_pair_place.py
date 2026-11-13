@@ -91,9 +91,16 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                     relative_rotation=t.relative_rotation, uncertainty_m=t.uncertainty_m,allow_grasp_translation=True)
                 if not robot.confirm_payload_observation(o.track_id,t,measurements[arm],packet):
                     raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
-            robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if held else None,
-                support_contact=contact and held, target_contact=contact and not held,
-                check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach')
+            try:
+                robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if held else None,
+                    support_contact=contact and held, target_contact=contact and not held,
+                    check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach')
+            except RuntimeError:
+                from workstation.diagnostics.vision_check import save_observation
+                save_observation(env.output,'pair_blocked_'+phase,packet,scene)
+                report['path_failure']=dict(arm=arm, details=robot.last_plan_check,
+                    robot_pixels_removed=estimator.last_robot_filter_counts.copy())
+                raise
             paths.append(path)
         # Final Cartesian contact is verified below in metres/radians. The
         # per-step 0.04 rad stop and actual two-arm collision checks stay active.

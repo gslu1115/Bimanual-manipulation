@@ -91,6 +91,8 @@ class CuMotionPickPlace(VisualPickPlace):
         return tcp,rotation
 
     def execute_selected(self, result, chosen, prepared_q, obj, slot):
+        from workstation.perception.preclose_target import PreCloseTarget,reconcile_preclose_target
+        initial_reference=PreCloseTarget(obj,self.scene,self.priors)
         candidate = self.candidate
         result['preclose_checks']=self.preclose_checks
         self.robot.monitor = None
@@ -163,10 +165,17 @@ class CuMotionPickPlace(VisualPickPlace):
                     if driver.phase=='DESCEND_PICK':
                         self.observe('pregrasp')
                         current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
-                        if len(current)!=1:raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
-                        self.candidate=self._refresh_candidate(candidate,current[0])
-                        from workstation.perception.preclose_target import PreCloseTarget
-                        self.preclose_reference=PreCloseTarget(current[0],self.scene,self.priors)
+                        if len(current)==1 and not current[0].failures and current[0].posture=='UPRIGHT':
+                            self.candidate=self._refresh_candidate(candidate,current[0])
+                            self.preclose_reference=PreCloseTarget(current[0],self.scene,self.priors)
+                        else:
+                            proof=initial_reference.confirm(self.packet,self.scene)
+                            self.preclose_checks.append(proof)
+                            if not proof['supported']:
+                                raise RuntimeError('PREGRASP_TARGET_UNCERTAIN:'+proof['reason'])
+                            self.preclose_reference=initial_reference
+                            self.scene=reconcile_preclose_target(self.estimator,self.scene,proof)
+                            self.robot.set_observation(self.packet,self.scene,self.priors)
                         self.event('APPROACH')
                         try:
                             self._cartesian_segment(driver,pick,pick_rotation,contact=True,approach=True)
