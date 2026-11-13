@@ -1,0 +1,1817 @@
+{
+  "scope": "Two separated upright pickup cartons, one physical upright carton on a stopped conveyor, and all three slots available to the allocator. Single shared Isaac Sim scene and Panda GraspGen. Each run is preserved below; no mixed-version pooled success rate.",
+  "implementation": "18f4200",
+  "baseline": "Development deployment implementing table-source filtering. Seeds 8040, 8041 and 8042 all stopped at transfer with a recently reidentified parked carton.",
+  "progression": {
+    "parkedview": "Online stationary reference plus 0.1 s repeat observation. Full views required for final confirmation.",
+    "parkedbound": "Current measured face planes bound an incompletely visible carton.",
+    "parkedguard": "Persist the bounded no-contact region across alignment and test actual joint and payload separation.",
+    "parkedmerge": "Accept complementary whole-instance masks from distinct cameras for the same measured cuboid.",
+    "parkedpatch": "Support the protected obstacle with a current foreground top patch, validating any contributing instance in full.",
+    "parkedrays": "Also accept verified front occlusion of the prior observed footprint for <=8 s after continuously guarding it. Re-observe it at rest before acceptance."
+  },
+  "scoring": "Offline body identity assigned by the source estimate and initial body position before comparing assigned goal and final truth. Parked displacement compares initial to final horizontal position and does not measure peak excursion or contact impulses. Action wall time starts at joint motion; transfer overlap is from encoder motion on the simulation clock.",
+  "open_failure": {
+    "seed": 8066,
+    "phase": "approach before closure",
+    "cause": "Left reference at 3.225 s was already 4.542 s old at the pregrasp waypoint. Only a constrained observation was available there. Subsequent confirmations expired; no grasp or placement in this scene."
+  },
+  "runs": [
+    {
+      "run": "parkedpair-20261114-021959-pair-8040",
+      "initial": [
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.22488462521035837,
+            -0.07829340916925545
+          ],
+          "yaw_deg": -0.82
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0.18263248484358582,
+            -0.07324006457842716
+          ],
+          "yaw_deg": 169.86
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "transfer",
+      "action_wall_s": 60.672,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.666666666666666,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          -0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1522,
+        "final_orientation_difference_deg": 0.0011,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedpair-20261114-021959-pair-8041",
+      "initial": [
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.18406923179221704,
+            -0.014274279632254035
+          ],
+          "yaw_deg": -5.32
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.1791900321883521,
+            -0.027296852824831512
+          ],
+          "yaw_deg": 9.56
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "transfer",
+      "action_wall_s": 67.161,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 7.75,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1341,
+        "final_orientation_difference_deg": 0.0011,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedpair-20261114-021959-pair-8042",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.18490205232267576,
+            -0.07163115344442166
+          ],
+          "yaw_deg": 152.51
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.17813754417367397,
+            -0.08539104488962639
+          ],
+          "yaw_deg": -96.48
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "transfer",
+      "action_wall_s": 55.038,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 7.841666666666667,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.0774,
+        "final_orientation_difference_deg": 0.0009,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedview-20261114-022648-pair-8041",
+      "initial": [
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.18406923179221704,
+            -0.014274279632254035
+          ],
+          "yaw_deg": -5.32
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.1791900321883521,
+            -0.027296852824831512
+          ],
+          "yaw_deg": 9.56
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "action_wall_s": 116.307,
+      "model_calls": 6,
+      "historical_proposals": [
+        "36cba416ca4949819b35a50932d69f58:168:panda_left",
+        "0b216478d00f4ca7b1f9d71693851235:183:panda_right"
+      ],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 7.741666666666666,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.295,
+          "y": -0.018,
+          "radius": 0.295
+        },
+        "panda_right": {
+          "x": -0.513,
+          "y": 1.726,
+          "radius": 1.801
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.2127,
+        "final_orientation_difference_deg": 0.0013,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "online_parked_after_placement": [
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "track_id": "visual_0050",
+          "position_m": [
+            -0.000041019171476364136,
+            -0.39963576197624207,
+            0.7849998946725327
+          ],
+          "centre_change_m": 0.00011235720403963425
+        }
+      ],
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 27.041666666665773,
+          "second_s": 27.141666666665767
+        },
+        {
+          "phase": "align",
+          "first_s": 28.324999999999033,
+          "second_s": 28.424999999999027
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedview-20261114-022648-pair-8050",
+      "initial": [
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.2124571331544304,
+            -0.06786517480974684
+          ],
+          "yaw_deg": 119.84
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18629709069715714,
+            -0.030410195272568448
+          ],
+          "yaw_deg": 141.74
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "action_wall_s": 116.308,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 7,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.139,
+          "y": 0.639,
+          "radius": 0.654
+        },
+        "panda_right": {
+          "x": -0.54,
+          "y": 0.781,
+          "radius": 0.95
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.2406,
+        "final_orientation_difference_deg": 0.0013,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "online_parked_after_placement": [
+        {
+          "xy": [
+            0,
+            -0.4
+          ],
+          "track_id": "visual_0051",
+          "position_m": [
+            -0.00009408220648765564,
+            -0.39962056279182434,
+            0.7849999207014777
+          ],
+          "centre_change_m": 0.00011399484187659973
+        }
+      ],
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 25.474999999999195,
+          "second_s": 25.57499999999919
+        },
+        {
+          "phase": "align",
+          "first_s": 31.616666666665513,
+          "second_s": 31.716666666665507
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedview-20261114-023307-pair-8052",
+      "initial": [
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.2077786192269734,
+            -0.03408341797165942
+          ],
+          "yaw_deg": -44.29
+        },
+        {
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            0.20506759975739697,
+            -0.07244255699663653
+          ],
+          "yaw_deg": -106.87
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "action_wall_s": 126.885,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.175,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "offline_error_mm": {
+        "panda_left": {
+          "x": -0.376,
+          "y": 0.035,
+          "radius": 0.378
+        },
+        "panda_right": {
+          "x": -0.511,
+          "y": 0.582,
+          "radius": 0.774
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          -0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.2965,
+        "final_orientation_difference_deg": 0.0016,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "online_parked_after_placement": [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "track_id": "visual_0045",
+          "position_m": [
+            -0.19979916512966156,
+            -0.39958903193473816,
+            0.7824999222119081
+          ],
+          "centre_change_m": 0.00021409583094592348
+        }
+      ],
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 31.80833333333217,
+          "second_s": 31.908333333332163
+        },
+        {
+          "phase": "align",
+          "first_s": 39.45833333333174,
+          "second_s": 39.55833333333173
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedview-20261114-023307-pair-8054",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.21695623917852724,
+            -0.0554552315614361
+          ],
+          "yaw_deg": 147.44
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.20426009034804726,
+            -0.0199565690357233
+          ],
+          "yaw_deg": -61.77
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "transfer",
+      "action_wall_s": 67.638,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.716666666666667,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.0969,
+        "final_orientation_difference_deg": 0.0009,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 27.7583333333324,
+          "second_s": 27.858333333332393
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedbound-20261114-024210-pair-8054",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.21695623917852724,
+            -0.0554552315614361
+          ],
+          "yaw_deg": 147.44
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.20426009034804726,
+            -0.0199565690357233
+          ],
+          "yaw_deg": -61.77
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "align",
+      "action_wall_s": 93.412,
+      "model_calls": 6,
+      "historical_proposals": [
+        "cc4cdad801ef41c2ba14985006aa52d0:170:panda_left",
+        "a98588b4c27746b5befdf052e62d53bc:128:panda_right"
+      ],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.75,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1197,
+        "final_orientation_difference_deg": 0.001,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 27.716666666665734,
+          "second_s": 27.81666666666573
+        },
+        {
+          "phase": "align",
+          "first_s": 34.14166666666537,
+          "second_s": 34.24166666666537
+        }
+      ],
+      "parked_surface_bounds": [
+        {
+          "track_id": "visual_0031",
+          "time_s": 27.81666666666573,
+          "mask_refs": [
+            "right_wrist_camera/132/component_1"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": 1,
+          "offset_interval_m": [
+            -0.004293040348647025,
+            0.03264805917550731
+          ],
+          "collision_center_m": [
+            0.20000263743446625,
+            -0.3857279421779875,
+            0.788173747213088
+          ],
+          "collision_size_m": [
+            0.1284201550909888,
+            0.11053799918316325,
+            0.06367540396436965
+          ]
+        }
+      ],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedbound-20261114-024210-pair-8060",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.20604244924896517,
+            -0.05993682083636239
+          ],
+          "yaw_deg": -53.24
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18474245615420498,
+            -0.04794325314087675
+          ],
+          "yaw_deg": 108.96
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "transfer",
+      "action_wall_s": 55.594,
+      "model_calls": 18,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.291666666666666,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.0756,
+        "final_orientation_difference_deg": 0.0009,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 21.808333333332737,
+          "second_s": 21.90833333333273
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedguard-20261114-024829-pair-8054",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.21695623917852724,
+            -0.0554552315614361
+          ],
+          "yaw_deg": 147.44
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.20426009034804726,
+            -0.0199565690357233
+          ],
+          "yaw_deg": -61.77
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "action_wall_s": 132.254,
+      "model_calls": 6,
+      "historical_proposals": [
+        "cc4cdad801ef41c2ba14985006aa52d0:170:panda_left",
+        "a98588b4c27746b5befdf052e62d53bc:128:panda_right"
+      ],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.808333333333334,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.55,
+          "y": -0.168,
+          "radius": 0.575
+        },
+        "panda_right": {
+          "x": 0.601,
+          "y": -0.132,
+          "radius": 0.615
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1781,
+        "final_orientation_difference_deg": 0.0012,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "online_parked_after_placement": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0046",
+          "position_m": [
+            0.19989046454429626,
+            -0.39967823028564453,
+            0.7874999596511949
+          ],
+          "centre_change_m": 0.0002293058912404372
+        }
+      ],
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 27.79166666666573,
+          "second_s": 27.891666666665724
+        },
+        {
+          "phase": "align",
+          "first_s": 34.21666666666537,
+          "second_s": 34.31666666666536
+        }
+      ],
+      "parked_surface_bounds": [
+        {
+          "track_id": "visual_0031",
+          "time_s": 27.891666666665724,
+          "mask_refs": [
+            "right_wrist_camera/132/component_1"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": 1,
+          "offset_interval_m": [
+            -0.0043961788214331755,
+            0.03302130430792478
+          ],
+          "collision_center_m": [
+            0.20000272758176826,
+            -0.38559302392988526,
+            0.7881545647516643
+          ],
+          "collision_size_m": [
+            0.1284411912143346,
+            0.11102933747245022,
+            0.06368229479997595
+          ]
+        }
+      ],
+      "parked_occlusion_checks": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "time_s": 34.31666666666536,
+          "last_surface_s": 27.891666666665724,
+          "source": "current top-depth patch and continuously protected collision envelope"
+        }
+      ]
+    },
+    {
+      "run": "parkedmerge-20261114-025208-pair-8060",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.20604244924896517,
+            -0.05993682083636239
+          ],
+          "yaw_deg": -53.24
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18474245615420498,
+            -0.04794325314087675
+          ],
+          "yaw_deg": 108.96
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "align",
+      "action_wall_s": 89.294,
+      "model_calls": 6,
+      "historical_proposals": [
+        "5094ac263b41422a88f00257b4f390f2:137:panda_left",
+        "9374862fdc83415b8437e5efe65c69af:143:panda_right"
+      ],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.258333333333333,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1025,
+        "final_orientation_difference_deg": 0.0009,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 21.741666666666074,
+          "second_s": 21.841666666666068
+        },
+        {
+          "phase": "align",
+          "first_s": 29.33333333333231,
+          "second_s": 29.433333333332303
+        }
+      ],
+      "parked_surface_bounds": [
+        {
+          "track_id": "visual_0028",
+          "fragment_tracks": [
+            "visual_0028",
+            "visual_0030"
+          ],
+          "time_s": 21.841666666666068,
+          "mask_refs": [
+            "left_wrist_camera/120/component_1",
+            "right_wrist_camera/120/component_1"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": 1,
+          "offset_interval_m": [
+            -0.0038266308252275748,
+            0.0290092770043946
+          ],
+          "collision_center_m": [
+            0.20000088567101193,
+            -0.38731331869266195,
+            0.7879831751928651
+          ],
+          "collision_size_m": [
+            0.12779233716943095,
+            0.10593764505113072,
+            0.06331445199645493
+          ]
+        }
+      ],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedmerge-20261114-025208-pair-8063",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.18927605818779208,
+            -0.028743018100750493
+          ],
+          "yaw_deg": -28.09
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.191653072981398,
+            -0.02602793852796797
+          ],
+          "yaw_deg": -103.03
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "last_phase": "align",
+      "action_wall_s": 99.358,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.891666666666666,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1236,
+        "final_orientation_difference_deg": 0.001,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 27.67499999999907,
+          "second_s": 27.774999999999064
+        },
+        {
+          "phase": "align",
+          "first_s": 35.20833333333198,
+          "second_s": 35.30833333333197
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    },
+    {
+      "run": "parkedpatch-20261114-025746-pair-8060",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.20604244924896517,
+            -0.05993682083636239
+          ],
+          "yaw_deg": -53.24
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18474245615420498,
+            -0.04794325314087675
+          ],
+          "yaw_deg": 108.96
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "action_wall_s": 123.071,
+      "model_calls": 6,
+      "historical_proposals": [
+        "5094ac263b41422a88f00257b4f390f2:137:panda_left",
+        "9374862fdc83415b8437e5efe65c69af:143:panda_right"
+      ],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.341666666666667,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.791,
+          "y": 0.338,
+          "radius": 0.86
+        },
+        "panda_right": {
+          "x": 0.221,
+          "y": 0.055,
+          "radius": 0.228
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1619,
+        "final_orientation_difference_deg": 0.0011,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "online_parked_after_placement": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0048",
+          "position_m": [
+            0.1998903602361679,
+            -0.39968639612197876,
+            0.7874999468728442
+          ],
+          "centre_change_m": 0.00022112435872201824
+        }
+      ],
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 21.841666666666068,
+          "second_s": 21.941666666666062
+        },
+        {
+          "phase": "align",
+          "first_s": 29.466666666665635,
+          "second_s": 29.56666666666563
+        }
+      ],
+      "parked_surface_bounds": [
+        {
+          "track_id": "visual_0028",
+          "fragment_tracks": [
+            "visual_0028",
+            "visual_0030"
+          ],
+          "time_s": 21.941666666666062,
+          "mask_refs": [
+            "left_wrist_camera/120/component_1",
+            "right_wrist_camera/120/component_1"
+          ],
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "bounded_axis": 1,
+          "offset_interval_m": [
+            -0.0038314831331103224,
+            0.02908639145157123
+          ],
+          "collision_center_m": [
+            0.2000007348204331,
+            -0.3872772249440994,
+            0.7879781503240461
+          ],
+          "collision_size_m": [
+            0.12777920213547758,
+            0.10600410889773601,
+            0.0632994124214069
+          ]
+        }
+      ],
+      "parked_occlusion_checks": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "mask_refs": [
+            "scene_camera/144/component_3"
+          ],
+          "time_s": 29.56666666666563,
+          "last_surface_s": 21.941666666666062,
+          "source": "current top-depth patch and continuously protected collision envelope"
+        }
+      ]
+    },
+    {
+      "run": "parkedrays-20261114-030110-pair-8063",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.18927605818779208,
+            -0.028743018100750493
+          ],
+          "yaw_deg": -28.09
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.191653072981398,
+            -0.02602793852796797
+          ],
+          "yaw_deg": -103.03
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "last_phase": "verify",
+      "action_wall_s": 137.78,
+      "model_calls": 6,
+      "historical_proposals": [
+        "3dd7e5c7d462417e8bb8712e6fe54aa5:100:panda_left",
+        "ca8dc0683f2d41c9877b8363de1c8ce7:124:panda_right"
+      ],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": 8.883333333333333,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": true,
+      "offline_error_mm": {
+        "panda_left": {
+          "x": 0.209,
+          "y": 0.77,
+          "radius": 0.798
+        },
+        "panda_right": {
+          "x": -0.151,
+          "y": 1.044,
+          "radius": 1.055
+        }
+      },
+      "offline_initial_body": {
+        "panda_left": "box_00",
+        "panda_right": "box_01"
+      },
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.1721,
+        "final_orientation_difference_deg": 0.0011,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": "occupied"
+      },
+      "online_parked_after_placement": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0045",
+          "position_m": [
+            0.19990116357803345,
+            -0.39968132972717285,
+            0.7874999183298975
+          ],
+          "centre_change_m": 0.0002259612543794443
+        }
+      ],
+      "parked_rechecks": [
+        {
+          "phase": "transfer",
+          "first_s": 27.64999999999907,
+          "second_s": 27.749999999999066
+        },
+        {
+          "phase": "align",
+          "first_s": 35.18333333333198,
+          "second_s": 35.283333333331974
+        }
+      ],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "mask_refs": [],
+          "time_s": 35.283333333331974,
+          "last_surface_s": 27.749999999999066,
+          "source": "foreground occlusion in current depth views and continuously protected collision envelope"
+        }
+      ]
+    },
+    {
+      "run": "parkedrays-20261114-030110-pair-8066",
+      "initial": [
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.2021535443600809,
+            -0.06127320875074629
+          ],
+          "yaw_deg": 112.07
+        },
+        {
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.18542530110293914,
+            -0.010651212128941788
+          ],
+          "yaw_deg": 11.93
+        },
+        {
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "yaw_deg": 0
+        }
+      ],
+      "success": false,
+      "failure": "PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED",
+      "last_phase": "approach",
+      "action_wall_s": 23.635,
+      "model_calls": 6,
+      "historical_proposals": [],
+      "actual_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "transport_overlap_sim_s": null,
+      "physical_retry": false,
+      "simultaneous_grasp_verified": false,
+      "parked": {
+        "slot": [
+          0.2,
+          -0.4
+        ],
+        "body": "box_02",
+        "observed_initial_track": "visual_0003",
+        "initial_slot": {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied",
+          "owner": null,
+          "observation_time_s": 3.1999999999999913
+        },
+        "final_translation_xy_mm": 0.05,
+        "final_orientation_difference_deg": 0.0008,
+        "selected_as_source": false,
+        "reserved": false,
+        "final_visual_state": null
+      },
+      "online_parked_after_placement": null,
+      "parked_rechecks": [],
+      "parked_surface_bounds": [],
+      "parked_occlusion_checks": []
+    }
+  ]
+}
