@@ -1,0 +1,752 @@
+{
+  "controller_commit": "685f54d",
+  "scope": "Two upright separated cartons. The physics replay reruns perception, planning, gripper drives, contact, retreat and verification using previously sampled unmodified model poses matched to fresh visual clouds. The model was not resampled during those replays. Runs span successive fixes. Locked poses do not fix Isaac physics or runtime timing.",
+  "time_definition": "action_wall_s starts at the shared pregrasp drive, after candidate generation and initial planning, and ends when placement verification returns or the actor stops. Includes feedback and simulation stepping. Overlaps are measured encoder motion in simulated seconds.",
+  "old_failed_frames": {
+    "source": [
+      "study-20261113-101058-pair-10/pair_held_panda_right_lift",
+      "study-20261113-100304-pair-10/pair_held_panda_right_initial_lift"
+    ],
+    "method": "Re-fit the saved synchronized RGB-D and masks using prior observed body relation plus nominal lift displacement as the correspondence hint. The strict independent fit failed in both; the new carry fit recovered measured orientation and two coordinates, with the long axis explicitly constrained by the grasp. Offline sensitivity test; the full physics replays below run their own image-time FK."
+  },
+  "limits": "Final successful tests used the two outside slots; uncontrolled GraspGen proposals still can fail pair selection. The seed-10 success preceded adding the post-retreat home motion tested on seed 9. Final simulator state is read offline only.",
+  "runs": [
+    {
+      "run": "study-20261113-103156-pair-10",
+      "proposal_source": "fresh online GraspGen",
+      "success": false,
+      "phase": "approach",
+      "failure": "PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED",
+      "action_wall_s": 13.662796502001584,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": false,
+      "overlap_sim_s": {
+        "approach": 2.7916666666666665
+      },
+      "lift": {},
+      "placements": null,
+      "release_checks": null,
+      "pose_ids": [
+        "85a85a572ef94b6ebb5352d7ee887335:125:panda_left",
+        "0014ac7adebd48ca9ea2d0e20b4eebcc:179:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            22.8,
+            318.691
+          ],
+          "final_center_z_m": 0.7849998474121094,
+          "tilt_deg": 0,
+          "axis_error_deg": 61.76
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_error_mm": [
+            -17.536,
+            346.152
+          ],
+          "final_center_z_m": 0.7874999642372131,
+          "tilt_deg": 0,
+          "axis_error_deg": 48.931
+        }
+      }
+    },
+    {
+      "run": "study-20261113-103552-pair-10",
+      "proposal_source": "fresh online GraspGen",
+      "success": false,
+      "phase": null,
+      "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "action_wall_s": null,
+      "slots": null,
+      "verified_dual_grasp": false,
+      "overlap_sim_s": {},
+      "lift": {},
+      "placements": null,
+      "release_checks": null
+    },
+    {
+      "run": "study-20261113-103552-pair-9",
+      "proposal_source": "fresh online GraspGen",
+      "success": false,
+      "phase": "transfer",
+      "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "action_wall_s": 52.61932844109833,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 3.275,
+        "initial_lift": 0.8333333333333334,
+        "lift": 2.183333333333333,
+        "transfer": 5.641666666666667
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 1.02,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 0.145,
+          "fit": "GEOMETRY_OBSERVED"
+        }
+      },
+      "placements": null,
+      "release_checks": null,
+      "pose_ids": [
+        "063a5ea5aa984de584a49e00a87c1e3f:202:panda_left",
+        "ce7ee46e347e4447883227d3c98ecb9c:137:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_error_mm": [
+            -1.01,
+            0.862
+          ],
+          "final_center_z_m": 0.9718459844589233,
+          "tilt_deg": 1.2024,
+          "axis_error_deg": 35.118
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            1.055,
+            1.025
+          ],
+          "final_center_z_m": 0.9744760394096375,
+          "tilt_deg": 0.2814,
+          "axis_error_deg": 31.108
+        }
+      }
+    },
+    {
+      "run": "study-20261113-105710-pair-10",
+      "proposal_source": "fresh online GraspGen",
+      "success": false,
+      "phase": null,
+      "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "action_wall_s": null,
+      "slots": null,
+      "verified_dual_grasp": false,
+      "overlap_sim_s": {},
+      "lift": {},
+      "placements": null,
+      "release_checks": null
+    },
+    {
+      "run": "tilt-original-01",
+      "proposal_source": "saved raw GraspGen poses with fresh scene checks",
+      "success": false,
+      "phase": "lower",
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "action_wall_s": 83.77293250104412,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 2.658333333333333,
+        "initial_lift": 0.7416666666666667,
+        "lift": 1.9833333333333334,
+        "transfer": 5.4,
+        "align": 4.733333333333333,
+        "lower": 1.1583333333333332
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 2.853,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 9.527,
+          "fit": "GRASP_CONSTRAINED"
+        }
+      },
+      "placements": null,
+      "release_checks": null,
+      "pose_ids": [
+        "ad6e75595732455793c5387754c7377c:145:panda_left",
+        "53cb70248e49443a9e891c8355e709ee:245:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            -0.13,
+            0.229
+          ],
+          "final_center_z_m": 0.7923100590705872,
+          "tilt_deg": 7.6528,
+          "axis_error_deg": 0.121
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_error_mm": [
+            3.201,
+            1.601
+          ],
+          "final_center_z_m": 0.7876092195510864,
+          "tilt_deg": 0.0161,
+          "axis_error_deg": 0.133
+        }
+      }
+    },
+    {
+      "run": "tilt-original-02",
+      "proposal_source": "saved raw GraspGen poses with fresh scene checks",
+      "success": false,
+      "phase": "align",
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "action_wall_s": 73.62396135507151,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 2.658333333333333,
+        "initial_lift": 0.7416666666666667,
+        "lift": 1.9833333333333334,
+        "transfer": 5.383333333333333,
+        "align": 4.775
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 2.853,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 9.526,
+          "fit": "GRASP_CONSTRAINED"
+        }
+      },
+      "placements": null,
+      "release_checks": null,
+      "pose_ids": [
+        "ad6e75595732455793c5387754c7377c:145:panda_left",
+        "53cb70248e49443a9e891c8355e709ee:245:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            -0.073,
+            -0.286
+          ],
+          "final_center_z_m": 0.9759464859962463,
+          "tilt_deg": 0.1477,
+          "axis_error_deg": 0.361
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_error_mm": [
+            3.47,
+            1.39
+          ],
+          "final_center_z_m": 0.9683291912078857,
+          "tilt_deg": 2.7914,
+          "axis_error_deg": 0.014
+        }
+      }
+    },
+    {
+      "run": "tilt-original-09",
+      "proposal_source": "saved raw GraspGen poses with fresh scene checks",
+      "success": false,
+      "phase": "retreat",
+      "failure": "STATIC_PATH_BLOCKED:visual_0044",
+      "action_wall_s": 82.61575932521373,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 3.275,
+        "initial_lift": 0.8083333333333333,
+        "lift": 2.2,
+        "transfer": 5.591666666666667,
+        "align": 2.341666666666667,
+        "lower": 0.9416666666666667
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 0.892,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 0.197,
+          "fit": "GEOMETRY_OBSERVED"
+        }
+      },
+      "placements": null,
+      "release_checks": null,
+      "pose_ids": [
+        "063a5ea5aa984de584a49e00a87c1e3f:202:panda_left",
+        "ce7ee46e347e4447883227d3c98ecb9c:137:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_error_mm": [
+            -0.19,
+            0.654
+          ],
+          "final_center_z_m": 0.7824999690055847,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.155
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            0.067,
+            0.824
+          ],
+          "final_center_z_m": 0.7849999070167542,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.531
+        }
+      }
+    },
+    {
+      "run": "tilt-retreat-09",
+      "proposal_source": "saved raw GraspGen poses with fresh scene checks",
+      "success": false,
+      "phase": "verify",
+      "failure": "PAIR_RELEASED_CARTONS_NOT_STABLE",
+      "action_wall_s": 109.74880298809148,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 3.275,
+        "initial_lift": 0.8333333333333334,
+        "lift": 2.183333333333333,
+        "transfer": 5.6,
+        "align": 2.3166666666666664,
+        "lower": 0.9416666666666667,
+        "retreat": 0.9583333333333334
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 1.02,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 0.145,
+          "fit": "GEOMETRY_OBSERVED"
+        }
+      },
+      "placements": null,
+      "release_checks": {
+        "panda_left": {
+          "centre_m": [
+            -0.2003594046251488,
+            -0.39883475165198173,
+            0.7933688814761073
+          ],
+          "tilt_deg": 0.5000559073524654,
+          "gap_upper_m": 0.01598739013491473,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.20024510824007763,
+            -0.39861239447697966,
+            0.7958604399372872
+          ],
+          "tilt_deg": 0.3142812424772961,
+          "gap_upper_m": 0.0163793779185248,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "pose_ids": [
+        "063a5ea5aa984de584a49e00a87c1e3f:202:panda_left",
+        "ce7ee46e347e4447883227d3c98ecb9c:137:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_error_mm": [
+            -0.321,
+            0.745
+          ],
+          "final_center_z_m": 0.7824999690055847,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.18
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            0.069,
+            1.448
+          ],
+          "final_center_z_m": 0.7849999070167542,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.089
+        }
+      }
+    },
+    {
+      "run": "tilt-retreat-10",
+      "proposal_source": "saved raw GraspGen poses with fresh scene checks",
+      "success": true,
+      "phase": "verify",
+      "failure": null,
+      "action_wall_s": 101.93804253311828,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 2.658333333333333,
+        "initial_lift": 0.7416666666666667,
+        "lift": 1.9833333333333334,
+        "transfer": 5.391666666666667,
+        "align": 4.4,
+        "lower": 1.1416666666666666,
+        "retreat": 0.975
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 2.853,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 9.526,
+          "fit": "GRASP_CONSTRAINED"
+        }
+      },
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0034",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.003993603587150563,
+            0.00009336471557619408
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0035",
+          "goal_xy": [
+            0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.003788056969642628,
+            0.001574450731277488
+          ]
+        }
+      },
+      "release_checks": {
+        "panda_left": {
+          "centre_m": [
+            -0.20141585339302473,
+            -0.39986083602928807,
+            0.79413610341005
+          ],
+          "tilt_deg": 9.530876986106568,
+          "gap_upper_m": 0.00645045051660207,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.19994916226535653,
+            -0.3984323940964006,
+            0.7875523595636831
+          ],
+          "tilt_deg": 0.04856328325115615,
+          "gap_upper_m": 0.003569293395613452,
+          "measurement": "GRASP_CONSTRAINED",
+          "waypoint_reacquisition": "lower"
+        }
+      },
+      "pose_ids": [
+        "ad6e75595732455793c5387754c7377c:145:panda_left",
+        "53cb70248e49443a9e891c8355e709ee:245:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            -3.993,
+            0.098
+          ],
+          "final_center_z_m": 0.7849999070167542,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.1
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_error_mm": [
+            3.804,
+            1.577
+          ],
+          "final_center_z_m": 0.7874999642372131,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.13
+        }
+      }
+    },
+    {
+      "run": "tilt-visible-09",
+      "proposal_source": "saved raw GraspGen poses with fresh scene checks",
+      "success": true,
+      "phase": "verify",
+      "failure": null,
+      "action_wall_s": 99.97089982009493,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "verified_dual_grasp": true,
+      "overlap_sim_s": {
+        "approach": 3.275,
+        "initial_lift": 0.8083333333333333,
+        "lift": 2.2,
+        "transfer": 5.608333333333333,
+        "align": 2.3,
+        "lower": 0.9416666666666667,
+        "retreat": 0.9583333333333334
+      },
+      "lift": {
+        "panda_left": {
+          "tilt_deg": 0.892,
+          "fit": "GEOMETRY_OBSERVED"
+        },
+        "panda_right": {
+          "tilt_deg": 0.197,
+          "fit": "GEOMETRY_OBSERVED"
+        }
+      },
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0003",
+          "observed_track": "visual_0046",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.0001705765724182018,
+            0.000571185350418113
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0045",
+          "goal_xy": [
+            0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.00008614659309386097,
+            0.0008132100105285867
+          ]
+        }
+      },
+      "release_checks": {
+        "panda_left": {
+          "centre_m": [
+            -0.20021564177268408,
+            -0.3988414534769394,
+            0.7934308127410035
+          ],
+          "tilt_deg": 0.2600344470843344,
+          "gap_upper_m": 0.016499870360093954,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.20024953412362018,
+            -0.3986242371817345,
+            0.7958786706407891
+          ],
+          "tilt_deg": 0.31273493219090187,
+          "gap_upper_m": 0.016773596114319125,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "pose_ids": [
+        "063a5ea5aa984de584a49e00a87c1e3f:202:panda_left",
+        "ce7ee46e347e4447883227d3c98ecb9c:137:panda_right"
+      ],
+      "offline_final": {
+        "panda_left": {
+          "box": "box_00",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_error_mm": [
+            -0.171,
+            0.569
+          ],
+          "final_center_z_m": 0.7824999690055847,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.218
+        },
+        "panda_right": {
+          "box": "box_01",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_error_mm": [
+            0.09,
+            0.808
+          ],
+          "final_center_z_m": 0.7850000262260437,
+          "tilt_deg": 0,
+          "axis_error_deg": 0.497
+        }
+      }
+    }
+  ]
+}
