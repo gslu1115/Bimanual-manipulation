@@ -1,0 +1,1558 @@
+{
+  "date": "2026-11-14",
+  "scope": "Headless Isaac Sim 6.1 on anl4090 GPU 1. Single-arm scene with fresh RGB-D and physical finger/joint drives, or paired scene with two arms and two separate upright cartons. Raw camera data, weights and access details are excluded from this receipt.",
+  "revisions": {
+    "baseline": "d8c4e9d",
+    "timer": "95492aa",
+    "final": "1edb338"
+  },
+  "methods": {
+    "measurement": "Elapsed time starts at first pregrasp motion and ends at verification or stop. Pair overlap comes from both encoder streams on the same simulation clock. Offline final state is used only for placement evaluation. No carton pose, contact truth or instance label is supplied by the simulator to the controller.",
+    "matched_7946_7948": "Replayed each original 256-proposal GraspGen pool and model scores. Physics, visual checks and controllers remained live. Original inference-clock advances 1.000 and 1.825 simulation seconds were reproduced. Both selected IDs match the originals.",
+    "matched_7960": "Replayed the saved second GraspGen pool with the original two inference waiting intervals (2.825 and 1.475 simulated seconds). The first original request did not yield an accepted candidate and its raw poses were unavailable. The replay reuses the available pool and retains normal visual revalidation; the selected ID is the same.",
+    "counting": "Keep stage-clock development runs, matched regressions and new scenes in separate groups. Do not pool success rates across revisions."
+  },
+  "diagnosis": {
+    "seed7946": "Original DESCEND_PICK advanced 7.117 sim seconds, although the SDK timeout is 5 s. End residual 0.3 mm / 0.0035 rad. After descent-only clock adjustment, a separately checked lift consumed more than its 5 s phase budget. Final change subtracts the duration executed outside the SDK from its phase timer and requires new endpoint samples; does not reset prior SDK-controlled waiting.",
+    "seed7948": "Original GRASP stopped with stable fingertip positions around 32.5/32.7 mm and 0.0173 rad orientation error. Increased closing-only angular tolerance to 1.5 deg while retaining 3 mm positional tolerance, SDK gripper feedback, stability/dwell and independent RGB-D lift checks.",
+    "seed7960": "On the failed overhead frame the original fit returned VISIBLE_PLANES_UNRESOLVED. Image timestamp and trace timestamp both 20.4833 s. A top-normal refit using scene and right-wrist masks returned GEOMETRY_OBSERVED, normal correction 9.56 deg and normal offset -4.31 mm. Enable the existing RGB-D refit after a verified lift for up to 5 s when ordinary correspondence has failed.",
+    "seed7971": "Left-arm single carton reached the release waypoint. The visible top covered 78.3 mm of the known 100 mm length and the holding check returned TRANSLATION_AXIS_UNOBSERVED:0, so the skill stopped before opening. Offline terminal center was [-0.20009,-0.40044,0.79350] m; this is not a verified placement."
+  },
+  "prior": [
+    {
+      "run": "liftclockanchor-20261113-234416-small_wide-7946",
+      "seed": 7946,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18096425078022818,
+            -0.02040965611159174
+          ],
+          "yaw_deg": 309
+        }
+      ],
+      "success": false,
+      "failure": "CUMOTION:DESCEND_PICK timed out after 5.000 s (position error 0.0003 m, orientation error 0.0035 rad).",
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "FAILED"
+      ],
+      "last_phase": null,
+      "action_wall_s": 18.184,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": null,
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "0b54260ec5724a80b2c7fd1318eea84d:142:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.18173930425474683,
+          -0.021321254554925898,
+          0.8054020328923981
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.046841034337989015,
+          0.42988479641840405,
+          0.9013686837903566,
+          -0.023226605272710466
+        ]
+      ],
+      "placements": {},
+      "path_rejection": null,
+      "holding_failure": null
+    },
+    {
+      "run": "liftclockanchor-20261113-234914-small_wide-7948",
+      "seed": 7948,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18137964272120272,
+            -0.02062900071111364
+          ],
+          "yaw_deg": 241
+        }
+      ],
+      "success": false,
+      "failure": "CUMOTION:GRASP timed out after 2.000 s (position error 0.0012 m, orientation error 0.0173 rad).",
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "FAILED"
+      ],
+      "last_phase": null,
+      "action_wall_s": 16.621,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": null,
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "871ad25d2aa34d6e9e8813032021d0bc:141:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.18056085263884772,
+          -0.02180203956497785,
+          0.7990233552998801
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.053882160044791585,
+          -0.5069970218837122,
+          0.8599300031888836,
+          0.02389816406171461
+        ]
+      ],
+      "placements": {},
+      "path_rejection": null,
+      "holding_failure": null
+    }
+  ],
+  "descent_only_development": [
+    {
+      "run": "close61-20261114-010356-pair-7955",
+      "seed": 7955,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            -0.22110523988852157,
+            -0.021842433289468922
+          ],
+          "yaw_deg": 104.62
+        },
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            0.21871151277105375,
+            -0.06664246420231734
+          ],
+          "yaw_deg": -1.87
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [],
+      "last_phase": "verify",
+      "action_wall_s": 116.862,
+      "requests": 6,
+      "transfer_overlap_sim_s": 8.058333333333334,
+      "first_test_lift": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.05954871328561695,
+            "visual_rise_m": 0.05961157063120415,
+            "lag_m": -0.00006285734558719724,
+            "finger_gap_m": 0.06498667225241661,
+            "gap_change_m": 0.0000017508864402770996,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05940669162060708,
+            "visual_rise_m": 0.059466892462414545,
+            "lag_m": -0.00006020084180746732,
+            "finger_gap_m": 0.05498792603611946,
+            "gap_change_m": 0.000036133453249931335,
+            "suspect": false
+          }
+        ]
+      },
+      "alternate": null,
+      "arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "pose_ids": [
+        "960b7c44120e458797c00692e8ffc5ec:222:panda_left",
+        "984978ea600c4c8fb1c8f925a775c120:218:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          -0.2200940716849346,
+          -0.026205076560195092,
+          0.8050398627340695
+        ],
+        [
+          0.21734545147774448,
+          -0.06658068202048362,
+          0.7976249500660548
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.018146873567306182,
+          -0.6110912232682348,
+          -0.7911369605673976,
+          -0.018453114871063457
+        ],
+        [
+          0.0003178403083418429,
+          0.999835060071339,
+          -0.01629676792289685,
+          -0.00801042976047839
+        ]
+      ],
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.588,
+            0.19
+          ],
+          "radial_mm": 0.618
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.152,
+            2.231
+          ],
+          "radial_mm": 2.236
+        }
+      }
+    },
+    {
+      "run": "close61-20261114-010356-small_medium-7953",
+      "seed": 7953,
+      "initial": [
+        {
+          "variant": "small_medium",
+          "dimensions_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.18853159689334992,
+            -0.0976074083046424
+          ],
+          "yaw_deg": 279
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 49.772,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05785962638062847,
+          "visual_rise_m": 0.05697858421276558,
+          "lag_m": 0.0008810421678628888,
+          "finger_gap_m": 0.05999547243118286,
+          "gap_change_m": -0.00030266493558883667,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_left"
+      ],
+      "pose_ids": [
+        "f19466ab7e9044bea78ac50828ef837d:16:panda_left"
+      ],
+      "selected_tcp_m": [
+        [
+          -0.18395021017909421,
+          -0.11418363368004367,
+          0.8049346732371282
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.024407355498052268,
+          -0.6496094286260158,
+          -0.7591201414886571,
+          -0.033889261190146354
+        ]
+      ],
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -1.678,
+            -0.507
+          ],
+          "radial_mm": 1.753
+        }
+      }
+    },
+    {
+      "run": "close61-20261114-010356-small_wide-7946",
+      "seed": 7946,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18096425078022818,
+            -0.02040965611159174
+          ],
+          "yaw_deg": 309
+        }
+      ],
+      "success": false,
+      "failure": "CUMOTION:LIFT timed out after 5.000 s (position error 0.0005 m, orientation error 0.0044 rad).",
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "FAILED"
+      ],
+      "last_phase": null,
+      "action_wall_s": 35.747,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05885553340693239,
+          "visual_rise_m": 0.059003627862397545,
+          "lag_m": -0.0001480944554651531,
+          "finger_gap_m": 0.0649137981235981,
+          "gap_change_m": -0.0000014081597328186035,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "0b54260ec5724a80b2c7fd1318eea84d:142:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.18173930425474683,
+          -0.021321254554925898,
+          0.8054020328923981
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.046841034337989015,
+          0.42988479641840405,
+          0.9013686837903566,
+          -0.023226605272710466
+        ]
+      ],
+      "placements": {},
+      "path_rejection": null,
+      "holding_failure": null
+    },
+    {
+      "run": "close61-20261114-010356-small_wide-7948",
+      "seed": 7948,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18137964272120272,
+            -0.02062900071111364
+          ],
+          "yaw_deg": 241
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 54.008,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05905666203532345,
+          "visual_rise_m": 0.06019811159810662,
+          "lag_m": -0.00114144956278317,
+          "finger_gap_m": 0.06492147967219353,
+          "gap_change_m": -0.00025459006428718567,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "871ad25d2aa34d6e9e8813032021d0bc:141:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.18056085263884772,
+          -0.02180203956497785,
+          0.7990233552998801
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.053882160044791585,
+          -0.5069970218837122,
+          0.8599300031888836,
+          0.02389816406171461
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.32,
+            -1.438
+          ],
+          "radial_mm": 1.473
+        }
+      }
+    },
+    {
+      "run": "close61-20261114-010356-small_wide-7952",
+      "seed": 7952,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.21017586550496853,
+            -0.07731899697719116
+          ],
+          "yaw_deg": 73
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 53.402,
+      "requests": 2,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.058276022316699594,
+          "visual_rise_m": 0.05784829330477814,
+          "lag_m": 0.00042772901192145163,
+          "finger_gap_m": 0.06502582877874374,
+          "gap_change_m": -0.000014372169971466064,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "2d80f2eced99457eb4005e64e8e48694:27:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.20982670660523525,
+          -0.07809351623128875,
+          0.798818401564661
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.015920822340969105,
+          -0.8033011437166309,
+          -0.5946155264157633,
+          -0.02976870277397597
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.331,
+            3.042
+          ],
+          "radial_mm": 3.06
+        }
+      }
+    },
+    {
+      "run": "close61-20261114-010356-small_wide-7954",
+      "seed": 7954,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2206355880105627,
+            -0.058985232137863476
+          ],
+          "yaw_deg": 223
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 51.599,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.0580644835079287,
+          "visual_rise_m": 0.05795788534937407,
+          "lag_m": 0.00010659815855462718,
+          "finger_gap_m": 0.06503764539957047,
+          "gap_change_m": -0.000004000961780548096,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "5b2bc867f2254a9aa85b6adb9f817a23:206:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.2169961839914322,
+          -0.06389461662620305,
+          0.8071735620498659
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.0073319936947065885,
+          -0.9314838288992974,
+          -0.3634869337834225,
+          -0.012703044370986962
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.574,
+            2.979
+          ],
+          "radial_mm": 3.034
+        }
+      }
+    }
+  ],
+  "timer_revision": [
+    {
+      "run": "dwell61-20261114-011551-pair-7963",
+      "seed": 7963,
+      "initial": [
+        {
+          "variant": "small_medium",
+          "dimensions_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.20747793284200186,
+            -0.09089945066507304
+          ],
+          "yaw_deg": -168.14
+        },
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.20289405227161714,
+            -0.057602296034194596
+          ],
+          "yaw_deg": 52.04
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [],
+      "last_phase": "verify",
+      "action_wall_s": 108.547,
+      "requests": 6,
+      "transfer_overlap_sim_s": 7.408333333333333,
+      "first_test_lift": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.059315144057560554,
+            "visual_rise_m": 0.05923608372639588,
+            "lag_m": 0.00007906033116467093,
+            "finger_gap_m": 0.06008074805140495,
+            "gap_change_m": -0.00007597915828227997,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05965454090042566,
+            "visual_rise_m": 0.05938727774163555,
+            "lag_m": 0.00026726315879010976,
+            "finger_gap_m": 0.06498302519321442,
+            "gap_change_m": -0.00009503215551376343,
+            "suspect": false
+          }
+        ]
+      },
+      "alternate": null,
+      "arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "pose_ids": [
+        "47f03ef86a4445e0b75bb205146285d2:141:panda_left",
+        "0fc89771a19c4242bc7bcbf529467764:181:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          -0.20848521172821588,
+          -0.09122847070529731,
+          0.7996979233792041
+        ],
+        [
+          0.20210546272793276,
+          -0.058862011553077895,
+          0.8039910792692437
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.007672996415429168,
+          -0.9940165989133393,
+          -0.10313114486972383,
+          -0.03515811668201818
+        ],
+        [
+          0.022938749952382605,
+          -0.8978996514014755,
+          -0.43807484973410143,
+          -0.03661223558013345
+        ]
+      ],
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            0,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.116,
+            1.793
+          ],
+          "radial_mm": 1.797
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.273,
+            1.78
+          ],
+          "radial_mm": 1.801
+        }
+      }
+    },
+    {
+      "run": "dwell61-20261114-011551-small_medium-7961",
+      "seed": 7961,
+      "initial": [
+        {
+          "variant": "small_medium",
+          "dimensions_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.17659250171972238,
+            -0.08948302859419073
+          ],
+          "yaw_deg": 291
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 48.847,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.057887309604005344,
+          "visual_rise_m": 0.05659054519180806,
+          "lag_m": 0.0012967644121972821,
+          "finger_gap_m": 0.05998965539038181,
+          "gap_change_m": -4.3958425521850586e-7,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_left"
+      ],
+      "pose_ids": [
+        "3cd6b99103a343e483ec184d87f81c53:220:panda_left"
+      ],
+      "selected_tcp_m": [
+        [
+          -0.17521912213566251,
+          -0.09334072520251045,
+          0.8048401127269171
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.0187632138375378,
+          0.5663228476507699,
+          0.8239112181323552,
+          -0.009832531254348388
+        ]
+      ],
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.11,
+            -0.681
+          ],
+          "radial_mm": 0.689
+        }
+      }
+    },
+    {
+      "run": "dwell61-20261114-011551-small_wide-7946",
+      "seed": 7946,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18096425078022818,
+            -0.02040965611159174
+          ],
+          "yaw_deg": 309
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 66.533,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05885553340693239,
+          "visual_rise_m": 0.059051185057518385,
+          "lag_m": -0.00019565165058599288,
+          "finger_gap_m": 0.0649137981235981,
+          "gap_change_m": -0.0000014081597328186035,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "0b54260ec5724a80b2c7fd1318eea84d:142:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.18173930425474683,
+          -0.021321254554925898,
+          0.8054020328923981
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.046841034337989015,
+          0.42988479641840405,
+          0.9013686837903566,
+          -0.023226605272710466
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.311,
+            -0.666
+          ],
+          "radial_mm": 0.735
+        }
+      }
+    },
+    {
+      "run": "dwell61-20261114-011551-small_wide-7948",
+      "seed": 7948,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.18137964272120272,
+            -0.02062900071111364
+          ],
+          "yaw_deg": 241
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 56.673,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05905666203532345,
+          "visual_rise_m": 0.0601981145294197,
+          "lag_m": -0.0011414524940962512,
+          "finger_gap_m": 0.06492147967219353,
+          "gap_change_m": -0.00025459006428718567,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "871ad25d2aa34d6e9e8813032021d0bc:141:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.18056085263884772,
+          -0.02180203956497785,
+          0.7990233552998801
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.053882160044791585,
+          -0.5069970218837122,
+          0.8599300031888836,
+          0.02389816406171461
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.222,
+            -1.409
+          ],
+          "radial_mm": 1.426
+        }
+      }
+    },
+    {
+      "run": "dwell61-20261114-011551-small_wide-7960",
+      "seed": 7960,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.19931037525760956,
+            -0.06261131062255904
+          ],
+          "yaw_deg": 214
+        }
+      ],
+      "success": false,
+      "failure": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "FAILED"
+      ],
+      "last_phase": null,
+      "action_wall_s": 35.831,
+      "requests": 2,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05904985329105272,
+          "visual_rise_m": 0.05872963496411032,
+          "lag_m": 0.0003202183269424008,
+          "finger_gap_m": 0.06535214185714722,
+          "gap_change_m": -0.0001313239336013794,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "8702be4e3e544f4d825dee7ed2c4c3bd:168:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.20955987943745225,
+          -0.05648494549109348,
+          0.8079065041165961
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.030880704964296932,
+          0.2926327279291192,
+          -0.9557026488923491,
+          -0.006701903148894497
+        ]
+      ],
+      "placements": {},
+      "path_rejection": null,
+      "holding_failure": {
+        "status": "UNKNOWN",
+        "reason": "VISIBLE_PLANES_UNRESOLVED",
+        "time_s": 20.483333333332812
+      }
+    },
+    {
+      "run": "dwell61-20261114-011551-small_wide-7962",
+      "seed": 7962,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.1976209167150766,
+            -0.03817878769024277
+          ],
+          "yaw_deg": 94
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 54.8,
+      "requests": 1,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05872488117891206,
+          "visual_rise_m": 0.0581141806630423,
+          "lag_m": 0.0006107005158697554,
+          "finger_gap_m": 0.06515408307313919,
+          "gap_change_m": -0.0003479868173599243,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "be6228d52a0b40829ac73a252dc43774:187:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.19709409659558724,
+          -0.03797437311379031,
+          0.8033585075082808
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.01747938335802646,
+          0.6819878371110485,
+          0.7311321245874611,
+          0.00573389799718673
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.4,
+            -0.924
+          ],
+          "radial_mm": 1.006
+        }
+      }
+    }
+  ],
+  "final_revision": [
+    {
+      "run": "dwelltilt-20261114-012730-pair-7972",
+      "seed": 7972,
+      "initial": [
+        {
+          "variant": "small_medium",
+          "dimensions_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "xy_m": [
+            -0.17942050848414817,
+            -0.05285115194217489
+          ],
+          "yaw_deg": -71.84
+        },
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.20173091703567328,
+            -0.05740118651037181
+          ],
+          "yaw_deg": -112.99
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [],
+      "last_phase": "verify",
+      "action_wall_s": 129.252,
+      "requests": 6,
+      "transfer_overlap_sim_s": 6.708333333333333,
+      "first_test_lift": {
+        "panda_left": [
+          {
+            "tcp_rise_m": 0.05933864860017202,
+            "visual_rise_m": 0.05924584862643234,
+            "lag_m": 0.00009279997373967674,
+            "finger_gap_m": 0.060023631900548935,
+            "gap_change_m": -0.00011069700121879578,
+            "suspect": false
+          }
+        ],
+        "panda_right": [
+          {
+            "tcp_rise_m": 0.05975023271020974,
+            "visual_rise_m": 0.05887036592372974,
+            "lag_m": 0.0008798667864799992,
+            "finger_gap_m": 0.06502015888690948,
+            "gap_change_m": -0.0005084797739982605,
+            "suspect": false
+          }
+        ]
+      },
+      "alternate": null,
+      "arms": [
+        "panda_left",
+        "panda_right"
+      ],
+      "pose_ids": [
+        "281230364c2b4a6a9a09cd8b391b51c3:191:panda_left",
+        "7d58b041ff864c4da569ecc5c74569c5:175:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          -0.1798662551659781,
+          -0.05205327291019843,
+          0.7947624474813083
+        ],
+        [
+          0.20079511239049352,
+          -0.05841305061653557,
+          0.8007481487127739
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.044515093511450665,
+          0.5863200101321703,
+          0.8085801407332975,
+          -0.021104695686013066
+        ],
+        [
+          0.010299652746620936,
+          0.8335939373083759,
+          0.5520291356400624,
+          0.016700246719859767
+        ]
+      ],
+      "placements": {
+        "panda_left": {
+          "target_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.373,
+            0.018
+          ],
+          "radial_mm": 0.373
+        },
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            0.276,
+            0.814
+          ],
+          "radial_mm": 0.859
+        }
+      }
+    },
+    {
+      "run": "dwelltilt-20261114-012730-small_reference-7971",
+      "seed": 7971,
+      "initial": [
+        {
+          "variant": "small_reference",
+          "dimensions_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "xy_m": [
+            -0.20710228259749358,
+            -0.03851398720864121
+          ],
+          "yaw_deg": 118
+        }
+      ],
+      "success": false,
+      "failure": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "FAILED"
+      ],
+      "last_phase": null,
+      "action_wall_s": 38.681,
+      "requests": 3,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05817542030467093,
+          "visual_rise_m": 0.05986104837091899,
+          "lag_m": -0.0016856280662480572,
+          "finger_gap_m": 0.05493451841175556,
+          "gap_change_m": 0.000010775402188301086,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_left"
+      ],
+      "pose_ids": [
+        "6f4734c76476414296710eb7169e15b7:226:panda_left"
+      ],
+      "selected_tcp_m": [
+        [
+          -0.2025042059546757,
+          -0.04724087645289318,
+          0.8011200017958138
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.042630677696752974,
+          -0.514368425136361,
+          -0.8561065146942117,
+          -0.026256123856819635
+        ]
+      ],
+      "placements": {},
+      "path_rejection": null,
+      "holding_failure": {
+        "status": "UNKNOWN",
+        "reason": "TRANSLATION_AXIS_UNOBSERVED:0",
+        "time_s": 20.85833333333279,
+        "unobserved_axis": 0,
+        "observed_span_m": 0.07831292248619429,
+        "expected_span_m": 0.1,
+        "visible_face_axes": [
+          2
+        ],
+        "face_point_counts": [
+          {
+            "axis": 2,
+            "sign": 1,
+            "points": 70518
+          }
+        ]
+      }
+    },
+    {
+      "run": "dwelltilt-20261114-012730-small_wide-7960",
+      "seed": 7960,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.19931037525760956,
+            -0.06261131062255904
+          ],
+          "yaw_deg": 214
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 54.511,
+      "requests": 2,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05904985329105272,
+          "visual_rise_m": 0.05873202611808781,
+          "lag_m": 0.0003178271729649129,
+          "finger_gap_m": 0.06535214185714722,
+          "gap_change_m": -0.0001313239336013794,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "8702be4e3e544f4d825dee7ed2c4c3bd:168:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.20955987943745225,
+          -0.05648494549109348,
+          0.8079065041165961
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.030880704964296932,
+          0.2926327279291192,
+          -0.9557026488923491,
+          -0.006701903148894497
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.281,
+            -0.384
+          ],
+          "radial_mm": 0.476
+        }
+      }
+    },
+    {
+      "run": "dwelltilt-20261114-012730-small_wide-7970",
+      "seed": 7970,
+      "initial": [
+        {
+          "variant": "small_wide",
+          "dimensions_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "xy_m": [
+            0.2237196541461255,
+            -0.05942297864914933
+          ],
+          "yaw_deg": 141
+        }
+      ],
+      "success": true,
+      "failure": null,
+      "events": [
+        "PREGRASP",
+        "APPROACH",
+        "CLOSE",
+        "LIFT",
+        "TRANSFER",
+        "LOWER",
+        "OPEN",
+        "RETREAT",
+        "HOME",
+        "VERIFY",
+        "DONE"
+      ],
+      "last_phase": null,
+      "action_wall_s": 50.215,
+      "requests": 2,
+      "transfer_overlap_sim_s": null,
+      "first_test_lift": [
+        {
+          "tcp_rise_m": 0.05856267855257935,
+          "visual_rise_m": 0.05850629515675998,
+          "lag_m": 0.00005638339581937046,
+          "finger_gap_m": 0.06506606191396713,
+          "gap_change_m": -0.00003588944673538208,
+          "suspect": false
+        }
+      ],
+      "alternate": null,
+      "arms": [
+        "panda_right"
+      ],
+      "pose_ids": [
+        "add9a391886c4d3d9bd6cff21f30f6f9:222:panda_right"
+      ],
+      "selected_tcp_m": [
+        [
+          0.23497702265381074,
+          -0.06872888461482816,
+          0.8042485092631929
+        ]
+      ],
+      "selected_wxyz": [
+        [
+          0.06834425565522857,
+          -0.33259052600641825,
+          -0.9401530824557189,
+          -0.028719092581721554
+        ]
+      ],
+      "placements": {
+        "panda_right": {
+          "target_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "error_xy_mm": [
+            -0.349,
+            -0.348
+          ],
+          "radial_mm": 0.493
+        }
+      }
+    }
+  ],
+  "cpu_tests_passed": 603
+}
