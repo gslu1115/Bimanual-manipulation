@@ -4,7 +4,7 @@ from dataclasses import replace
 import numpy as np
 
 from workstation.observations.camera_geometry import pose_matrix, quaternion_from_matrix
-from workstation.perception.held_surface import CuboidHoldingTracker
+from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors
 from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres
@@ -40,8 +40,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     goals = dict(zip(arms, pair['slots']))
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
     trackers = {}
+    release_trackers = {}
     measurements = {}
     held = False
+    before_transfer={}
     phases = report['phases'] = {}
 
     def observe():
@@ -81,6 +83,24 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         t=trackers[arm]
         pos,rot=robot.fk(arm)
         observed=t.observe(packet,scene,pos,rot,reacquire_tilt=held)
+        if observed is None and report['last_phase'] in ('align','lower'):
+            # A carton may settle onto the stationary belt before the hand
+            # opens. Search at support height, keeping the grasp's XY prior:
+            # the desired slot centre must never supply a hidden coordinate.
+            from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported,grasp_constrained_cuboid_supported
+            from workstation.planning.selection import nearest_upright_slot_rotation
+            hint=pos+rot@t.offset
+            upright=nearest_upright_slot_rotation(rot@t.relative_rotation)
+            waypoint_height=.18 if report['last_phase']=='align' else 0.
+            for gap in (0.,.006,.012):
+                centre=np.array([*hint[:2],robot.place_support_z+t.size[2]/2+waypoint_height+gap])
+                fit=fit_cuboid_pose(packet,scene,centre,upright,t.size,priors,allow_grasp_translation=True)
+                if not (measured_cuboid_supported(fit,packet.observation_time_s) or
+                        grasp_constrained_cuboid_supported(fit,packet.observation_time_s)):continue
+                if np.linalg.norm(np.asarray(fit['position_m'])-hint)>.025:continue
+                observed=fit
+                observed['waypoint_reacquisition']=report['last_phase']
+                break
         if observed is None:
             from workstation.diagnostics.vision_check import save_observation
             save_observation(env.output,'pair_held_'+arm+'_'+report['last_phase'],packet,scene)
@@ -94,6 +114,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         # from its previous reference. Keep the uncertainty of a partial fit.
         if observed.get('geometric_pose_measured'):
             t.offset=rot.T@(np.asarray(observed['position_m'])-pos)
+        # The partial fit still measures all rotation axes. One hidden
+        # translation must not freeze the measured carton tilt at closure.
+        if observed.get('geometric_pose_measured') or observed.get('grasp_constrained'):
             t.relative_rotation=rot.T@np.asarray(observed['rotation'])
         t.uncertainty_m=max(t.uncertainty_m,observed['uncertainty_m'])
         return observed
@@ -111,8 +134,17 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                 raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
             xy=goals[arm]
             view=robot.observed_workspace.slot(xy)
-            report.setdefault('destination_checks',[]).append(dict(arm=arm,phase=report['last_phase'],**view))
-            if slots.owners.get(xy)!=arm or not view['free']:
+            carried_ids={objects[a].track_id for a in arms}
+            accounted=(len(carried_ids)==2 and len(scene.objects)==2 and
+                       {o.track_id for o in scene.objects}==carried_ids and
+                       all(measurements[a]['time_s']==packet.observation_time_s and
+                           measurements[a]['position_m'][2]-np.linalg.norm(trackers[a].size)/2>
+                           robot.place_support_z+.04 for a in arms))
+            evidence=slots.approach_clearance(arm,xy,view,before_transfer.get(xy),accounted_for=accounted,
+                stationary_belt=env.conveyor.state=='WAITING' and not env.safe_to_index)
+            report.setdefault('destination_checks',[]).append(dict(arm=arm,phase=report['last_phase'],
+                evidence=evidence,prior=before_transfer.get(xy),both_cartons_accounted_for=accounted,**view))
+            if evidence is None:
                 from workstation.diagnostics.vision_check import save_observation
                 save_observation(env.output,'pair_slot_'+arm+'_'+report['last_phase'],packet,scene)
                 raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+arm+':'+str(view['reason']))
@@ -214,6 +246,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         proof = confirm_target(a,packet,closed=True)
         scene=reconcile_preclose_target(estimator,scene,proof)
         trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors)
+        release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
         measure_held(a,packet)
     robot.set_observation(packet,scene,priors)
     held = True
@@ -231,7 +264,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     for a in arms:
         t = trackers[a]
         support = measure_held(a,packet)
-        if support is None or support['height_gain_m'] < .08:
+        gain=support.get('height_gain_lower_bound_m') if support.get('grasp_constrained') else support['height_gain_m']
+        if gain is None or gain < .08:
             raise RuntimeError('PAIR_LIFT_UNCONFIRMED:'+a)
         phases.setdefault('lift_evidence',{})[a]=support
         places[a] = placement_goal(goals[a],robot.place_support_z,t.size,.012,
@@ -239,6 +273,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     robot.set_observation(packet,scene,priors)
     report['simultaneous_grasp_verified']=phases['lift']['overlap_ticks']>0
     robot.anchor_observation()
+    before_transfer={xy:robot.observed_workspace.slot(xy) for xy in goals.values()}
     # Carry without simultaneously rotating the carton. Aim the BOX centre
     # above its lane using the measured grasp offset before changing attitude.
     overhead={}
@@ -272,13 +307,49 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         rotation=np.asarray(measurement['rotation'])
         height=np.asarray(measurement['position_m'])[2]-np.abs(rotation[2])@(trackers[a].size/2)
         upper_gap=height-robot.place_support_z+measurement['uncertainty_m']
+        report.setdefault('release_check',{})[a]=dict(centre_m=measurement['position_m'],
+            tilt_deg=math.degrees(math.acos(np.clip(rotation[2,2],-1,1))),gap_upper_m=float(upper_gap),
+            measurement=measurement['status'],waypoint_reacquisition=measurement.get('waypoint_reacquisition'))
         if upper_gap>.020:raise RuntimeError('PAIR_RELEASE_HEIGHT_UNSUPPORTED:'+a)
     report['last_phase']='release'
     fingers(False)
     held=False
     robot.held_visual_geometry=None
-    observe()
+    packet=observe()
+    for a in arms:
+        m=measurements[a]
+        from workstation.planning.selection import nearest_upright_slot_rotation
+        fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+            max_drop_m=max(0.,report['release_check'][a]['gap_upper_m']),
+            reference_position_m=m['position_m'],reference_rotation=m['rotation'],allow_partial=True)
+        if fit is None:
+            # A tilted bottom edge may settle flat on release. The new
+            # depth image must support that level orientation and the footprint.
+            trial=nearest_upright_slot_rotation(np.asarray(m['rotation']))
+            hint=np.asarray(m['position_m']).copy()
+            hint[2]=robot.place_support_z+trackers[a].size[2]/2
+            fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+                reference_position_m=hint,reference_rotation=trial,allow_partial=True)
+        if fit is None:raise RuntimeError('PAIR_RELEASED_GEOMETRY_UNCERTAIN:'+a)
+        tid=objects[a].track_id
+        scene=estimator.associate_supported_target(scene,tid,fit)
+        obj=next((o for o in scene.objects if o.track_id==tid),None)
+        if obj is None:raise RuntimeError('PAIR_RELEASED_TRACK_UNRESOLVED:'+a)
+        dimensions=fit.get('collision_size_m',trackers[a].size)
+        bounded=replace(obj,position_m=fit['position_m'],axis_yaw_rad=fit['axis_yaw_rad'],
+            size_m=tuple(trackers[a].size),uncertainty_m=fit['uncertainty_m'],measured_cuboid=None,
+            posture='UNKNOWN',hypotheses=(),visibility='RELEASE_BOUNDED_CUBOID',failures=(),
+            quality={**obj.quality,'geometric_length_m':dimensions[0],'geometric_width_m':dimensions[1],
+                     'observed_height_m':dimensions[2]})
+        scene=replace(scene,objects=tuple(bounded if o.track_id==tid else o for o in scene.objects))
+        report.setdefault('released_bounds',{})[a]=fit
+    robot.set_observation(packet,scene,priors)
     move('retreat',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()},True)
+    # Clear the two camera sightlines. The last measured release envelopes
+    # remain stationary obstacles while the empty arms leave the conveyor.
+    report['last_phase']='clear_for_verification'
+    for a in arms:
+        robot.execute_joint(a,robot.home,scene,None)
     report['last_phase']='verify'
     stable_since=None
     previous_ids=None
@@ -307,5 +378,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                 slots.confirm_placement(a,goals[a],p['observed_track'])
             report['placements']=placements
             break
-    else:raise RuntimeError('PAIR_RELEASED_CARTONS_NOT_STABLE')
+    else:
+        from workstation.diagnostics.vision_check import save_observation
+        packet=observe()
+        save_observation(env.output,'pair_final_verification',packet,scene)
+        raise RuntimeError('PAIR_RELEASED_CARTONS_NOT_STABLE')
     report['slots_final']=slots.report()

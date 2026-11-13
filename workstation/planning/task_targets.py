@@ -50,6 +50,17 @@ class ConveyorSlots:
             raise RuntimeError('PLACEMENT_NOT_CONFIRMED')
         del self.owners[xy]
 
+    def approach_clearance(self,arm,xy,current,prior,*,accounted_for,stationary_belt):
+        """An exclusive two-carton scene can retain a recently inspected slot during occlusion."""
+        if self.owners.get(xy)!=arm:return None
+        if current['free']:return 'current_depth'
+        if (stationary_belt and accounted_for and prior is not None and prior['free']
+                and tuple(prior['xy'])==xy and tuple(current['xy'])==xy
+                and 0<current['observation_time_s']-prior['observation_time_s']<=20.
+                and current['reason']=='UNOBSERVED_PATH_SPACE' and not current['observed_objects']):
+            return 'observed_empty_before_transfer_both_cartons_in_hand'
+        return None
+
     def report(self):
         return [dict(xy=xy, state=self.states[xy], owner=self.owners.get(xy),
                      observation_time_s=self.timestamps.get(xy)) for xy in self.positions]

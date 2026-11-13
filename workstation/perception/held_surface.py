@@ -286,11 +286,11 @@ def released_bound_supported(measurement,time_s):
         np.allclose(collision,np.abs(rz.T@rotation)@size+width,atol=1e-6,rtol=0))
 
 
-def reacquire_tilted_top(packet,scene,centre,rotation,size,priors):
-    """Use a nearby measured top normal to initialize a new independent RGB-D fit."""
+def reacquire_tilted_top(packet,scene,centre,rotation,size,priors,*,allow_grasp_translation=False):
+    """Refit from a measured normal; a latched grasp can constrain one hidden axis."""
     from workstation.perception.rgbd_cartons import deproject
     from workstation.observations.camera_geometry import visible_surface_normals
-    from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported
+    from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported,grasp_constrained_cuboid_supported
     for ref,mask in scene.masks.items():
         name=ref.split('/')[0]
         frame=packet.cameras.get(name)
@@ -313,8 +313,11 @@ def reacquire_tilted_top(packet,scene,centre,rotation,size,priors):
         corrected=(np.eye(3)+skew+skew@skew/(1+axis@normal))@rotation
         displacement=float(np.median((samples[keep]-centre)@normal)-size[2]/2)
         if abs(displacement)>.010:continue
-        proof=fit_cuboid_pose(packet,scene,centre+displacement*normal,corrected,size,priors)
-        if (measured_cuboid_supported(proof,packet.observation_time_s) and
+        proof=fit_cuboid_pose(packet,scene,centre+displacement*normal,corrected,size,priors,
+                              allow_grasp_translation=allow_grasp_translation)
+        supported=measured_cuboid_supported(proof,packet.observation_time_s)
+        if allow_grasp_translation:supported |= grasp_constrained_cuboid_supported(proof,packet.observation_time_s)
+        if (supported and
                 np.linalg.norm(np.asarray(proof['position_m'])-centre)<=.012):
             proof['normal_reacquisition_mask']=ref
             proof['prior_angle_correction_deg']=float(np.degrees(np.arccos(np.clip(axis@normal,-1,1))))
@@ -414,7 +417,8 @@ class CuboidHoldingTracker:
                     reference=backup
                     measured=retry
         if reacquire_tilt and measured['status']=='UNKNOWN':
-            measured=reacquire_tilted_top(packet,scene,hint,body_hint,self.size,self.priors) or measured
+            measured=reacquire_tilted_top(packet,scene,hint,body_hint,self.size,self.priors,
+                allow_grasp_translation=self.allow_grasp_translation) or measured
         if measured['status'] not in ('GEOMETRY_OBSERVED','GRASP_CONSTRAINED'):
             self.last_failure=measured;return None
         self.last_failure=None

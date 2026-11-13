@@ -57,6 +57,15 @@ class PreCloseTargetTests(unittest.TestCase):
         for p,s in cases:
             with self.subTest():self.assertFalse(self.check.confirm(p,s)['supported'])
 
+    def test_carry_reacquisition_can_constrain_one_hidden_translation(self):
+        from workstation.perception.held_surface import reacquire_tilted_top
+        args=(self.packet,self.scene,CENTRE,np.eye(3),SIZE,self.priors)
+        self.assertIsNone(reacquire_tilted_top(*args))
+        measured=reacquire_tilted_top(*args,allow_grasp_translation=True)
+        self.assertTrue(grasp_constrained_cuboid_supported(measured,1.))
+        self.assertEqual(measured['predicted_translation_axes'],[0])
+        self.assertFalse(measured['geometric_pose_measured'])
+
     def test_stationary_reference_accepts_measured_rectangular_top_but_not_a_short_patch(self):
         m=dict(self.check.confirm(self.packet,self.scene)['surface'],tape_direction=None,
                top_rectangle=dict(measured_xy_m=list(SIZE[:2]),hull_fraction=.92))

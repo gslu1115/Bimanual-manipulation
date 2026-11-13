@@ -5,6 +5,22 @@ from workstation.planning.task_targets import ConveyorSlots
 
 
 class ConveyorSlotTests(unittest.TestCase):
+    def test_occluded_reserved_slot_requires_recent_free_view_and_both_cartons(self):
+        goal=(-.2,-.4)
+        slots=ConveyorSlots({'conveyor':{'slots_xy':[goal,(.2,-.4)]}})
+        slots.owners[goal]='left'
+        prior=dict(xy=goal,free=True,observation_time_s=10.)
+        view=dict(xy=goal,free=False,reason='UNOBSERVED_PATH_SPACE',observation_time_s=15.,observed_objects=[])
+        def check(current=view,arm='left',accounted=True,stopped=True):
+            return slots.approach_clearance(arm,goal,current,prior,accounted_for=accounted,stationary_belt=stopped)
+        self.assertIsNotNone(check())
+        for blocked in (dict(view,reason='OBSERVED_PATH_OBSTACLE'),dict(view,observed_objects=['other']),
+                        dict(view,observation_time_s=31.)):
+            self.assertIsNone(check(blocked))
+        self.assertIsNone(check(accounted=False))
+        self.assertIsNone(check(stopped=False))
+        self.assertIsNone(check(arm='right'))
+
     def test_reserve_recheck_place_and_clear(self):
         positions = [(-.2, -.4), (0., -.4), (.2, -.4)]
         slots = ConveyorSlots({'conveyor': {'slots_xy': positions}})
