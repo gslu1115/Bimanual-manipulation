@@ -48,6 +48,32 @@ class PreCloseTargetTests(unittest.TestCase):
         self.assertEqual(m['predicted_translation_axes'],[0])
         self.assertEqual(proof['reference_time_s'],.9)
 
+    def test_sparse_end_face_completes_a_two_view_preclose_pose(self):
+        from workstation.perception.cuboid_pose import fit_cuboid_pose
+        p,s=synthetic_observation(np.eye(3),views=([0.,-.101,1.35],[-.32,-.10,1.08]))
+        masks={};cameras=dict(p.cameras)
+        for ref,mask in s.masks.items():
+            name=ref.split('/')[0];f=cameras[name];xyz=deproject(f)
+            top=np.abs(xyz[:,:,2]-CENTRE[2]-SIZE[2]/2)<.001
+            clip=top & (np.abs(xyz[:,:,0]-CENTRE[0])<.035)
+            # Disconnected rows of real side returns have no normal stencil.
+            if name!='scene_camera':
+                clip|=(np.abs(xyz[:,:,0]-CENTRE[0]+SIZE[0]/2)<.001)&(np.indices(mask.shape)[0]%3==0)
+            masks[ref]=mask & clip
+            rgb=f.rgb.copy();rgb[top & (np.abs(xyz[:,:,1]-CENTRE[1])<.006)]=[205,160,100]
+            cameras[name]=replace(f,rgb=rgb)
+        p=replace(p,cameras=cameras);s=replace(s,masks=masks)
+        def fit(scene,enabled):
+            return fit_cuboid_pose(p,scene,CENTRE,np.eye(3),SIZE,PRIORS,
+                                   allow_reference_translation=True,measure_side_interiors=enabled)
+        self.assertFalse(measured_cuboid_supported(fit(s,False),1.))
+        m=fit(s,True)
+        self.assertTrue(measured_cuboid_supported(m,1.),m)
+        self.assertTrue(any(c.get('extraction') for c in m['coordinate_constraints']))
+        np.testing.assert_allclose(m['position_m'],CENTRE,atol=.001)
+        one_view=replace(s,masks=dict([next(iter(masks.items()))]))
+        self.assertFalse(measured_cuboid_supported(fit(one_view,True),1.))
+
     def test_no_current_direction_missing_frames_and_contamination_are_rejected(self):
         p,s=self.partial(tape=False)
         cases=[(p,s),(self.missing_packet(),self.scene)]

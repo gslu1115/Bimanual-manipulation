@@ -25,7 +25,7 @@ def _plane_patch(points,expected_normal):
 
 
 def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,allow_grasp_translation=False,
-                    allow_reference_translation=False):
+                    allow_reference_translation=False,measure_side_interiors=False):
     import cv2
     if allow_grasp_translation and allow_reference_translation:
         raise ValueError('Choose one translation prior: a latched grasp or a stationary target reference')
@@ -144,7 +144,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
     extent_patches=[dict(mask_ref=patch['mask_ref'],
         bounds=np.quantile(patch['points']@measured,[.002,.998],axis=0))
         for face in faces for patch in face['extent_patches']]
-    coordinates=[];constraints=[];extent_errors=[];predicted_axes=[]
+    coordinates=[];constraints=[];extent_errors=[];predicted_axes=[];interior_residuals=[]
     for axis in range(3):
         values=[]
         for face in faces:
@@ -161,6 +161,26 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
             constraints.append(dict(axis=axis,source='complete_observed_extent',span_m=span,
                 aggregation='union of per-view validated planar quantiles',
                 mask_refs=sorted({patch['mask_ref'] for patch in extent_patches})))
+        if (not values and measure_side_interiors and axis in (0,1) and len(set(ref.split('/')[0] for ref in refs))>=2):
+            # Exclude every adjacent face and edge before fitting a signed side.
+            # Fit its depth from the interior pixels, without cropping around
+            # the expected coordinate along the axis being measured.
+            other=1-axis
+            for ref,instance in zip(refs,instances):
+                local=(instance-centre)@measured
+                inside=(np.abs(local[:,other])<half[other]-.004)&(np.abs(local[:,2])<half[2]-.004)
+                for sign in (-1.,1.):
+                    patch=instance[inside & (sign*local[:,axis]>0)]
+                    plane=_plane_patch(patch,measured[:,axis])
+                    if plane is None:continue
+                    projected=patch@measured
+                    if np.any(np.ptp(np.quantile(projected[:,[other,2]],[.05,.95],axis=0),axis=0)<.008):continue
+                    level=float(np.median(projected[:,axis]))
+                    if np.quantile(np.abs(projected[:,axis]-level),.95)>.002:continue
+                    values.append(level-sign*half[axis])
+                    constraints.append(dict(axis=axis,source='visible_signed_plane',sign=sign,points=len(patch),
+                        extraction='side interior independently fitted in one view',mask_ref=ref))
+                    interior_residuals.append(plane[1])
         if not values:
             if (axis in (0,1) and set(axes)=={2} and tape_direction is None
                     and (allow_reference_translation or allow_grasp_translation)
@@ -210,7 +230,7 @@ def fit_cuboid_pose(packet,scene,position_hint,rotation_hint,size_m,priors,*,all
         ratio=float(support.mean())
         if ratio>=.95:
             refs.append(ref);ratios.append(ratio);rechecked.append(ref)
-    residual=max(face['residual'] for face in faces)
+    residual=max([face['residual'] for face in faces]+interior_residuals)
     uncertainty=max(.003,priors.optical_depth_error_margin_m)+2*residual+max(extent_errors,default=0.)/2
     if uncertainty>.008:return unknown('POSE_UNCERTAINTY_UNBOUNDED')
     height_bound=max(float(np.median(face['points'][:,2])) for face in faces)-float(np.abs(measured[2])@half)-max(.003,priors.optical_depth_error_margin_m)

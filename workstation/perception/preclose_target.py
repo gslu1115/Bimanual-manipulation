@@ -36,7 +36,7 @@ class PreCloseTarget:
         if not 0<=age<=6.:
             return dict(proof,reason='PRECLOSE_REFERENCE_EXPIRED')
         measured=fit_cuboid_pose(packet,scene,self.obj.position_m,self.rotation,self.obj.size_m,self.priors,
-                                allow_reference_translation=True)
+                                allow_reference_translation=True,measure_side_interiors=True)
         proof['surface']=measured
         if not (measured_cuboid_supported(measured,packet.observation_time_s) or
                 reference_constrained_cuboid_supported(measured,packet.observation_time_s)):
