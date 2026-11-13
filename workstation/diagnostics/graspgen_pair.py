@@ -161,7 +161,7 @@ def paired_pregrasp(robot, rows, states, scene):
 
 
 def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.,
-                          require_overlap=True):
+                          require_overlap=True,loaded_transfer=False):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
@@ -185,7 +185,9 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                 feedforward=(q-commanded[i])/robot.dt
                 # Follow the measured arm through the waypoint, including a
                 # bounded correction while its partner waits on the same tick.
-                correction=np.clip(6.*(commanded[i]-previous[i]),-.15,.15)
+                lag=commanded[i]-previous[i]
+                correction=(np.clip(10.*lag,-.28,.28) if loaded_transfer
+                            else np.clip(6.*lag,-.15,.15))
                 robot.command_velocities(a,np.r_[np.clip(feedforward+correction,
                     -robot.joint_speed,robot.joint_speed),0.,0.])
         commanded=desired.copy()
@@ -212,7 +214,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         desired=np.asarray(pair)
         advance(desired)
         # Let the physical drives catch up before advancing the common clock.
-        for _ in range(math.ceil(.25/robot.dt)):
+        for _ in range(math.ceil((.45 if loaded_transfer else .25)/robot.dt)):
             if np.max(np.abs(previous-desired))<=following_band:break
             advance(desired)
         else:

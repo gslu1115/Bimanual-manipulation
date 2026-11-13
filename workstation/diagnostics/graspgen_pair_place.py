@@ -201,7 +201,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             report[phase+'_schedule']=schedule
         phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer,
-                                              speed_fraction=.5 if transfer else 1.)
+                                              speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
