@@ -19,7 +19,8 @@ class CuMotionAdapterTests(unittest.TestCase):
             position,angle=phase_tolerances(phase)
             self.assertLess(.0031,position);self.assertLess(.0106,angle)
             self.assertEqual((position,angle),(.005,np.deg2rad(1.)))
-        for phase in ('APPROACH_PICK','DESCEND_PICK','GRASP','UNKNOWN'):
+        self.assertEqual(phase_tolerances('GRASP'),(.003,np.deg2rad(1.5)))
+        for phase in ('APPROACH_PICK','DESCEND_PICK','UNKNOWN'):
             self.assertEqual(phase_tolerances(phase),(.003,.01))
 
     def test_phase_switch_restores_contact_gate_before_measured_state_evaluation(self):
@@ -47,10 +48,13 @@ class CuMotionAdapterTests(unittest.TestCase):
         driver=object.__new__(CuMotionPickPlaceDriver);driver.time_s=2.
         measured=object();goal=object();seen=[]
         driver.read_state=lambda:measured
-        driver.controller=SimpleNamespace(_make_arm_setpoint=lambda:goal,phase=SimpleNamespace(name='LIFT'))
+        driver.controller=SimpleNamespace(_make_arm_setpoint=lambda:goal,phase=SimpleNamespace(name='LIFT'),
+                                          _phase_started=1.,_stable_since=1.9)
         driver.arm_controller=SimpleNamespace(reset=lambda *args:seen.append(args) or True)
         driver.resync_after_cartesian(3.25)
         self.assertEqual(seen,[(measured,goal,5.25)])
+        self.assertEqual(driver.controller._phase_started,4.25)
+        self.assertIsNone(driver.controller._stable_since)
         self.assertIsNone(driver.contact_hold_q)
         with self.assertRaises(ValueError):driver.resync_after_cartesian(-1.)
 
@@ -64,10 +68,12 @@ class CuMotionAdapterTests(unittest.TestCase):
         proposed=np.r_[q+.1,[.023,.023]];vel=np.ones(9)*.2
         joints=SimpleNamespace(position_names=driver.names,velocity_names=driver.names,
             positions=SimpleNamespace(numpy=lambda:proposed),velocities=SimpleNamespace(numpy=lambda:vel))
-        controller=SimpleNamespace(phase=SimpleNamespace(name='DESCEND_PICK'),failed=False,
+        controller=SimpleNamespace(phase=SimpleNamespace(name='DESCEND_PICK'),failed=False,_phase_started=2.,
             _make_arm_setpoint=lambda:None,forward=lambda state,*args:seen.append(state) or SimpleNamespace(joints=joints))
         driver.controller=controller;driver.arm_controller=SimpleNamespace(reset=lambda *a:True)
         driver.resync_after_cartesian(3.)
+        self.assertEqual(controller._phase_started,5.)
+        self.assertIsNone(controller._stable_since)
         for phase in ('DESCEND_PICK','GRASP'):
             controller.phase.name=phase
             command,velocity=driver.propose(.02)

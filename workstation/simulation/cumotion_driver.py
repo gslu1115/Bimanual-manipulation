@@ -21,6 +21,7 @@ def phase_tolerances(phase):
     """
     if phase in AIR_WAYPOINT_PHASES:return .008,math.radians(1.5)
     if phase in ('DESCEND_PLACE','RELEASE'):return .005,math.radians(1.)
+    if phase=='GRASP':return .003,math.radians(1.5)
     return .003,.01
 
 
@@ -216,3 +217,8 @@ class CuMotionPickPlaceDriver:
         # tracking offset. Relatching measured joints loses that compensation.
         self.contact_hold_q=(self.robot.targets[self.arm][:7].copy()
                              if self.phase=='DESCEND_PICK' else None)
+        # No SDK forward/settling samples were taken during this checked
+        # segment. Exclude only this interval, retaining time already spent
+        # under SDK control (including across multiple segments in a phase).
+        self.controller._phase_started+=elapsed
+        self.controller._stable_since=None
