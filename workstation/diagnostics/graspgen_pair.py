@@ -26,6 +26,50 @@ def renew_view_candidate(candidate,scene,seq):
     return revalidate_candidate(replace(candidate,target_id=matches[0].track_id),matches[0],scene,seq)
 
 
+def refine_pinch_contact(candidate,obj):
+    """Fit a nearby model pinch to the observed parallel sides and pad depth."""
+    from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
+    from workstation.planning.graspgen_candidates import opening_from_visual_box
+    opening=candidate.metadata['opening']
+    depth=opening.get('estimated_tip_engagement_m')
+    direction=np.asarray(candidate.approach_direction)
+    if (depth is None or depth<0 or -direction[2]<.98 or set(candidate.rejection_reasons)-
+            {'FINGERTIPS_ABOVE_GRASP_BAND','GRASP_OFF_CENTRE','GRIPPER_SPACE_INSUFFICIENT'}):
+        return candidate
+    travel=min(.012,(.40*obj.size_m[2]-depth)/-direction[2]) if depth<.30*obj.size_m[2] else 0.
+    pose=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
+    yaw_delta=0.
+    lateral=0.
+    if set(candidate.rejection_reasons)&{'GRASP_OFF_CENTRE','GRIPPER_SPACE_INSUFFICIENT'}:
+        body_long=np.array([math.cos(obj.axis_yaw_rad),math.sin(obj.axis_yaw_rad),0.])
+        tangent=pose[:3,0]
+        if tangent@body_long<0:body_long=-body_long
+        axis=pose[:3,2]
+        yaw_delta=math.atan2(axis@np.cross(tangent,body_long),tangent@body_long)
+        if abs(yaw_delta)>math.radians(12):return candidate
+        c,s=math.cos(yaw_delta),math.sin(yaw_delta)
+        pose[:3,:3]=pose[:3,:3]@np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+        lateral=float((np.asarray(obj.position_m)-pose[:3,3])@pose[:3,1])
+        if abs(lateral)>.008:return candidate
+        pose[:3,3]+=lateral*pose[:3,1]
+    tangent=pose[:3,0]
+    eccentricity=float((np.asarray(obj.position_m)-pose[:3,3])@tangent)
+    slide=float(np.clip(eccentricity,-.020,.020)) if abs(eccentricity)>.012 else 0.
+    if travel==0 and slide==0 and yaw_delta==0 and lateral==0:return candidate
+    pose[:3,3]+=direction*travel+tangent*slide
+    width,closing,evidence,reasons=opening_from_visual_box(pose,obj)
+    raw=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
+    engagement=depth-(pose[2,3]-raw[2,3])+(abs(raw[2,1])*candidate.opening_m-abs(pose[2,1])*width)/2
+    if reasons or engagement<.30*obj.size_m[2]:return candidate
+    evidence['estimated_tip_engagement_m']=engagement
+    orientation=tuple(quaternion_from_matrix(pose[:3,:3])) if yaw_delta else candidate.orientation_wxyz
+    return replace(candidate,position_m=tuple(pose[:3,3]),orientation_wxyz=orientation,
+        yaw_rad=math.atan2(pose[1,0],pose[0,0]),opening_m=width,closing_width_m=closing,
+        rejection_reasons=(),metadata={**candidate.metadata,'opening':evidence,
+        'model_tcp_before_seating_m':list(candidate.position_m),'axial_seating_m':travel,'tangent_slide_m':slide,
+        'pad_alignment_rad':yaw_delta,'lateral_adjustment_m':lateral})
+
+
 def preferred_assignments(targets, bases):
     """Assign both cartons to distinct arms with the shortest total XY reach."""
     left,right=sorted(bases)
@@ -218,6 +262,7 @@ def check_pair(env, args, packet, scene, estimator):
     candidates={}
     seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
     rows=[]
+    inspection_cloud=None
     report['slot_assessments']=[]
     pick_failures={}
     def check_destination(c,o,s,slot):
@@ -240,6 +285,7 @@ def check_pair(env, args, packet, scene, estimator):
             camera='left_wrist_camera' if arm=='panda_left' else 'right_wrist_camera'
             observation=dict(arm=arm,target_id=target.track_id,executed=False,trials=[])
             report['extra_view']=observation
+            before_view=visual_clouds(packet,scene,target.track_id)
             for side in (1.,-1.):
                 lateral=np.array([-math.sin(target.axis_yaw_rad),math.cos(target.axis_yaw_rad),0.])
                 goal=centre+side*.18*lateral+[0.,0.,.19]
@@ -261,6 +307,12 @@ def check_pair(env, args, packet, scene, estimator):
                 available=[xy for xy in destinations if slots.states[xy]=='free']
                 targets=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and pose_is_observed(o,scene)]
                 if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
+                matches=[o for o in targets if np.linalg.norm(np.asarray(o.position_m)-centre)<=.002
+                         and np.allclose(o.size_m,target.size_m,atol=1e-6,rtol=0)
+                         and abs((o.axis_yaw_rad-target.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(3)
+                         and o.velocity_m_s is not None and np.linalg.norm(o.velocity_m_s)<=.015]
+                if len(matches)==1:
+                    inspection_cloud=(matches[0].track_id,before_view)
                 old={row.candidate.candidate_id:row.candidate for row in rows if row.feasible}
                 rows.clear()
                 pick_failures.clear()
@@ -288,17 +340,26 @@ def check_pair(env, args, packet, scene, estimator):
             yaw=(0.,-obj.axis_yaw_rad,math.pi/2-obj.axis_yaw_rad,math.pi/4,-math.pi/4,
                  math.pi-obj.axis_yaw_rad,-math.pi/2-obj.axis_yaw_rad)[attempt-1]
             clouds=visual_clouds(packet,source_scene,obj.track_id)
+            if inspection_cloud and inspection_cloud[0]==obj.track_id:
+                past=inspection_cloud[1]
+                # Both captures were deprojected with their own image-time FK.
+                # Reuse only target surfaces for proposal generation. The
+                # newest RGB-D packet alone supplies the collision scene.
+                clouds=replace(clouds,target_m=np.concatenate((clouds.target_m,past.target_m)))
+                observation['fused_observation_times_s']=[past.time_s,clouds.time_s]
             if attempt>=3:clouds=balance_visible_surfaces(clouds,obj)
             proposals=[]
-            for sample in range(3):
+            for sample in range(3 if attempt<=2 else 9):
                 basis=yaw+sample*math.pi*2/3
-                result=infer_rotated_view(proxy,clouds,args.num_grasps,basis)
+                pitch=(0.,math.pi/3,-math.pi/3)[sample//3]
+                result=infer_rotated_view(proxy,clouds,args.num_grasps,basis,pitch)
                 proposals.extend(candidates_from_result(result,obj,states,calibration,seq))
                 report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
-                    attempt=attempt,mask_refs=list(refs),basis_yaw_rad=basis,
+                    attempt=attempt,mask_refs=list(refs),basis_yaw_rad=basis,basis_pitch_rad=pitch,
                     observed_input_points=len(clouds.target_m),raw_grasps=len(result['scores'])))
             checked=[]
             for c in proposals:
+                c=refine_pinch_contact(c,obj)
                 reasons=c.rejection_reasons
                 if -c.approach_direction[2]<math.cos(math.radians(10)):
                     reasons+=('UNSUPPORTED_UPRIGHT_APPROACH',)
@@ -311,6 +372,9 @@ def check_pair(env, args, packet, scene, estimator):
             # Try balanced pinches first on the nearer arm. Keep the other
             # arm eligible in later rounds when the local lane has failed.
             allowed=[c for c in checked if not c.rejection_reasons]
+            report.setdefault('proposal_filters',[]).append(dict(attempt=attempt,target_id=obj.track_id,
+                candidate_count=len(checked),eligible=len(allowed),
+                reasons=dict(Counter(reason for c in checked for reason in c.rejection_reasons))))
             def pinch_cost(c):
                 opening=c.metadata['opening']
                 offset=visual_pinch_balance(c,obj)['penalty']

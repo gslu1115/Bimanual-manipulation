@@ -69,13 +69,15 @@ def tcp_poses(base_poses,T_graspgen_base_from_project_tcp,calibration_verified=F
     return np.asarray(base_poses)@transform[0]
 
 
-def infer_rotated_view(proxy, clouds, count, yaw):
-    """Resample the same observed object in a rotated horizontal basis."""
-    if yaw==0:
+def infer_rotated_view(proxy, clouds, count, yaw, pitch=0.):
+    """Resample measured points in a rotated basis and restore every world pose."""
+    if yaw==0 and pitch==0:
         return proxy.infer(clouds,count)
     from dataclasses import replace
     c,s=np.cos(yaw),np.sin(yaw)
     rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+    cp,sp=np.cos(pitch),np.sin(pitch)
+    rotation=np.array([[cp,0.,sp],[0.,1.,0.],[-sp,0.,cp]])@rotation
     centre=clouds.target_m.mean(axis=0)
     def rotate(points):
         return ((points-centre)@rotation.T+centre).astype(np.float32)
@@ -90,7 +92,7 @@ def infer_rotated_view(proxy, clouds, count, yaw):
     poses[:,:3,3]=(poses[:,:3,3]-centre)@rotation+centre
     poses[:,:3,:3]=rotation.T@poses[:,:3,:3]
     return dict(reply,base_poses_workcell=poses,
-                metadata={**reply['metadata'],'inference_basis_yaw_rad':float(yaw)})
+                metadata={**reply['metadata'],'inference_basis_yaw_rad':float(yaw),'inference_basis_pitch_rad':float(pitch)})
 
 
 class GraspGenClient:

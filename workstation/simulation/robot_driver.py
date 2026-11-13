@@ -396,6 +396,9 @@ class RobotMotion:
                             depth=float(-gap[2])
                             if support_contact and box.name in ('table','belt') and depth <= .007:
                                 continue
+                            self.last_plan_check=dict(rejection='HELD_CARTON_PATH_BLOCKED:'+box.name,
+                                held_centre_m=centre_box.tolist(),held_half_extent_m=half.tolist(),
+                                obstacle_centre_m=list(box.centre),obstacle_size_m=list(box.size))
                             raise RuntimeError('HELD_CARTON_PATH_BLOCKED:'+box.name)
                     for _,centre,radius in other_spheres:
                         local=body_rotation.T@(np.asarray(centre)-centre_box)

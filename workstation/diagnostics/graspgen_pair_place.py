@@ -110,6 +110,23 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         # The wrist can split the carried carton into new visual IDs. Reconcile
         # only the masks supported by this arm's current measured surfaces.
         scene=estimator.associate_supported_target(scene,objects[arm].track_id,observed)
+        # Replace a clipped neighbour proxy only when its whole set of masks
+        # is supported by this current carried-box fit. Keep other obstacles.
+        target_id=objects[arm].track_id
+        for obj in scene.objects:
+            if obj.track_id!=target_id or set(obj.mask_refs)!=set(observed['mask_refs']):continue
+            rotation=np.asarray(observed['rotation'])
+            yaw=math.atan2(rotation[1,0],rotation[0,0])
+            c,s=math.cos(yaw),math.sin(yaw)
+            level=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+            extent=np.abs(level.T@rotation)@t.size
+            bounded=replace(obj,position_m=tuple(observed['position_m']),axis_yaw_rad=yaw,
+                uncertainty_m=observed['uncertainty_m'],size_m=tuple(t.size),
+                visibility='HELD_COLLISION_ENVELOPE',posture='UNKNOWN',failures=(),hypotheses=(),
+                measured_cuboid=None,quality={**obj.quality,'geometric_length_m':extent[0],
+                    'geometric_width_m':extent[1],'observed_height_m':extent[2]})
+            scene=replace(scene,objects=tuple(bounded if o.track_id==target_id else o for o in scene.objects))
+            break
         # Only a fully measured center can move the collision proxy away
         # from its previous reference. Keep the uncertainty of a partial fit.
         if observed.get('geometric_pose_measured'):

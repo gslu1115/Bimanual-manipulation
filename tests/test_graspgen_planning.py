@@ -46,6 +46,41 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertIn('GRASP_OFF_CENTRE',reject)
         np.testing.assert_array_equal(self.pose[:3,3],self.obj.position_m)
 
+    def test_shallow_seating_moves_only_along_model_approach(self):
+        from workstation.diagnostics.graspgen_pair import refine_pinch_contact
+        self.calibration['fingertip_reach_past_tcp_m']=.01
+        self.pose[2,3]=self.obj.position_m[2]+self.obj.size_m[2]/2+.003
+        c=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        seated=refine_pinch_contact(c,self.obj)
+        self.assertEqual(seated.orientation_wxyz,c.orientation_wxyz)
+        self.assertAlmostEqual(seated.metadata['opening']['estimated_tip_engagement_m'],self.obj.size_m[2]*.40)
+        np.testing.assert_allclose(np.asarray(seated.position_m)-c.position_m,
+            np.asarray(c.approach_direction)*seated.metadata['axial_seating_m'])
+        self.assertEqual(seated.metadata['T_workcell_from_graspgen_base'],c.metadata['T_workcell_from_graspgen_base'])
+        blocked=replace(c,rejection_reasons=('UNSUPPORTED_UPRIGHT_APPROACH',))
+        self.assertIs(refine_pinch_contact(blocked,self.obj),blocked)
+        tangent=self.pose[:3,0]
+        shifted=replace(c,position_m=tuple(np.asarray(c.position_m)+.028*tangent))
+        balanced=refine_pinch_contact(shifted,self.obj)
+        self.assertAlmostEqual(balanced.metadata['tangent_slide_m'],-.020)
+        self.assertEqual(shifted.orientation_wxyz,balanced.orientation_wxyz)
+
+    def test_nearby_wide_box_pinch_preserves_approach_and_rechecks_opening(self):
+        from workstation.diagnostics.graspgen_pair import refine_pinch_contact
+        self.calibration['fingertip_reach_past_tcp_m']=.012
+        obj=replace(self.obj,size_m=(.12,.065,.055))
+        c,s=np.cos(.15),np.sin(.15)
+        self.pose[:3,:3]=self.pose[:3,:3]@np.array([[c,-s,0],[s,c,0],[0,0,1]])
+        self.pose[:3,3]+=self.pose[:3,1]*.006
+        candidate=candidates_from_result(self.result,obj,self.states,self.calibration,{})[0]
+        self.assertIn('GRIPPER_SPACE_INSUFFICIENT',candidate.rejection_reasons)
+        adjusted=refine_pinch_contact(candidate,obj)
+        self.assertFalse(adjusted.rejection_reasons)
+        self.assertLessEqual(adjusted.opening_m,.08)
+        self.assertAlmostEqual(abs(adjusted.metadata['pad_alignment_rad']),.15)
+        np.testing.assert_allclose(pose_matrix(adjusted.position_m,adjusted.orientation_wxyz)[:3,2],
+                                   candidate.approach_direction,atol=1e-8)
+
     def test_wrist_view_change_renews_pose_only_for_one_stationary_carton(self):
         from workstation.diagnostics.graspgen_pair import renew_view_candidate
         c=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]

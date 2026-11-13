@@ -58,8 +58,9 @@ class PairTests(unittest.TestCase):
         clouds=VisualClouds(points,points.copy(),.5)
         proxy=SimpleNamespace(infer=predict)
         expected=predict(clouds,1)['base_poses_workcell'][0]
-        actual=infer_rotated_view(proxy,clouds,1,np.pi/4)['base_poses_workcell'][0]
-        np.testing.assert_allclose(actual[:3,[0,3]],expected[:3,[0,3]],atol=2e-6)
+        for pitch in (0.,np.pi/3,-np.pi/3):
+            actual=infer_rotated_view(proxy,clouds,1,np.pi/4,pitch)['base_poses_workcell'][0]
+            np.testing.assert_allclose(actual[:3,[0,3]],expected[:3,[0,3]],atol=2e-6)
 
     def test_model_is_default_for_single_and_mandatory_for_pair(self):
         import contextlib, io
