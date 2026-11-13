@@ -15,14 +15,17 @@ class GraspGenExecutionTests(unittest.TestCase):
         skill=VisualPickPlace.__new__(VisualPickPlace);calls=[]
         skill.robot=SimpleNamespace(anchor_observation=lambda:calls.append(True))
         skill.packet=SimpleNamespace(observation_time_s=8.);skill.observation_anchors=[];skill.held=False
-        skill._anchor_normal_stage('pregrasp',None)
+        skill._anchor_normal_stage('before_model_pregrasp',None)
         self.assertEqual(len(calls),1);self.assertEqual(skill.observation_anchors[-1]['time_s'],8.)
+        skill.packet.observation_time_s=10.
+        skill._anchor_normal_stage('pregrasp',None)
+        self.assertEqual([a['time_s'] for a in skill.observation_anchors],[8.,10.])
         skill.held=True;skill.packet.observation_time_s=23.
-        skill._anchor_normal_stage('lifted',None);self.assertEqual(len(calls),1)
+        skill._anchor_normal_stage('lifted',None);self.assertEqual(len(calls),2)
         skill._anchor_normal_stage('lifted',{'geometric_pose_measured':True})
-        self.assertEqual(len(calls),2);self.assertEqual(skill.observation_anchors[-1]['time_s'],23.)
+        self.assertEqual(len(calls),3);self.assertEqual(skill.observation_anchors[-1]['time_s'],23.)
         skill._anchor_normal_stage('transferred',{'geometric_pose_measured':True})
-        self.assertEqual(len(calls),2)
+        self.assertEqual(len(calls),3)
 
     def test_stage_observation_refresh_does_not_change_history_limits(self):
         from workstation.planning.occlusion_memory import OcclusionMemory

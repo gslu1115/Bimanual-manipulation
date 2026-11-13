@@ -123,7 +123,7 @@ class VisualPickPlace:
     def _anchor_normal_stage(self,label,measurement):
         # Fresh rays acquired by NORMAL task motion, with the original 30 s
         # age/4-anchor limits. Never retimestamp old frames or move a camera.
-        if (label in ('pregrasp','lifted') and (not self.held or measurement is not None)
+        if (label in ('before_model_pregrasp','pregrasp','lifted') and (not self.held or measurement is not None)
                 and hasattr(self.robot,'anchor_observation')):
             self.robot.anchor_observation()
             self.observation_anchors.append(dict(phase=label,time_s=self.packet.observation_time_s,
