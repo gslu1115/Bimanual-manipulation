@@ -15,7 +15,7 @@ from workstation.perception.scene_estimate import (
     ScenePriors, SceneEstimate, ObjectEstimate, PoseHypothesis)
 from workstation.perception.visible_edges import observed_face_edges
 from workstation.perception.mask_refinement import refine_visible_boundary
-from workstation.perception.packaging_evidence import tape_fold_evidence
+from workstation.perception.packaging_evidence import tape_axis_evidence, tape_fold_evidence
 
 
 def axis_error(a, b):
@@ -858,6 +858,17 @@ class CartonEstimator:
         cues=[];labels=set();sources=[];fold_votes={'UPRIGHT':0,'INVERTED':0}
         for view,(top_rgb,top_xy,body,body_rgb) in views.items():
             cue=CartonEstimator._tape_evidence(top_rgb,top_xy,centre,yaw,length,width)
+            if not cue['tape_observed'] and len(top_xy)>=60:
+                # A broad lighting gradient can hide the stripe from the global
+                # brightness test. Fit its colour contrast against both flanks.
+                c,s=math.cos(yaw),math.sin(yaw)
+                axes=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+                xyz=np.column_stack((top_xy,np.full(len(top_xy),top_z)))
+                stripe=tape_axis_evidence([(xyz,top_rgb)],[*centre,top_z],axes,axes[:,2],[length,width,height])
+                if (stripe and stripe['span_m']>=.60*length and
+                        np.dot(stripe['axis_workcell'],axes[:,0])>=math.cos(math.radians(5))):
+                    cue.update(tape_observed=1.,tape_paired_bins=stripe['paired_bins'],
+                               tape_paired_span_m=stripe['span_m'],tape_stripe_width_m=stripe['width_m'])
             cues.append((view,cue))
             if cue['tape_observed']:
                 labels.add('UPRIGHT');sources.append('top stripe in '+view)

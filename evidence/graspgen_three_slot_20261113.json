@@ -1,0 +1,300 @@
+{
+  "scope": "Headless RTX 4090 GPU 0; real GraspGen, physics and RGB-D. First draws and subsequent samples are separate. No claim of arbitrary-yaw robustness.",
+  "single": [
+    {
+      "run": "study-20261113-074921-small_medium-5714",
+      "seed": 5714,
+      "variant": "small_medium",
+      "yaw_deg": 116,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "motion_to_home_or_stop_wall_s": null,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        8.79,
+        382.84
+      ]
+    },
+    {
+      "run": "study-20261113-074921-small_medium-5717",
+      "seed": 5717,
+      "variant": "small_medium",
+      "yaw_deg": 21,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "motion_to_home_or_stop_wall_s": null,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        1.66,
+        375.24
+      ]
+    },
+    {
+      "run": "study-20261113-074921-small_reference-5713",
+      "seed": 5713,
+      "variant": "small_reference",
+      "yaw_deg": 38,
+      "passed": false,
+      "reason": "IK_DISCONTINUITY",
+      "motion_to_home_or_stop_wall_s": 5.45102633186616,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        -8.31,
+        350.69
+      ]
+    },
+    {
+      "run": "study-20261113-074921-small_reference-5716",
+      "seed": 5716,
+      "variant": "small_reference",
+      "yaw_deg": 147,
+      "passed": true,
+      "reason": null,
+      "motion_to_home_or_stop_wall_s": 43.84524192404933,
+      "max_visual_lift_m": 0.18921417033804222,
+      "terminal_xy_error_mm": [
+        0.08,
+        -0.35
+      ]
+    },
+    {
+      "run": "study-20261113-074921-small_wide-5715",
+      "seed": 5715,
+      "variant": "small_wide",
+      "yaw_deg": 79,
+      "passed": false,
+      "reason": "CURRENT_HELD_SURFACE_UNSUPPORTED",
+      "motion_to_home_or_stop_wall_s": 30.28389005502686,
+      "max_visual_lift_m": 0.17748795864870182,
+      "terminal_xy_error_mm": [
+        -21.15,
+        -3.03
+      ]
+    },
+    {
+      "run": "study-20261113-074921-small_wide-5718",
+      "seed": 5718,
+      "variant": "small_wide",
+      "yaw_deg": 164,
+      "passed": false,
+      "reason": "NO_FEASIBLE_DIRECT_GRASP",
+      "motion_to_home_or_stop_wall_s": null,
+      "max_visual_lift_m": 0,
+      "terminal_xy_error_mm": [
+        13.33,
+        309.68
+      ]
+    },
+    {
+      "run": "study-20261113-080020-small_medium-5714",
+      "seed": 5714,
+      "variant": "small_medium",
+      "yaw_deg": 116,
+      "passed": false,
+      "reason": "HELD_CARTON_OWN_BODY_COLLISION",
+      "motion_to_home_or_stop_wall_s": 17.426465180004016,
+      "max_visual_lift_m": 0.10165160882172919,
+      "terminal_xy_error_mm": [
+        7.29,
+        382.67
+      ]
+    },
+    {
+      "run": "study-20261113-080020-small_medium-5717",
+      "seed": 5717,
+      "variant": "small_medium",
+      "yaw_deg": 21,
+      "passed": true,
+      "reason": null,
+      "motion_to_home_or_stop_wall_s": 44.57098497916013,
+      "max_visual_lift_m": 0.18360535742791095,
+      "terminal_xy_error_mm": [
+        -0.16,
+        2.92
+      ]
+    }
+  ],
+  "pair": [
+    {
+      "run": "study-20261113-074921-pair-6",
+      "scope": "physical_empty_arm_pregrasp_only",
+      "passed": false,
+      "reason": "PAIR_JOINT_TRACKING_ERROR",
+      "phase": null,
+      "planned_slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          2
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          2
+        ],
+        [
+          "panda_right",
+          0,
+          2
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          2
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-074921-pair-7",
+      "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "passed": false,
+      "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "phase": null,
+      "planned_slots": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          1
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          1
+        ],
+        [
+          "panda_right",
+          0,
+          8
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          8
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-075810-pair-6",
+      "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "passed": false,
+      "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "phase": null,
+      "planned_slots": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          0
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          0
+        ],
+        [
+          "panda_right",
+          0,
+          3
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          3
+        ]
+      ]
+    },
+    {
+      "run": "study-20261113-075810-pair-8",
+      "scope": "snapshot_and_synchronized_empty_pregrasp_only",
+      "passed": false,
+      "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "phase": null,
+      "planned_slots": null,
+      "pregrasp_overlap_sim_s": null,
+      "phase_overlap_sim_s": {},
+      "confirmed_placements": {},
+      "arm_slot_options": [
+        [
+          "panda_left",
+          -0.2,
+          1
+        ],
+        [
+          "panda_right",
+          -0.2,
+          0
+        ],
+        [
+          "panda_left",
+          0,
+          1
+        ],
+        [
+          "panda_right",
+          0,
+          2
+        ],
+        [
+          "panda_left",
+          0.2,
+          0
+        ],
+        [
+          "panda_right",
+          0.2,
+          2
+        ]
+      ]
+    }
+  ]
+}

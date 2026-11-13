@@ -17,7 +17,7 @@ from workstation.runtime_paths import isaac_root
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-adjust", "visual-sort",
          "model-worker", "model-prepare", "model-eval", "model-capture", "model-train", "graspgen-proxy", "graspgen-check",
-         "graspgen-pair-pregrasp")
+         "graspgen-pair-pregrasp", "graspgen-pair-place")
 
 
 def build_parser():
@@ -96,10 +96,10 @@ def build_parser():
 
 
 def load_config(args, parser):
-    pair_mode=args.mode=='graspgen-pair-pregrasp'
+    pair_mode=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if args.grasp_backend is None:
         model_modes=('visual-pnp','visual-adjust','graspgen-check','graspgen-pair-pregrasp')
-        args.grasp_backend='graspgen' if args.mode in model_modes else 'geometry'
+        args.grasp_backend='graspgen' if pair_mode or args.mode in model_modes else 'geometry'
         if args.grasp_backend=='graspgen' and args.graspgen_assets is None:
             args.graspgen_assets=isaac_root().parent/'graspgen'/'source'
     if pair_mode:
@@ -114,7 +114,7 @@ def load_config(args, parser):
         except (ValueError,OSError) as error:parser.error(str(error))
     if args.headless and args.keep_open:
         parser.error("--keep-open requires a GUI")
-    if args.grasp_backend=='graspgen' and args.mode not in ('graspgen-check','graspgen-pair-pregrasp','visual-pnp','visual-adjust'):
+    if args.grasp_backend=='graspgen' and not pair_mode and args.mode not in ('graspgen-check','visual-pnp','visual-adjust'):
         parser.error('--grasp-backend graspgen requires graspgen-check or controlled visual-pnp')
     if args.grasp_backend=='graspgen' and not args.graspgen_assets:
         parser.error('--grasp-backend graspgen requires --graspgen-assets for frame verification')
@@ -349,7 +349,7 @@ def main(argv=None):
         env.record_video = args.record_video
         env.livestream = args.livestream
         env.start()
-        if args.mode in ('graspgen-check','graspgen-pair-pregrasp'):
+        if args.mode in ('graspgen-check','graspgen-pair-pregrasp','graspgen-pair-place'):
             from workstation.diagnostics.graspgen_check import check
             check(env,args)
         elif args.mode == "sensor-check":

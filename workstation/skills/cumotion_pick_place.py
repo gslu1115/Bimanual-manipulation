@@ -168,7 +168,22 @@ class CuMotionPickPlace(VisualPickPlace):
                         from workstation.perception.preclose_target import PreCloseTarget
                         self.preclose_reference=PreCloseTarget(current[0],self.scene,self.priors)
                         self.event('APPROACH')
-                        self._cartesian_segment(driver,pick,pick_rotation,contact=True,approach=True)
+                        try:
+                            self._cartesian_segment(driver,pick,pick_rotation,contact=True,approach=True)
+                        except RuntimeError as error:
+                            # RMP can reach the pregrasp TCP on a different elbow
+                            # branch from the one used to validate the descent.
+                            # IK_DISCONTINUITY occurs during knot generation,
+                            # before any descent command is issued.
+                            if str(error)!='IK_DISCONTINUITY' or candidate.source!='graspgen':raise
+                            joints=chosen.terms['pregrasp_joint_positions_rad']
+                            self.robot.execute_joint(self.arm,np.r_[joints,[.04,.04]],self.scene,candidate.target_id)
+                            self.observe('pregrasp_branch_recheck')
+                            current=[o for o in self.scene.objects if o.track_id==candidate.target_id]
+                            if len(current)!=1:raise RuntimeError('PREGRASP_TARGET_UNCERTAIN')
+                            self.candidate=self._refresh_candidate(candidate,current[0])
+                            self.preclose_reference=PreCloseTarget(current[0],self.scene,self.priors)
+                            self._cartesian_segment(driver,pick,pick_rotation,contact=True,approach=True)
                         self.observe('approached')
                         # reconcile_observation has checked CURRENT surfaces and
                         # merged only supported fragments. The original model

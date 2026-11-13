@@ -1,7 +1,9 @@
 """GraspGen proposals for two distinct visual tracks in one frozen Isaac scene."""
 from dataclasses import asdict, replace
+from collections import Counter
 from itertools import product
 import math
+import time
 
 import numpy as np
 
@@ -9,7 +11,7 @@ from workstation.perception.scene_estimate import pose_is_observed, ScenePriors
 from workstation.planning.collision import check_spheres
 from workstation.planning.graspgen_candidates import candidates_from_result, revalidate_candidate
 from workstation.planning.selection import assess
-from workstation.planning.task_targets import visual_target_slots
+from workstation.planning.task_targets import ConveyorSlots
 
 
 def synchronized_knots(left, right, max_step=.025):
@@ -33,7 +35,8 @@ def paired_pregrasp(robot, rows, states, scene):
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
                  and a.candidate.arm == arm and a.terms.get('full_pose_checked')] for arm in arms]
     pairs = [(left, right) for left, right in product(*feasible)
-             if left.candidate.target_id != right.candidate.target_id]
+             if left.candidate.target_id != right.candidate.target_id
+             and ('slot_xy' not in left.terms or left.terms['slot_xy'] != right.terms['slot_xy'])]
     pairs.sort(key=lambda pair: -(pair[0].score+pair[1].score))
     paths = {}
     rejected = []
@@ -61,12 +64,13 @@ def paired_pregrasp(robot, rows, states, scene):
             rejected.append(dict(ids=[a.candidate.candidate_id for a in pair], reason=reason))
             continue
         return dict(selection=[asdict(a.candidate) for a in pair],
+                    slots=[a.terms.get('slot_xy') for a in pair],
                     pregrasp_knots=[np.asarray(paths[a.candidate.candidate_id]).tolist() for a in pair],
                     sample_count=sampled, min_clearance_m=minimum), rejected
     return None, rejected
 
 
-def drive_empty_pregrasps(robot, paths):
+def drive_empty_pregrasps(robot, paths, payload_guard=None):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
@@ -80,6 +84,7 @@ def drive_empty_pregrasps(robot, paths):
         nonlocal previous,overlap,ticks
         # Also check tracking lag, not just the nominal synchronized paths.
         for left,right in synchronized_knots([previous[0],desired[0]],[previous[1],desired[1]]):
+            if payload_guard:payload_guard(left,right)
             reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None)
             if reason:raise RuntimeError('PAIR_COMMAND_'+reason)
         for a,q in zip(arms,desired):
@@ -91,6 +96,7 @@ def drive_empty_pregrasps(robot, paths):
             raise RuntimeError('PAIR_JOINT_TRACKING_ERROR')
         reason,_=check_spheres(robot.spheres(arms[0],measured[0]),robot.spheres(arms[1],measured[1]),[],None)
         if reason:raise RuntimeError('PAIR_MEASURED_'+reason)
+        if payload_guard:payload_guard(*measured)
         speed=np.max(np.abs(measured-previous),axis=1)/robot.dt
         moving=speed>.03
         overlap+=int(moving.all())
@@ -98,7 +104,13 @@ def drive_empty_pregrasps(robot, paths):
         trace.append(dict(tick=ticks,measured_max_joint_speed_rad_s=speed.tolist()))
         previous=measured
     for pair in synchronized_knots(*paths,max_step=min(.025,robot.joint_speed*robot.dt)):
-        advance(np.asarray(pair))
+        desired=np.asarray(pair)
+        advance(desired)
+        # Let the physical drives catch up before advancing the common clock.
+        for _ in range(math.ceil(.25/robot.dt)):
+            if np.max(np.abs(previous-desired))<=.009:break
+            advance(desired)
+        else:raise RuntimeError('PAIR_JOINT_TRACKING_ERROR')
     for _ in range(math.ceil(.3/robot.dt)):
         advance(np.asarray([p[-1] for p in paths]))
     moved=np.max(np.abs(previous-start),axis=1)
@@ -123,31 +135,51 @@ def check_pair(env, args, packet, scene, estimator):
     targets = [o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures and pose_is_observed(o,scene)]
     if len(targets)!=2 or len({o.track_id for o in targets})!=2:
         fail('PAIR_REQUIRES_TWO_OBSERVED_UPRIGHT_TRACKS')
-    execute=args.mode=='graspgen-pair-pregrasp'
+    execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if not execute:env.timeline.pause()
     robot=from_environment(env)
     robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
-    slot, = visual_target_slots(env.c)
-    if not robot.observed_workspace.slot(slot)['free']:fail('SHARED_SLOT_NOT_OBSERVED_FREE')
+    slots = ConveyorSlots(env.c)
+    slots.observe(robot.observed_workspace)
+    report['slots_initial'] = slots.report()
+    available = [xy for xy in slots.positions if slots.states[xy] == 'free']
+    if len(available) < 2:fail('TWO_OBSERVED_FREE_SLOTS_REQUIRED')
     calibration=verify(env,robot,isaac_root(),args.graspgen_assets)
     proxy=GraspGenProxy(args.graspgen_proxy)
     states=robot.read_states()
     candidates={}
     seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
-    for obj in targets:
-        result=proxy.infer(visual_clouds(packet,scene,obj.track_id),args.num_grasps)
-        proposals=candidates_from_result(result,obj,states,calibration,seq)
-        candidates[obj.track_id]=[
-            replace(c,rejection_reasons=c.rejection_reasons+('UNSUPPORTED_UPRIGHT_APPROACH',))
-            if -c.approach_direction[2] < math.cos(math.radians(10)) else c for c in proposals]
-        report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
-                                             raw_grasps=len(result['scores'])))
-    rows=assess(scene,states,lambda c,o,s:robot.feasibility(c,o,s,slot),robot.home,
-                candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
-    report['feasible_per_arm']={a:sum(row.feasible and row.candidate.arm==a for row in rows) for a in states}
-    pair,rejections=paired_pregrasp(robot,rows,states,scene)
-    report.update(pair=pair, rejected_pairs=rejections, shared_slot_xy=slot)
+    rows=[]
+    report['slot_assessments']=[]
+    for attempt in range(1,4):
+        for obj in targets:
+            result=proxy.infer(visual_clouds(packet,scene,obj.track_id),args.num_grasps)
+            proposals=candidates_from_result(result,obj,states,calibration,seq)
+            candidates[obj.track_id]=[
+                replace(c,rejection_reasons=c.rejection_reasons+('UNSUPPORTED_UPRIGHT_APPROACH',))
+                if -c.approach_direction[2] < math.cos(math.radians(10)) else c for c in proposals]
+            report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
+                                                 raw_grasps=len(result['scores'])))
+        for slot in available:
+            scored=assess(scene,states,lambda c,o,s:robot.feasibility(c,o,s,slot),robot.home,
+                          candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
+            for row in scored:
+                row.terms['slot_xy']=slot
+            rows.extend(scored)
+            for arm in states:
+                assigned=[r for r in scored if r.candidate.arm==arm]
+                report['slot_assessments'].append(dict(attempt=attempt,slot_xy=slot,arm=arm,
+                    feasible=sum(r.feasible for r in assigned),
+                    reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
+                    phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
+        report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}
+        pair,rejections=paired_pregrasp(robot,rows,states,scene)
+        report.update(pair=pair, rejected_pairs=rejections)
+        if pair is not None:break
     if pair is None:fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
+    assigned_slots={c['arm']:xy for c,xy in zip(pair['selection'],pair['slots'])}
+    slots.reserve_pair(assigned_slots)
+    report['slots_reserved']=slots.report()
     if execute:
         try:
             robot.hold(.025)
@@ -159,19 +191,32 @@ def check_pair(env, args, packet, scene, estimator):
             new={}
             for a in rows:
                 c=a.candidate
-                if c.candidate_id not in selected:continue
+                if c.candidate_id not in selected or a.terms['slot_xy']!=assigned_slots[c.arm]:continue
                 matches=[o for o in updated.objects if o.track_id==c.target_id]
                 if len(matches)!=1:raise RuntimeError('PAIR_TARGET_LOST')
                 new[c.target_id]=[revalidate_candidate(c,matches[0],updated,seq)]
-            if not robot.observed_workspace.slot(slot)['free']:raise RuntimeError('SHARED_SLOT_NOT_OBSERVED_FREE')
+            slots.observe(robot.observed_workspace)
+            if any(slots.states[xy]!='reserved' for xy in assigned_slots.values()):
+                raise RuntimeError('RESERVED_SLOT_CHANGED')
             states=robot.read_states()
-            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,slot),robot.home,
+            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm]),robot.home,
                            candidate_provider=lambda o,_:new.get(o.track_id,[]))
+            for row in checked:
+                row.terms['slot_xy']=assigned_slots[row.candidate.arm]
             current,_=paired_pregrasp(robot,checked,states,updated)
             if current is None:raise RuntimeError('PAIR_CHANGED_BEFORE_APPROACH')
             report.update(pair=current,scope='physical_empty_arm_pregrasp_only',physical_execution=True)
             env._write_json('graspgen_pair_check.json',report)
+            action_start=time.monotonic()
             report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'])
+            if args.mode=='graspgen-pair-place':
+                from workstation.diagnostics.graspgen_pair_place import place_pair
+                report['scope']='two_cartons_same_physics_scene'
+                try:
+                    place_pair(env,robot,estimator,updated,current,slots,report)
+                finally:
+                    report['action_wall_s']=time.monotonic()-action_start
+                    env._write_json('graspgen_pair_check.json',report)
         except RuntimeError as error:
             fail(str(error))
     report['success']=True

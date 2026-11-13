@@ -14,9 +14,10 @@
 export WORKSTATION_GRASPGEN_ASSETS=/path/to/GraspGen
 ./run-project.sh --mode graspgen-check --visual-fixture upright-pair --headless --num-grasps 256
 ./run-project.sh --mode graspgen-pair-pregrasp --headless --num-grasps 256
+./run-project.sh --mode graspgen-pair-place --headless --num-grasps 256
 ```
 
-`run-project.sh` 为 5090 部署目录的启动器，其他机器可从仓库根目录用 Isaac 的 `python.sh -m workstation` 运行相同参数。第一条命令检查冻结快照；第二条在新的 RGB-D 观测上复核原始模型抓姿，在同一物理时钟驱动两只空爪接近。结果写入 `graspgen_pair_check.json`，记录目标、候选、采样球体间距和编码器运动重叠。当前物理入口止于预抓位置。双臂闭爪、持盒避碰、共享放置位和输送带清位仍待集成与实测。
+在其他机器上，从仓库根目录用 Isaac 的 `python.sh -m workstation` 运行相同参数。三个命令分别检查候选、执行双臂预抓、尝试双盒完整抓放。单盒使用配置指定的一格。双盒按当前 RGB-D 检查左、中、右三格，给两臂同时预约两个不同且全路径可行的目标。空格、预约、遮挡和已占用状态见 `graspgen_pair_check.json`。完整抓放模式记录关节实测重叠、持盒检查、动作墙钟和视觉落位误差。物理实验的成功范围与失败原因见 [4090 实测记录](evidence/graspgen_three_slot_20261113.json)。
 
 ## 许可
 

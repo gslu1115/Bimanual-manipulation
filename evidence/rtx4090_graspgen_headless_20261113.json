@@ -1,0 +1,137 @@
+{
+  "isaac_sim": "6.1.0",
+  "gpu": "RTX 4090",
+  "driver": "580.105.08",
+  "run_mode": "headless",
+  "source_commit": "003f398a6d8d647cd61f037e6d6eb8f3a49f5c2d",
+  "sensor_check": {
+    "success": true,
+    "poses": {
+      "home": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        }
+      },
+      "left_moved": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        }
+      },
+      "both_moved": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 1
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "valid_depth_fraction": 0.99955078125
+        }
+      }
+    }
+  },
+  "panda_graspgen_official_sample": {
+    "input_points": 7674,
+    "candidates": 64,
+    "model_inference_ms": 994.3314988631755
+  },
+  "first_model_start": {
+    "outcome": "failed before inference",
+    "reason": "torch_scatter CUDA wheel requires glibc 2.32 on the Ubuntu 20.04 host",
+    "resolution": "Run the model service in the single-GPU Ubuntu 24.04 user environment used by Isaac."
+  },
+  "scope": "RGB-D acquisition and official sample inference; paired pregrasp has a separate physical test."
+}

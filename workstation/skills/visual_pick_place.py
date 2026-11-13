@@ -350,9 +350,30 @@ class VisualPickPlace:
                 result['candidate_attempts']=[result['assessments']]
                 # Bounded fresh-observation attempts, never a geometry fallback.
                 for attempt in range(2):
-                    if chosen is not None:break
+                    # A pinch near the end of the long axis gives the carton a
+                    # large lever arm. Sample another model batch before moving.
+                    if chosen is not None:
+                        balance=chosen.terms.get('visual_pinch_balance',{})
+                        if (chosen.candidate.source!='graspgen' or self.accepted_postures!=('UPRIGHT',)
+                                or balance.get('penalty',0.)<=.45):break
+                        previous=chosen
+                    else:
+                        previous=None
                     self.robot.hold(.1);self.observe('model_retry_'+str(attempt+1))
                     assessments=self._assess(full_task)
+                    if previous is not None:
+                        # Preserve a previously feasible option only if the
+                        # original pose and its full path pass this fresh frame.
+                        matches=[o for o in self.scene.objects if o.track_id==previous.candidate.target_id]
+                        if len(matches)==1:
+                            try: retained=self._refresh_candidate(previous.candidate,matches[0])
+                            except RuntimeError:pass
+                            else:
+                                assessments.extend(assess(self.scene,self.robot.read_states(),full_task,self.robot.home,
+                                    eligible=self.eligible,candidate_provider=lambda o,_:
+                                        [retained] if o.track_id==retained.target_id else [],
+                                    accepted_postures=self.accepted_postures))
+                                assessments.sort(key=lambda row:(not row.feasible,-row.score))
                     result['assessments']=[asdict(a) for a in assessments]
                     result['candidate_attempts'].append(result['assessments'])
                     result['decision']=select_skill(assessments)
