@@ -1,0 +1,1194 @@
+{
+  "date": "2026-11-13",
+  "branch": "linux-based",
+  "controller_commit": "6cedb74",
+  "source_fingerprint": {
+    "directories": [
+      "workstation",
+      "config"
+    ],
+    "extensions": [
+      ".py",
+      ".json",
+      ".yaml",
+      ".yml"
+    ],
+    "files": 80,
+    "normalized_tree_sha256": "631c8fd293b25f8ffdb5a9dbd69500031edd325763f5d48732fd96f386b9ac88",
+    "verified_on": "Local checkout and remote deployment, before execution."
+  },
+  "protocol": {
+    "scene": "Isaac Sim 6.1, headless RTX 4090, two separated upright cartons in the same physics scene. Fixed left and right starting neighborhoods with random XY offset and yaw from scene seed. One new initial condition per size-pair by slot-pair cell.",
+    "selection": "Seeds 450–458 selected before execution, unused in existing server run configurations. Three configured small sizes rotate by seed. The left and right arms each serve one carton. Target pair is supplied for each run.",
+    "controller": "Same production settings throughout. GraspGen generates fresh proposals from RGB-D in every attempt (256 requested per model call). Joint 1/3 armature floor is 0.01 kg m^2. Scene seeds control initial conditions; the model proposals need not repeat.",
+    "score": "First attempt passes when the production pair check and run_status pass, both grasps are verified and both assigned placements are visually confirmed. Each failed scene is retried once with a fresh model draw, reported separately.",
+    "action_wall_s": "Start of physical pregrasp approach through final checks or first failure. Includes computations during action. Excludes simulation startup and initial grasp generation.",
+    "offline_final_snapshot": "Post-run simulator pose, matched by distinct known sizes. Signed XY error and radial distance are relative to the assigned slot center. Failed attempts are stop snapshots, not placements. Offline poses do not feed the controller."
+  },
+  "summary": {
+    "first_attempt_successes": 7,
+    "first_attempt_total": 9,
+    "retry_successes": 2,
+    "retry_total": 2
+  },
+  "failure_notes": {
+    "456": "Right initial-lift observation returned NO_SUPPORTED_CURRENT_INSTANCE. On the saved failure frame all three cameras reported OK; the global and right wrist views produced separate right-side tracks. Offline center rose 45.5 mm from the initial spawn pose.",
+    "458": "Left pre-close reference age was 6.933 sim seconds, above the existing 6.0 s limit. The controller stopped before gripper closure."
+  },
+  "first_attempts": [
+    {
+      "seed": 450,
+      "run": "study-20261113-141813-pair-450",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            -0.20038201375838374,
+            -0.09597397187291681
+          ],
+          "yaw_deg": 138.346
+        },
+        {
+          "box": "box_01",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            0.18191086203296675,
+            -0.06131348063554177
+          ],
+          "yaw_deg": 26.762
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 102.944,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 7.6667,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "free"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.058,
+            0.378
+          ],
+          "xy_distance_mm": 0.383,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.559,
+            0.955
+          ],
+          "xy_distance_mm": 1.107,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 451,
+      "run": "study-20261113-141813-pair-451",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            -0.20491826875659816,
+            -0.08283385192580288
+          ],
+          "yaw_deg": 148.775
+        },
+        {
+          "box": "box_01",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            0.21347474988948556,
+            -0.051153829228931545
+          ],
+          "yaw_deg": 18.857
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 102.966,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 7.9083,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "free"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.432,
+            -0.23
+          ],
+          "xy_distance_mm": 0.49,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.29,
+            0.98
+          ],
+          "xy_distance_mm": 1.022,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 452,
+      "run": "study-20261113-141813-pair-452",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            -0.17701890719338015,
+            -0.09698930446638288
+          ],
+          "yaw_deg": 104.773
+        },
+        {
+          "box": "box_01",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            0.20232969701963738,
+            -0.02369212838183534
+          ],
+          "yaw_deg": -102.684
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 100.998,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 6.8167,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "free"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.761,
+            0.333
+          ],
+          "xy_distance_mm": 0.83,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.216,
+            1.563
+          ],
+          "xy_distance_mm": 1.578,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 453,
+      "run": "study-20261113-141813-pair-453",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            -0.2157398492944272,
+            -0.059763675870015125
+          ],
+          "yaw_deg": -15.907
+        },
+        {
+          "box": "box_01",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            0.21792190337757306,
+            -0.09639039390206378
+          ],
+          "yaw_deg": -59.991
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 112.812,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 8.075,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "free"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.535,
+            -0.788
+          ],
+          "xy_distance_mm": 0.953,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.447,
+            0.938
+          ],
+          "xy_distance_mm": 1.039,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 454,
+      "run": "study-20261113-141813-pair-454",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            -0.21935492805906023,
+            -0.055562380944352716
+          ],
+          "yaw_deg": -80.352
+        },
+        {
+          "box": "box_01",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            0.1821856936694601,
+            -0.08317608553237016
+          ],
+          "yaw_deg": -116.761
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 109.792,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 6.475,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "free"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.122,
+            0.824
+          ],
+          "xy_distance_mm": 0.833,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.137,
+            1.215
+          ],
+          "xy_distance_mm": 1.222,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 455,
+      "run": "study-20261113-141813-pair-455",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            -0.20457075027833463,
+            -0.01024385105373294
+          ],
+          "yaw_deg": -164.812
+        },
+        {
+          "box": "box_01",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            0.22493831675420736,
+            -0.036450252920381086
+          ],
+          "yaw_deg": -137.616
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 118.783,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 9.125,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "free"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.648,
+            0.806
+          ],
+          "xy_distance_mm": 1.034,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.179,
+            0.633
+          ],
+          "xy_distance_mm": 0.658,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 456,
+      "run": "study-20261113-141813-pair-456",
+      "status": "failed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            -0.20151633778176173,
+            -0.05971102316585897
+          ],
+          "yaw_deg": -135.34
+        },
+        {
+          "box": "box_01",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            0.2127424990738055,
+            -0.012431039070737636
+          ],
+          "yaw_deg": -150.113
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 30.704,
+      "dual_grasp_verified": false,
+      "transfer_overlap_sim_s": null,
+      "last_phase": "initial_lift",
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "online_verified_placements": [],
+      "final_slot_states": [],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.591,
+            339.434
+          ],
+          "xy_distance_mm": 339.435,
+          "tilt_deg": 0.507
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            11.57,
+            387.385
+          ],
+          "xy_distance_mm": 387.558,
+          "tilt_deg": 4.068
+        }
+      ],
+      "held_surface_failure": {
+        "arm": "panda_right",
+        "measurement": {
+          "status": "UNKNOWN",
+          "reason": "NO_SUPPORTED_CURRENT_INSTANCE",
+          "time_s": 17.199999999999665
+        }
+      }
+    },
+    {
+      "seed": 457,
+      "run": "study-20261113-141813-pair-457",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            -0.20598810041231172,
+            -0.024377132792350036
+          ],
+          "yaw_deg": -152.977
+        },
+        {
+          "box": "box_01",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            0.20591913215412178,
+            -0.07977025228614913
+          ],
+          "yaw_deg": 99.12
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 122.449,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 7.95,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "free"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.004,
+            0.448
+          ],
+          "xy_distance_mm": 0.448,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.072,
+            -0.052
+          ],
+          "xy_distance_mm": 0.089,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 458,
+      "run": "study-20261113-141813-pair-458",
+      "status": "failed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            -0.19420080909873255,
+            -0.07193327277826636
+          ],
+          "yaw_deg": -147.549
+        },
+        {
+          "box": "box_01",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            0.17959506655543034,
+            -0.01268933313435875
+          ],
+          "yaw_deg": 53.925
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 21.469,
+      "dual_grasp_verified": false,
+      "transfer_overlap_sim_s": null,
+      "last_phase": "approach",
+      "failure": "PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED",
+      "online_verified_placements": [],
+      "final_slot_states": [],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -194.201,
+            328.067
+          ],
+          "xy_distance_mm": 381.237,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -20.405,
+            387.311
+          ],
+          "xy_distance_mm": 387.848,
+          "tilt_deg": 0
+        }
+      ],
+      "failed_preclose": [
+        {
+          "reason": "PRECLOSE_REFERENCE_EXPIRED",
+          "reference_age_sim_s": 6.933333333333002
+        }
+      ]
+    }
+  ],
+  "retries": [
+    {
+      "seed": 456,
+      "run": "study-20261113-144303-pair-456",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            -0.20151633778176173,
+            -0.05971102316585897
+          ],
+          "yaw_deg": -135.34
+        },
+        {
+          "box": "box_01",
+          "variant": "small_medium",
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "initial_xy_m": [
+            0.2127424990738055,
+            -0.012431039070737636
+          ],
+          "yaw_deg": -150.113
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 100.599,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 6.8833,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "free"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.061,
+            1.947
+          ],
+          "xy_distance_mm": 1.948,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            0.267,
+            1.736
+          ],
+          "xy_distance_mm": 1.756,
+          "tilt_deg": 0
+        }
+      ]
+    },
+    {
+      "seed": 458,
+      "run": "study-20261113-144303-pair-458",
+      "status": "passed",
+      "scene": [
+        {
+          "box": "box_00",
+          "variant": "small_wide",
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "initial_xy_m": [
+            -0.19420080909873255,
+            -0.07193327277826636
+          ],
+          "yaw_deg": -147.549
+        },
+        {
+          "box": "box_01",
+          "variant": "small_reference",
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "initial_xy_m": [
+            0.17959506655543034,
+            -0.01268933313435875
+          ],
+          "yaw_deg": 53.925
+        }
+      ],
+      "eligible_slot_xy_m": [
+        [
+          0,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ],
+      "model_requests": 6,
+      "action_wall_s": 131.054,
+      "dual_grasp_verified": true,
+      "transfer_overlap_sim_s": 8.4083,
+      "last_phase": "verify",
+      "failure": null,
+      "online_verified_placements": [
+        "panda_left",
+        "panda_right"
+      ],
+      "final_slot_states": [
+        {
+          "xy_m": [
+            -0.2,
+            -0.4
+          ],
+          "state": "free"
+        },
+        {
+          "xy_m": [
+            0,
+            -0.4
+          ],
+          "state": "occupied"
+        },
+        {
+          "xy_m": [
+            0.2,
+            -0.4
+          ],
+          "state": "occupied"
+        }
+      ],
+      "offline_final_snapshot": [
+        {
+          "arm": "panda_left",
+          "box": "box_00",
+          "slot_xy_m": [
+            0,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.597,
+            1.449
+          ],
+          "xy_distance_mm": 1.567,
+          "tilt_deg": 0
+        },
+        {
+          "arm": "panda_right",
+          "box": "box_01",
+          "slot_xy_m": [
+            0.2,
+            -0.4
+          ],
+          "offline_stop_error_xy_mm": [
+            -0.221,
+            0.732
+          ],
+          "xy_distance_mm": 0.765,
+          "tilt_deg": 0
+        }
+      ]
+    }
+  ]
+}
