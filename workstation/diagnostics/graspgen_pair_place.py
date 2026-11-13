@@ -255,7 +255,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     move('approach', poses, True)
     packet = observe()
     for a in arms:
-        confirm_target(a,packet)
+        proof=confirm_target(a,packet)
+        if proof['full_pose_measured']:
+            scene=reconcile_preclose_target(estimator,scene,proof)
+            references[a]=references[a].renewed(scene,proof)
     report['last_phase']='close'
     fingers(True)
     packet = observe()
