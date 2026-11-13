@@ -82,6 +82,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         pos,rot=robot.fk(arm)
         observed=t.observe(packet,scene,pos,rot)
         if observed is None:
+            from workstation.diagnostics.vision_check import save_observation
+            save_observation(env.output,'pair_held_'+arm+'_'+report['last_phase'],packet,scene)
             report['held_surface_failure']=dict(arm=arm,measurement=t.last_failure)
             raise RuntimeError('PAIR_HELD_SURFACE_UNCONFIRMED:'+arm)
         measurements[arm]=observed
@@ -156,12 +158,18 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     packet=observe()
     for a in arms:
         prior=objects[a]
-        matches=[o for o in scene.objects if o.track_id==prior.track_id and o.posture=='UPRIGHT'
+        matches=[o for o in scene.objects if o.posture=='UPRIGHT'
                  and not o.failures and np.linalg.norm(np.asarray(o.position_m)-prior.position_m)<=.002
                  and abs((o.axis_yaw_rad-prior.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(3)
                  and np.allclose(o.size_m,prior.size_m,atol=1e-6,rtol=0)]
         if len(matches)==1:
-            references[a]=PreCloseTarget(matches[0],scene,priors)
+            current=matches[0]
+            if current.track_id!=prior.track_id:
+                if any(o.track_id==prior.track_id for o in scene.objects):
+                    raise RuntimeError('PAIR_AMBIGUOUS_PREGRASP_ID:'+a)
+                report.setdefault('pregrasp_identity',{})[a]=dict(original=prior.track_id,current=current.track_id)
+            references[a]=PreCloseTarget(current,scene,priors)
+            objects[a]=current
         else:
             proof=confirm_target(a,packet)
             scene=reconcile_preclose_target(estimator,scene,proof)
@@ -187,7 +195,15 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         measure_held(a,packet)
     robot.set_observation(packet,scene,priors)
     held = True
-    move('lift',{a:(robot.fk(a)[0]+[0.,0.,.18],robot.fk(a)[1]) for a in arms},True)
+    raised={a:(robot.fk(a)[0]+[0.,0.,.18],robot.fk(a)[1]) for a in arms}
+    # Refit after initial finger loading; using the closure frame until the
+    # end of an 18 cm lift loses track of cartons that rotate under load.
+    move('initial_lift',{a:(p-[0.,0.,.12],r) for a,(p,r) in raised.items()},True)
+    packet=observe()
+    for a in arms:
+        phases.setdefault('initial_lift_evidence',{})[a]=measure_held(a,packet)
+    robot.set_observation(packet,scene,priors)
+    move('lift',raised,True)
     packet = observe()
     places = {}
     for a in arms:
@@ -238,7 +254,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                      np.allclose(o.size_m,objects[a].size_m,atol=.002,rtol=0)]
             if len(matches)==1:
                 o,=matches
-                placements[a]=dict(initial_track=objects[a].track_id,observed_track=o.track_id,
+                placements[a]=dict(initial_track=selected[a]['target_id'],grasp_track=objects[a].track_id,observed_track=o.track_id,
                     goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())
         ids=tuple(p['observed_track'] for p in placements.values())
         if len(set(ids))!=2 or ids!=previous_ids:

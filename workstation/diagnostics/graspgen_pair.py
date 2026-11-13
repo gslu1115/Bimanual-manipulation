@@ -173,6 +173,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
 def check_pair(env, args, packet, scene, estimator):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
+    from workstation.planning.selection import visual_pinch_balance
     from workstation.models.graspgen_proxy import GraspGenProxy
     from workstation.runtime_paths import isaac_root
     from workstation.simulation.robot_driver import from_environment
@@ -269,9 +270,17 @@ def check_pair(env, args, packet, scene, estimator):
             if attempt>=3:clouds=balance_visible_surfaces(clouds,obj)
             result=infer_rotated_view(proxy,clouds,args.num_grasps,yaw)
             proposals=candidates_from_result(result,obj,states,calibration,seq)
-            candidates[obj.track_id]=[
-                replace(c,rejection_reasons=c.rejection_reasons+('UNSUPPORTED_UPRIGHT_APPROACH',))
-                if -c.approach_direction[2] < math.cos(math.radians(10)) else c for c in proposals]
+            checked=[]
+            for c in proposals:
+                reasons=c.rejection_reasons
+                if -c.approach_direction[2]<math.cos(math.radians(10)):
+                    reasons+=('UNSUPPORTED_UPRIGHT_APPROACH',)
+                if not reasons:
+                    balance=visual_pinch_balance(c,obj)
+                    if balance['offset_m']>.5*balance['half_extent_m']:
+                        reasons+=('ECCENTRIC_PAIRED_LIFT',)
+                checked.append(replace(c,rejection_reasons=reasons))
+            candidates[obj.track_id]=checked
             report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
                                                  attempt=attempt,mask_refs=list(refs),basis_yaw_rad=yaw,
                                                  observed_input_points=len(clouds.target_m),raw_grasps=len(result['scores'])))
