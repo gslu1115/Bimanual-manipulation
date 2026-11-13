@@ -286,6 +286,42 @@ def released_bound_supported(measurement,time_s):
         np.allclose(collision,np.abs(rz.T@rotation)@size+width,atol=1e-6,rtol=0))
 
 
+def reacquire_tilted_top(packet,scene,centre,rotation,size,priors):
+    """Use a nearby measured top normal to initialize a new independent RGB-D fit."""
+    from workstation.perception.rgbd_cartons import deproject
+    from workstation.observations.camera_geometry import visible_surface_normals
+    from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported
+    for ref,mask in scene.masks.items():
+        name=ref.split('/')[0]
+        frame=packet.cameras.get(name)
+        if frame is None or packet.camera_status.get(name)!='OK' or scene.camera_status.get(name)!='OK':continue
+        xyz=deproject(frame)
+        valid=frame.valid_depth & mask
+        points=xyz[valid]
+        if len(points)<60 or np.linalg.norm(np.median(points,axis=0)-centre)>np.linalg.norm(size)/2+.008:continue
+        _,_,samples,normals=visible_surface_normals(xyz,valid)
+        axis=rotation[:,2]
+        normals*=np.where(normals@axis>=0,1.,-1.)[:,None]
+        keep=(normals@axis>np.cos(np.radians(35)))&((samples-centre)@axis>0)
+        if keep.sum()<40:continue
+        normal=np.median(normals[keep],axis=0)
+        normal/=np.linalg.norm(normal)
+        if np.mean(normals[keep]@normal>np.cos(np.radians(5)))<.80:continue
+        cross=np.cross(axis,normal)
+        x,y,z=cross
+        skew=np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
+        corrected=(np.eye(3)+skew+skew@skew/(1+axis@normal))@rotation
+        displacement=float(np.median((samples[keep]-centre)@normal)-size[2]/2)
+        if abs(displacement)>.010:continue
+        proof=fit_cuboid_pose(packet,scene,centre+displacement*normal,corrected,size,priors)
+        if (measured_cuboid_supported(proof,packet.observation_time_s) and
+                np.linalg.norm(np.asarray(proof['position_m'])-centre)<=.012):
+            proof['normal_reacquisition_mask']=ref
+            proof['prior_angle_correction_deg']=float(np.degrees(np.arccos(np.clip(axis@normal,-1,1))))
+            return proof
+    return None
+
+
 class CuboidHoldingTracker:
     """Geometrically measured holding pose for adjustment and flipping skills.
 
@@ -352,7 +388,7 @@ class CuboidHoldingTracker:
                 offset=rotation.T@(np.asarray(measurement['position_m'])-tcp),
                 relative_rotation=rotation.T@np.asarray(measurement['rotation']))
 
-    def observe(self,packet,scene,tcp_position,tcp_rotation,require_motion_extent=True):
+    def observe(self,packet,scene,tcp_position,tcp_rotation,require_motion_extent=True,*,reacquire_tilt=False):
         from workstation.perception.cuboid_pose import fit_cuboid_pose
         from workstation.observations.camera_geometry import quaternion_from_matrix
         tcp,r=np.asarray(tcp_position),np.asarray(tcp_rotation)
@@ -377,6 +413,8 @@ class CuboidHoldingTracker:
                     retry['lift_hint_source']=backup['source']
                     reference=backup
                     measured=retry
+        if reacquire_tilt and measured['status']=='UNKNOWN':
+            measured=reacquire_tilted_top(packet,scene,hint,body_hint,self.size,self.priors) or measured
         if measured['status'] not in ('GEOMETRY_OBSERVED','GRASP_CONSTRAINED'):
             self.last_failure=measured;return None
         self.last_failure=None

@@ -213,6 +213,15 @@ def visual_object(scene,r,ambiguous=False):
 
 
 class CuboidHoldingIntegrationTests(unittest.TestCase):
+    def test_current_tilted_top_can_initialize_independent_pose(self):
+        from workstation.perception.held_surface import reacquire_tilted_top
+        p,s=synthetic_observation(turn(1,16))
+        measured=reacquire_tilted_top(p,s,CENTRE,np.eye(3),SIZE,PRIORS)
+        self.assertIsNotNone(measured)
+        self.assertTrue(measured_cuboid_supported(measured,p.observation_time_s))
+        self.assertAlmostEqual(measured['prior_angle_correction_deg'],16,delta=.4)
+        self.assertIsNone(reacquire_tilted_top(p,s,CENTRE+[.2,0,0],np.eye(3),SIZE,PRIORS))
+
     def test_lift_hint_requires_new_full_pose_near_latest_prediction(self):
         from unittest.mock import patch
         p,s=synthetic_observation(np.eye(3))

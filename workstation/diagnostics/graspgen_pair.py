@@ -165,7 +165,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
     for _ in range(math.ceil(.3/robot.dt)):
         advance(np.asarray([p[-1] for p in paths]))
     moved=np.max(np.abs(previous-start),axis=1)
-    if (require_overlap and not overlap) or np.min(moved)<.04:raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
+    if require_overlap and (not overlap or np.min(moved)<.04):raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
     return dict(ticks=ticks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
                 arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace)
 

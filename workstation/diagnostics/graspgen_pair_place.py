@@ -80,7 +80,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         nonlocal scene
         t=trackers[arm]
         pos,rot=robot.fk(arm)
-        observed=t.observe(packet,scene,pos,rot)
+        observed=t.observe(packet,scene,pos,rot,reacquire_tilt=held)
         if observed is None:
             from workstation.diagnostics.vision_check import save_observation
             save_observation(env.output,'pair_held_'+arm+'_'+report['last_phase'],packet,scene)
@@ -97,6 +97,25 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             t.relative_rotation=rot.T@np.asarray(observed['rotation'])
         t.uncertainty_m=max(t.uncertainty_m,observed['uncertainty_m'])
         return observed
+
+    def verify_slots(packet):
+        # Reconcile BOTH carried cartons before testing the slot underneath
+        # either one. Register the current arm-specific payload to explain its
+        # shadow using saved free depth rays, never using ownership as clearance.
+        for arm in arms:
+            t=trackers[arm]
+            robot.set_observation(packet,scene,priors)
+            robot.held_visual_geometry=dict(arm=arm,target_id=objects[arm].track_id,offset=t.offset,
+                relative_rotation=t.relative_rotation,uncertainty_m=t.uncertainty_m,allow_grasp_translation=True)
+            if not robot.confirm_payload_observation(objects[arm].track_id,t,measurements[arm],packet):
+                raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
+            xy=goals[arm]
+            view=robot.observed_workspace.slot(xy)
+            report.setdefault('destination_checks',[]).append(dict(arm=arm,phase=report['last_phase'],**view))
+            if slots.owners.get(xy)!=arm or not view['free']:
+                from workstation.diagnostics.vision_check import save_observation
+                save_observation(env.output,'pair_slot_'+arm+'_'+report['last_phase'],packet,scene)
+                raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+arm+':'+str(view['reason']))
 
     def move(phase, destinations, contact=False):
         report['last_phase'] = phase
@@ -127,10 +146,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             paths.append(path)
         # Final Cartesian contact is verified below in metres/radians. The
         # per-step 0.04 rad stop and actual two-arm collision checks stay active.
-        if phase=='transfer':
-            paths,report['transfer_schedule']=transfer_schedule(robot,paths,carried_clearance)
+        transfer=phase in ('transfer','align')
+        if transfer:
+            paths,schedule=transfer_schedule(robot,paths,carried_clearance)
+            report[phase+'_schedule']=schedule
         phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None,
-                                              following_band=.035 if contact else .025,require_overlap=phase!='transfer')
+                                              following_band=.035 if contact else .025,require_overlap=not transfer,
+                                              speed_fraction=.5 if transfer else 1.)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
@@ -216,12 +238,32 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                                    robot.fk(a)[1]@t.relative_rotation,t.offset,t.relative_rotation)
     robot.set_observation(packet,scene,priors)
     report['simultaneous_grasp_verified']=phases['lift']['overlap_ticks']>0
-    move('transfer',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()})
+    robot.anchor_observation()
+    # Carry without simultaneously rotating the carton. Aim the BOX centre
+    # above its lane using the measured grasp offset before changing attitude.
+    overhead={}
+    for a in arms:
+        t=trackers[a]
+        rot=robot.fk(a)[1]
+        centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
+        overhead[a]=(centre-rot@t.offset,rot)
+    move('transfer',overhead)
     packet=observe()
     for a in arms:
-        measure_held(a,packet)
-        if slots.states[goals[a]]!='reserved':
-            raise RuntimeError('PAIR_DESTINATION_UNCONFIRMED:'+a)
+        observed=measure_held(a,packet)
+        t=trackers[a]
+        places[a]=placement_goal(goals[a],robot.place_support_z,t.size,.012,
+                                 observed['rotation'],t.offset,t.relative_rotation)
+    verify_slots(packet)
+    robot.set_observation(packet,scene,priors)
+    move('align',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()})
+    packet=observe()
+    for a in arms:
+        observed=measure_held(a,packet)
+        t=trackers[a]
+        places[a]=placement_goal(goals[a],robot.place_support_z,t.size,.012,
+                                 observed['rotation'],t.offset,t.relative_rotation)
+    verify_slots(packet)
     robot.set_observation(packet,scene,priors)
     move('lower',places,True)
     packet=observe()
