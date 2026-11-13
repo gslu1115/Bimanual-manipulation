@@ -71,6 +71,9 @@ def build_parser():
                         help='Initial upright single-carton yaw only; preserves seed-generated position, never an online pose input')
     parser.add_argument('--visual-carton-variant',
                         help='Initial upright small-carton variant; public size catalogue stays identical in all trials')
+    parser.add_argument('--single-start-side',choices=('left','right'),help='Initial single-carton side for upright trials')
+    parser.add_argument('--single-arm',choices=('panda_left','panda_right'),
+                        help='Assign the picking arm for a single upright GraspGen trial')
     parser.add_argument('--scene-focal-length-mm',type=float,
                         help='Explicit calibrated scene-camera optics experiment; original config is preserved')
     parser.add_argument('--wrist-focal-length-mm',type=float,
@@ -214,6 +217,14 @@ def load_config(args, parser):
         if args.visual_carton_variant not in variants:
             parser.error('--visual-carton-variant must name a configured small carton')
         config['diagnostic_visual_carton_variant']=args.visual_carton_variant
+    if args.single_start_side:
+        if args.visual_fixture!='upright' or args.mode!='visual-pnp':
+            parser.error('--single-start-side requires upright visual-pnp')
+        config['diagnostic_single_start_side']=args.single_start_side
+    if args.single_arm:
+        if args.visual_fixture!='upright' or args.mode!='visual-pnp' or args.grasp_backend!='graspgen':
+            parser.error('--single-arm requires upright visual-pnp with GraspGen')
+        config['single_pick_arm']=args.single_arm
     if args.scene_focal_length_mm is not None:
         if args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','model-capture'):
             parser.error('--scene-focal-length-mm requires a visual diagnostic mode')

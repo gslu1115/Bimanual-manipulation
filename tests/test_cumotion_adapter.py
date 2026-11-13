@@ -57,7 +57,7 @@ class CuMotionAdapterTests(unittest.TestCase):
     def test_grasp_holds_reached_arm_without_hiding_measured_pose_or_overriding_fingers(self):
         driver=object.__new__(CuMotionPickPlaceDriver);driver.time_s=2.;driver.controller_wall_s=0.;driver.calls=0
         driver.arm='left';driver.names=['j'+str(i) for i in range(9)]
-        q=np.arange(7)*.01;target=np.r_[q,[.04,.04]]
+        q=np.arange(7)*.01;target=np.r_[q+.002,[.04,.04]]
         driver.robot=SimpleNamespace(targets={'left':target},
             read_states=lambda:{'left':SimpleNamespace(joint_positions_rad=q)})
         measured=object();seen=[];driver.read_state=lambda:measured
@@ -71,7 +71,7 @@ class CuMotionAdapterTests(unittest.TestCase):
         for phase in ('DESCEND_PICK','GRASP'):
             controller.phase.name=phase
             command,velocity=driver.propose(.02)
-            np.testing.assert_allclose(command[:7],q);np.testing.assert_allclose(velocity[:7],0.)
+            np.testing.assert_allclose(command[:7],q+.002);np.testing.assert_allclose(velocity[:7],0.)
             np.testing.assert_allclose(command[7:],proposed[7:]);np.testing.assert_allclose(velocity[7:],vel[7:])
         self.assertEqual(seen,[measured,measured])
         controller.phase.name='LIFT';driver.resync_after_cartesian(2.)

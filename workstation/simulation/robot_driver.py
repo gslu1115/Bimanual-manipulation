@@ -303,6 +303,16 @@ class RobotMotion:
         # still require 2 mm clearance and are never exempted.
         target_boxes=[b for b in scene_obstacles(scene,None,extra_margin=0.) if b.name == target_id]
         if target_boxes_override is not None: target_boxes=list(target_boxes_override)
+        target_rotation=None
+        if target_contact and held_size is None and target_boxes_override is None:
+            from workstation.perception.scene_estimate import current_cuboid_measurement
+            obj=next((o for o in scene.objects if o.track_id==target_id),None)
+            m=current_cuboid_measurement(obj,scene) if obj is not None else None
+            if m is not None:
+                # Hand/body checks can use the current measured local box. A
+                # world AABB includes empty corners around a rotated carton.
+                target_rotation=np.asarray(m['rotation'])
+                local_target=AABB(target_id,np.zeros(3),np.asarray(m['size_m'])+2*m['uncertainty_m'])
         workspace=getattr(self,'observed_workspace',None)
         if workspace is None and getattr(self,'require_observed_workspace',False):
             raise RuntimeError('MISSING_WORKSPACE_OBSERVATION')
@@ -354,7 +364,9 @@ class RobotMotion:
                     for box in target_boxes:
                         for link,centre,radius in own_spheres:
                             if link == 9 and target_contact: continue
-                            if sphere_box_clearance(centre,radius,box) < .002:
+                            clearance=(sphere_box_clearance((centre-np.asarray(box.centre))@target_rotation,radius,local_target)
+                                       if target_rotation is not None else sphere_box_clearance(centre,radius,box))
+                            if clearance < .002:
                                 self.last_plan_check=dict(rejection='TARGET_BODY_COLLISION',link_index=link,
                                     sphere_centre_m=np.asarray(centre).tolist(),sphere_radius_m=radius,
                                     target_centre_m=box.centre,target_size_m=box.size)

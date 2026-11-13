@@ -93,6 +93,50 @@ class CuMotionPickPlace(VisualPickPlace):
         return tcp,rotation
 
     def execute_selected(self, result, chosen, prepared_q, obj, slot):
+        """Keep the same scene and slot through at most one verified alternate."""
+        started=time.perf_counter()
+        try:
+            self._execute_attempt(result,chosen,prepared_q,obj,slot)
+        except RuntimeError as exc:
+            recoverable=(str(exc)=='IK_DISCONTINUITY' and not self.held and
+                not self.robot.motion_started and self.events[-1]['phase']=='APPROACH')
+            regrasp=str(exc)=='UPRIGHT_REGRASP_ON_SUPPORT'
+            if not (recoverable or regrasp) or self.candidate.source!='graspgen':raise
+            record=result['alternate_attempt']=dict(reason=str(exc),original=self.candidate.candidate_id,
+                first_controller_timing=result.get('controller_timing'),success=False)
+            original=self.candidate
+            self.preclose_reference=None
+            self.preclose_proof=None
+            self.robot.hold(.12)
+            self.observe('alternate_recheck')
+            matches=[o for o in self.scene.objects if o.posture=='UPRIGHT' and not o.failures
+                and np.allclose(o.size_m,obj.size_m,rtol=0,atol=.002)
+                and np.linalg.norm(np.subtract(o.position_m[:2],obj.position_m[:2]))<.035]
+            if len(matches)!=1:raise RuntimeError('ALTERNATE_TARGET_UNCONFIRMED') from exc
+            target=matches[0]
+            rows=self.pregrasp_alternates
+            if regrasp:
+                rows=self._assess(lambda c,o,s:self._check_task(c,o,s,slot))
+                target=next((o for o in self.scene.objects if o.track_id==target.track_id),None)
+                if target is None:raise RuntimeError('ALTERNATE_TARGET_LOST') from exc
+            for row in rows:
+                c=row.candidate
+                if not row.feasible or c.arm!=original.arm or c.target_id!=target.track_id:continue
+                if (np.linalg.norm(np.subtract(c.position_m,original.position_m))<.004 and
+                    abs(np.dot(c.orientation_wxyz,original.orientation_wxyz))>math.cos(math.radians(4)/2)):continue
+                try:c=self._refresh_candidate(c,target)
+                except RuntimeError:continue
+                check=self._check_task(c,target,self.scene,slot)
+                if check['reasons']:continue
+                self.candidate=c
+                record['replacement']=c.candidate_id
+                self._execute_attempt(result,row,check['pregrasp_joint_positions_rad'],target,slot)
+                record['success']=True
+                break
+            else:raise RuntimeError('NO_FEASIBLE_ALTERNATE_GRASP') from exc
+        finally:result['all_attempts_through_home_or_stop_wall_s']=time.perf_counter()-started
+
+    def _execute_attempt(self, result, chosen, prepared_q, obj, slot):
         from workstation.perception.preclose_target import PreCloseTarget,reconcile_preclose_target
         initial_reference=PreCloseTarget(obj,self.scene,self.priors)
         candidate = self.candidate
@@ -205,6 +249,38 @@ class CuMotionPickPlace(VisualPickPlace):
                     elif driver.phase=='LIFT':
                         tcp,grasp_rotation=self.latch_closed_payload(result,True,preload=False)
                         self.event('LIFT')
+                        if candidate.source=='graspgen':
+                            from workstation.planning.selection import lift_slip_evidence
+                            closed=self.robot.read_states()[self.arm].finger_positions_m
+                            self._cartesian_segment(driver,tcp+[0.,0.,.06],grasp_rotation,contact=True)
+                            for sample in range(2):
+                                self.observe('initial_lift_check')
+                                m=self.holding_measurement()
+                                if m is None:raise RuntimeError('CURRENT_HELD_SURFACE_UNSUPPORTED')
+                                pos,r=self.robot.fk(self.arm)
+                                proof=lift_slip_evidence(tcp[2],pos[2],m,self.robot.read_states()[self.arm].finger_positions_m,closed)
+                                result.setdefault('initial_grip_checks',[]).append(proof)
+                                if not proof['suspect']:break
+                                if sample==0:self.robot.hold(.12)
+                            else:
+                                if result.get('alternate_attempt'):raise RuntimeError('REGRASP_SLIP_REPEATED')
+                                size=np.asarray(obj.size_m)
+                                dz=m['position_m'][2]-np.abs(np.asarray(m['rotation'])[2])@(size/2)-self.priors.support_z_m-.004
+                                if not 0<dz<.08:raise RuntimeError('REGRASP_SUPPORT_HEIGHT_UNCONFIRMED')
+                                self._cartesian_segment(driver,pos-[0,0,dz],r,contact=True)
+                                self.observe('regrasp_lower')
+                                m=self.holding_measurement()
+                                if m is None:raise RuntimeError('REGRASP_RELEASE_UNCONFIRMED')
+                                gap=m['position_m'][2]-np.abs(np.asarray(m['rotation'])[2])@(size/2)-self.priors.support_z_m
+                                if gap<-.006 or gap+m['uncertainty_m']>.020:raise RuntimeError('REGRASP_RELEASE_HEIGHT_UNCONFIRMED')
+                                self.robot.grip(self.arm,.04,self.scene,self.candidate.target_id,size)
+                                self.held=False
+                                self.hold_tracker=self.release_tracker=self.preclose_reference=None
+                                self.robot.held_visual_geometry=None
+                                self.observe('regrasp_open')
+                                pos,r=self.robot.fk(self.arm)
+                                self._cartesian_segment(driver,pos+[0,0,.16],r,contact=True)
+                                raise RuntimeError('UPRIGHT_REGRASP_ON_SUPPORT')
                         self._cartesian_segment(driver,tcp+[0.,0.,.18],grasp_rotation,contact=True)
                         used_cartesian=True
                     elif driver.phase in ('APPROACH_PLACE','DESCEND_PLACE'):

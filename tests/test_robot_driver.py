@@ -5,6 +5,26 @@ from workstation.simulation.robot_driver import RobotMotion
 
 
 class RobotDriveTests(unittest.TestCase):
+    def test_measured_rotated_contact_box_distinguishes_empty_corner_and_wall(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from workstation.observations.camera_geometry import pose_matrix
+        q=np.zeros(7)
+        state=RobotState(1.,q,np.full(2,.04))
+        robot=RobotMotion.__new__(RobotMotion)
+        robot.read_states=lambda:{'left':state,'right':state}
+        robot.static=[];robot.limits=(q-3,q+3)
+        centre=np.array([.032,-.032,0.])
+        robot.spheres=lambda arm,*_: [(8,centre if arm=='left' else np.ones(3),.004)]
+        scene=SimpleNamespace(objects=[SimpleNamespace(track_id='carton')])
+        rotation=pose_matrix(q[:3],[np.cos(np.pi/8),0.,0.,np.sin(np.pi/8)])[:3,:3]
+        proof=dict(position_m=q[:3],rotation=rotation,size_m=[.11,.05,.05],uncertainty_m=.003)
+        with patch('workstation.perception.scene_estimate.current_cuboid_measurement',return_value=proof):
+            robot.validate_path('left',[q,q],scene,'carton',target_contact=True)
+            centre[:]=rotation[:,1]*.026
+            with self.assertRaisesRegex(RuntimeError,'TARGET_BODY_COLLISION'):
+                robot.validate_path('left',[q,q],scene,'carton',target_contact=True)
+
     def test_paired_armature_preserves_higher_values_and_uses_native_indices(self):
         from types import SimpleNamespace
         from unittest.mock import Mock, patch

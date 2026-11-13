@@ -159,7 +159,7 @@ class VisualPickPlace:
 
     def event(self,phase):
         event=dict(phase=phase,time_s=self.scene.observation_time_s if self.scene else None)
-        if phase=='PREGRASP':
+        if phase=='PREGRASP' and not hasattr(self,'_action_wall_start'):
             self._action_wall_start=monotonic()
         if hasattr(self,'_action_wall_start'):
             event['action_wall_s']=monotonic()-self._action_wall_start
@@ -469,6 +469,8 @@ class VisualPickPlace:
                 result['prepared_candidate']=asdict(candidate)
                 if check['reasons']:raise RuntimeError('PREPARED_TASK_NOT_FEASIBLE:'+check['reasons'][0])
                 prepared_q=check['pregrasp_joint_positions_rad']
+            self.pregrasp_alternates=[row for row in assessments if row.feasible and row.candidate.arm==self.arm
+                and row.candidate.target_id==candidate.target_id and row.candidate.candidate_id!=candidate.candidate_id]
             self.execute_selected(result, chosen, prepared_q, obj, slot)
             self.verify_placement(result, slot)
         except Exception as exc:

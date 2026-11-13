@@ -4,6 +4,18 @@ from workstation.app import build_parser,load_config,PROJECT_ROOT
 
 
 class VisualCLITests(unittest.TestCase):
+    def test_right_single_trial_uses_same_optics_and_distinct_arm_assignment(self):
+        from workstation.simulation.visual_fixtures import initial_cartons
+        parser=build_parser()
+        args=['--mode','visual-pnp','--visual-fixture','upright','--seed','7804']
+        left=load_config(parser.parse_args(args),parser)
+        right=load_config(parser.parse_args(args+['--single-start-side','right','--single-arm','panda_right']),parser)
+        a,b=(initial_cartons(config,'upright')[0] for config in (left,right))
+        self.assertAlmostEqual(b.position[0]-a.position[0],.4)
+        self.assertEqual(a.orientation_wxyz,b.orientation_wxyz)
+        self.assertEqual(left['cameras'],right['cameras'])
+        self.assertEqual(right['single_pick_arm'],'panda_right')
+
     def test_explicit_upright_yaw_changes_only_initial_rotation(self):
         import math
         from workstation.simulation.visual_fixtures import initial_cartons

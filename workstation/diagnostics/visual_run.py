@@ -117,7 +117,8 @@ def _run(env, segmenter,max_items,graspgen,side_adjustment,timing):
         from workstation.models.graspgen_source import GraspGenSource
         calibration=verify(env,robot,isaac_root(),graspgen.graspgen_assets)
         grasp_source=GraspGenSource(GraspGenProxy(graspgen.graspgen_proxy),calibration,graspgen.num_grasps,
-                                   accepted_postures=('SIDE',) if side_adjustment else ('UPRIGHT',))
+                                   accepted_postures=('SIDE',) if side_adjustment else ('UPRIGHT',),
+                                   assigned_arm=env.c.get('single_pick_arm'))
         timing.wrap(grasp_source,'generate','grasp_generation')
     if env.c.get('grasp_backend')=='centered':
         from workstation.planning.centered_grasp import CenteredGraspSource

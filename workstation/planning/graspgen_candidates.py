@@ -3,6 +3,7 @@
 Known dimensions bound the visual cuboid; they are not fabricated point-cloud
 samples. The simulator's robot model must still check every resulting path.
 """
+import math
 import hashlib
 import json
 import numpy as np
@@ -42,6 +43,49 @@ def opening_from_visual_box(tcp,obj):
         centre_offset_m=float(centre[1]),visual_uncertainty_m=margin,
         available_clearance_per_finger_m=float((.080-envelope)/2),
         source='current visual cuboid orientation + known size; not a model output'),tuple(reasons)
+
+
+def refine_pinch_contact(candidate,obj):
+    """Fit a nearby model pinch to the observed parallel sides and pad depth."""
+    from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
+    opening=candidate.metadata['opening']
+    depth=opening.get('estimated_tip_engagement_m')
+    direction=np.asarray(candidate.approach_direction)
+    if (depth is None or depth<0 or -direction[2]<.98 or set(candidate.rejection_reasons)-
+            {'FINGERTIPS_ABOVE_GRASP_BAND','GRASP_OFF_CENTRE','GRIPPER_SPACE_INSUFFICIENT'}):
+        return candidate
+    travel=min(.012,(.40*obj.size_m[2]-depth)/-direction[2]) if depth<.30*obj.size_m[2] else 0.
+    pose=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
+    yaw_delta=0.
+    lateral=0.
+    if set(candidate.rejection_reasons)&{'GRASP_OFF_CENTRE','GRIPPER_SPACE_INSUFFICIENT'}:
+        body_long=np.array([math.cos(obj.axis_yaw_rad),math.sin(obj.axis_yaw_rad),0.])
+        tangent=pose[:3,0]
+        if tangent@body_long<0:body_long=-body_long
+        axis=pose[:3,2]
+        yaw_delta=math.atan2(axis@np.cross(tangent,body_long),tangent@body_long)
+        if abs(yaw_delta)>math.radians(12):return candidate
+        c,s=math.cos(yaw_delta),math.sin(yaw_delta)
+        pose[:3,:3]=pose[:3,:3]@np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+        lateral=float((np.asarray(obj.position_m)-pose[:3,3])@pose[:3,1])
+        if abs(lateral)>.008:return candidate
+        pose[:3,3]+=lateral*pose[:3,1]
+    tangent=pose[:3,0]
+    eccentricity=float((np.asarray(obj.position_m)-pose[:3,3])@tangent)
+    slide=float(np.clip(eccentricity,-.020,.020)) if abs(eccentricity)>.012 else 0.
+    if travel==0 and slide==0 and yaw_delta==0 and lateral==0:return candidate
+    pose[:3,3]+=direction*travel+tangent*slide
+    width,closing,evidence,reasons=opening_from_visual_box(pose,obj)
+    raw=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
+    engagement=depth-(pose[2,3]-raw[2,3])+(abs(raw[2,1])*candidate.opening_m-abs(pose[2,1])*width)/2
+    if reasons or engagement<.30*obj.size_m[2]:return candidate
+    evidence['estimated_tip_engagement_m']=engagement
+    orientation=tuple(quaternion_from_matrix(pose[:3,:3])) if yaw_delta else candidate.orientation_wxyz
+    return replace(candidate,position_m=tuple(pose[:3,3]),orientation_wxyz=orientation,
+        yaw_rad=math.atan2(pose[1,0],pose[0,0]),opening_m=width,closing_width_m=closing,
+        rejection_reasons=(),metadata={**candidate.metadata,'opening':evidence,
+        'model_tcp_before_seating_m':list(candidate.position_m),'axial_seating_m':travel,'tangent_slide_m':slide,
+        'pad_alignment_rad':yaw_delta,'lateral_adjustment_m':lateral})
 
 
 def candidates_from_result(result,obj,arms,calibration,sequence_ids):

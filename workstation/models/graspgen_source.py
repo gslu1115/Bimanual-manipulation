@@ -4,17 +4,18 @@ from dataclasses import replace
 import math
 import time
 from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
-from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate
+from workstation.planning.graspgen_candidates import candidates_from_result,revalidate_candidate,refine_pinch_contact
 from workstation.perception.scene_estimate import pose_is_observed
 
 
 class GraspGenSource:
-    def __init__(self,proxy,calibration,num_grasps=256,accepted_postures=('UPRIGHT',)):
+    def __init__(self,proxy,calibration,num_grasps=256,accepted_postures=('UPRIGHT',),assigned_arm=None):
         self.proxy,self.calibration,self.num_grasps=proxy,calibration,num_grasps
         self.accepted_postures=tuple(accepted_postures)
         if not self.accepted_postures or not set(self.accepted_postures)<={'UPRIGHT','SIDE'}:
             raise ValueError('Only implemented upright and side-adjustment initial postures are supported')
         self.requests=[]
+        self.assigned_arm=assigned_arm
 
     def generate(self,packet,scene,robot,refresh):
         candidates=[]
@@ -28,10 +29,13 @@ class GraspGenSource:
                 while not pending.done():
                     robot.hold(.025)
                 result=pending.result()
-            rows=candidates_from_result(result,obj,robot.read_states(),self.calibration,
+            arms=(self.assigned_arm,) if self.assigned_arm else robot.read_states()
+            rows=candidates_from_result(result,obj,arms,self.calibration,
                 {n:f.sequence_id for n,f in packet.cameras.items() if f})
             prepared=[]
             for row in rows:
+                if obj.posture=='UPRIGHT':
+                    row=refine_pinch_contact(row,obj)
                 reasons=list(row.rejection_reasons)
                 tilt=math.degrees(math.acos(max(-1.,min(1.,-row.approach_direction[2]))))
                 # First physical stage supports near-vertical upright grasps,

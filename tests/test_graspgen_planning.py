@@ -46,6 +46,28 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertIn('GRASP_OFF_CENTRE',reject)
         np.testing.assert_array_equal(self.pose[:3,3],self.obj.position_m)
 
+    def test_contact_margin_ranks_oblique_corner_pinch_below_parallel_sides(self):
+        from workstation.planning.selection import upright_contact_cost,distinct_pinches
+        c=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        width=min(self.obj.size_m[:2])
+        def contact(span,margin):
+            return replace(c,metadata=dict(opening=dict(estimated_tip_engagement_m=.02,
+                projected_span_m=span,available_clearance_per_finger_m=margin)))
+        good=contact(width+.001,.006)
+        bad=contact(width+.008,.0025)
+        self.assertLess(upright_contact_cost(good,self.obj),upright_contact_cost(bad,self.obj))
+        different=replace(c,position_m=tuple(np.asarray(c.position_m)+[.008,0,0]))
+        self.assertEqual(distinct_pinches([good,bad,different],2),[good,different])
+
+    def test_initial_lift_distinguishes_loading_from_tracking(self):
+        from workstation.planning.selection import lift_slip_evidence
+        def check(gain):
+            return lift_slip_evidence(.80,.86,dict(height_gain_m=gain,uncertainty_m=.004),
+                                      [.027,.027],[.028,.028])
+        self.assertFalse(check(.057)['suspect'])
+        self.assertTrue(check(.049)['suspect'])
+        self.assertAlmostEqual(check(.049)['gap_change_m'],-.002)
+
     def test_shallow_seating_moves_only_along_model_approach(self):
         from workstation.diagnostics.graspgen_pair import refine_pinch_contact
         self.calibration['fingertip_reach_past_tcp_m']=.01

@@ -197,7 +197,7 @@ class CuMotionPickPlaceDriver:
                 velocity = merge_named_command(velocity, joints.velocity_names, joints.velocities.numpy(), self.names)
         if self.contact_hold_q is not None and previous_phase in ('DESCEND_PICK','GRASP'):
             # The checked Cartesian approach already reached the grasp pose.
-            # Keep measured arm joints through the dwell/close instead of
+            # Keep the checked arm drive setpoint through dwell/close instead of
             # applying RMP's near-table repulsion. Still use the official
             # gripper command and real pose/gripper convergence checks.
             target[:7]=self.contact_hold_q
@@ -212,5 +212,7 @@ class CuMotionPickPlaceDriver:
         # resuming, otherwise it would command the old pre-segment configuration.
         if not self.arm_controller.reset(self.read_state(),self.controller._make_arm_setpoint(),self.time_s):
             raise RuntimeError('CUMOTION_RESYNC_FAILED')
-        self.contact_hold_q=(self.robot.read_states()[self.arm].joint_positions_rad.copy()
+        # Copy the final Cartesian setpoint, including the drive's static
+        # tracking offset. Relatching measured joints loses that compensation.
+        self.contact_hold_q=(self.robot.targets[self.arm][:7].copy()
                              if self.phase=='DESCEND_PICK' else None)

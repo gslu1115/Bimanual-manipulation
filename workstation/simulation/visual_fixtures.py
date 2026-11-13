@@ -8,6 +8,8 @@ def initial_cartons(config, fixture):
         from workstation.task_logic import release_states
         return release_states(config,config['seed'])
     entries = [('upright',(-.2,-.06),20)] if fixture == 'upright' else [(fixture,(-.2,-.06),20)]
+    if fixture=='upright' and config.get('diagnostic_single_start_side')=='right':
+        entries=[('upright',(.20,-.06),20)]
     if fixture == 'upright-pair':
         entries=[('upright',(-.20,-.06),20),('upright',(.20,-.06),-25)]
     elif fixture == 'separated':

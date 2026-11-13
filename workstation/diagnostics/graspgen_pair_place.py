@@ -1,6 +1,6 @@
 """Two independently grasped cartons, joint commands on a shared physics clock."""
 import math
-from dataclasses import replace
+from dataclasses import replace, asdict
 import numpy as np
 
 from workstation.observations.camera_geometry import pose_matrix, quaternion_from_matrix
@@ -33,7 +33,7 @@ def transfer_schedule(robot,paths,payload_guard):
     raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
 
 
-def place_pair(env, robot, estimator, scene, pair, slots, report):
+def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
     selected = dict(zip(arms, pair['selection']))
@@ -83,17 +83,18 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         t=trackers[arm]
         pos,rot=robot.fk(arm)
         observed=t.observe(packet,scene,pos,rot,reacquire_tilt=held)
-        if observed is None and report['last_phase'] in ('align','lower'):
+        if observed is None and report['last_phase'] in ('align','lower','regrasp_lower'):
             # A carton may settle onto the stationary belt before the hand
             # opens. Search at support height, keeping the grasp's XY prior:
             # the desired slot centre must never supply a hidden coordinate.
             from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported,grasp_constrained_cuboid_supported
             from workstation.planning.selection import nearest_upright_slot_rotation
             hint=pos+rot@t.offset
-            upright=nearest_upright_slot_rotation(rot@t.relative_rotation)
+            upright=rot@t.relative_rotation if report['last_phase']=='regrasp_lower' else nearest_upright_slot_rotation(rot@t.relative_rotation)
             waypoint_height=.18 if report['last_phase']=='align' else 0.
+            support_z=priors.support_z_m if report['last_phase']=='regrasp_lower' else robot.place_support_z
             for gap in (0.,.006,.012):
-                centre=np.array([*hint[:2],robot.place_support_z+t.size[2]/2+waypoint_height+gap])
+                centre=np.array([*hint[:2],support_z+t.size[2]/2+waypoint_height+gap])
                 fit=fit_cuboid_pose(packet,scene,centre,upright,t.size,priors,allow_grasp_translation=True)
                 if not (measured_cuboid_supported(fit,packet.observation_time_s) or
                         grasp_constrained_cuboid_supported(fit,packet.observation_time_s)):continue
@@ -183,25 +184,59 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
                 renewed=references[arm] is not prior))
         robot.set_observation(packet,scene,priors)
 
-    def move(phase, destinations, contact=False):
+    def move(phase, destinations, contact=False,*,active=arms,carrying=None):
         report['last_phase'] = phase
         paths = []
         for arm in arms:
             o = objects[arm]
             q = robot.read_states()[arm].joint_positions_rad
+            if arm not in active:
+                paths.append([q,q])
+                continue
+            carries=held if carrying is None else arm in carrying
             pos, rot = robot.fk(arm, q)
             goal, goal_rot = destinations[arm]
-            path = robot.cartesian_knots(arm, pos, goal, 0., 0., .12, q,
-                orientation0=quaternion_from_matrix(rot), orientation1=quaternion_from_matrix(goal_rot))
-            if held:
+            try:
+                path = robot.cartesian_knots(arm, pos, goal, 0., 0., .12, q,
+                    orientation0=quaternion_from_matrix(rot), orientation1=quaternion_from_matrix(goal_rot))
+            except RuntimeError as exc:
+                if phase!='approach' or str(exc)!='IK_DISCONTINUITY':raise
+                # Neither arm has started the descent. Check a nearby alternate
+                # from the actual pregrasp FK against the current target.
+                from workstation.planning.graspgen_candidates import revalidate_candidate
+                seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
+                for alt in (alternatives or {}).get(arm,()):
+                    if alt.candidate_id==selected[arm]['candidate_id']:continue
+                    try:
+                        alt=revalidate_candidate(replace(alt,target_id=o.track_id),o,scene,seq)
+                        orientation=pose_matrix(alt.position_m,alt.orientation_wxyz)[:3,:3]
+                        # Stay on the model's approach line. Move to its own
+                        # pregrasp first, then descend only along that line.
+                        pre=np.asarray(alt.position_m)-np.asarray(alt.approach_direction)*alt.pregrasp_distance_m
+                        prefix=robot.cartesian_knots(arm,pos,pre,0.,0.,.12,q,
+                            orientation0=quaternion_from_matrix(rot),orientation1=alt.orientation_wxyz)
+                        robot.validate_path(arm,prefix,scene,o.track_id)
+                        descent=robot.cartesian_knots(arm,pre,alt.position_m,0.,0.,.12,prefix[-1],
+                            orientation0=alt.orientation_wxyz,orientation1=alt.orientation_wxyz)
+                        robot.validate_path(arm,descent,scene,o.track_id,target_contact=True)
+                    except RuntimeError:continue
+                    report.setdefault('preclose_substitutions',[]).append(dict(arm=arm,
+                        previous=selected[arm]['candidate_id'],replacement=alt.candidate_id,reason=str(exc)))
+                    selected[arm]=asdict(alt)
+                    pair['selection'][arms.index(arm)]=selected[arm]
+                    destinations[arm]=(np.asarray(alt.position_m),orientation)
+                    path=prefix+descent[1:]
+                    break
+                else:raise
+            if carries:
                 t = trackers[arm]
                 robot.held_visual_geometry = dict(arm=arm, target_id=o.track_id, offset=t.offset,
                     relative_rotation=t.relative_rotation, uncertainty_m=t.uncertainty_m,allow_grasp_translation=True)
                 if not robot.confirm_payload_observation(o.track_id,t,measurements[arm],packet):
                     raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
             try:
-                robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if held else None,
-                    support_contact=contact and held, target_contact=contact and not held,
+                robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if carries else None,
+                    support_contact=contact and carries, target_contact=contact and not carries,
                     check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach')
             except RuntimeError:
                 from workstation.diagnostics.vision_check import save_observation
@@ -216,8 +251,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
         if transfer:
             paths,schedule=transfer_schedule(robot,paths,carried_clearance)
             report[phase+'_schedule']=schedule
-        phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if held else None,
-                                              following_band=.035 if contact else .025,require_overlap=not transfer,
+        both_loaded=held and (carrying is None or set(carrying)==set(arms))
+        phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if both_loaded else None,
+                                              following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
                                               speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
                                               progress_check=refresh_approach_references if phase=='approach' else None)
         for arm,(goal,goal_rot) in destinations.items():
@@ -228,11 +264,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
             if error>.005 or angle>math.radians(3):
                 raise RuntimeError('PAIR_TCP_GOAL_MISSED:'+arm)
 
-    def fingers(close):
+    def fingers(close,active=arms):
         steps = math.ceil(.6/robot.dt)
         starts = {a:robot.read_states()[a].finger_positions_m.copy() for a in arms}
         for i in range(1,steps+1):
-            for arm in arms:
+            for arm in active:
                 width = max(0., selected[arm]['closing_width_m']/2-.004) if close else .04
                 robot.targets[arm][7:] = starts[arm]+(width-starts[arm])*i/steps
             robot.tick()
@@ -281,6 +317,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     report['last_phase']='close'
     fingers(True)
     packet = observe()
+    closed_states=robot.read_states()
+    closed_tcp_z={a:robot.fk(a)[0][2] for a in arms}
     for a in arms:
         proof = confirm_target(a,packet,closed=True)
         scene=reconcile_preclose_target(estimator,scene,proof)
@@ -296,6 +334,96 @@ def place_pair(env, robot, estimator, scene, pair, slots, report):
     packet=observe()
     for a in arms:
         phases.setdefault('initial_lift_evidence',{})[a]=measure_held(a,packet)
+    from workstation.planning.selection import lift_slip_evidence
+    def slip(a):
+        return lift_slip_evidence(closed_tcp_z[a],robot.fk(a)[0][2],measurements[a],
+            robot.read_states()[a].finger_positions_m,closed_states[a].finger_positions_m)
+    checks=report['initial_grip_checks']={a:[slip(a)] for a in arms}
+    suspect=[a for a in arms if checks[a][0]['suspect']]
+    if suspect:
+        robot.hold(.12)
+        packet=observe()
+        for a in arms:
+            measure_held(a,packet)
+            checks[a].append(slip(a))
+        confirmed=[a for a in suspect if checks[a][-1]['suspect']]
+        if len(confirmed)>1:raise RuntimeError('BOTH_GRIPS_SLIPPING')
+        if confirmed:
+            a=confirmed[0]
+            other=next(b for b in arms if b!=a)
+            recovery=report['one_arm_regrasp']=dict(arm=a,parked_arm=other,success=False,
+                original=selected[a]['candidate_id'])
+            # The other gripper stays closed at the measured first-lift waypoint.
+            # Its observed carton remains a separate obstacle for the moving arm.
+            m=measurements[other]
+            robot.stationary_payload_keepout=AABB(objects[other].track_id,np.asarray(m['position_m']),
+                np.abs(m['rotation'])@(trackers[other].size+2*m['uncertainty_m']))
+            try:
+                m=measurements[a]
+                bottom=m['position_m'][2]-np.abs(np.asarray(m['rotation'])[2])@(trackers[a].size/2)
+                tcp,rot=robot.fk(a)
+                dz=bottom-priors.support_z_m-.004
+                if not 0<dz<.08:raise RuntimeError('REGRASP_SUPPORT_HEIGHT_UNCONFIRMED')
+                robot.set_observation(packet,scene,priors)
+                move('regrasp_lower',{a:(tcp-[0,0,dz],rot)},True,active=(a,))
+                packet=observe()
+                m=measure_held(a,packet)
+                gap=m['position_m'][2]-np.abs(np.asarray(m['rotation'])[2])@(trackers[a].size/2)-priors.support_z_m
+                if not -.006<=gap<=.020-m['uncertainty_m']:raise RuntimeError('REGRASP_RELEASE_HEIGHT_UNCONFIRMED')
+                fingers(False,(a,))
+                tcp,rot=robot.fk(a)
+                packet=observe()
+                move('regrasp_retreat',{a:(tcp+[0,0,.16],rot)},True,active=(a,),carrying=(other,))
+                robot.hold(.12)
+                packet=observe()
+                # The retreat image may introduce a fresh visual ID. A second
+                # sample measures its velocity before another model request.
+                measure_held(other,packet)
+                robot.hold(.10)
+                packet=observe()
+                candidates=[o for o in scene.objects if o.posture=='UPRIGHT' and not o.failures
+                    and np.allclose(o.size_m,trackers[a].size,rtol=0,atol=.002)
+                    and np.linalg.norm(np.subtract(o.position_m[:2],m['position_m'][:2]))<.035]
+                if len(candidates)!=1 or resample is None:raise RuntimeError('REGRASP_TARGET_UNCONFIRMED')
+                obj=candidates[0]
+                alt=resample(a,obj,scene,packet,selected[a],goals[a])
+                objects[a]=obj
+                references[a]=PreCloseTarget(obj,scene,priors)
+                selected[a]=asdict(alt)
+                pair['selection'][arms.index(a)]=selected[a]
+                recovery['replacement']=alt.candidate_id
+                pos=np.asarray(alt.position_m)
+                rot=pose_matrix(pos,alt.orientation_wxyz)[:3,:3]
+                pre=pos-np.asarray(alt.approach_direction)*alt.pregrasp_distance_m
+                move('regrasp_pregrasp',{a:(pre,rot)},active=(a,),carrying=(other,))
+                packet=observe()
+                proof=confirm_target(a,packet)
+                if proof['full_pose_measured']:
+                    scene=reconcile_preclose_target(estimator,scene,proof)
+                    references[a]=references[a].renewed(scene,proof)
+                    robot.set_observation(packet,scene,priors)
+                move('regrasp_approach',{a:(pos,rot)},True,active=(a,),carrying=(other,))
+                packet=observe()
+                confirm_target(a,packet)
+                fingers(True,(a,))
+                packet=observe()
+                proof=confirm_target(a,packet,closed=True)
+                scene=reconcile_preclose_target(estimator,scene,proof)
+                objects[a]=references[a].obj
+                trackers[a]=CuboidHoldingTracker.from_preclose_support(objects[a],proof,*robot.fk(a),priors)
+                release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
+                for b in arms:measure_held(b,packet)
+                tcp,rot=robot.fk(a)
+                closed_tcp_z[a]=tcp[2]
+                closed_states[a]=robot.read_states()[a]
+                raised[a]=(tcp+[0,0,.18],rot)
+                move('regrasp_initial_lift',{a:(tcp+[0,0,.06],rot)},True,active=(a,))
+                packet=observe()
+                for b in arms:measure_held(b,packet)
+                recovery['recheck']=slip(a)
+                if recovery['recheck']['suspect']:raise RuntimeError('REGRASP_SLIP_REPEATED')
+                recovery['success']=True
+            finally:robot.stationary_payload_keepout=None
     robot.set_observation(packet,scene,priors)
     move('lift',raised,True)
     packet = observe()

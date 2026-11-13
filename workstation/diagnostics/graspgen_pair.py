@@ -9,7 +9,7 @@ import numpy as np
 
 from workstation.perception.scene_estimate import pose_is_observed, ScenePriors
 from workstation.planning.collision import check_spheres
-from workstation.planning.graspgen_candidates import candidates_from_result, revalidate_candidate
+from workstation.planning.graspgen_candidates import candidates_from_result, revalidate_candidate, refine_pinch_contact
 from workstation.planning.selection import assess
 from workstation.planning.task_targets import ConveyorSlots
 
@@ -24,50 +24,6 @@ def renew_view_candidate(candidate,scene,seq):
             and np.allclose(o.size_m,source['size_m'],atol=1e-6,rtol=0)]
     if len(matches)!=1:raise RuntimeError('PAIR_TARGET_LOST')
     return revalidate_candidate(replace(candidate,target_id=matches[0].track_id),matches[0],scene,seq)
-
-
-def refine_pinch_contact(candidate,obj):
-    """Fit a nearby model pinch to the observed parallel sides and pad depth."""
-    from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
-    from workstation.planning.graspgen_candidates import opening_from_visual_box
-    opening=candidate.metadata['opening']
-    depth=opening.get('estimated_tip_engagement_m')
-    direction=np.asarray(candidate.approach_direction)
-    if (depth is None or depth<0 or -direction[2]<.98 or set(candidate.rejection_reasons)-
-            {'FINGERTIPS_ABOVE_GRASP_BAND','GRASP_OFF_CENTRE','GRIPPER_SPACE_INSUFFICIENT'}):
-        return candidate
-    travel=min(.012,(.40*obj.size_m[2]-depth)/-direction[2]) if depth<.30*obj.size_m[2] else 0.
-    pose=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
-    yaw_delta=0.
-    lateral=0.
-    if set(candidate.rejection_reasons)&{'GRASP_OFF_CENTRE','GRIPPER_SPACE_INSUFFICIENT'}:
-        body_long=np.array([math.cos(obj.axis_yaw_rad),math.sin(obj.axis_yaw_rad),0.])
-        tangent=pose[:3,0]
-        if tangent@body_long<0:body_long=-body_long
-        axis=pose[:3,2]
-        yaw_delta=math.atan2(axis@np.cross(tangent,body_long),tangent@body_long)
-        if abs(yaw_delta)>math.radians(12):return candidate
-        c,s=math.cos(yaw_delta),math.sin(yaw_delta)
-        pose[:3,:3]=pose[:3,:3]@np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
-        lateral=float((np.asarray(obj.position_m)-pose[:3,3])@pose[:3,1])
-        if abs(lateral)>.008:return candidate
-        pose[:3,3]+=lateral*pose[:3,1]
-    tangent=pose[:3,0]
-    eccentricity=float((np.asarray(obj.position_m)-pose[:3,3])@tangent)
-    slide=float(np.clip(eccentricity,-.020,.020)) if abs(eccentricity)>.012 else 0.
-    if travel==0 and slide==0 and yaw_delta==0 and lateral==0:return candidate
-    pose[:3,3]+=direction*travel+tangent*slide
-    width,closing,evidence,reasons=opening_from_visual_box(pose,obj)
-    raw=pose_matrix(candidate.position_m,candidate.orientation_wxyz)
-    engagement=depth-(pose[2,3]-raw[2,3])+(abs(raw[2,1])*candidate.opening_m-abs(pose[2,1])*width)/2
-    if reasons or engagement<.30*obj.size_m[2]:return candidate
-    evidence['estimated_tip_engagement_m']=engagement
-    orientation=tuple(quaternion_from_matrix(pose[:3,:3])) if yaw_delta else candidate.orientation_wxyz
-    return replace(candidate,position_m=tuple(pose[:3,3]),orientation_wxyz=orientation,
-        yaw_rad=math.atan2(pose[1,0],pose[0,0]),opening_m=width,closing_width_m=closing,
-        rejection_reasons=(),metadata={**candidate.metadata,'opening':evidence,
-        'model_tcp_before_seating_m':list(candidate.position_m),'axial_seating_m':travel,'tangent_slide_m':slide,
-        'pad_alignment_rad':yaw_delta,'lateral_adjustment_m':lateral})
 
 
 def preferred_assignments(targets, bases):
@@ -233,7 +189,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
 def check_pair(env, args, packet, scene, estimator):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
-    from workstation.planning.selection import visual_pinch_balance
+    from workstation.planning.selection import visual_pinch_balance, upright_contact_cost, distinct_pinches
     from workstation.models.graspgen_proxy import GraspGenProxy
     from workstation.runtime_paths import isaac_root
     from workstation.simulation.robot_driver import from_environment
@@ -385,11 +341,11 @@ def check_pair(env, args, packet, scene, estimator):
                 opening=c.metadata['opening']
                 offset=visual_pinch_balance(c,obj)['penalty']
                 depth=opening.get('estimated_tip_engagement_m',0.)/obj.size_m[2]
-                return offset+abs(depth-.45)+abs(opening['centre_offset_m'])/.02
+                return offset+abs(depth-.45)+abs(opening['centre_offset_m'])/.02+upright_contact_cost(c,obj)
             for arm in states:
                 if attempt<=4 and arm!=preferred.get(obj.track_id):continue
                 ordered=sorted((c for c in allowed if c.arm==arm),key=pinch_cost)
-                candidates.setdefault(obj.track_id,[]).extend(ordered[:4])
+                candidates.setdefault(obj.track_id,[]).extend(distinct_pinches(ordered,4))
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
@@ -464,7 +420,35 @@ def check_pair(env, args, packet, scene, estimator):
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
-                place_pair(env,robot,estimator,updated,current,slots,report)
+                alternatives={arm:[] for arm in assigned_slots}
+                seen=set()
+                for row in sorted(rows,key=lambda item:-item.score):
+                    c=row.candidate
+                    if (row.feasible and row.terms['slot_xy']==assigned_slots[c.arm] and
+                            c.candidate_id not in seen):
+                        alternatives[c.arm].append(c)
+                        seen.add(c.candidate_id)
+                def resample(arm,obj,view,image,previous,goal):
+                    seq={n:f.sequence_id for n,f in image.cameras.items() if f}
+                    observed=visual_clouds(image,view,obj.track_id)
+                    options=[]
+                    for yaw in (0.,-obj.axis_yaw_rad,math.pi/2-obj.axis_yaw_rad):
+                        result=infer_rotated_view(proxy,observed,args.num_grasps,yaw)
+                        report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
+                            purpose='one_arm_regrasp',raw_grasps=len(result['scores'])))
+                        for raw in candidates_from_result(result,obj,(arm,),calibration,seq):
+                            c=refine_pinch_contact(raw,obj)
+                            if c.rejection_reasons or -c.approach_direction[2]<math.cos(math.radians(10)):continue
+                            if (np.linalg.norm(np.subtract(c.position_m,previous['position_m']))<.004 and
+                                abs(np.dot(c.orientation_wxyz,previous['orientation_wxyz']))>math.cos(math.radians(4)/2)):continue
+                            options.append(c)
+                    options.sort(key=lambda c:visual_pinch_balance(c,obj)['penalty']+upright_contact_cost(c,obj))
+                    verified=assess(view,robot.read_states(),lambda c,o,s:robot.feasibility(c,o,s,goal),robot.home,
+                        candidate_provider=lambda o,_:distinct_pinches(options,6) if o.track_id==obj.track_id else [])
+                    best=next((r.candidate for r in verified if r.feasible),None)
+                    if best is None:raise RuntimeError('NO_FEASIBLE_REGRASP')
+                    return best
+                place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample)
         except RuntimeError as error:
             fail(str(error))
         finally:

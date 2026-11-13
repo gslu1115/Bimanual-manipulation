@@ -104,6 +104,46 @@ def visual_pinch_balance(candidate,obj):
                 penalty=float(np.clip(offset/extent,0.,1.)),applicable=True)
 
 
+def upright_contact_cost(candidate,obj):
+    """Estimated loss of useful side contact from the visual carton and Panda opening."""
+    opening=candidate.metadata.get('opening',{})
+    if obj.posture!='UPRIGHT' or candidate.source!='graspgen' or 'estimated_tip_engagement_m' not in opening:
+        return 0.
+    # Oblique jaws first touch opposite corners. Compare their measured-axis
+    # projection against the short side, even when the aperture still permits it.
+    height=obj.size_m[2]
+    skew=max(0.,opening['projected_span_m']-min(obj.size_m[:2]))
+    clearance=opening['available_clearance_per_finger_m']
+    depth=opening['estimated_tip_engagement_m']
+    return float(np.clip(skew/.015,0,1)+np.clip((.004-clearance)/.004,0,1)
+                 +np.clip((.35*height-depth)/(.35*height),0,1))
+
+
+def distinct_pinches(ordered,limit):
+    """Prefer different measured wrist poses, then fill unused slots in score order."""
+    chosen=[]
+    similar=[]
+    for c in ordered:
+        if any(np.linalg.norm(np.subtract(c.position_m,p.position_m))<.004 and
+               abs(np.dot(c.orientation_wxyz,p.orientation_wxyz))>math.cos(math.radians(4)/2)
+               for p in chosen):
+            similar.append(c)
+            continue
+        chosen.append(c)
+        if len(chosen)==limit:break
+    return (chosen+similar)[:limit]
+
+
+def lift_slip_evidence(closed_tcp_z,current_tcp_z,measurement,fingers,closed_fingers):
+    """Compare visual vertical motion with encoder motion during a level test lift."""
+    travel=float(current_tcp_z-closed_tcp_z)
+    lag=travel-float(measurement['height_gain_m'])
+    uncertainty=float(measurement['uncertainty_m'])
+    return dict(tcp_rise_m=travel,visual_rise_m=measurement['height_gain_m'],lag_m=lag,
+                finger_gap_m=float(sum(fingers)),gap_change_m=float(sum(fingers)-sum(closed_fingers)),
+                suspect=bool(travel>.025 and lag>max(.008,1.5*uncertainty)))
+
+
 def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history=None,priorities=None,eligible=None,
            candidate_provider=None,accepted_postures=('UPRIGHT',)):
     """feasibility(candidate, object, scene) must check IK AND whole-path collisions."""
@@ -164,10 +204,11 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
                 terms['rejection_details']=path.get('rejection_details',{})
             balance=visual_pinch_balance(candidate,obj)
             terms['visual_pinch_balance']=balance
+            terms['upright_contact_cost']=upright_contact_cost(candidate,obj)
             utility = (2*terms['geometry_quality']+min(clearance,.10)*5
                        +min(terms['path_clearance_m'],.05)*5
                        +terms['task_priority']*.2+terms['valid_depth_ratio']*.3
-                       -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5-balance['penalty']
+                       -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5-balance['penalty']-terms['upright_contact_cost']
                        +(.2*float(np.clip(candidate.model_score,0,1)) if candidate.model_score is not None else 0.))
             results.append(CandidateAssessment(candidate,not all_reasons,all_reasons,terms,utility))
     return sorted(results,key=lambda item:(not item.feasible,-item.score,item.candidate.target_id,item.candidate.arm))
