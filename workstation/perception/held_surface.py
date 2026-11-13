@@ -421,7 +421,11 @@ class CuboidHoldingTracker:
                     retry['lift_hint_source']=backup['source']
                     reference=backup
                     measured=retry
-        if reacquire_tilt and measured['status']=='UNKNOWN':
+        # A verified lift establishes which carton this gripper carries. If
+        # it rolls during transport, initialize a new fit from CURRENT depth.
+        after_verified_lift=(self.allow_grasp_translation and backup is not None and
+                             0<packet.observation_time_s-backup['time_s']<=5.)
+        if (reacquire_tilt or after_verified_lift) and measured['status']=='UNKNOWN':
             measured=reacquire_tilted_top(packet,scene,hint,body_hint,self.size,self.priors,
                 allow_grasp_translation=self.allow_grasp_translation) or measured
         if measured['status'] not in ('GEOMETRY_OBSERVED','GRASP_CONSTRAINED'):

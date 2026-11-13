@@ -213,6 +213,17 @@ def visual_object(scene,r,ambiguous=False):
 
 
 class CuboidHoldingIntegrationTests(unittest.TestCase):
+    def test_fresh_lift_reference_can_reacquire_tilt_from_current_carry_image(self):
+        p,s=synthetic_observation(np.eye(3))
+        tracker=CuboidHoldingTracker(visual_object(s,np.eye(3)),CENTRE,np.eye(3),SIZE,PRIORS,
+                                     allow_grasp_translation=True)
+        initial=tracker.observe(p,s,CENTRE,np.eye(3))
+        tracker.remember_transfer_geometry(CENTRE,np.eye(3),dict(initial,time_s=.5))
+        tilted_packet,tilted_scene=synthetic_observation(turn(1,16))
+        seen=tracker.observe(tilted_packet,tilted_scene,CENTRE,np.eye(3))
+        self.assertTrue(measured_cuboid_supported(seen,tilted_packet.observation_time_s))
+        self.assertAlmostEqual(seen['prior_angle_correction_deg'],16,delta=.4)
+
     def test_current_tilted_top_can_initialize_independent_pose(self):
         from workstation.perception.held_surface import reacquire_tilted_top
         p,s=synthetic_observation(turn(1,16))
