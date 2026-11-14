@@ -296,9 +296,17 @@ class SortingEnvironment:
                 size_m=metadata.size_m,mass_kg=metadata.mass_kg,variant=metadata.variant))
         return result
 
-    def step(self, monitor_conveyor=True, render=True):
+    def step(self, monitor_conveyor=True, render=True, *, conveyor_velocity_m_s=None):
         dt = self.c['physics']['dt']
-        velocity = self.conveyor.update(self.observe_ground_truth(), dt, self.safe_to_index) if monitor_conveyor else 0.
+        if getattr(self.conveyor,'visual_control',False):
+            if monitor_conveyor:raise RuntimeError('VISUAL_CONVEYOR_REQUIRES_EXPLICIT_COMMAND')
+            velocity=0. if conveyor_velocity_m_s is None else float(conveyor_velocity_m_s)
+            if (not np.isfinite(velocity) or not 0<=velocity<=self.c['conveyor']['speed'] or
+                    velocity and (not self.safe_to_index or self.conveyor.state!='INDEXING')):
+                raise RuntimeError('VISUAL_CONVEYOR_INTERLOCK')
+        else:
+            if conveyor_velocity_m_s is not None:raise RuntimeError('VISUAL_CONVEYOR_NOT_ENABLED')
+            velocity = self.conveyor.update(self.observe_ground_truth(), dt, self.safe_to_index) if monitor_conveyor else 0.
         self.belt_api.GetSurfaceVelocityAttr().Set(Gf.Vec3f(velocity, 0, 0))
         SimulationManager.step()
         self.time += dt

@@ -17,7 +17,7 @@ from workstation.runtime_paths import isaac_root
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODES = ("scene", "single-pnp", "dual-handover", "conveyor-check", "sensor-check", "vision-check", "visual-pnp", "visual-adjust", "visual-sort",
          "model-worker", "model-prepare", "model-eval", "model-capture", "model-train", "graspgen-proxy", "graspgen-check",
-         "graspgen-pair-pregrasp", "graspgen-pair-place")
+         "graspgen-pair-pregrasp", "graspgen-pair-place", "graspgen-pair-sort")
 
 
 def build_parser():
@@ -65,7 +65,7 @@ def build_parser():
     parser.add_argument('--capture-seeds',help='model-capture only: comma-separated independent initial scenes')
     parser.add_argument('--epochs',type=int,default=80)
     parser.add_argument('--teacher-capture',action='store_true',help='Offline truth-baseline supervision, model-capture upright only')
-    parser.add_argument('--visual-fixture',choices=('upright','upright-pair','side','inverted','separated-upright','separated','clutter'),
+    parser.add_argument('--visual-fixture',choices=('upright','upright-pair','upright-four','side','inverted','separated-upright','separated','clutter'),
                         help='Explicit diagnostic INITIAL condition for visual-pnp; seed then changes XY/yaw')
     parser.add_argument('--visual-yaw-deg',type=float,
                         help='Initial upright single-carton yaw only; preserves seed-generated position, never an online pose input')
@@ -103,16 +103,17 @@ def build_parser():
 
 
 def load_config(args, parser):
-    pair_mode=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
+    pair_mode=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place','graspgen-pair-sort')
     if args.grasp_backend is None:
         model_modes=('visual-pnp','visual-adjust','graspgen-check','graspgen-pair-pregrasp')
         args.grasp_backend='graspgen' if pair_mode or args.mode in model_modes else 'geometry'
         if args.grasp_backend=='graspgen' and args.graspgen_assets is None:
             args.graspgen_assets=isaac_root().parent/'graspgen'/'source'
     if pair_mode:
-        if args.grasp_backend!='graspgen' or args.visual_fixture not in (None,'upright-pair'):
+        fixture='upright-four' if args.mode=='graspgen-pair-sort' else 'upright-pair'
+        if args.grasp_backend!='graspgen' or args.visual_fixture not in (None,fixture):
             parser.error('graspgen-pair-pregrasp requires two upright cartons and GraspGen')
-        args.visual_fixture='upright-pair'
+        args.visual_fixture=fixture
     if getattr(args,'archive_output',None) is not None:
         if not args.headless or args.keep_open or args.livestream or args.output is None:
             parser.error('--archive-output requires --headless --output and no interactive session')
@@ -129,7 +130,7 @@ def load_config(args, parser):
         parser.error('visual-adjust requires --grasp-backend graspgen and verified full-pose model assets')
     config = json.loads(args.config.read_text(encoding="utf-8"))
     if args.pair_transfer_policy is not None:
-        if args.mode!='graspgen-pair-place':parser.error('--pair-transfer-policy requires graspgen-pair-place')
+        if args.mode not in ('graspgen-pair-place','graspgen-pair-sort'):parser.error('--pair-transfer-policy requires paired placement')
         config['pair_transfer_policy']=args.pair_transfer_policy
     if args.pair_slots is not None:
         indices=args.pair_slots
@@ -203,12 +204,15 @@ def load_config(args, parser):
             parser.error('Below3mm requires --depth-backboard and separate saved calibration audit')
         config['diagnostic_optical_depth_error_margin_m']=args.optical_depth_margin_mm/1000.
     if args.visual_fixture:
-        if args.visual_fixture=='upright-pair':
+        if args.visual_fixture=='upright-four':
+            if args.mode!='graspgen-pair-sort':parser.error('upright-four requires graspgen-pair-sort')
+            if config.get('diagnostic_occupied_slot') is not None:parser.error('upright-four requires initially empty slots')
+        elif args.visual_fixture=='upright-pair':
             if not (pair_mode or args.mode=='vision-check' or (args.mode=='graspgen-check' and args.grasp_backend=='graspgen')):
                 parser.error('upright-pair requires vision-check or graspgen-check --grasp-backend graspgen')
         elif args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'):
             parser.error('--visual-fixture requires a visual mode')
-        config['boxes']['count']={'upright-pair':2,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
+        config['boxes']['count']={'upright-pair':2,'upright-four':4,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
         if args.visual_fixture=='upright-pair' and config.get('diagnostic_occupied_slot') is not None:
             config['boxes']['count']+=1
         config['diagnostic_visual_fixture']=args.visual_fixture
@@ -374,12 +378,15 @@ def main(argv=None):
         env.record_video = args.record_video
         env.livestream = args.livestream
         env.start()
-        if args.mode in ('graspgen-check','graspgen-pair-pregrasp','graspgen-pair-place'):
+        if args.mode in ('graspgen-check','graspgen-pair-pregrasp','graspgen-pair-place','graspgen-pair-sort'):
             from workstation.diagnostics.graspgen_check import check
             try:
-                check(env,args)
+                if args.mode=='graspgen-pair-sort':
+                    from workstation.diagnostics.graspgen_pair_sort import run
+                    run(env,args)
+                else:check(env,args)
             finally:
-                if args.mode=='graspgen-pair-place':
+                if args.mode in ('graspgen-pair-place','graspgen-pair-sort'):
                     # Evaluation only, after the actor has returned or stopped.
                     states=env.observe_ground_truth()
                     env._write_json('pair_final_truth.json',dict(

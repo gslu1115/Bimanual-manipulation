@@ -223,7 +223,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                 arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace)
 
 
-def check_pair(env, args, packet, scene, estimator):
+def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
     from workstation.planning.selection import visual_pinch_balance, upright_contact_cost, distinct_pinches
@@ -237,13 +237,14 @@ def check_pair(env, args, packet, scene, estimator):
         report['failure_reason'] = reason
         env._write_json('graspgen_pair_check.json', report)
         raise RuntimeError(reason)
-    targets=source_cartons(scene,env.c['table'])
+    select_targets=target_selector or (lambda current:source_cartons(current,env.c['table']))
+    targets=select_targets(scene)
     if len(targets)!=2 or len({o.track_id for o in targets})!=2:
         fail('PAIR_REQUIRES_TWO_OBSERVED_UPRIGHT_TRACKS')
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if not execute:env.timeline.pause()
     armature_floor=.01 if execute else None
-    robot=from_environment(env,paired_armature_floor=armature_floor)
+    if robot is None:robot=from_environment(env,paired_armature_floor=armature_floor)
     report['shoulder_drive_armature_floor_kg_m2']=armature_floor
     estimator.robot_point_filter=robot.observed_robot_points
     estimator.robot_filter_factory=robot.prepare_observed_robot_filter
@@ -308,7 +309,7 @@ def check_pair(env, args, packet, scene, estimator):
                 states=robot.read_states()
                 slots.observe(robot.observed_workspace)
                 available=[xy for xy in destinations if slots.states[xy]=='free']
-                targets=source_cartons(scene,env.c['table'])
+                targets=select_targets(scene)
                 if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
                 matches=[o for o in targets if np.linalg.norm(np.asarray(o.position_m)-centre)<=.002
                          and np.allclose(o.size_m,target.size_m,atol=1e-6,rtol=0)
@@ -523,3 +524,4 @@ def check_pair(env, args, packet, scene, estimator):
                 env._write_json('graspgen_pair_check.json',report)
     report['success']=True
     env._write_json('graspgen_pair_check.json',report)
+    return report

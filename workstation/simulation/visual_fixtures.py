@@ -12,6 +12,9 @@ def initial_cartons(config, fixture):
         entries=[('upright',(.20,-.06),20)]
     if fixture == 'upright-pair':
         entries=[('upright',(-.20,-.06),20),('upright',(.20,-.06),-25)]
+    elif fixture=='upright-four':
+        entries=[('upright',(-.22,-.10),20),('upright',(.22,-.10),-25),
+                 ('upright',(-.17,.075),45),('upright',(.17,.075),-40)]
     elif fixture == 'separated':
         entries=[('upright',(-.2,-.06),20),('side',(0.,-.06),-25),('inverted',(.2,-.06),45)]
     elif fixture == 'separated-upright':
@@ -31,13 +34,14 @@ def initial_cartons(config, fixture):
     spec=next((v for v in config['boxes'].get('variants',[]) if v['name']==variant),None) if variant else None
     if variant and (spec is None or spec['group']!='small' or fixture!='upright'):
         raise ValueError('Single upright fixture requires a configured small-carton variant')
-    if fixture=='upright-pair':
+    if fixture in ('upright-pair','upright-four'):
         catalogue=[v for v in config['boxes']['variants'] if v['group']=='small']
         if len(catalogue)<2:raise ValueError('The upright pair needs two small variants')
         offset=int(config['seed'])%len(catalogue)
-        pair=[catalogue[offset],catalogue[(offset+1)%len(catalogue)]]
+        pair=[catalogue[(offset+i)%len(catalogue)] for i in range(len(entries))]
         variants=config.get('diagnostic_pair_carton_variants')
         if variants is not None:
+            if fixture=='upright-four':raise ValueError('Two-carton variant override is not a four-carton fixture')
             by_name={v['name']:v for v in catalogue}
             if not isinstance(variants,list) or len(variants)!=2 or any(
                     not isinstance(name,str) or name not in by_name for name in variants):
@@ -45,13 +49,14 @@ def initial_cartons(config, fixture):
             pair=[by_name[name] for name in variants]
         occupied=config.get('diagnostic_occupied_slot')
         if occupied is not None:
+            if fixture=='upright-four':raise ValueError('Four-carton fixture starts with empty conveyor slots')
             slots=config['conveyor']['slots_xy']
             if type(occupied) is not int or not 0<=occupied<len(slots):
                 raise ValueError('Occupied slot must index a configured conveyor slot')
             entries.append(('upright',slots[occupied],0.))
             pair.append(pair[0])
     for index,(posture,xy,yaw_deg) in enumerate(entries):
-        if fixture=='upright-pair':spec=pair[index]
+        if fixture in ('upright-pair','upright-four'):spec=pair[index]
         size=spec['size_m'] if spec else config['boxes']['size']
         roll={'upright':0.,'side':math.pi/2,'inverted':math.pi}[posture]
         yaw=math.radians(yaw_deg)

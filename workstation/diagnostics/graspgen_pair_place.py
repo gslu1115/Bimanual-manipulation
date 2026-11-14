@@ -330,6 +330,17 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     partial_keepout={}
     transfer_top_seen={}
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
+    from workstation.diagnostics.graspgen_pair import source_cartons
+    from workstation.planning.pair_task import match_stationary_sources
+    source_references={o.track_id:dict(position_m=o.position_m,size_m=o.size_m,axis_yaw_rad=o.axis_yaw_rad)
+        for o in source_cartons(scene,env.c['table']) if o.track_id not in {v.track_id for v in objects.values()}}
+    source_keepouts=[]
+    for key,ref in source_references.items():
+        c,s=abs(math.cos(ref['axis_yaw_rad'])),abs(math.sin(ref['axis_yaw_rad']))
+        sx,sy,sz=ref['size_m']
+        source_keepouts.append((AABB('unselected_'+key,np.asarray(ref['position_m']),
+            np.array([c*sx+s*sy,s*sx+c*sy,sz])+.024),scene.observation_time_s))
+    report['unselected_source_references']=source_references
     trackers = {}
     release_trackers = {}
     measurements = {}
@@ -371,12 +382,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             extent = np.abs(rot @ t.relative_rotation) @ (t.size + 2*t.uncertainty_m)
             box = AABB(objects[arm].track_id, centre, extent)
             payload=dict(arm=arm,track_id=box.name)
-            keepouts=list(partial_keepout.values())+list(released_keepout.values())
+            keepouts=list(partial_keepout.values())+list(released_keepout.values())+source_keepouts
             for keepout,_ in keepouts:
                 payload_gap=float(np.max(np.abs(centre-keepout.centre)-(extent+keepout.size)/2))
                 robot_gap,sphere,link=min((sphere_box_clearance(p,r,keepout),index,link)
                     for index,(link,p,r) in enumerate(robot.spheres(arm,q)))
-                key='released_clearances' if keepout.name.startswith('released_') else 'parked_clearances'
+                key=('unselected_clearances' if keepout.name.startswith('unselected_') else
+                     'released_clearances' if keepout.name.startswith('released_') else 'parked_clearances')
                 stats=report.setdefault(key,{}).setdefault(arm,{})
                 for label,gap in [('carton_axis_gap_m',payload_gap),('arm_surface_gap_m',robot_gap)]:
                     stats[label]=min(stats.get(label,gap),float(gap))
@@ -587,6 +599,12 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 report.setdefault('parked_surface_bounds',[]).append(proof)
                 parked_ids.add(proxy.track_id);enclosed.add(xy)
         supported=parked_unchanged(current,enclosed)
+        current_sources=match_stationary_sources(scene,source_references)
+        source_ids={o.track_id for o in current_sources.values()}
+        sources_supported=current_sources.keys()==source_references.keys()
+        report.setdefault('unselected_source_checks',[]).append(dict(time_s=packet.observation_time_s,
+            supported=sources_supported,observed_tracks=sorted(source_ids)))
+        if not sources_supported:raise RuntimeError('PAIR_UNSELECTED_CARTONS_UNCONFIRMED')
         for arm in active:
             t=trackers[arm]
             robot.set_observation(packet,scene,priors)
@@ -598,7 +616,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             view=robot.observed_workspace.slot(xy)
             if sequential and view['free']:before_transfer[xy]=view
             accounted=(len(carried_ids|released_ids)==2 and supported and carried_ids.isdisjoint(parked_ids) and
-                       {o.track_id for o in scene.objects}==carried_ids|released_ids|parked_ids and
+                       {o.track_id for o in scene.objects}==carried_ids|released_ids|parked_ids|source_ids and
                        all(report['released_bounds'][a]['time_s']==packet.observation_time_s for a in released_references) and
                        all(measurements[a]['time_s']==packet.observation_time_s and
                            measurements[a]['position_m'][2]-np.linalg.norm(trackers[a].size)/2>
@@ -1235,7 +1253,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())
         ids=tuple(p['observed_track'] for p in placements.values())
         current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
-        ready=len(set(ids))==2 and parked_unchanged(current)
+        current_sources=match_stationary_sources(scene,source_references)
+        ready=(len(set(ids))==2 and parked_unchanged(current) and
+               current_sources.keys()==source_references.keys())
         if not ready:
             stable_since=None
         elif stable_since is None or ids!=previous_ids:
@@ -1245,6 +1265,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             for a,p in placements.items():
                 slots.confirm_placement(a,goals[a],p['observed_track'])
             report['placements']=placements
+            report['unselected_sources_after_placement']={k:dict(track_id=o.track_id,position_m=o.position_m)
+                                                         for k,o in current_sources.items()}
             report['parked_after_placement']=[dict(xy=list(k),track_id=o.track_id,position_m=list(o.position_m),
                 centre_change_m=float(np.linalg.norm(np.subtract(o.position_m,parked[k]['position_m']))))
                 for k,o in current.items()]
