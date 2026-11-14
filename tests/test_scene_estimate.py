@@ -30,6 +30,25 @@ def packet(time=1., yaw=.3, centre=(0.,-.10), tape=True, size=(.1,.055,.045),
 
 
 class EstimateTests(unittest.TestCase):
+    def test_conflicting_sizes_without_top_rectangle_remain_unknown(self):
+        from unittest.mock import patch
+        from workstation.perception.rgbd_cartons import deproject
+        p=packet(yaw=.5,size=(.12,.065,.055));full=p.cameras['scene_camera']
+        xy=deproject(full)[...,:2]-[0.,-.1]
+        valid=full.valid_depth & (xy@np.array([math.cos(.5),math.sin(.5)])<.051)
+        cameras=dict(p.cameras,scene_camera=replace(full,valid_depth=valid),
+                     right_wrist_camera=replace(full,name='right_wrist_camera'))
+        p=replace(p,cameras=cameras,camera_status={**p.camera_status,'right_wrist_camera':'OK'})
+        priors=ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16),
+            carton_size_catalog_m=((.1,.055,.045),(.11,.06,.05),(.12,.065,.055)))
+        with patch('workstation.perception.cuboid_pose.fit_cuboid_pose',
+                   return_value=dict(top_rectangle=None,failures=['NO_TOP_RECTANGLE'])) as fit:
+            scene=CartonEstimator(priors).estimate(p)
+        self.assertTrue(fit.called)
+        self.assertEqual(len(scene.objects),1)
+        self.assertEqual(scene.objects[0].posture,'UNKNOWN')
+        self.assertIn('CAMERA_SIZE_CONFLICT',scene.objects[0].failures)
+
     def test_clipped_complete_view_cannot_shrink_full_other_view(self):
         from workstation.perception.rgbd_cartons import deproject
         for yaw in (0.,.5):

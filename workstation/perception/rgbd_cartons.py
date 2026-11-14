@@ -268,7 +268,7 @@ class CartonEstimator:
             if obj.failures or obj.posture not in ('UPRIGHT','INVERTED'):continue
             rotation=pose_matrix([0,0,0],obj.hypotheses[0].orientation_wxyz)[:3,:3]
             fit=fit_cuboid_pose(packet,scene,obj.position_m,rotation,obj.size_m,self.priors)
-            span=fit.get('top_rectangle',{}).get('measured_xy_m')
+            span=(fit.get('top_rectangle') or {}).get('measured_xy_m')
             if (not measured_cuboid_supported(fit,packet.observation_time_s) or
                     set(fit['mask_refs'])!=refs or span is None or
                     np.max(np.abs(np.sort(span)-np.sort(obj.size_m[:2])))>.003):continue
