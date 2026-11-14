@@ -71,6 +71,20 @@ class GraspConstrainedCarryTests(unittest.TestCase):
         displaced=dict(reference,position_m=CENTRE+[.02,0,0])
         self.assertIsNone(parked_side_with_top(single_view,s,displaced,[ref],PRIORS,guarded=True))
 
+    def test_guarded_side_fragment_can_use_top_from_another_current_camera(self):
+        from workstation.diagnostics.graspgen_pair_place import parked_top_still_visible
+        p,s=synthetic_observation(np.eye(3),views=([0.,-.101,1.35],[-.32,-.10,1.08]))
+        ref=next(ref for ref in s.masks if not ref.startswith('scene_camera/'))
+        frame=p.cameras[ref.split('/')[0]];xyz=deproject(frame)
+        mask=s.masks[ref] & (np.abs(xyz[:,:,0]-CENTRE[0]+SIZE[0]/2)<.001) & (xyz[:,:,2]<CENTRE[2]+.005)
+        reference=dict(position_m=CENTRE,axis_yaw_rad=0.,size_m=SIZE)
+        self.assertFalse(parked_top_still_visible(p,reference,[ref],{ref:mask}))
+        self.assertTrue(parked_top_still_visible(p,reference,[ref],{ref:mask},allow_cross_view_top=True))
+        moved=dict(reference,position_m=CENTRE+[.015,0,0])
+        self.assertFalse(parked_top_still_visible(p,moved,[ref],{ref:mask},allow_cross_view_top=True))
+        stale=replace(p,observation_time_s=2.)
+        self.assertFalse(parked_top_still_visible(stale,reference,[ref],{ref:mask},allow_cross_view_top=True))
+
     def test_two_fragments_may_independently_measure_the_whole_parked_pose(self):
         from workstation.diagnostics.graspgen_pair_place import parked_surface_envelope
         p,s=synthetic_observation(np.eye(3),views=([0.,-.45,1.28],[-.32,-.10,1.08]))

@@ -194,7 +194,8 @@ def parked_side_with_top(packet,scene,reference,refs,priors,*,guarded=False):
     return None
 
 
-def parked_top_still_visible(packet,reference,mask_refs=(),masks=None,*,exclude_camera=None):
+def parked_top_still_visible(packet,reference,mask_refs=(),masks=None,*,exclude_camera=None,
+                             allow_cross_view_top=False):
     """Require a connected depth patch at the previously observed top inside its footprint."""
     import cv2
     from workstation.perception.rgbd_cartons import deproject
@@ -207,21 +208,21 @@ def parked_top_still_visible(packet,reference,mask_refs=(),masks=None,*,exclude_
     if any(name not in packet.cameras for name in selected):return False
     for name,f in packet.cameras.items():
         if name==exclude_camera:continue
-        if selected and name not in selected:continue
+        if selected and name not in selected and not allow_cross_view_top:continue
         if f is None or packet.camera_status.get(name)!='OK' or f.sample_time_s!=packet.observation_time_s:
-            if selected:return False
+            if name in selected:return False
             continue
         xyz=deproject(f)
         local=(xyz[:,:,:2]-centre[:2])@rz
         mask=(f.valid_depth & np.all(np.abs(local)<=size[:2]/2,axis=2)
               & (np.abs(xyz[:,:,2]-centre[2]-size[2]/2)<.001))
-        if selected:
+        if name in selected:
             instance=masks[selected[name]]
             if not instance.any() or f.valid_depth[instance].mean()<.9:return False
             observed=np.column_stack((local[instance&f.valid_depth],xyz[:,:,2][instance&f.valid_depth]-centre[2]))
             residual=np.abs(observed)-size/2
             if np.mean((residual.max(axis=1)<=.004)&(np.abs(residual).min(axis=1)<=.004))<.95:return False
-            mask&=instance
+            if not allow_cross_view_top:mask&=instance
         count,labels,stats,_=cv2.connectedComponentsWithStats(mask.astype(np.uint8),connectivity=8)
         for index in range(1,count):
             if stats[index,cv2.CC_STAT_AREA]<9:continue
@@ -458,7 +459,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     # occlusion across the sampled interior of the guarded box.
                     shadow=not ids and 0<age<=20. and parked_top_occluded(packet,parked[xy])
                     patch=(0<age<=(20. if refs or shadow else 8.) and
-                           parked_top_still_visible(packet,parked[xy],refs,scene.masks))
+                           parked_top_still_visible(packet,parked[xy],refs,scene.masks,
+                                                    allow_cross_view_top=True))
                     component=None
                     if not patch and not ids and 0<age<=20.:
                         component=parked_depth_top(packet,parked[xy],(),allow_partial=True)
