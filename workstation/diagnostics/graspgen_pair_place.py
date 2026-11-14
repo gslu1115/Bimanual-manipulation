@@ -605,6 +605,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                            robot.place_support_z+.04 for a in carried_arms))
             evidence=slots.approach_clearance(arm,xy,view,before_transfer.get(xy),accounted_for=accounted,
                 stationary_belt=env.conveyor.state=='WAITING' and not env.safe_to_index)
+            if evidence=='observed_empty_before_transfer_both_cartons_in_hand' and released_ids:
+                evidence='observed_empty_before_transfer_current_held_and_released_geometry'
             report.setdefault('destination_checks',[]).append(dict(arm=arm,phase=report['last_phase'],
                 evidence=evidence,prior=before_transfer.get(xy),both_cartons_accounted_for=accounted,
                 observed_parked_tracks=sorted(parked_ids),**view))
@@ -1037,6 +1039,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report.setdefault('held_fragment_associations',[]).append(dict(arm=a,time_s=packet.observation_time_s,fragments=items))
         robot.set_observation(packet,scene,priors)
         protect_stationary(stationary_slot_tracks(robot.observed_workspace,scene,unused),packet.observation_time_s)
+        if sequential:
+            for a in carried_arms:
+                view=robot.observed_workspace.slot(goals[a])
+                if view['free']:before_transfer[goals[a]]=view
 
     def update_places(active):
         for a in active:

@@ -21,6 +21,16 @@ class CurrentFragmentTests(unittest.TestCase):
         xyz[6:,:,2]=.79
         self.assertEqual(len(split_separated_depths(mask,mask,xyz,.16)),1)
 
+    def test_total_span_can_disprove_one_box_with_a_sub_diagonal_depth_gap(self):
+        from workstation.perception.rgbd_cartons import split_separated_depths
+        mask=np.ones((12,12),bool);xyz=np.zeros((12,12,3))
+        xyz[:6,:,2]=np.linspace(.77,.81,6)[:,None]
+        xyz[6:,:,2]=np.linspace(.94,.99,6)[:,None]
+        parts=split_separated_depths(mask,mask,xyz,.16)
+        self.assertEqual([part.sum() for part in parts],[72,72])
+        np.testing.assert_array_equal(parts[0]|parts[1],mask)
+        self.assertEqual(len(split_separated_depths(mask,mask,xyz,.24)),1)
+
     def setUp(self):
         self.est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)))
         self.packet=packet(yaw=0.)

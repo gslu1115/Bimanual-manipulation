@@ -42,7 +42,11 @@ def split_separated_depths(mask,valid,xyz,max_carton_diagonal):
     if min(lower.sum(),(~lower).sum())<60:return [mask]
     a,b=points[lower],points[~lower]
     gap=np.maximum(0.,np.maximum(a.min(axis=0)-b.max(axis=0),b.min(axis=0)-a.max(axis=0)))
-    if np.linalg.norm(gap)<=max_carton_diagonal:return [mask]
+    # The TOTAL span already disproves a single catalogue cuboid. The empty
+    # gap need not itself exceed that cuboid's diagonal: that old condition
+    # merged a held carton with a lower surface despite a clear depth break.
+    # Keep both measured groups; this does not assign their identities.
+    if np.linalg.norm(gap)<.03:return [mask]
     parts=[]
     for group in (lower,~lower):
         part=np.zeros_like(mask);part[rows[group],cols[group]]=True;parts.append(part)
