@@ -10,6 +10,26 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_payload_fragment_requires_unique_current_full_surface_support(self):
+        from unittest.mock import patch
+        from workstation.diagnostics.graspgen_pair_place import supported_payload_fragments
+        mask=np.ones((10,10),bool)
+        frame=SimpleNamespace(sample_time_s=1.,depth_m=np.ones((10,10)),valid_depth=mask)
+        packet=SimpleNamespace(observation_time_s=1.,camera_status={'scene_camera':'OK'},cameras={'scene_camera':frame})
+        obj=SimpleNamespace(track_id='fragment',failures=('INSTANCE_GEOMETRY_INCONSISTENT',),mask_refs=('scene_camera/f',))
+        scene=SimpleNamespace(objects=(obj,),masks={'scene_camera/f':mask})
+        cloud=np.zeros((10,10,3));cloud[:,:,2]=.025
+        m=dict(time_s=1.,position_m=np.zeros(3),rotation=np.eye(3),mask_refs=('scene_camera/top',))
+        with patch('workstation.perception.rgbd_cartons.deproject',return_value=cloud):
+            result=supported_payload_fragments(packet,scene,{'left':m},{'left':(.1,.06,.05)})
+            self.assertEqual(result['left'][0]['track_id'],'fragment')
+            ambiguous=supported_payload_fragments(packet,scene,{'left':m,'right':m},{'left':(.1,.06,.05),'right':(.1,.06,.05)})
+            self.assertEqual(ambiguous,{'left':[],'right':[]})
+            stale=supported_payload_fragments(packet,scene,{'left':dict(m,time_s=0.)},{'left':(.1,.06,.05)})
+            self.assertEqual(stale,{'left':[]})
+            cloud[:2,:,0]=.08
+            self.assertEqual(supported_payload_fragments(packet,scene,{'left':m},{'left':(.1,.06,.05)}),{'left':[]})
+
     def test_strategy_priority_falls_back_only_after_plan_rejection(self):
         from workstation.diagnostics.graspgen_pair_place import choose_transfer_strategy
         calls=[];attempts=[]
@@ -19,18 +39,18 @@ class PairTests(unittest.TestCase):
         planners={'parallel':lambda:reject('parallel'),'orient-first':lambda:reject('orient-first'),
                   'sequential-end':lambda:calls.append('sequential-end') or {'order':['left','right']}}
         name,plan=choose_transfer_strategy('auto',planners,attempts)
-        self.assertEqual(calls,['parallel','orient-first','sequential-end'])
+        self.assertEqual(calls,['orient-first','sequential-end'])
         self.assertEqual(name,'sequential-end')
-        self.assertEqual([a['feasible'] for a in attempts],[False,False,True])
+        self.assertEqual([a['feasible'] for a in attempts],[False,True])
         calls.clear();planners['orient-first']=lambda:calls.append('orient-first') or 'clear'
         self.assertEqual(choose_transfer_strategy('auto',planners,[]),('orient-first','clear'))
-        self.assertEqual(calls,['parallel','orient-first'])
+        self.assertEqual(calls,['orient-first'])
 
     def test_strategy_never_recovers_missing_payload_evidence_as_path_failure(self):
         from workstation.diagnostics.graspgen_pair_place import choose_transfer_strategy
         def missing():raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:panda_left')
         with self.assertRaisesRegex(RuntimeError,'PAIR_PAYLOAD_GEOMETRY'):
-            choose_transfer_strategy('auto',{'parallel':missing},[])
+            choose_transfer_strategy('auto',{'orient-first':missing},[])
 
     def test_strategy_comparison_flag_is_explicit_and_placement_only(self):
         import contextlib,io

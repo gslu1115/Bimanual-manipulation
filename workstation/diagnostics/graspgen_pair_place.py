@@ -61,7 +61,7 @@ def path_rejection(reason):
 def choose_transfer_strategy(policy,planners,attempts):
     """Try deterministic feasibility plans only. Execution errors never enter here."""
     if policy not in ('auto','orient-first','sequential-end'):raise ValueError('Unknown pair transfer policy')
-    order=('parallel','orient-first','sequential-end') if policy=='auto' else (policy,)
+    order=('orient-first','sequential-end') if policy=='auto' else (policy,)
     for name in order:
         start=perf_counter()
         try:plan=planners[name]()
@@ -89,6 +89,40 @@ def stationary_slot_tracks(workspace, scene, positions):
                 and abs(obj.position_m[2]-workspace.priors.support_z_m-obj.size_m[2]/2)<=.008):
             tracks[xy]=obj
     return tracks
+
+
+def supported_payload_fragments(packet,scene,measurements,sizes):
+    """Associate failed fragments only to a unique CURRENT measured cuboid surface."""
+    from workstation.perception.rgbd_cartons import deproject
+    clouds={};joined={a:[] for a in measurements}
+    used={ref for m in measurements.values() for ref in m['mask_refs']}
+    for obj in scene.objects:
+        if not obj.failures or not obj.mask_refs or used.intersection(obj.mask_refs):continue
+        candidates=[]
+        for arm,m in measurements.items():
+            if m['time_s']!=packet.observation_time_s:continue
+            ratios=[]
+            for ref in obj.mask_refs:
+                name=ref.split('/')[0];frame=packet.cameras.get(name);mask=scene.masks.get(ref)
+                if (frame is None or packet.camera_status.get(name)!='OK' or mask is None or
+                        frame.sample_time_s!=packet.observation_time_s or mask.shape!=frame.depth_m.shape or
+                        not mask.any() or frame.valid_depth[mask].mean()<.9):break
+                if name not in clouds:clouds[name]=deproject(frame)
+                points=clouds[name][mask&frame.valid_depth]
+                if len(points)<60:break
+                local=(points-m['position_m'])@np.asarray(m['rotation'])
+                half=np.asarray(sizes[arm])/2
+                inside=np.all(np.abs(local)<=half+.006,axis=1)
+                surface=np.min(np.abs(np.abs(local)-half),axis=1)<=.006
+                ratio=float((inside&surface).mean())
+                if ratio<.95:break
+                ratios.append(ratio)
+            else:
+                if ratios:candidates.append((arm,min(ratios)))
+        if len(candidates)==1:
+            arm,ratio=candidates[0]
+            joined[arm].append(dict(track_id=obj.track_id,mask_refs=obj.mask_refs,surface_ratio=ratio))
+    return joined
 
 
 def parked_surface_envelope(packet,scene,reference,fragments,priors,goals):
@@ -302,6 +336,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     held = False
     carried_arms=set(arms)
     released_references={}
+    released_keepout={}
     sequential=False
     fresh_scene=scene
     before_transfer={}
@@ -336,11 +371,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             extent = np.abs(rot @ t.relative_rotation) @ (t.size + 2*t.uncertainty_m)
             box = AABB(objects[arm].track_id, centre, extent)
             payload=dict(arm=arm,track_id=box.name)
-            for keepout,_ in partial_keepout.values():
+            keepouts=list(partial_keepout.values())+list(released_keepout.values())
+            for keepout,_ in keepouts:
                 payload_gap=float(np.max(np.abs(centre-keepout.centre)-(extent+keepout.size)/2))
                 robot_gap,sphere,link=min((sphere_box_clearance(p,r,keepout),index,link)
                     for index,(link,p,r) in enumerate(robot.spheres(arm,q)))
-                stats=report.setdefault('parked_clearances',{}).setdefault(arm,{})
+                key='released_clearances' if keepout.name.startswith('released_') else 'parked_clearances'
+                stats=report.setdefault(key,{}).setdefault(arm,{})
                 for label,gap in [('carton_axis_gap_m',payload_gap),('arm_surface_gap_m',robot_gap)]:
                     stats[label]=min(stats.get(label,gap),float(gap))
                 if payload_gap<=.008:
@@ -972,13 +1009,34 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                          'observed_height_m':dimensions[2]})
             scene=replace(scene,objects=tuple(bounded if o.track_id==tid else o for o in scene.objects))
             report.setdefault('released_bounds',{})[a]=fit
+            c,s=math.cos(fit['axis_yaw_rad']),math.sin(fit['axis_yaw_rad'])
+            rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+            released_keepout[a]=(AABB('released_'+a,np.asarray(fit['position_m']),
+                np.abs(rotation)@np.asarray(dimensions)+2*fit['uncertainty_m']),packet.observation_time_s)
 
     def refresh_payloads():
-        nonlocal packet
+        nonlocal packet,scene
         packet=observe_destinations()
         for a in arms:
-            if a in carried_arms:measure_held(a,packet)
+            if a not in carried_arms:continue
+            measured=measure_held(a,packet)
+            if sequential:
+                gain=measured.get('height_gain_lower_bound_m') if measured.get('grasp_constrained') else measured.get('height_gain_m')
+                if gain is None and measured.get('geometric_pose_measured'):
+                    gain=measured['position_m'][2]-trackers[a].initial_z
+                report.setdefault('sequential_hold_checks',[]).append(dict(arm=a,phase=report['last_phase'],
+                    time_s=packet.observation_time_s,status=measured['status'],height_gain_lower_bound_m=gain,
+                    position_m=measured['position_m'],currently_carried=sorted(carried_arms)))
+                if gain is None or gain<.08:raise RuntimeError('PAIR_WAITING_HOLD_UNCONFIRMED:'+a)
+        current={a:measurements[a] for a in arms if a in carried_arms}
+        fragments=supported_payload_fragments(packet,scene,current,{a:trackers[a].size for a in current})
+        for a,items in fragments.items():
+            if not items:continue
+            refs=tuple(dict.fromkeys(tuple(current[a]['mask_refs'])+tuple(ref for item in items for ref in item['mask_refs'])))
+            scene=estimator.associate_supported_target(scene,objects[a].track_id,dict(current[a],mask_refs=refs))
+            report.setdefault('held_fragment_associations',[]).append(dict(arm=a,time_s=packet.observation_time_s,fragments=items))
         robot.set_observation(packet,scene,priors)
+        protect_stationary(stationary_slot_tracks(robot.observed_workspace,scene,unused),packet.observation_time_s)
 
     def update_places(active):
         for a in active:
