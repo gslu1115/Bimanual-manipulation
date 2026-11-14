@@ -1,0 +1,4239 @@
+{
+  "date": "2026-11-15",
+  "scope": "Fresh GraspGen original 8130/8131 regression and controlled four-carton two-round visual sorting; not generalized success rates.",
+  "fresh_runs": [
+    {
+      "run": "fresh-v1-8130",
+      "source_commit": "bf988cf5dc3f57f65d75ea334a65aee2826ed8ee",
+      "seed": 8130,
+      "replayed": false,
+      "model_request_count": 6,
+      "model_requests": [
+        {
+          "target_id": "visual_0001",
+          "request_id": "19b114a1a0f3465a917b2a87958482d1",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_2",
+            "right_wrist_camera/24/component_1"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 7441,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0001",
+          "request_id": "c2f4cf8ec72341e99437121283181568",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_2",
+            "right_wrist_camera/24/component_1"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 7441,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0001",
+          "request_id": "33850e5a82674bc6a0aa93ee059df1cd",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_2",
+            "right_wrist_camera/24/component_1"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 7441,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "b1b8a847c2104ad79eebbf9390e0f09c",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_1",
+            "left_wrist_camera/24/component_2"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 4690,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "cc86d86d4d914361ba7144ac7b1d53af",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_1",
+            "left_wrist_camera/24/component_2"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 4690,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "9e8659dcf6fe40d38aef8551fb12045d",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_1",
+            "left_wrist_camera/24/component_2"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 4690,
+          "raw_grasps": 256
+        }
+      ],
+      "success": true,
+      "action_wall_s": 153.53115443396382,
+      "transfer_strategy": {
+        "requested": "auto",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0048",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            8.62412154674641e-05,
+            0.0006871461868286355
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0049",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.0002628713846206665,
+            0.002635830640792869
+          ]
+        }
+      },
+      "simultaneous_grasp_verified": true,
+      "parked_after_placement": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0050",
+          "position_m": [
+            0.2000579684972763,
+            -0.39972296357154846,
+            0.7824999883676527
+          ],
+          "centre_change_m": 0.00015372196141844217
+        }
+      ],
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "current": "auto"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": false,
+      "selected_model_poses": {
+        "panda_left": [
+          [
+            0.9959678285730017,
+            0.089696153521622,
+            0.0015969730087372893,
+            -0.22056056671766683
+          ],
+          [
+            0.0890611594749068,
+            -0.9907407566907981,
+            0.10247322627758493,
+            -0.06019556537340841
+          ],
+          [
+            0.010773641057312489,
+            -0.1019178181886673,
+            -0.9947344064712524,
+            0.8918768763542175
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "panda_right": [
+          [
+            0.9507175087928772,
+            -0.310049831867218,
+            0.0023136120289564133,
+            0.18732665479183197
+          ],
+          [
+            -0.3078409433364868,
+            -0.9430009126663208,
+            0.1264249086380005,
+            -0.10064776241779327
+          ],
+          [
+            -0.03701627999544144,
+            -0.12090659141540527,
+            -0.9919735193252563,
+            0.8957644701004028
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "sha256": {
+        "graspgen_pair_check.json": "8717cf1f41b55b20592948cdc668bfb34a9f793fbaa4b2eae8e69164ffa52941",
+        "config_used.json": "48af8e0e606b9a2065df423815a8c829498670eedec9913004eab00b71f36e0d",
+        "pair_final_truth.json": "06da8fa9e8ed5ac41e20412e6696bff198c0eb6d1214dcbfd273409da7b91ff6",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67",
+        "run_status.json": "8b1b54b5d1065ac5133e0020958ad8074d509c43cc6e5a3b0fa7b4365b81b3c6"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.0863194465637318,
+          "y": 0.6865799427032693,
+          "radial": 0.691984873084299
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": 0.2824939147103578,
+          "y": 2.2101640701294167,
+          "radial": 2.2281445259990234
+        }
+      },
+      "parked_final_dxy_mm": 0.2385058064637121
+    },
+    {
+      "run": "fresh-v1-8131",
+      "source_commit": "bf988cf5dc3f57f65d75ea334a65aee2826ed8ee",
+      "seed": 8131,
+      "replayed": false,
+      "model_request_count": 6,
+      "model_requests": [
+        {
+          "target_id": "visual_0001",
+          "request_id": "b20de5860da842559589ce9ce5d22172",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_1",
+            "right_wrist_camera/24/component_1"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 8941,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0001",
+          "request_id": "6f8e547d4136418fbf0c0c34efcf8af1",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_1",
+            "right_wrist_camera/24/component_1"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 8941,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0001",
+          "request_id": "26853f9032a841df81c0bf180c117e29",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_1",
+            "right_wrist_camera/24/component_1"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 8941,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "10a308c7c9ba44debfcb31ef076678bf",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_2",
+            "left_wrist_camera/24/component_2"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 7862,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "967cb50fdb924bbb974c4db051b3e0a3",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_2",
+            "left_wrist_camera/24/component_2"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 7862,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "1d718eb9213c4b91a87173e566901f67",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/24/component_2",
+            "left_wrist_camera/24/component_2"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 7862,
+          "raw_grasps": 256
+        }
+      ],
+      "success": true,
+      "action_wall_s": 147.29420377896167,
+      "transfer_strategy": {
+        "requested": "auto",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0049",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.0006849423050880321,
+            0.001069837808609031
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0050",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            6.827712059020996e-05,
+            0.0009387373924255593
+          ]
+        }
+      },
+      "simultaneous_grasp_verified": true,
+      "parked_after_placement": [
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "track_id": "visual_0051",
+          "position_m": [
+            0.20001809298992157,
+            -0.39962446689605713,
+            0.784999927459602
+          ],
+          "centre_change_m": 0.00011375821679972488
+        }
+      ],
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "current": "auto"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": false,
+      "selected_model_poses": {
+        "panda_left": [
+          [
+            0.9525077957142406,
+            -0.30391318042862986,
+            0.019127506321051462,
+            -0.2338736108696169
+          ],
+          [
+            -0.3044931296926571,
+            -0.9513064486115005,
+            0.0479589760372361,
+            -0.12509264578294454
+          ],
+          [
+            0.0036207535304129124,
+            -0.05150549113750458,
+            -0.9986662864685059,
+            0.8994477391242981
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "panda_right": [
+          [
+            0.5028123021687181,
+            -0.8629162564927833,
+            -0.050550149743553,
+            0.19220514203274897
+          ],
+          [
+            -0.8641237066481544,
+            -0.5003270696593325,
+            -0.05443423672087306,
+            -0.05563290082251619
+          ],
+          [
+            0.02168058417737484,
+            0.07105179131031036,
+            -0.997236967086792,
+            0.9096657633781433
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "sha256": {
+        "graspgen_pair_check.json": "3defe732fa7706c1d722842a80d439fcab64e9fde27a17bf5442ee9506a9b98e",
+        "config_used.json": "74fc04b6b4f911e2965c41ccd2d08ec8735ccfe9baa92fac29761ac4d375131f",
+        "pair_final_truth.json": "1ec6ccbf67ce486fdab90c08dc378bd9e9ecb54aec14bede222457df1c5b2650",
+        "release_states.json": "72951fc44dd2868edee449bd8d5d89f6b8119738bda973badf34b5f0fb190123",
+        "run_status.json": "8b1b54b5d1065ac5133e0020958ad8074d509c43cc6e5a3b0fa7b4365b81b3c6"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": -0.6731033325195201,
+          "y": 1.0212302207947,
+          "radial": 1.2231023097489742
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": 0.15521160094067454,
+          "y": 0.9379327297210915,
+          "radial": 0.9506884066552118
+        }
+      },
+      "parked_final_dxy_mm": 0.24173236846553334
+    }
+  ],
+  "continuous_runs": [
+    {
+      "run": "pair-sort-v1-6",
+      "source_commit": "a76ec1c7fd1642079a962436b0d794a63a3eac7f",
+      "seed": 6,
+      "report": {
+        "success": false,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [
+          {
+            "round": 1,
+            "success": true,
+            "reserved_source_keys": [
+              "visual_0001",
+              "visual_0002"
+            ],
+            "wall_s": 193.95091607491486,
+            "action_wall_s": 121.52935893507674,
+            "placements": {
+              "panda_left": {
+                "initial_track": "visual_0002",
+                "grasp_track": "visual_0008",
+                "observed_track": "visual_0058",
+                "goal_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  0.00038806796073914684,
+                  -3.156661987302467e-05
+                ]
+              },
+              "panda_right": {
+                "initial_track": "visual_0001",
+                "grasp_track": "visual_0007",
+                "observed_track": "visual_0057",
+                "goal_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  -0.00031806230545045056,
+                  0.0004427969455719216
+                ]
+              }
+            },
+            "transfer_strategy": {
+              "requested": "auto",
+              "selected": "orient-first",
+              "selection": "first feasible deterministic plan; no learned score or duration optimization",
+              "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+            },
+            "model_request_count": 6
+          }
+        ],
+        "indexing": [
+          {
+            "round": 1,
+            "success": true,
+            "wall_s": 29.15123550198041,
+            "elapsed_sim_s": 5.008333333333372,
+            "stopped_slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.833333333331375
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.833333333331375
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.833333333331375
+              }
+            ],
+            "check_count": 26,
+            "all_recorded_arm_interlocks_clear": true,
+            "first_check": {
+              "time_s": 40.22499999999836,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0058"
+                  ],
+                  "observation_time_s": 40.22499999999836
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 40.22499999999836
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0057"
+                  ],
+                  "observation_time_s": 40.22499999999836
+                }
+              ]
+            },
+            "last_check": {
+              "time_s": 45.224999999998076,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 45.224999999998076
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 45.224999999998076
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 45.224999999998076
+                }
+              ]
+            }
+          }
+        ],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              -0.22001045942306519,
+              -0.10000387579202652,
+              0.7824998823513456
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ]
+          },
+          "visual_0003": {
+            "position_m": [
+              -0.17029480449855328,
+              0.07364908466115594,
+              0.787499865035841
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ]
+          },
+          "visual_0002": {
+            "position_m": [
+              0.21999922394752502,
+              -0.10000173468142748,
+              0.7849999814003025
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ]
+          },
+          "visual_0004": {
+            "position_m": [
+              0.17001982033252716,
+              0.07497377693653107,
+              0.7825000534741884
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ]
+          }
+        },
+        "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "total_wall_s": 324.9885848108679,
+        "conveyor_events": [
+          {
+            "event": "index_started",
+            "visual_placements": [
+              "round_1/visual_0058",
+              "round_1/visual_0057"
+            ]
+          },
+          {
+            "event": "visually_cleared",
+            "time_s": 45.224999999998076,
+            "elapsed_s": 5.008333333333372,
+            "commanded_distance_m": 0.8013333333333396,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.224999999998076
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.224999999998076
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.224999999998076
+              }
+            ]
+          }
+        ]
+      },
+      "initial_release_states": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22,
+            -0.1,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.984807753012208,
+            0.0,
+            0.0,
+            0.17364817766693033
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        },
+        {
+          "name": "box_01",
+          "position": [
+            0.22,
+            -0.1,
+            0.789
+          ],
+          "orientation_wxyz": [
+            0.9762960071199334,
+            0.0,
+            -0.0,
+            -0.21643961393810288
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "mass_kg": 0.09683366733466933,
+          "variant": "small_medium"
+        },
+        {
+          "name": "box_02",
+          "position": [
+            -0.17,
+            0.075,
+            0.7915
+          ],
+          "orientation_wxyz": [
+            0.9238795325112867,
+            0.0,
+            0.0,
+            0.3826834323650898
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "mass_kg": 0.11527054108216432,
+          "variant": "small_wide"
+        },
+        {
+          "name": "box_03",
+          "position": [
+            0.17,
+            0.075,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9396926207859084,
+            0.0,
+            -0.0,
+            -0.3420201433256687
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        }
+      ],
+      "initial_states_match_v3": false,
+      "configuration_matches_v3": true,
+      "sha256": {
+        "graspgen_pair_sort.json": "34469304058ffe48f50731072406626c82e635ed711276dc50db58c7d962a368",
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "pair_final_truth.json": "e3932fb24920fd8e1d6ab226496d2be4bcf5a144dcffb033ff670f8c93e9b4a1",
+        "release_states.json": "63c65b708a657be507a55a4954fbe4b4067f6a71876b7feed961cbb6453b5a70",
+        "run_status.json": "b0e7dc914544a82266e4405a9223f05a27298bc82aabd0a08cdf88cea956c2f2"
+      },
+      "pair_reports": [
+        {
+          "round": 1,
+          "sha256": {
+            "graspgen_pair_check.json": "454f74288190513fb2a38cc7f24715b6e21286048965b5418bb89a32fa3d3f46"
+          },
+          "success": true,
+          "last_phase": "verify",
+          "action_wall_s": 121.52935893507674,
+          "transfer_strategy": {
+            "requested": "auto",
+            "selected": "orient-first",
+            "selection": "first feasible deterministic plan; no learned score or duration optimization",
+            "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+          },
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0008",
+              "observed_track": "visual_0058",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00038806796073914684,
+                -3.156661987302467e-05
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0007",
+              "observed_track": "visual_0057",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00031806230545045056,
+                0.0004427969455719216
+              ]
+            }
+          },
+          "unselected_source_references": {
+            "visual_0003": {
+              "position_m": [
+                -0.17029480636119843,
+                0.073649100959301,
+                0.7874999714572799
+              ],
+              "size_m": [
+                0.12,
+                0.065,
+                0.055
+              ],
+              "axis_yaw_rad": 0.7807372269787303
+            },
+            "visual_0004": {
+              "position_m": [
+                0.1700147371739149,
+                0.07498068362474442,
+                0.7825000575847629
+              ],
+              "size_m": [
+                0.1,
+                0.055,
+                0.045
+              ],
+              "axis_yaw_rad": 2.4434605676526595
+            }
+          },
+          "unselected_sources_after_placement": {
+            "visual_0003": {
+              "track_id": "visual_0055",
+              "position_m": [
+                -0.17029482126235962,
+                0.07364911027252674,
+                0.7874998380068512
+              ]
+            },
+            "visual_0004": {
+              "track_id": "visual_0056",
+              "position_m": [
+                0.17002516984939575,
+                0.07496624533087015,
+                0.7824998674029322
+              ]
+            }
+          },
+          "unselected_clearances": {
+            "panda_left": {
+              "carton_axis_gap_m": 0.04859018399199333,
+              "arm_surface_gap_m": 0.009551467677517987
+            },
+            "panda_right": {
+              "carton_axis_gap_m": 0.05301090724314375,
+              "arm_surface_gap_m": 0.03419998060827229
+            }
+          },
+          "pregrasp_identity": {
+            "panda_left": {
+              "original": "visual_0002",
+              "current": "visual_0008"
+            },
+            "panda_right": {
+              "original": "visual_0001",
+              "current": "visual_0007"
+            }
+          },
+          "model_request_count": 6,
+          "model_request_ids": [
+            "4ec589acd5764d68baec13c9d7fe2cc1",
+            "b56d4e4184784d6e9de75ab02f83c9bd",
+            "da1c614d62be487b9c31ce657efe0389",
+            "e8282186715e4a99a5be84286a7327fd",
+            "7812c43ef1414110973ebb52eb33da28",
+            "1e252d6f6bba45f39b574a0a66ca6917"
+          ]
+        },
+        {
+          "round": 2,
+          "sha256": {
+            "graspgen_pair_check.json": "e704731b41a6a957883d4bb48835e55832aced1cbdb20021850ace4afdb54f63"
+          },
+          "success": false,
+          "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+          "rejection_evidence": {
+            "feasible_per_arm": {
+              "panda_left": 0,
+              "panda_right": 2
+            },
+            "extra_view": {
+              "arm": "panda_left",
+              "target_id": "visual_0001",
+              "executed": true,
+              "trials": [
+                "ROBOT_UNREACHABLE"
+              ],
+              "view": {
+                "camera_position_goal_m": [
+                  -0.043609986994085526,
+                  -0.0542218341165773,
+                  0.9774997789486473
+                ],
+                "camera_position_fk_m": [
+                  -0.04378272942655288,
+                  -0.053612745995530044,
+                  0.9770036936470555
+                ],
+                "camera_position_error_m": 0.0008043189128890202,
+                "camera_angle_error_rad": 0.001255857699514808,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              },
+              "revalidated_prior_proposals": 2,
+              "fused_observation_times_s": [
+                46.03333333333136,
+                56.474999999997436
+              ]
+            },
+            "distinct_reasons": [
+              "HELD_CARTON_PATH_BLOCKED:tray_rim_3",
+              "IK_DISCONTINUITY",
+              "OTHER_ARM_COLLISION",
+              "ROBOT_UNREACHABLE",
+              "SELF_COLLISION",
+              "TARGET_BODY_COLLISION",
+              "UNOBSERVED_PATH_SPACE"
+            ],
+            "distinct_phases": [
+              "APPROACH",
+              "LIFT",
+              "LOWER",
+              "PREGRASP",
+              "TRANSFER"
+            ],
+            "first_slot_assessments": [
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "HELD_CARTON_PATH_BLOCKED:tray_rim_3": 4
+                },
+                "phases": {
+                  "LIFT": 4
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "SELF_COLLISION": 1,
+                  "ROBOT_UNREACHABLE": 2,
+                  "IK_DISCONTINUITY": 1
+                },
+                "phases": {
+                  "PREGRASP": 2,
+                  "APPROACH": 2
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.0,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "HELD_CARTON_PATH_BLOCKED:tray_rim_3": 4
+                },
+                "phases": {
+                  "LIFT": 4
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.0,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "SELF_COLLISION": 1,
+                  "ROBOT_UNREACHABLE": 2,
+                  "IK_DISCONTINUITY": 1
+                },
+                "phases": {
+                  "PREGRASP": 2,
+                  "APPROACH": 2
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "HELD_CARTON_PATH_BLOCKED:tray_rim_3": 4
+                },
+                "phases": {
+                  "LIFT": 4
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "SELF_COLLISION": 1,
+                  "ROBOT_UNREACHABLE": 2,
+                  "IK_DISCONTINUITY": 1
+                },
+                "phases": {
+                  "PREGRASP": 2,
+                  "APPROACH": 2
+                }
+              }
+            ]
+          },
+          "model_request_count": 57,
+          "model_request_ids": [
+            "8eb9227299e3416596b431549c0e6067",
+            "2a8b0257b77d44738fef165f31f2662c",
+            "fcbd8f3f57ea434ab0c666ffdeefc1fc",
+            "65daff8e5a294a1b8e2d9d99869f485e",
+            "c8ed4718183d4d0a915ad70a055f37ee",
+            "32664ae09dd44d9db8d1d563dc663c55",
+            "3d3fc8a2c8754e9cbaf1c053fab17fac",
+            "806b8fec22fb41758c3ca9ccab99e982",
+            "c888f02218ec431a930bbb16c7832d98",
+            "4655a889f5294fed8efdacf00ff3245a",
+            "832b646803ff411bb5710942fdc4c6d0",
+            "1335e481ff4647a6ad3f44ef53583132",
+            "59d68ec6ebe14f05941cb0c424c4fc48",
+            "b14a21be3ada4735b99f11e545f09971",
+            "c5500956ea2c410ebe2ca9a7039eb848",
+            "92415a8fe63d4d78916f5831ff9b2ec3",
+            "f3c403214ad94e758e058a41f4657bbc",
+            "16cb312232ec4b8f86da1f160738217d",
+            "69ecb677db0b4141be0ad5b3e200d19d",
+            "03f91669b9d940f3b4da4009e15a0c4e",
+            "d70259e1ece9441baf1dfa130e45589b",
+            "907a5d11775f4a2b9fcf79e4990c25af",
+            "7164c550091f42aca3b9a43730b5adf7",
+            "8664826405e44135bfa0e2ce23217024",
+            "c5739b38cc74481abcbab5b6d8e0cae4",
+            "4a0f51c5cb0f4ccba1929c2bd5e2895f",
+            "dab96250ee5147c69ea1879ecbd2c793",
+            "a66dcd6c6d7f4f0c92968fb3e733fe0d",
+            "370f4935aeaa4c7c8152bcc23ca25f08",
+            "78ba4e062cdb4534bd9532564d0d67d7",
+            "437c184df1ee414d8250f19ac0de8319",
+            "005ebcde7f6d46bf99dd93817c433bb8",
+            "2a9a8b8d93374ddf95400b641e63ddac",
+            "084b1fc28ac04080a803e772f5228f26",
+            "a795c831c26c4ae6a13b8e9ddd9c6fe8",
+            "376e0fbf69624aaea82776c99e600fc9",
+            "24aa0ef5555845b28ae365332cdddbd1",
+            "774370fc5ace4ded86ef2a70d28272fd",
+            "d4e63268dc664cff95e370fa52052f5a",
+            "5bf8e23131a345269a0da21d4afa3298",
+            "3f0b209a2b6848bcbea546370e444373",
+            "94cd28445a5544d88a5a393c3b8c10bd",
+            "bba16fbd35294181b364cf45e6aa3576",
+            "f7546fa1945845f7a68ffc37d52566ac",
+            "c15367e4bde44ac291ea7d490e387524",
+            "0db2f98b4c4e4278a43d16aef6ac8d87",
+            "0a90e57556bb4d498b1e0dd8d4031f1e",
+            "adae31e3f19748a99e14a882d125fdd4",
+            "eb9c2440a5ef44ba995c9fc70ceda82c",
+            "05cd0d69619f4d38ae89b10d0c7a24d8",
+            "fb16e6e20439416684a06e4d1136de01",
+            "ca990e314bf248c3a0ce116f0018be35",
+            "f825333db2d041278965eba1bb52f2b4",
+            "95a26a740a014a6d9acdd1d0afd4b91a",
+            "ac13a0eef7a447bbba465be7d40fb9cc",
+            "f18bf71328a94547b6b3423d77e9cdf1",
+            "d2a4334de47b4dd49f906c2834efee18"
+          ]
+        }
+      ],
+      "offline_final_truth": {
+        "scope": "offline_final_centers_at_actor_exit",
+        "states": [
+          {
+            "name": "box_00",
+            "position": [
+              0.6017588376998901,
+              -0.4004497528076172,
+              0.7824999690055847
+            ],
+            "orientation_wxyz": [
+              1.0,
+              4.0207257967495025e-08,
+              -6.704422350622963e-09,
+              -0.00024368104641325772
+            ],
+            "linear_velocity": [
+              -7.058254425373889e-08,
+              -6.723116712237243e-07,
+              0.0016016003210097551
+            ],
+            "angular_velocity": [
+              -2.8704185751848854e-05,
+              4.8632196012476925e-06,
+              -1.816368239815347e-06
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          },
+          {
+            "name": "box_01",
+            "position": [
+              1.001230001449585,
+              -0.3994934558868408,
+              0.7849999070167542
+            ],
+            "orientation_wxyz": [
+              0.9999997615814209,
+              -3.713576779418304e-09,
+              2.1478110401318418e-09,
+              -0.000744096003472805
+            ],
+            "linear_velocity": [
+              -4.713691836855105e-08,
+              -3.1468394467992766e-07,
+              0.0016028470126911998
+            ],
+            "angular_velocity": [
+              2.635368616665801e-07,
+              -8.478166080294613e-08,
+              -3.6487529087025905e-07
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "mass_kg": 0.09683366733466933,
+            "variant": "small_medium"
+          },
+          {
+            "name": "box_02",
+            "position": [
+              -0.17030178010463715,
+              0.07365607470273972,
+              0.7874998450279236
+            ],
+            "orientation_wxyz": [
+              0.9247691035270691,
+              -2.385089601375512e-07,
+              -7.022131143230581e-08,
+              0.38052898645401
+            ],
+            "linear_velocity": [
+              2.140947981388308e-05,
+              -2.3658425561734475e-05,
+              0.0015953921247273684
+            ],
+            "angular_velocity": [
+              0.0002384026302024722,
+              0.0002822928945533931,
+              2.2380336304195225e-05
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "mass_kg": 0.11527054108216432,
+            "variant": "small_wide"
+          },
+          {
+            "name": "box_03",
+            "position": [
+              0.17000004649162292,
+              0.07500017434358597,
+              0.7825000882148743
+            ],
+            "orientation_wxyz": [
+              0.9396926164627075,
+              -1.1569854905246757e-06,
+              3.456935928625171e-07,
+              -0.3420201539993286
+            ],
+            "linear_velocity": [
+              8.620325388619676e-06,
+              -0.00022172743047121912,
+              0.0015196931781247258
+            ],
+            "angular_velocity": [
+              -0.0003849270869977772,
+              0.000283798057353124,
+              -0.0001277150440728292
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          }
+        ]
+      }
+    },
+    {
+      "run": "pair-sort-v2-6",
+      "source_commit": "aea160847a5b950fb939ebce1a2b3d35cda1ad62",
+      "seed": 6,
+      "report": {
+        "success": false,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [],
+        "indexing": [],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              -0.2200000062584877,
+              -0.13000004924833775,
+              0.7824999337978931
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 0.34906583884074094
+          },
+          "visual_0002": {
+            "position_m": [
+              0.22002512216567993,
+              -0.13001745380461216,
+              0.7849998190761981
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 2.705259564926663
+          },
+          "visual_0003": {
+            "position_m": [
+              -0.1699720025062561,
+              0.035016387701034546,
+              0.7874999051209718
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "axis_yaw_rad": 0.7853990500857642
+          },
+          "visual_0004": {
+            "position_m": [
+              0.17006367444992065,
+              0.03493888024240732,
+              0.7824999688099088
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 2.443435477968608
+          }
+        },
+        "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "total_wall_s": 86.9294888949953,
+        "conveyor_events": []
+      },
+      "initial_release_states": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22,
+            -0.13,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.984807753012208,
+            0.0,
+            0.0,
+            0.17364817766693033
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        },
+        {
+          "name": "box_01",
+          "position": [
+            0.22,
+            -0.13,
+            0.789
+          ],
+          "orientation_wxyz": [
+            0.9762960071199334,
+            0.0,
+            -0.0,
+            -0.21643961393810288
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "mass_kg": 0.09683366733466933,
+          "variant": "small_medium"
+        },
+        {
+          "name": "box_02",
+          "position": [
+            -0.17,
+            0.035,
+            0.7915
+          ],
+          "orientation_wxyz": [
+            0.9238795325112867,
+            0.0,
+            0.0,
+            0.3826834323650898
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "mass_kg": 0.11527054108216432,
+          "variant": "small_wide"
+        },
+        {
+          "name": "box_03",
+          "position": [
+            0.17,
+            0.035,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9396926207859084,
+            0.0,
+            -0.0,
+            -0.3420201433256687
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        }
+      ],
+      "initial_states_match_v3": false,
+      "configuration_matches_v3": true,
+      "sha256": {
+        "graspgen_pair_sort.json": "86f0a78688d46b6a744c89a65f7bc08d2ec925c173d80415aa82d2d21d863ca3",
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "pair_final_truth.json": "8aba671debe46c854cd59feb24afd89f9f7fbd5e99ae1d379670ef83de1a3df3",
+        "release_states.json": "348ad9ab425089e11bb98aad06784070f08551e64daef07ad27786d3f1526be7",
+        "run_status.json": "294b5ee47b87536198eac80fd8bb27692a62955ffee56bfd9c2b59fdfb89c636"
+      },
+      "pair_reports": [
+        {
+          "round": 1,
+          "sha256": {
+            "graspgen_pair_check.json": "ebc0437f19921281fd1039a1a716a05e00e586f8527ddd9ed7a8d9fa37461f0f"
+          },
+          "success": false,
+          "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+          "rejection_evidence": {
+            "feasible_per_arm": {
+              "panda_left": 0,
+              "panda_right": 4
+            },
+            "extra_view": {
+              "arm": "panda_left",
+              "target_id": "visual_0002",
+              "executed": true,
+              "trials": [],
+              "view": {
+                "camera_position_goal_m": [
+                  -0.2816375070812184,
+                  0.03911774968832721,
+                  0.9724999672000367
+                ],
+                "camera_position_fk_m": [
+                  -0.2815729477630209,
+                  0.039258709054058996,
+                  0.9723899417434958
+                ],
+                "camera_position_error_m": 0.00019011325424775761,
+                "camera_angle_error_rad": 0.0019376788054400432,
+                "calibration_source": "image-time robot FK and existing calibrated camera frame"
+              },
+              "revalidated_prior_proposals": 4,
+              "fused_observation_times_s": [
+                3.3999999999999906,
+                8.250000000000172
+              ]
+            },
+            "distinct_reasons": [
+              "NEIGHBOUR_SPACE_INSUFFICIENT",
+              "ROBOT_UNREACHABLE"
+            ],
+            "distinct_phases": [
+              "TRANSFER"
+            ],
+            "first_slot_assessments": [
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "NEIGHBOUR_SPACE_INSUFFICIENT": 4
+                },
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "ROBOT_UNREACHABLE": 4
+                },
+                "phases": {
+                  "TRANSFER": 4
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.0,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "NEIGHBOUR_SPACE_INSUFFICIENT": 4
+                },
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.0,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 4,
+                "feasible_by_target": {
+                  "visual_0001": 4
+                },
+                "reasons": {},
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "NEIGHBOUR_SPACE_INSUFFICIENT": 4
+                },
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 4,
+                "feasible_by_target": {
+                  "visual_0001": 4
+                },
+                "reasons": {},
+                "phases": {}
+              }
+            ]
+          },
+          "model_request_count": 54,
+          "model_request_ids": [
+            "9649e84c9ac34595a0bdffc2987382df",
+            "3838df520af34bcca8a38442c5d0be1d",
+            "7be7c54e248b4fa694e7301db4139cc5",
+            "43c990f7aa7e4a5da43d8d94e8e10b66",
+            "2da0e08e18e14580a60fc6f17ca80db1",
+            "072ada79af464aa09de33db4e8d07712",
+            "b70ec512f1e4471dbcec279040b184b6",
+            "de3087a3429a4a0daeb850a099038ce3",
+            "8922469d9d1541af8b4019c36c9acd07",
+            "aa858844cb244d76bee7038b08aefa90",
+            "11d9d2aff46d45d593c24be149e3fa73",
+            "98fb60f312784e1782c7f4e168c7a12c",
+            "6755ec45b56a45e8b8e6e49c60fdf044",
+            "c9dd1d48be1f493283f2477a409e2b58",
+            "741d56bdb4134fec9c3f7aaec3916326",
+            "9196e1226da040feb3b0f6afe59c8d9d",
+            "ad5254deb2324109a7e90530e02ff009",
+            "2e78e2ee13974bad906e60900bf5b69b",
+            "879504e3e26b418cbff71385106c3b00",
+            "2b47eb182e2c49eead3d090678268e5c",
+            "7e2d1b7d052544e3b949b9c04303aa45",
+            "eb4270b4359d4cadae89a9a67af1db10",
+            "c8148b254dbc495e989f0d88c4256600",
+            "ed41af471d6a4802a61c27111fc13ec2",
+            "ce5a1ce349254995ac2e64bdfad6ad82",
+            "4c7ba22aeb464c46b6542bd2f797e3c3",
+            "41f90d88ed0847859ab53aded72faf17",
+            "be003ff49ba54d51af01e43d759c01d6",
+            "d4475bbc846244a08c8b285fb37f5df1",
+            "b879cd87a763435f8d66d4975439895f",
+            "a099b052f206402e9f484d42d753ce07",
+            "4cddcfb54d9a483fbd57dcfd42cda303",
+            "cd717b0f2577477887d75f6075f3c0c3",
+            "f77d1fd84ce74b37803c715a544b35fa",
+            "0ff7173f0c234bcba1db2e4eede2bbe7",
+            "6c9007a798054946bb79a62d78c14816",
+            "10156e07caa540d1b698c1f07de55976",
+            "0d4252efa57d4e0da7195c8804c6499e",
+            "6aa0d65e5dbc48e5abd544562e38634c",
+            "1e9975279cbc49edb84e67d4c2fce1a9",
+            "45a12956d6bd48c6824add381e3fed7a",
+            "d23cf05a00ed47fda3a4acfb1b6f2742",
+            "21a70a19b9f04bfc8d2def9fba462704",
+            "df70d89006ec424aad18484bdad4bab4",
+            "55ea46cf9508427391c671878dbef354",
+            "62bc914943dd4feca35a9685b603d11b",
+            "4ba0ebb8f56d480492e9a196f5334661",
+            "326ad5ae17af47daa631d015ac7eac61",
+            "ca77038b73a84423820c8276d0914283",
+            "2257db44d40d4a00a7a1fd1eb7ac9f83",
+            "10ed04645e6d4c86938aa9de04c3689a",
+            "829e145fadc1464ba5eafe6be7ddbdc3",
+            "da4e9b1000c54d7eb1e8f8457463c916",
+            "3675f13521e44b53ab4d8e3581117aea"
+          ]
+        }
+      ],
+      "offline_final_truth": {
+        "scope": "offline_final_centers_at_actor_exit",
+        "states": [
+          {
+            "name": "box_00",
+            "position": [
+              -0.2200000137090683,
+              -0.1300000101327896,
+              0.7824999094009399
+            ],
+            "orientation_wxyz": [
+              0.9848077297210693,
+              5.025232781008526e-07,
+              -9.369933451353063e-08,
+              0.1736481934785843
+            ],
+            "linear_velocity": [
+              1.9284558220533654e-05,
+              6.000766734359786e-05,
+              0.0015956673305481672
+            ],
+            "angular_velocity": [
+              0.0003508898080326617,
+              0.00047380017349496484,
+              2.7089907234767452e-05
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          },
+          {
+            "name": "box_01",
+            "position": [
+              0.2200000286102295,
+              -0.12999999523162842,
+              0.7849998474121094
+            ],
+            "orientation_wxyz": [
+              0.9762960076332092,
+              -2.577557722815982e-07,
+              8.67240572688388e-08,
+              -0.21643967926502228
+            ],
+            "linear_velocity": [
+              -1.392930334986886e-05,
+              -3.896912676282227e-05,
+              0.0015961081953719258
+            ],
+            "angular_velocity": [
+              0.0007482270593754947,
+              -0.000392121757613495,
+              -1.5717610949650407e-05
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "mass_kg": 0.09683366733466933,
+            "variant": "small_medium"
+          },
+          {
+            "name": "box_02",
+            "position": [
+              -0.16999998688697815,
+              0.0350000262260437,
+              0.7874999046325684
+            ],
+            "orientation_wxyz": [
+              0.9238795638084412,
+              -3.2337985089725407e-07,
+              -1.3578359414623264e-07,
+              0.38268351554870605
+            ],
+            "linear_velocity": [
+              3.97011790482793e-05,
+              -2.2377698769560084e-05,
+              0.0015922475140541792
+            ],
+            "angular_velocity": [
+              7.736707630101591e-05,
+              0.00024083648168016225,
+              3.1284387659979984e-05
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "mass_kg": 0.11527054108216432,
+            "variant": "small_wide"
+          },
+          {
+            "name": "box_03",
+            "position": [
+              0.17000000178813934,
+              0.03500000387430191,
+              0.7824999094009399
+            ],
+            "orientation_wxyz": [
+              0.9396926164627075,
+              -3.2667810501152417e-07,
+              1.5608851811066415e-07,
+              -0.3420201539993286
+            ],
+            "linear_velocity": [
+              -2.406541352684144e-05,
+              -2.85939167952165e-05,
+              0.001593584893271327
+            ],
+            "angular_velocity": [
+              0.0003725198039319366,
+              -0.0002716587914619595,
+              5.006293940823525e-05
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          }
+        ]
+      }
+    },
+    {
+      "run": "pair-sort-v3-6",
+      "source_commit": "e03ab58f5ff2ea9e4aa36613befb83be29e7a604",
+      "seed": 6,
+      "report": {
+        "success": false,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [
+          {
+            "round": 1,
+            "success": true,
+            "reserved_source_keys": [
+              "visual_0001",
+              "visual_0002"
+            ],
+            "wall_s": 196.82622515689582,
+            "action_wall_s": 121.3454210080672,
+            "placements": {
+              "panda_left": {
+                "initial_track": "visual_0001",
+                "grasp_track": "visual_0008",
+                "observed_track": "visual_0062",
+                "goal_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  -0.00017518103122710071,
+                  0.0005427837371826394
+                ]
+              },
+              "panda_right": {
+                "initial_track": "visual_0003",
+                "grasp_track": "visual_0005",
+                "observed_track": "visual_0060",
+                "goal_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  -0.00030843615531922497,
+                  -6.470680236814186e-05
+                ]
+              }
+            },
+            "transfer_strategy": {
+              "requested": "auto",
+              "selected": "orient-first",
+              "selection": "first feasible deterministic plan; no learned score or duration optimization",
+              "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+            },
+            "model_request_count": 6
+          },
+          {
+            "round": 2,
+            "success": true,
+            "reserved_source_keys": [
+              "visual_0003",
+              "visual_0004"
+            ],
+            "wall_s": 178.96736431191675,
+            "action_wall_s": 123.57989533105865,
+            "placements": {
+              "panda_left": {
+                "initial_track": "visual_0001",
+                "grasp_track": "visual_0004",
+                "observed_track": "visual_0046",
+                "goal_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  1.4913082122813837e-05,
+                  0.0014430224895477517
+                ]
+              },
+              "panda_right": {
+                "initial_track": "visual_0002",
+                "grasp_track": "visual_0003",
+                "observed_track": "visual_0045",
+                "goal_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  -0.0002499490976333729,
+                  0.0004990339279175027
+                ]
+              }
+            },
+            "transfer_strategy": {
+              "requested": "auto",
+              "selected": "orient-first",
+              "selection": "first feasible deterministic plan; no learned score or duration optimization",
+              "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+            },
+            "model_request_count": 18
+          }
+        ],
+        "indexing": [
+          {
+            "round": 1,
+            "success": true,
+            "wall_s": 31.092324475059286,
+            "elapsed_sim_s": 5.008333333333372,
+            "stopped_slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 46.05833333333136
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 46.05833333333136
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 46.05833333333136
+              }
+            ],
+            "check_count": 26,
+            "all_recorded_arm_interlocks_clear": true,
+            "first_check": {
+              "time_s": 40.44999999999835,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0062"
+                  ],
+                  "observation_time_s": 40.44999999999835
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 40.44999999999835
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0060"
+                  ],
+                  "observation_time_s": 40.44999999999835
+                }
+              ]
+            },
+            "last_check": {
+              "time_s": 45.44999999999806,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 45.44999999999806
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 45.44999999999806
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 45.44999999999806
+                }
+              ]
+            }
+          },
+          {
+            "round": 2,
+            "success": false,
+            "wall_s": 14.566495307954028,
+            "elapsed_sim_s": 2.208333333333328,
+            "check_count": 11,
+            "all_recorded_arm_interlocks_clear": true,
+            "first_check": {
+              "time_s": 99.29166666669175,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0046"
+                  ],
+                  "observation_time_s": 99.29166666669175
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 99.29166666669175
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0045"
+                  ],
+                  "observation_time_s": 99.29166666669175
+                }
+              ]
+            },
+            "last_check": {
+              "time_s": 101.29166666669335,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 101.29166666669335
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 101.29166666669335
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0046"
+                  ],
+                  "observation_time_s": 101.29166666669335
+                }
+              ]
+            }
+          }
+        ],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              -0.22001970559358597,
+              -0.1500072181224823,
+              0.7824998978644118
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 0.34906531486776293
+          },
+          "visual_0002": {
+            "position_m": [
+              0.21999859809875488,
+              -0.15000304765999317,
+              0.7849998226276355
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 2.7052597469029007
+          },
+          "visual_0003": {
+            "position_m": [
+              -0.1699720025062561,
+              0.035016387701034546,
+              0.7874999051209718
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "axis_yaw_rad": 0.7853990500857642
+          },
+          "visual_0004": {
+            "position_m": [
+              0.17006367444992065,
+              0.03493888024240732,
+              0.7824999688099088
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 2.443435477968608
+          }
+        },
+        "failure_reason": "'NoneType' object has no attribute 'get'",
+        "total_wall_s": 434.43235504394397,
+        "conveyor_events": [
+          {
+            "event": "index_started",
+            "visual_placements": [
+              "round_1/visual_0062",
+              "round_1/visual_0060"
+            ]
+          },
+          {
+            "event": "visually_cleared",
+            "time_s": 45.44999999999806,
+            "elapsed_s": 5.008333333333372,
+            "commanded_distance_m": 0.8013333333333396,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.44999999999806
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.44999999999806
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 45.44999999999806
+              }
+            ]
+          },
+          {
+            "event": "index_started",
+            "visual_placements": [
+              "round_2/visual_0046",
+              "round_2/visual_0045"
+            ]
+          }
+        ]
+      },
+      "initial_release_states": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22,
+            -0.15,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.984807753012208,
+            0.0,
+            0.0,
+            0.17364817766693033
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        },
+        {
+          "name": "box_01",
+          "position": [
+            0.22,
+            -0.15,
+            0.789
+          ],
+          "orientation_wxyz": [
+            0.9762960071199334,
+            0.0,
+            -0.0,
+            -0.21643961393810288
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "mass_kg": 0.09683366733466933,
+          "variant": "small_medium"
+        },
+        {
+          "name": "box_02",
+          "position": [
+            -0.17,
+            0.035,
+            0.7915
+          ],
+          "orientation_wxyz": [
+            0.9238795325112867,
+            0.0,
+            0.0,
+            0.3826834323650898
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "mass_kg": 0.11527054108216432,
+          "variant": "small_wide"
+        },
+        {
+          "name": "box_03",
+          "position": [
+            0.17,
+            0.035,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9396926207859084,
+            0.0,
+            -0.0,
+            -0.3420201433256687
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        }
+      ],
+      "initial_states_match_v3": true,
+      "configuration_matches_v3": true,
+      "sha256": {
+        "graspgen_pair_sort.json": "0779f98f98fc5324f819a621a10822506ec8366322f52d55da222c5f014df745",
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "pair_final_truth.json": "5e27f10bca649ebfaa2b9a1120524dfca9e45f6ce68b70f17a653ff9fd5cfe61",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "run_status.json": "5fe74bae3ae85df88eefb349cc2110b59742d13de2cdd037bac9916c09b50921"
+      },
+      "pair_reports": [
+        {
+          "round": 1,
+          "sha256": {
+            "graspgen_pair_check.json": "4ac810c46a56506a738512a575c9b57e81551db3f40cb1260cea8d95ed544bf7"
+          },
+          "success": true,
+          "last_phase": "verify",
+          "action_wall_s": 121.3454210080672,
+          "transfer_strategy": {
+            "requested": "auto",
+            "selected": "orient-first",
+            "selection": "first feasible deterministic plan; no learned score or duration optimization",
+            "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+          },
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0008",
+              "observed_track": "visual_0062",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00017518103122710071,
+                0.0005427837371826394
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0005",
+              "observed_track": "visual_0060",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00030843615531922497,
+                -6.470680236814186e-05
+              ]
+            }
+          },
+          "unselected_source_references": {
+            "visual_0002": {
+              "position_m": [
+                -0.16997203044593334,
+                0.03501635789871216,
+                0.7874999321499617
+              ],
+              "size_m": [
+                0.12,
+                0.065,
+                0.055
+              ],
+              "axis_yaw_rad": 0.7853981305571245
+            },
+            "visual_0004": {
+              "position_m": [
+                0.1700569987297058,
+                0.03494279179722071,
+                0.782500041567245
+              ],
+              "size_m": [
+                0.1,
+                0.055,
+                0.045
+              ],
+              "axis_yaw_rad": 2.4434610457556785
+            }
+          },
+          "unselected_sources_after_placement": {
+            "visual_0002": {
+              "track_id": "visual_0059",
+              "position_m": [
+                -0.1699720323085785,
+                0.03501640260219574,
+                0.7874998853423072
+              ]
+            },
+            "visual_0004": {
+              "track_id": "visual_0061",
+              "position_m": [
+                0.1700659841299057,
+                0.034938931465148926,
+                0.7824999488998288
+              ]
+            }
+          },
+          "unselected_clearances": {
+            "panda_left": {
+              "carton_axis_gap_m": 0.05716575270926716,
+              "arm_surface_gap_m": 0.019017696230741607
+            },
+            "panda_right": {
+              "carton_axis_gap_m": 0.06163607163699086,
+              "arm_surface_gap_m": 0.03962872873852007
+            }
+          },
+          "pregrasp_identity": {
+            "panda_left": {
+              "original": "visual_0001",
+              "current": "visual_0008"
+            },
+            "panda_right": {
+              "original": "visual_0003",
+              "current": "visual_0005"
+            }
+          },
+          "model_request_count": 6,
+          "model_request_ids": [
+            "d88149beb73948008250cecc0a32180c",
+            "f48eb65c558241f999d10e561a073917",
+            "af819ed6bda74e9fa21749ef9c7f9f8c",
+            "fe5ac2308a3c4e85844d5616eadf4174",
+            "9c4fd26153754356b65d9ab86815742a",
+            "563226ad5123441995c1a0b7c33559c2"
+          ]
+        },
+        {
+          "round": 2,
+          "sha256": {
+            "graspgen_pair_check.json": "8f9c93d3eeb1434a25baa2d508d7298bbb842ac831d00311fe77de66bea9b21c"
+          },
+          "success": true,
+          "last_phase": "verify",
+          "action_wall_s": 123.57989533105865,
+          "transfer_strategy": {
+            "requested": "auto",
+            "selected": "orient-first",
+            "selection": "first feasible deterministic plan; no learned score or duration optimization",
+            "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+          },
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0046",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                1.4913082122813837e-05,
+                0.0014430224895477517
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0045",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0002499490976333729,
+                0.0004990339279175027
+              ]
+            }
+          },
+          "unselected_source_references": {},
+          "unselected_sources_after_placement": {},
+          "pregrasp_identity": {
+            "panda_left": {
+              "original": "visual_0001",
+              "current": "visual_0004"
+            },
+            "panda_right": {
+              "original": "visual_0002",
+              "current": "visual_0003"
+            }
+          },
+          "model_request_count": 18,
+          "model_request_ids": [
+            "3e1d26e334794e71b3193f9fbf8e0282",
+            "c050202515a64ecd956ab6cc4aaf177d",
+            "2bf2fa98b6b045faa63b77b46dd736ee",
+            "790b603591ad4970a41e29007401b959",
+            "ae3fc80d830c4dfa9b1d7aebafecdc88",
+            "a85384f1d77b4a28affab2d3988b3f64",
+            "a192cad6971f4d06b347ab2c50300857",
+            "24febd0d55604d7198a2fb0946c82f04",
+            "252a86f073c74cf185f65047e6e7132a",
+            "07c4c818b84645ebab48980f040d72f1",
+            "ebb42c6b4b82423991cd257efc0bad62",
+            "e1bc9a1276b64adda248fb6c0662be06",
+            "1a6cb56bb73340cd9295d7c69103ce10",
+            "fedf1d05116d45c1be4721f0cb770b1f",
+            "7140628ebeb447559fab66376a8cfb01",
+            "7625e6d15a90482a82341534cf05a1d2",
+            "3084632425ce4dbf980c4324769b4dcf",
+            "1d4c237a7897465091c1c961a5d5fc72"
+          ]
+        }
+      ],
+      "offline_final_truth": {
+        "scope": "offline_final_centers_at_actor_exit",
+        "states": [
+          {
+            "name": "box_00",
+            "position": [
+              0.9539279937744141,
+              -0.3993784785270691,
+              0.7824999690055847
+            ],
+            "orientation_wxyz": [
+              0.9999997019767761,
+              5.243459781922866e-07,
+              4.26360975325224e-06,
+              0.0008929647738113999
+            ],
+            "linear_velocity": [
+              0.119277223944664,
+              1.800290738174226e-05,
+              0.0012788577005267143
+            ],
+            "angular_velocity": [
+              -0.006806220859289169,
+              -0.005445809103548527,
+              -2.5729332264745608e-05
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          },
+          {
+            "name": "box_01",
+            "position": [
+              1.3543460369110107,
+              -0.3998500108718872,
+              0.7849999666213989
+            ],
+            "orientation_wxyz": [
+              0.9999735355377197,
+              -8.858908273623456e-09,
+              -2.377770336181584e-08,
+              -0.007285994943231344
+            ],
+            "linear_velocity": [
+              0.11911694705486298,
+              1.4630172699980903e-06,
+              0.0016023756470531225
+            ],
+            "angular_velocity": [
+              -1.1725416698027402e-05,
+              1.5434105080203153e-05,
+              0.001456908299587667
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "mass_kg": 0.09683366733466933,
+            "variant": "small_medium"
+          },
+          {
+            "name": "box_02",
+            "position": [
+              0.15238265693187714,
+              -0.3988567590713501,
+              0.7875000238418579
+            ],
+            "orientation_wxyz": [
+              1.0,
+              2.7128674418008814e-08,
+              -5.9994853529588e-08,
+              -0.0004092288436368108
+            ],
+            "linear_velocity": [
+              0.1191185712814331,
+              2.1058909283055982e-07,
+              0.0015982077457010746
+            ],
+            "angular_velocity": [
+              -1.945496660482604e-05,
+              9.527285874355584e-05,
+              -1.0050669516203925e-05
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "mass_kg": 0.11527054108216432,
+            "variant": "small_wide"
+          },
+          {
+            "name": "box_03",
+            "position": [
+              0.5522403120994568,
+              -0.39949852228164673,
+              0.7825000286102295
+            ],
+            "orientation_wxyz": [
+              0.9999993443489075,
+              8.905854542717861e-07,
+              -7.370881007773278e-07,
+              -0.0011678667506203055
+            ],
+            "linear_velocity": [
+              0.11923160403966904,
+              1.0005185686168261e-05,
+              0.0013794013066217303
+            ],
+            "angular_velocity": [
+              -0.0031527408864349127,
+              0.00278356671333313,
+              -1.6605148630333133e-05
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          }
+        ]
+      }
+    },
+    {
+      "run": "pair-sort-v4-6",
+      "source_commit": "d40990ed43e227dd781bbf4431c04fd17c0e2a56",
+      "seed": 6,
+      "report": {
+        "success": false,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [],
+        "indexing": [],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              -0.22001970559358597,
+              -0.1500072181224823,
+              0.7824998978644118
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 0.34906531486776293
+          },
+          "visual_0002": {
+            "position_m": [
+              0.21999859809875488,
+              -0.15000304765999317,
+              0.7849998226276355
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 2.7052597469029007
+          },
+          "visual_0003": {
+            "position_m": [
+              -0.1699720025062561,
+              0.035016387701034546,
+              0.7874999051209718
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "axis_yaw_rad": 0.7853990500857642
+          },
+          "visual_0004": {
+            "position_m": [
+              0.17006367444992065,
+              0.03493888024240732,
+              0.7824999688099088
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 2.443435477968608
+          }
+        },
+        "failure_reason": "STATIC_PATH_BLOCKED:visual_0009",
+        "total_wall_s": 88.56607600487769,
+        "conveyor_events": []
+      },
+      "initial_release_states": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22,
+            -0.15,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.984807753012208,
+            0.0,
+            0.0,
+            0.17364817766693033
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        },
+        {
+          "name": "box_01",
+          "position": [
+            0.22,
+            -0.15,
+            0.789
+          ],
+          "orientation_wxyz": [
+            0.9762960071199334,
+            0.0,
+            -0.0,
+            -0.21643961393810288
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "mass_kg": 0.09683366733466933,
+          "variant": "small_medium"
+        },
+        {
+          "name": "box_02",
+          "position": [
+            -0.17,
+            0.035,
+            0.7915
+          ],
+          "orientation_wxyz": [
+            0.9238795325112867,
+            0.0,
+            0.0,
+            0.3826834323650898
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "mass_kg": 0.11527054108216432,
+          "variant": "small_wide"
+        },
+        {
+          "name": "box_03",
+          "position": [
+            0.17,
+            0.035,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9396926207859084,
+            0.0,
+            -0.0,
+            -0.3420201433256687
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        }
+      ],
+      "initial_states_match_v3": true,
+      "configuration_matches_v3": true,
+      "sha256": {
+        "graspgen_pair_sort.json": "068c6302ba554a0ccf4754e67b3c55c30f0a5bcb8927b641bdc58d991eaa2e34",
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "pair_final_truth.json": "c19968ea0ca4cba67198a87d7cf0b6b9d18d31648699258a28cb1e0965252d91",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "run_status.json": "c9bf4215436552a6895c9bad27816a65e0a99305a14e446bc7e25b714e24fb9f"
+      },
+      "pair_reports": [
+        {
+          "round": 1,
+          "sha256": {
+            "graspgen_pair_check.json": "5393d9589d9afe56ae77ef5e6a3f9183c95e8345e1f3060b68d7673a43c9dbcf"
+          },
+          "success": false,
+          "failure_reason": "STATIC_PATH_BLOCKED:visual_0009",
+          "last_phase": "approach",
+          "action_wall_s": 10.491219719871879,
+          "unselected_source_references": {
+            "visual_0002": {
+              "position_m": [
+                -0.16997203044593334,
+                0.03501635789871216,
+                0.7874999321499617
+              ],
+              "size_m": [
+                0.12,
+                0.065,
+                0.055
+              ],
+              "axis_yaw_rad": 0.7853981305571245
+            },
+            "visual_0004": {
+              "position_m": [
+                0.1700569987297058,
+                0.03494279179722071,
+                0.782500041567245
+              ],
+              "size_m": [
+                0.1,
+                0.055,
+                0.045
+              ],
+              "axis_yaw_rad": 2.4434610457556785
+            }
+          },
+          "path_failure": {
+            "arm": "panda_right",
+            "details": {
+              "rejection": "STATIC_PATH_BLOCKED:visual_0009",
+              "arm": "panda_right",
+              "other_arm": "panda_left",
+              "clearance_m": 0.00018406255995504633,
+              "candidate_joint_positions_rad": [
+                0.18081307930798743,
+                0.5157797416747422,
+                -0.4254102330270139,
+                -2.466873248996114,
+                1.1542395006478687,
+                2.732806161911644,
+                1.4857361902220878
+              ],
+              "other_arm_joint_positions_rad": [
+                -0.164781391620636,
+                -0.05240488424897194,
+                0.5023346543312073,
+                -2.6444032192230225,
+                0.0704406201839447,
+                2.5937440395355225,
+                2.2830233573913574
+              ],
+              "other_arm_state_source": "encoders",
+              "source": "robot encoder FK, official collision spheres and fixed/visual obstacles"
+            },
+            "robot_pixels_removed": {
+              "right_wrist_camera": 0,
+              "scene_camera": 68,
+              "left_wrist_camera": 0
+            }
+          },
+          "pregrasp_identity": {
+            "panda_left": {
+              "original": "visual_0001",
+              "current": "visual_0007"
+            },
+            "panda_right": {
+              "original": "visual_0003",
+              "current": "visual_0005"
+            }
+          },
+          "rejection_evidence": {
+            "feasible_per_arm": {
+              "panda_left": 4,
+              "panda_right": 4
+            },
+            "distinct_reasons": [
+              "IK_DISCONTINUITY",
+              "ROBOT_UNREACHABLE"
+            ],
+            "distinct_phases": [
+              "TRANSFER"
+            ],
+            "first_slot_assessments": [
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 4,
+                "feasible_by_target": {
+                  "visual_0001": 4
+                },
+                "reasons": {},
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "ROBOT_UNREACHABLE": 2,
+                  "IK_DISCONTINUITY": 2
+                },
+                "phases": {
+                  "TRANSFER": 4
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.0,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 4,
+                "feasible_by_target": {
+                  "visual_0001": 4
+                },
+                "reasons": {},
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.0,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 4,
+                "feasible_by_target": {
+                  "visual_0003": 4
+                },
+                "reasons": {},
+                "phases": {}
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "arm": "panda_left",
+                "feasible": 0,
+                "feasible_by_target": {},
+                "reasons": {
+                  "ROBOT_UNREACHABLE": 3,
+                  "IK_DISCONTINUITY": 1
+                },
+                "phases": {
+                  "TRANSFER": 4
+                }
+              },
+              {
+                "attempt": 1,
+                "slot_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "arm": "panda_right",
+                "feasible": 4,
+                "feasible_by_target": {
+                  "visual_0003": 4
+                },
+                "reasons": {},
+                "phases": {}
+              }
+            ]
+          },
+          "model_request_count": 6,
+          "model_request_ids": [
+            "a606521a62454523b634fb2a99eec7e8",
+            "47c3a5dda4374c83aa2e592994305e62",
+            "3b5ae6cbab4a405ab49b5699c3c9438d",
+            "b5b3b65b64bb428dbb0b5e9be4e8b5f0",
+            "a768728be8994321bff8debf6d1a5e4b",
+            "57927e0f1e144e908cfb16390b6650db"
+          ]
+        }
+      ],
+      "offline_final_truth": {
+        "scope": "offline_final_centers_at_actor_exit",
+        "states": [
+          {
+            "name": "box_00",
+            "position": [
+              -0.2199999988079071,
+              -0.15000002086162567,
+              0.7824999094009399
+            ],
+            "orientation_wxyz": [
+              0.9848077297210693,
+              4.958804424859409e-07,
+              -9.297564673715897e-08,
+              0.17364823818206787
+            ],
+            "linear_velocity": [
+              1.9787154087680392e-05,
+              6.029392534401268e-05,
+              0.0015957299619913101
+            ],
+            "angular_velocity": [
+              0.0003559421165846288,
+              0.0004778028232976794,
+              2.6824236556421965e-05
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          },
+          {
+            "name": "box_01",
+            "position": [
+              0.2200000286102295,
+              -0.15000000596046448,
+              0.7849998474121094
+            ],
+            "orientation_wxyz": [
+              0.9762960076332092,
+              -2.502118547909049e-07,
+              9.256520172584715e-08,
+              -0.21643967926502228
+            ],
+            "linear_velocity": [
+              -1.3933269656263292e-05,
+              -3.900672891177237e-05,
+              0.0015960951568558812
+            ],
+            "angular_velocity": [
+              0.0007482138462364674,
+              -0.0003921079041901976,
+              -1.573637746332679e-05
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "mass_kg": 0.09683366733466933,
+            "variant": "small_medium"
+          },
+          {
+            "name": "box_02",
+            "position": [
+              -0.16999998688697815,
+              0.0350000262260437,
+              0.7874999046325684
+            ],
+            "orientation_wxyz": [
+              0.9238795638084412,
+              -3.181019962994469e-07,
+              -1.321537155263286e-07,
+              0.38268351554870605
+            ],
+            "linear_velocity": [
+              3.9614347770111635e-05,
+              -2.2370188162312843e-05,
+              0.001592265791259706
+            ],
+            "angular_velocity": [
+              7.741661102045327e-05,
+              0.00024067654157988727,
+              3.130016557406634e-05
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "mass_kg": 0.11527054108216432,
+            "variant": "small_wide"
+          },
+          {
+            "name": "box_03",
+            "position": [
+              0.16999998688697815,
+              0.03500000387430191,
+              0.7824999094009399
+            ],
+            "orientation_wxyz": [
+              0.9396925568580627,
+              5.5941807630688345e-08,
+              -8.625542591289559e-08,
+              -0.34202027320861816
+            ],
+            "linear_velocity": [
+              3.628573540481739e-05,
+              -3.366997043485753e-05,
+              0.001595739391632378
+            ],
+            "angular_velocity": [
+              6.438523269025609e-05,
+              9.893716924125329e-05,
+              -0.00017517246305942535
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          }
+        ]
+      }
+    },
+    {
+      "run": "pair-sort-v4b-6",
+      "source_commit": "d40990ed43e227dd781bbf4431c04fd17c0e2a56",
+      "seed": 6,
+      "report": {
+        "success": true,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [
+          {
+            "round": 1,
+            "success": true,
+            "reserved_source_keys": [
+              "visual_0001",
+              "visual_0002"
+            ],
+            "wall_s": 190.40955315879546,
+            "action_wall_s": 118.47698933305219,
+            "placements": {
+              "panda_left": {
+                "initial_track": "visual_0001",
+                "grasp_track": "visual_0008",
+                "observed_track": "visual_0057",
+                "goal_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  0.00022919178009034313,
+                  0.0011447906494140847
+                ]
+              },
+              "panda_right": {
+                "initial_track": "visual_0003",
+                "grasp_track": "visual_0005",
+                "observed_track": "visual_0058",
+                "goal_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  -0.00021938681602479138,
+                  0.00019835829734804467
+                ]
+              }
+            },
+            "transfer_strategy": {
+              "requested": "auto",
+              "selected": "orient-first",
+              "selection": "first feasible deterministic plan; no learned score or duration optimization",
+              "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+            },
+            "model_request_count": 6
+          },
+          {
+            "round": 2,
+            "success": true,
+            "reserved_source_keys": [
+              "visual_0003",
+              "visual_0004"
+            ],
+            "wall_s": 177.85687774582766,
+            "action_wall_s": 133.8654631942045,
+            "placements": {
+              "panda_left": {
+                "initial_track": "visual_0001",
+                "grasp_track": "visual_0003",
+                "observed_track": "visual_0043",
+                "goal_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  0.00011594295501710095,
+                  0.0014058887958526833
+                ]
+              },
+              "panda_right": {
+                "initial_track": "visual_0002",
+                "grasp_track": "visual_0004",
+                "observed_track": "visual_0042",
+                "goal_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  0.0003048211336135753,
+                  0.0017569899559021218
+                ]
+              }
+            },
+            "transfer_strategy": {
+              "requested": "auto",
+              "selected": "orient-first",
+              "selection": "first feasible deterministic plan; no learned score or duration optimization",
+              "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+            },
+            "model_request_count": 6
+          }
+        ],
+        "indexing": [
+          {
+            "round": 1,
+            "success": true,
+            "wall_s": 34.61103131202981,
+            "elapsed_sim_s": 5.008333333333372,
+            "stopped_slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 43.558333333331504
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 43.558333333331504
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 43.558333333331504
+              }
+            ],
+            "check_count": 26,
+            "all_recorded_arm_interlocks_clear": true,
+            "first_check": {
+              "time_s": 37.94999999999849,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0057"
+                  ],
+                  "observation_time_s": 37.94999999999849
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 37.94999999999849
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0058"
+                  ],
+                  "observation_time_s": 37.94999999999849
+                }
+              ]
+            },
+            "last_check": {
+              "time_s": 42.949999999998205,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 42.949999999998205
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 42.949999999998205
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 42.949999999998205
+                }
+              ]
+            }
+          },
+          {
+            "round": 2,
+            "success": true,
+            "wall_s": 25.833358961855993,
+            "elapsed_sim_s": 5.008333333333372,
+            "stopped_slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 101.55000000002688
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 101.55000000002688
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 101.55000000002688
+              }
+            ],
+            "check_count": 26,
+            "all_recorded_arm_interlocks_clear": true,
+            "first_check": {
+              "time_s": 95.94166666668909,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0043"
+                  ],
+                  "observation_time_s": 95.94166666668909
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 95.94166666668909
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": false,
+                  "reason": "OBSERVED_SLOT_OCCUPIED",
+                  "observed_objects": [
+                    "visual_0042"
+                  ],
+                  "observation_time_s": 95.94166666668909
+                }
+              ]
+            },
+            "last_check": {
+              "time_s": 100.94166666669307,
+              "arms_clear": true,
+              "slot_views": [
+                {
+                  "xy": [
+                    -0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 100.94166666669307
+                },
+                {
+                  "xy": [
+                    0.0,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 100.94166666669307
+                },
+                {
+                  "xy": [
+                    0.2,
+                    -0.4
+                  ],
+                  "free": true,
+                  "reason": null,
+                  "observed_objects": [],
+                  "observation_time_s": 100.94166666669307
+                }
+              ]
+            }
+          }
+        ],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              -0.22001970559358597,
+              -0.1500072181224823,
+              0.7824998978644118
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 0.34906531486776293
+          },
+          "visual_0002": {
+            "position_m": [
+              0.21999859809875488,
+              -0.15000304765999317,
+              0.7849998226276355
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 2.7052597469029007
+          },
+          "visual_0003": {
+            "position_m": [
+              -0.1699720025062561,
+              0.035016387701034546,
+              0.7874999051209718
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "axis_yaw_rad": 0.7853990500857642
+          },
+          "visual_0004": {
+            "position_m": [
+              0.17006367444992065,
+              0.03493888024240732,
+              0.7824999688099088
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 2.443435477968608
+          }
+        },
+        "verified_placements": 4,
+        "completed_pairs": 2,
+        "visually_cleared_batches": 2,
+        "total_wall_s": 442.57025585882366,
+        "conveyor_events": [
+          {
+            "event": "index_started",
+            "visual_placements": [
+              "round_1/visual_0057",
+              "round_1/visual_0058"
+            ]
+          },
+          {
+            "event": "visually_cleared",
+            "time_s": 42.949999999998205,
+            "elapsed_s": 5.008333333333372,
+            "commanded_distance_m": 0.8013333333333396,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 42.949999999998205
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 42.949999999998205
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 42.949999999998205
+              }
+            ]
+          },
+          {
+            "event": "index_started",
+            "visual_placements": [
+              "round_2/visual_0043",
+              "round_2/visual_0042"
+            ]
+          },
+          {
+            "event": "visually_cleared",
+            "time_s": 100.94166666669307,
+            "elapsed_s": 5.008333333333372,
+            "commanded_distance_m": 0.8013333333333396,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 100.94166666669307
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 100.94166666669307
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 100.94166666669307
+              }
+            ]
+          }
+        ]
+      },
+      "initial_release_states": [
+        {
+          "name": "box_00",
+          "position": [
+            -0.22,
+            -0.15,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.984807753012208,
+            0.0,
+            0.0,
+            0.17364817766693033
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        },
+        {
+          "name": "box_01",
+          "position": [
+            0.22,
+            -0.15,
+            0.789
+          ],
+          "orientation_wxyz": [
+            0.9762960071199334,
+            0.0,
+            -0.0,
+            -0.21643961393810288
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.11,
+            0.06,
+            0.05
+          ],
+          "mass_kg": 0.09683366733466933,
+          "variant": "small_medium"
+        },
+        {
+          "name": "box_02",
+          "position": [
+            -0.17,
+            0.035,
+            0.7915
+          ],
+          "orientation_wxyz": [
+            0.9238795325112867,
+            0.0,
+            0.0,
+            0.3826834323650898
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.12,
+            0.065,
+            0.055
+          ],
+          "mass_kg": 0.11527054108216432,
+          "variant": "small_wide"
+        },
+        {
+          "name": "box_03",
+          "position": [
+            0.17,
+            0.035,
+            0.7865
+          ],
+          "orientation_wxyz": [
+            0.9396926207859084,
+            0.0,
+            -0.0,
+            -0.3420201433256687
+          ],
+          "linear_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "angular_velocity": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mass_kg": 0.08,
+          "variant": "small_reference"
+        }
+      ],
+      "initial_states_match_v3": true,
+      "configuration_matches_v3": true,
+      "sha256": {
+        "graspgen_pair_sort.json": "753513e2b987cb5729bbee561dbdb864f607b280f9a8580227715654de07caad",
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "pair_final_truth.json": "e2d968a1d15b46ec2fab7d7b35052ed6d13398a71ef4d2ad2dfd6a4e48f8fe97",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "run_status.json": "7c46bd3ac80b7e358d052654bda8273b67945406e43a30c97a92965b5ae3e23b"
+      },
+      "pair_reports": [
+        {
+          "round": 1,
+          "sha256": {
+            "graspgen_pair_check.json": "c363692e077468642a4010f8c149530181b34ace0a28d6911ef75264d54fd292"
+          },
+          "success": true,
+          "last_phase": "verify",
+          "action_wall_s": 118.47698933305219,
+          "transfer_strategy": {
+            "requested": "auto",
+            "selected": "orient-first",
+            "selection": "first feasible deterministic plan; no learned score or duration optimization",
+            "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+          },
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0008",
+              "observed_track": "visual_0057",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00022919178009034313,
+                0.0011447906494140847
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0005",
+              "observed_track": "visual_0058",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00021938681602479138,
+                0.00019835829734804467
+              ]
+            }
+          },
+          "unselected_source_references": {
+            "visual_0002": {
+              "position_m": [
+                -0.16997203044593334,
+                0.03501635789871216,
+                0.7874999321499617
+              ],
+              "size_m": [
+                0.12,
+                0.065,
+                0.055
+              ],
+              "axis_yaw_rad": 0.7853981305571245
+            },
+            "visual_0004": {
+              "position_m": [
+                0.1700569987297058,
+                0.03494279179722071,
+                0.782500041567245
+              ],
+              "size_m": [
+                0.1,
+                0.055,
+                0.045
+              ],
+              "axis_yaw_rad": 2.4434610457556785
+            }
+          },
+          "unselected_sources_after_placement": {
+            "visual_0002": {
+              "track_id": "visual_0055",
+              "position_m": [
+                -0.16997197084128857,
+                0.035016399808228016,
+                0.7874999517683139
+              ]
+            },
+            "visual_0004": {
+              "track_id": "visual_0056",
+              "position_m": [
+                0.1700720340013504,
+                0.03493769560009241,
+                0.7824999942607653
+              ]
+            }
+          },
+          "unselected_clearances": {
+            "panda_left": {
+              "carton_axis_gap_m": 0.059745088076114755,
+              "arm_surface_gap_m": 0.01721310615921865
+            },
+            "panda_right": {
+              "carton_axis_gap_m": 0.062219046003034184,
+              "arm_surface_gap_m": 0.03990721211941276
+            }
+          },
+          "pregrasp_identity": {
+            "panda_left": {
+              "original": "visual_0001",
+              "current": "visual_0008"
+            },
+            "panda_right": {
+              "original": "visual_0003",
+              "current": "visual_0005"
+            }
+          },
+          "model_request_count": 6,
+          "model_request_ids": [
+            "75b455bd3422456aa4cc2bf08b796bd2",
+            "fd69bef9d05740e7a011809ae5263b3c",
+            "81d2028973b9486395de646fb6661e55",
+            "92fe3b02aaf745d39438499e7a1d2625",
+            "b750580f86354286a740fb815300ded7",
+            "01731fe46e8945798aeed50538f1a734"
+          ]
+        },
+        {
+          "round": 2,
+          "sha256": {
+            "graspgen_pair_check.json": "d536bd9f66bf8fa41672e4c371c18b76d48b3a6e3c376fcc2d56a355a17b15fc"
+          },
+          "success": true,
+          "last_phase": "verify",
+          "action_wall_s": 133.8654631942045,
+          "transfer_strategy": {
+            "requested": "auto",
+            "selected": "orient-first",
+            "selection": "first feasible deterministic plan; no learned score or duration optimization",
+            "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+          },
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0043",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00011594295501710095,
+                0.0014058887958526833
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0042",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0003048211336135753,
+                0.0017569899559021218
+              ]
+            }
+          },
+          "unselected_source_references": {},
+          "unselected_sources_after_placement": {},
+          "pregrasp_identity": {
+            "panda_left": {
+              "original": "visual_0001",
+              "current": "visual_0003"
+            },
+            "panda_right": {
+              "original": "visual_0002",
+              "current": "visual_0004"
+            }
+          },
+          "model_request_count": 6,
+          "model_request_ids": [
+            "50a4e7dd551f4734b322018a0e8566d0",
+            "0524bbadaa90420caad865c4cf02ffbe",
+            "8a6d02e374d44cfea882a09ced39685d",
+            "1ed71ed1d3224f4f991c12bab4daf635",
+            "c274c2525d8d44258beea0b32aec6732",
+            "4cb47150b0fa461d9d4e3c8ed93f5e76"
+          ]
+        }
+      ],
+      "offline_final_truth": {
+        "scope": "offline_final_centers_at_actor_exit",
+        "states": [
+          {
+            "name": "box_00",
+            "position": [
+              1.473616123199463,
+              -0.3992406129837036,
+              0.22395043075084686
+            ],
+            "orientation_wxyz": [
+              -0.46543312072753906,
+              -0.000557870720513165,
+              0.8850829601287842,
+              -0.00024872564245015383
+            ],
+            "linear_velocity": [
+              -0.08070477098226547,
+              0.003434187965467572,
+              -0.014858117327094078
+            ],
+            "angular_velocity": [
+              0.03214525058865547,
+              -1.4806026220321655,
+              -0.014181584119796753
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          },
+          {
+            "name": "box_01",
+            "position": [
+              1.4790618419647217,
+              -0.4002966582775116,
+              0.14499977231025696
+            ],
+            "orientation_wxyz": [
+              -2.8301797101448756e-06,
+              0.002111325738951564,
+              0.9999978542327881,
+              1.5749814338050783e-05
+            ],
+            "linear_velocity": [
+              -0.00025564475799910724,
+              0.0013077593175694346,
+              0.0007722178124822676
+            ],
+            "angular_velocity": [
+              0.011326332576572895,
+              -0.0004278171109035611,
+              -0.0013027278473600745
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "mass_kg": 0.09683366733466933,
+            "variant": "small_medium"
+          },
+          {
+            "name": "box_02",
+            "position": [
+              0.601436197757721,
+              -0.399026095867157,
+              0.7874999642372131
+            ],
+            "orientation_wxyz": [
+              0.9999999403953552,
+              6.314835321319379e-09,
+              -1.2362126877718538e-09,
+              0.0005644447519443929
+            ],
+            "linear_velocity": [
+              -4.717239932006123e-08,
+              -3.253153124660457e-07,
+              0.0016028452664613724
+            ],
+            "angular_velocity": [
+              2.9408221280391444e-07,
+              -1.2434635543456807e-08,
+              -3.3901821439030755e-07
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "mass_kg": 0.11527054108216432,
+            "variant": "small_wide"
+          },
+          {
+            "name": "box_03",
+            "position": [
+              1.0017173290252686,
+              -0.3982307016849518,
+              0.7824999690055847
+            ],
+            "orientation_wxyz": [
+              0.9999989867210388,
+              3.128591075096665e-08,
+              -9.710637627335927e-09,
+              0.0014080493710935116
+            ],
+            "linear_velocity": [
+              -7.431137305502489e-08,
+              -6.633429734392848e-07,
+              0.0016016061417758465
+            ],
+            "angular_velocity": [
+              -2.8425061827874742e-05,
+              4.780378731084056e-06,
+              -1.7881649228002061e-06
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "mass_kg": 0.08,
+            "variant": "small_reference"
+          }
+        ]
+      }
+    }
+  ],
+  "model_files_sha256": {
+    "graspgen_franka_panda_gen.pth": "0597583b89b322d42ceb4e596967d6ed68d1b56cba4039895909ccd5bdc66eff",
+    "graspgen_franka_panda_dis.pth": "e47d703c63b54c2d11fbc1effd43898f251b4147250888541e3b16e9c0d19e1c",
+    "graspgen_franka_panda.yml": "3b666d28ffb91001ddb6ba24a2e0c11458478a986b808b493cf6fa9a987c2abd"
+  },
+  "archive": {
+    "filename": "fresh-sort-20261115-full.tgz",
+    "sha256": "e004a32c35ff661a434ca42685a326d4dbc3a2dff4f189836dea3658073e0678",
+    "bytes": 27749202,
+    "files": 236
+  },
+  "local_archive_verification": {
+    "archive": "fresh-sort-20261115-full.tgz",
+    "sha256": "e004a32c35ff661a434ca42685a326d4dbc3a2dff4f189836dea3658073e0678",
+    "manifest_files_verified": 235,
+    "success": true
+  },
+  "historical_first_attempt_result": "1/3 at 9994698; unchanged",
+  "excluded_scope": [
+    "Dedicated physical automatic-fallback trigger scene",
+    "General random clutter success rate",
+    "Real robot deployment",
+    "Guaranteed delivery of all four cartons to outfeed bin"
+  ],
+  "checks": {
+    "date": "2026-11-15",
+    "source_commit": "d40990ed43e227dd781bbf4431c04fd17c0e2a56",
+    "unit_tests": 635,
+    "unit_test_wall_s": 24.411,
+    "command": "D:/isaacsim/python.bat -m unittest discover -s tests -q",
+    "entry_command": "D:/isaacsim/python.bat -m workstation --mode graspgen-pair-sort --pair-transfer-policy auto --validate-only",
+    "result": "passed",
+    "diff_check": "passed"
+  },
+  "truth_boundary": "Actor uses three RGB-D views and synchronized encoder FK; final truth is recorded only after actor exit. Conveyor distance is a command integral, not encoder feedback. Four-carton placement residuals are visual, since final truth is after conveyor movement."
+}
