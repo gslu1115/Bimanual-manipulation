@@ -68,7 +68,10 @@ class PairTaskTests(unittest.TestCase):
             extent=np.abs([[np.cos(yaw),-np.sin(yaw)],[np.sin(yaw),np.cos(yaw)]])@np.asarray(box.size_m[:2])/2
             self.assertTrue(np.all(np.abs(np.asarray(box.position[:2])-tray)+extent+.025<half-.006))
         for i,a in enumerate(boxes):
-            for b in boxes[i+1:]:self.assertGreater(np.linalg.norm(np.subtract(a.position[:2],b.position[:2])),.15)
+            for b in boxes[i+1:]:
+                gap=np.linalg.norm(np.subtract(a.position[:2],b.position[:2]))
+                gap-=sum(np.linalg.norm(x.size_m[:2])/2 for x in (a,b))+.040+.010
+                self.assertGreater(gap,.008)
 
     def test_empty_arm_interlock_requires_measured_open_home_and_clear_geometry(self):
         from workstation.diagnostics.graspgen_pair_sort import empty_arms_clear

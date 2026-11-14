@@ -13,7 +13,7 @@ def initial_cartons(config, fixture):
     if fixture == 'upright-pair':
         entries=[('upright',(-.20,-.06),20),('upright',(.20,-.06),-25)]
     elif fixture=='upright-four':
-        entries=[('upright',(-.22,-.13),20),('upright',(.22,-.13),-25),
+        entries=[('upright',(-.22,-.15),20),('upright',(.22,-.15),-25),
                  ('upright',(-.17,.035),45),('upright',(.17,.035),-40)]
     elif fixture == 'separated':
         entries=[('upright',(-.2,-.06),20),('side',(0.,-.06),-25),('inverted',(.2,-.06),45)]
