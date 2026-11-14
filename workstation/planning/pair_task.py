@@ -1,4 +1,5 @@
 """Visual pair selection and conveyor interlock; no simulator object state."""
+import math
 import numpy as np
 from workstation.perception.scene_estimate import pose_is_observed
 
@@ -9,6 +10,8 @@ def match_stationary_sources(scene,references):
         candidates=[o for o in scene.objects if not o.failures and o.posture=='UPRIGHT'
             and abs(o.time_s-scene.observation_time_s)<=1e-6
             and pose_is_observed(o,scene) and np.linalg.norm(np.asarray(o.position_m)-ref['position_m'])<=.005
+            and ('axis_yaw_rad' not in ref or
+                 abs((o.axis_yaw_rad-ref['axis_yaw_rad']+math.pi/2)%math.pi-math.pi/2)<=math.radians(3))
             and np.allclose(o.size_m,ref['size_m'],atol=.002,rtol=0)]
         if len(candidates)==1:matched[key]=candidates[0]
     if len({o.track_id for o in matched.values()})!=len(matched):return {}
@@ -36,7 +39,8 @@ class VisualConveyorIndex:
         self.elapsed=0.;self.distance=0.;self.stable=None;self.batch=[];self.last_observation=None
 
     def start(self,verified_ids,arms_clear):
-        if self.state!='WAITING' or not arms_clear or len(set(verified_ids))!=2:
+        if (self.state!='WAITING' or not arms_clear or len(verified_ids)!=2 or len(set(verified_ids))!=2
+                or self.delivered.intersection(verified_ids)):
             raise RuntimeError('VISUAL_INDEX_START_UNSUPPORTED')
         self.batch=list(verified_ids);self.state='INDEXING';self.elapsed=0.;self.distance=0.
         self.stable=None;self.last_observation=None

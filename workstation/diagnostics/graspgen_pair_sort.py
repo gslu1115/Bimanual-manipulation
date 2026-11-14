@@ -58,6 +58,9 @@ def run(env,args):
                 arms_clear=empty_arms_clear(robot,packet,env.c)
                 checks.append(dict(time_s=packet.observation_time_s,arms_clear=arms_clear,slot_views=views))
                 env.conveyor.observe(packet.observation_time_s,views,arms_clear)
+        except Exception:
+            env.conveyor.state='FAULT'
+            raise
         finally:
             env.step(monitor_conveyor=False,render=False,conveyor_velocity_m_s=0.)
             env.safe_to_index=False
@@ -74,7 +77,7 @@ def run(env,args):
         observe();robot.hold(.2);packet,scene=observe()
         originals=source_cartons(scene,env.c['table'])
         if len(originals)!=4:raise RuntimeError('PAIR_TASK_REQUIRES_FOUR_OBSERVED_SOURCES')
-        remaining={o.track_id:dict(position_m=o.position_m,size_m=o.size_m) for o in originals}
+        remaining={o.track_id:dict(position_m=o.position_m,size_m=o.size_m,axis_yaw_rad=o.axis_yaw_rad) for o in originals}
         report['initial_visual_sources']=remaining.copy()
         pair_args=copy(args);pair_args.mode='graspgen-pair-place'
         for round_index in (1,2):

@@ -51,6 +51,8 @@ class PairTaskTests(unittest.TestCase):
         self.assertEqual(match_stationary_sources(scene,refs)['saved'].track_id,'a')
         objects[0].time_s=0.
         self.assertEqual(match_stationary_sources(scene,refs),{})
+        objects[0].time_s=1.;objects[0].axis_yaw_rad=.1;refs['saved']['axis_yaw_rad']=0.
+        self.assertEqual(match_stationary_sources(scene,refs),{})
 
     def test_four_boxes_exist_in_initial_fixture_and_cli_preserves_three_cameras(self):
         from workstation.app import build_parser,load_config
@@ -60,6 +62,11 @@ class PairTaskTests(unittest.TestCase):
         self.assertEqual(len(boxes),4);self.assertEqual(len({b.name for b in boxes}),4)
         self.assertEqual(len(c['cameras']),3)
         self.assertEqual(c['boxes']['count'],4)
+        tray=np.asarray(c['upstream']['center_xy']);half=np.asarray(c['upstream']['tray_size_xy'])/2
+        for box in boxes:
+            yaw=2*np.arctan2(box.orientation_wxyz[3],box.orientation_wxyz[0])
+            extent=np.abs([[np.cos(yaw),-np.sin(yaw)],[np.sin(yaw),np.cos(yaw)]])@np.asarray(box.size_m[:2])/2
+            self.assertTrue(np.all(np.abs(np.asarray(box.position[:2])-tray)+extent+.025<half-.006))
         for i,a in enumerate(boxes):
             for b in boxes[i+1:]:self.assertGreater(np.linalg.norm(np.subtract(a.position[:2],b.position[:2])),.15)
 
