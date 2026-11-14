@@ -42,7 +42,9 @@ linux-based 持续开发，环境、实验和开发检查点分别用固定附�
 
 新实验 ID 示例 dev-side-graspgen-seed006-attempt01；开发回归标 dev，冻结验收标 eval。保留完整源码 SHA、环境标签/镜像摘要、后端、初态/seed、配置/权重哈希、次数、所有成败和输出目录。条件改变另立记录，不覆盖旧证据或混用分母；历史 JSON 保持原样。
 
-[CPU tests](.github/workflows/cpu-tests.yml) 在 linux-based 的 push 与面向它的 PR 上执行 Ubuntu 24.04 / Python 3.12、3.13，分步检查环境路径/隔离、失败生命周期、相机/CLI 合同、无 SDK 配置校验及完整 CPU 回归。Actions 固定官方 SHA、权限只读，不访问服务器凭据；只安装固定 NumPy、SciPy、Pillow 和无界面 OpenCV，不安装 Isaac/CUDA/Torch/权重。
+[CPU tests](.github/workflows/cpu-tests.yml) 在推送到 `linux-based` 或向该分支提交 PR 时运行一个 Ubuntu 24.04 / Python 3.12 任务。日常检查覆盖场景配置、运行路径、失败处理、相机与观测数据、跨视角纸盒识别、闭爪前复核、持盒避碰、单盒中心落位、GraspGen 单臂与双臂控制，以及传送带格位预留。
+
+需要完整 CPU 回归时，在独立环境中运行以下命令。Python 3.12 和 3.13 均可单独验证。
 
 ~~~bash
 python -m venv .venv-cpu
