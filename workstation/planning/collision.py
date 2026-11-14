@@ -71,7 +71,7 @@ def scene_obstacles(scene,target_id,extra_margin=.004):
     return boxes
 
 
-def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002):
+def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,rejection=None):
     """(link_index, centre, radius). Connected link groups excluded from self checks."""
     if not spheres: return None,float('inf')
     links=np.asarray([s[0] for s in spheres]);centres=np.asarray([s[1] for s in spheres],float)
@@ -93,10 +93,20 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002):
     rejected=np.flatnonzero((static < margin).any(axis=1) | (mutual < margin).any(axis=1))
     if len(rejected):
         row=int(rejected[0]);bad=np.flatnonzero(static[row] < margin)
+        if rejection is not None and not len(bad):
+            col=int(np.flatnonzero(mutual[row]<margin)[0])
+            rejection.update(sphere_indices=[row,col],link_indices=[int(links[row]),int(other_spheres[col][0])],
+                             clearance_m=float(mutual[row,col]),required_m=margin)
         return ('STATIC_PATH_BLOCKED:'+obstacles[int(bad[0])].name if len(bad) else 'OTHER_ARM_COLLISION'),minimum
     distance=np.linalg.norm(centres[:,None,:]-centres[None,:,:],axis=2)-radii[:,None]-radii[None,:]
     eligible=np.triu(np.abs(links[:,None]-links[None,:]) > 2,k=1)
     if eligible.any():
         minimum=min(minimum,float(distance[eligible].min()))
-        if np.any(distance[eligible] < margin): return 'SELF_COLLISION',minimum
+        blocked=eligible & (distance<margin)
+        if blocked.any():
+            if rejection is not None:
+                row,col=map(int,np.argwhere(blocked)[0])
+                rejection.update(sphere_indices=[row,col],link_indices=[int(links[row]),int(links[col])],
+                                 clearance_m=float(distance[row,col]),required_m=margin)
+            return 'SELF_COLLISION',minimum
     return None,minimum

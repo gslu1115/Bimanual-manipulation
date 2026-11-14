@@ -43,8 +43,30 @@ class PairTests(unittest.TestCase):
             np.testing.assert_array_equal(original[0],timed[0])
             np.testing.assert_array_equal(original[-1],timed[-1])
         blocked=path[:11]
+        rejections=[]
         with self.assertRaisesRegex(RuntimeError,'NO_CLEAR'):
-            transfer_schedule(robot,[blocked,blocked],lambda l,r:None)
+            transfer_schedule(robot,[blocked,blocked],lambda l,r:None,rejections=rejections)
+        self.assertEqual(len(rejections),7)
+        for row in rejections:
+            self.assertEqual(row['reason'],'OTHER_ARM_COLLISION')
+            self.assertEqual(row['parts'],[
+                dict(arm='panda_left',link_index=0,sphere_index=0),
+                dict(arm='panda_right',link_index=0,sphere_index=0)])
+            self.assertLess(row['clearance_m'],row['required_m'])
+
+    def test_transfer_rejection_identifies_the_payload_and_opposing_link(self):
+        from workstation.diagnostics.graspgen_pair_place import PairClearanceError,transfer_schedule
+        robot=SimpleNamespace(spheres=lambda arm,q:[])
+        one_step=[np.zeros(7),np.zeros(7)]
+        parts=[dict(arm='panda_left',track_id='visual_0001'),
+               dict(arm='panda_right',link_index=8,sphere_index=12)]
+        def guard(left,right):
+            raise PairClearanceError('PAYLOAD_OTHER_ARM_COLLISION',parts,.001,.002)
+        rejected=[]
+        with self.assertRaisesRegex(RuntimeError,'NO_CLEAR'):
+            transfer_schedule(robot,[one_step,one_step],guard,rejections=rejected)
+        self.assertEqual(len(rejected),7)
+        self.assertTrue(all(row['parts']==parts and row['sample_index']==0 for row in rejected))
 
     def test_resampling_uses_distinct_nearby_arms_and_actual_side_points(self):
         from workstation.diagnostics.graspgen_pair import preferred_assignments,balance_visible_surfaces

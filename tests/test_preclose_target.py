@@ -152,6 +152,30 @@ class PreCloseTargetTests(unittest.TestCase):
         self.assertEqual(new.obj.time_s,1.)
         self.assertIs(new.original,self.check)
 
+    def test_expired_pick_reacquires_a_misclassified_box_from_height_and_current_views(self):
+        packet,scene=synthetic_observation(np.eye(3))
+        old=replace(self.reference,time_s=-8.)
+        reference=PreCloseTarget(old,replace(self.reference_scene,observation_time_s=-8.,
+            assembled_time_s=-8.,objects=(old,)),replace(self.priors,
+                carton_size_catalog_m=((.09,.05,.04),tuple(SIZE),(.11,.06,.05))))
+        current=replace(old,track_id='new_box',time_s=1.,position_m=tuple(CENTRE+[.004,0,.0025]),
+            size_m=(.09,.05,.04),mask_refs=tuple(scene.masks),velocity_m_s=None,
+            quality=dict(old.quality,observed_top_z_m=CENTRE[2]+SIZE[2]/2))
+        scene=replace(scene,objects=(current,))
+        self.assertEqual(reference.confirm(packet,scene)['reason'],'PRECLOSE_REFERENCE_EXPIRED')
+        measured=reference.reacquire(packet,scene)
+        self.assertIsNotNone(measured)
+        self.assertEqual(measured.size_m,old.size_m)
+        self.assertEqual(measured.time_s,1.)
+        np.testing.assert_allclose(measured.position_m,CENTRE,atol=.001)
+        self.assertIsNone(measured.velocity_m_s)
+        with_neighbour=replace(scene,objects=(current,replace(current,track_id='another')))
+        self.assertIsNone(reference.reacquire(packet,with_neighbour))
+        smaller_top=replace(current,quality=dict(current.quality,
+            observed_top_z_m=current.quality['observed_top_z_m']-.005))
+        self.assertIsNone(reference.reacquire(packet,replace(scene,objects=(smaller_top,))))
+        self.assertIsNone(reference.reacquire(self.missing_packet(),scene))
+
     def test_fragment_merge_retains_other_objects_and_old_anchor_time(self):
         objects=tuple(replace(self.reference,time_s=1.,track_id=self.reference.track_id if i==0 else 'alias',
             mask_refs=(ref,),cameras=(ref.split('/')[0],),posture='UNKNOWN',

@@ -79,6 +79,46 @@ class PreCloseTarget:
         new.original=original
         return new
 
+    def reacquire(self,packet,scene):
+        """Find a fresh upright measurement near the original pick at pregrasp."""
+        original=getattr(self,'original',self)
+        obj=original.obj
+        near=[other for other in scene.objects if
+              np.linalg.norm(np.asarray(other.position_m)-obj.position_m)<.07]
+        if len(near)!=1:
+            return None
+        current,=near
+        if (current.posture!='UPRIGHT' or current.failures or current.quality.get('packaging_conflict',0) or
+                abs(current.time_s-packet.observation_time_s)>1e-6 or
+                any(other.track_id==obj.track_id and other is not current for other in scene.objects)):
+            return None
+        # Select size using actual top elevation on the calibrated pickup
+        # support. A cropped footprint may fit the next smaller catalogue entry.
+        height=current.quality.get('observed_top_z_m',float('nan'))-self.priors.support_z_m
+        sizes=self.priors.carton_size_catalog_m or (self.priors.carton_size_m,)
+        matching=[size for size in sizes if abs(size[2]-height)<=.002]
+        if len(matching)!=1 or not np.allclose(matching[0],obj.size_m,rtol=0,atol=1e-6):
+            return None
+        measured=fit_cuboid_pose(packet,scene,obj.position_m,original.rotation,obj.size_m,self.priors,
+                                measure_side_interiors=True)
+        if (not measured_cuboid_supported(measured,packet.observation_time_s) or
+                measured['translation_difference_from_hint_m']>.002 or
+                measured['orientation_difference_from_hint_deg']>3. or
+                set(measured['mask_refs'])!=set(current.mask_refs) or
+                len({ref.split('/')[0] for ref in measured['mask_refs']})<2):
+            return None
+        rotation=np.asarray(measured['rotation'])
+        quality=dict(current.quality,geometric_length_m=obj.size_m[0],geometric_width_m=obj.size_m[1],
+                     observed_height_m=obj.size_m[2],independent_cuboid_pose=1.)
+        return replace(current,position_m=tuple(measured['position_m']),size_m=obj.size_m,quality=quality,
+            size_source='catalogue size verified by current top elevation and two-view cuboid fit',
+            axis_yaw_rad=math.atan2(rotation[1,0],rotation[0,0]),visibility='OBSERVED_CUBOID',
+            hypotheses=(PoseHypothesis('UPRIGHT',tuple(quaternion_from_matrix(rotation)),
+                'current packaging and two-view cuboid fit; height agrees with pickup support'),),
+            valid_depth_ratio=min(float(packet.cameras[ref.split('/')[0]].valid_depth[scene.masks[ref]].mean())
+                                  for ref in measured['mask_refs']),
+            measured_cuboid=measured,uncertainty_m=measured['uncertainty_m'],velocity_m_s=None)
+
 
 def preclose_supported(proof,time_s):
     if proof.get('supported') is not True or not proof.get('target_id') or proof.get('grasp_proven') is not False:

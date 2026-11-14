@@ -8,11 +8,19 @@ from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfac
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors, pose_is_observed
 from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres
+from workstation.planning.graspgen_candidates import revalidate_candidate
+from workstation.planning.selection import GraspCandidate
 from workstation.skills.cumotion_pick_place import placement_goal
 from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps, synchronized_knots
 
 
-def transfer_schedule(robot,paths,payload_guard):
+class PairClearanceError(RuntimeError):
+    def __init__(self, reason, parts, clearance, required):
+        super().__init__(reason)
+        self.details=dict(parts=parts,clearance_m=float(clearance),required_m=required)
+
+
+def transfer_schedule(robot,paths,payload_guard,*,rejections=None):
     """Choose a clear timing of the same two verified spatial paths before moving."""
     arms=('panda_left','panda_right')
     for delay,waiting in [(0.,0),(.35,0),(.35,1),(.7,0),(.7,1),(1.,0),(1.,1)]:
@@ -21,15 +29,25 @@ def transfer_schedule(robot,paths,payload_guard):
             for i,path in enumerate(paths):
                 wait=[path[0] if i==waiting else path[-1]]*math.ceil((len(path)-1)*delay)
                 scheduled[i]=wait+list(path) if i==waiting else list(path)+wait
+        detail=dict(delayed_arm=arms[waiting] if delay else None,delay_fraction=delay)
+        rejection={} if rejections is not None else None
         try:
-            for left,right in synchronized_knots(*scheduled,max_step=.015):
+            for index,(left,right) in enumerate(synchronized_knots(*scheduled,max_step=.015)):
                 reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None,
-                                       margin=.008)
+                                       margin=.008,rejection=rejection)
                 if reason:raise RuntimeError(reason)
                 payload_guard(left,right)
-        except RuntimeError:
+        except RuntimeError as error:
+            if rejections is not None:
+                if 'link_indices' in rejection:
+                    owners=arms if str(error)=='OTHER_ARM_COLLISION' else (arms[0],arms[0])
+                    rejection['parts']=[dict(arm=arm,link_index=link,sphere_index=sphere)
+                        for arm,link,sphere in zip(owners,rejection['link_indices'],rejection['sphere_indices'])]
+                rejections.append(dict(detail,reason=str(error),sample_index=index,
+                    joint_positions_rad={arms[0]:left.tolist(),arms[1]:right.tolist()},
+                    **(error.details if isinstance(error,PairClearanceError) else rejection)))
             continue
-        return scheduled,dict(delayed_arm=arms[waiting] if delay else None,delay_fraction=delay)
+        return scheduled,detail
     raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
 
 
@@ -283,20 +301,30 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             centre = pos + rot @ t.offset
             extent = np.abs(rot @ t.relative_rotation) @ (t.size + 2*t.uncertainty_m)
             box = AABB(objects[arm].track_id, centre, extent)
+            payload=dict(arm=arm,track_id=box.name)
             for keepout,_ in partial_keepout.values():
                 payload_gap=float(np.max(np.abs(centre-keepout.centre)-(extent+keepout.size)/2))
-                robot_gap=min(sphere_box_clearance(p,r,keepout) for _,p,r in robot.spheres(arm,q))
+                robot_gap,sphere,link=min((sphere_box_clearance(p,r,keepout),index,link)
+                    for index,(link,p,r) in enumerate(robot.spheres(arm,q)))
                 stats=report.setdefault('parked_clearances',{}).setdefault(arm,{})
                 for label,gap in [('carton_axis_gap_m',payload_gap),('arm_surface_gap_m',robot_gap)]:
                     stats[label]=min(stats.get(label,gap),float(gap))
-                if payload_gap<=.008 or robot_gap<.008:
-                    raise RuntimeError('PARKED_CARTON_CLEARANCE')
-            if any(sphere_box_clearance(c, r, box) < .002 for _, c, r in robot.spheres(other, other_q)):
-                raise RuntimeError('PAYLOAD_OTHER_ARM_COLLISION')
-            boxes.append(box)
-        a,b = boxes
+                if payload_gap<=.008:
+                    raise PairClearanceError('PARKED_CARTON_CLEARANCE', [payload,dict(obstacle=keepout.name)],
+                                             payload_gap,.008)
+                if robot_gap<.008:
+                    raise PairClearanceError('PARKED_CARTON_CLEARANCE',
+                        [dict(arm=arm,link_index=link,sphere_index=sphere),dict(obstacle=keepout.name)],robot_gap,.008)
+            for index,(link,c,r) in enumerate(robot.spheres(other,other_q)):
+                gap=sphere_box_clearance(c,r,box)
+                if gap<.002:
+                    raise PairClearanceError('PAYLOAD_OTHER_ARM_COLLISION',
+                        [payload,dict(arm=other,link_index=link,sphere_index=index)],gap,.002)
+            boxes.append((box,payload))
+        (a,part_a),(b,part_b)=boxes
         if np.all(np.abs(a.centre-b.centre) <= (a.size+b.size)/2+.002):
-            raise RuntimeError('PAYLOAD_PAYLOAD_COLLISION')
+            gap=float(np.max(np.abs(a.centre-b.centre)-(a.size+b.size)/2))
+            raise PairClearanceError('PAYLOAD_PAYLOAD_COLLISION',[part_a,part_b],gap,.002)
 
     def measure_held(arm,packet):
         nonlocal scene
@@ -546,7 +574,6 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 if phase!='approach' or str(exc)!='IK_DISCONTINUITY':raise
                 # Neither arm has started the descent. Check a nearby alternate
                 # from the actual pregrasp FK against the current target.
-                from workstation.planning.graspgen_candidates import revalidate_candidate
                 seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
                 for alt in (alternatives or {}).get(arm,()):
                     if alt.candidate_id==selected[arm]['candidate_id']:continue
@@ -592,7 +619,12 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         # per-step 0.04 rad stop and actual two-arm collision checks stay active.
         transfer=phase in ('transfer','align')
         if transfer:
-            paths,schedule=transfer_schedule(robot,paths,carried_clearance)
+            rejections=report.setdefault(phase+'_schedule_rejections',[])
+            try:
+                paths,schedule=transfer_schedule(robot,paths,carried_clearance,rejections=rejections)
+            except RuntimeError:
+                report[phase+'_rejected_paths_rad']={arm:np.asarray(path).tolist() for arm,path in zip(arms,paths)}
+                raise
             report[phase+'_schedule']=schedule
         both_loaded=held and (carrying is None or set(carrying)==set(arms))
         renew_reference=phase in ('approach','regrasp_pregrasp','regrasp_approach')
@@ -626,6 +658,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     references={a:PreCloseTarget(objects[a],scene,priors) for a in arms}
     report['last_phase']='pregrasp_recheck'
     packet=observe()
+    recovery={}
     for a in arms:
         prior=objects[a]
         matches=[o for o in scene.objects if o.posture=='UPRIGHT'
@@ -641,6 +674,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             references[a]=PreCloseTarget(current,scene,priors)
             objects[a]=current
         else:
+            if packet.observation_time_s-prior.time_s>6.:
+                current=references[a].reacquire(packet,scene)
+                if current is not None:
+                    recovery[a]=current
+                    continue
             proof=confirm_target(a,packet)
             scene=reconcile_preclose_target(estimator,scene,proof)
             # A complete current 6-D fit (including all three translations)
@@ -650,6 +688,45 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 same_face=replace(measured,posture=prior.posture,
                     hypotheses=tuple(h for h in measured.hypotheses if h.label==prior.posture))
                 references[a]=PreCloseTarget(same_face,scene,priors)
+    if recovery:
+        from workstation.diagnostics.vision_check import save_observation
+        robot.hold(.1)
+        packet=observe()
+        seq={name:frame.sequence_id for name,frame in packet.cameras.items() if frame is not None}
+        for a in arms:
+            reference=references[a]
+            if a not in recovery:
+                confirm_target(a,packet)
+                continue
+            current=reference.reacquire(packet,scene)
+            if current is None:
+                save_observation(env.output,'pair_'+a+'_pregrasp_reacquisition',packet,scene)
+                raise RuntimeError('PAIR_PREGRASP_REACQUISITION_LOST:'+a)
+            previous=recovery[a]
+            elapsed=current.time_s-previous.time_s
+            if not 0<elapsed<=.2:
+                raise RuntimeError('PAIR_PRECLOSE_REOBSERVATION_INTERVAL:'+a)
+            velocity=tuple((np.asarray(current.position_m)-previous.position_m)/elapsed)
+            current=replace(current,velocity_m_s=velocity)
+            candidate=GraspCandidate(**selected[a])
+            expected=replace(candidate,target_id=current.track_id)
+            updated=replace(scene,objects=tuple(current if o.track_id==current.track_id else o for o in scene.objects))
+            try:
+                checked=revalidate_candidate(expected,current,updated,seq)
+                renewed=PreCloseTarget(current,updated,priors)
+            except (RuntimeError,ValueError):
+                save_observation(env.output,'pair_'+a+'_pregrasp_reacquisition',packet,scene)
+                raise
+            renewed.original=reference
+            references[a]=renewed
+            scene=updated
+            objects[a]=current
+            selected[a]=asdict(checked)
+            pair['selection'][arms.index(a)]=selected[a]
+            report.setdefault('pregrasp_current_refits',[]).append(dict(arm=a,
+                original_track=reference.obj.track_id,current_track=current.track_id,size_m=current.size_m,
+                first_time_s=previous.time_s,second_time_s=current.time_s,velocity_m_s=velocity,
+                measurement=current.measured_cuboid))
     robot.set_observation(packet,scene,priors)
     next_approach_check=3.
     move('approach', poses, True)
