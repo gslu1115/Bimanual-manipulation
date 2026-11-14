@@ -617,7 +617,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             paths.append(path)
         # Final Cartesian contact is verified below in metres/radians. The
         # per-step 0.04 rad stop and actual two-arm collision checks stay active.
-        transfer=phase in ('transfer','align')
+        transfer=phase in ('transfer','align','transfer_orient','transfer_after_orient')
         if transfer:
             rejections=report.setdefault(phase+'_schedule_rejections',[])
             try:
@@ -889,7 +889,33 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         rot=robot.fk(a)[1]
         centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
         overhead[a]=(centre-rot@t.offset,rot)
-    move('transfer',overhead)
+    try:
+        move('transfer',overhead)
+    except RuntimeError as error:
+        if str(error)!='NO_CLEAR_PAIRED_TRANSFER_SCHEDULE':raise
+        # Timing cannot fix intersecting endpoint hand geometry. Rotate at the
+        # separated pickup locations, then translate with the slot attitude.
+        # The rejected schedule has executed no motion; every new path retains
+        # the same robot, payload, parked-object and 8 mm paired checks.
+        orient={}
+        for a in arms:
+            t=trackers[a]
+            pos,rot=robot.fk(a)
+            centre=pos+rot@t.offset
+            goal_rot=places[a][1]
+            orient[a]=(centre-goal_rot@t.offset,goal_rot)
+        report['transfer_replan']=dict(reason=str(error),strategy='orient_at_separated_pickup_then_translate')
+        move('transfer_orient',orient)
+        packet=observe_destinations()
+        for a in arms:measure_held(a,packet)
+        robot.set_observation(packet,scene,priors)
+        overhead={}
+        for a in arms:
+            t=trackers[a]
+            rot=robot.fk(a)[1]
+            centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
+            overhead[a]=(centre-rot@t.offset,rot)
+        move('transfer_after_orient',overhead)
     packet=observe_destinations()
     for a in arms:
         observed=measure_held(a,packet)

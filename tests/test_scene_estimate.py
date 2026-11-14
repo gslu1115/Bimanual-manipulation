@@ -30,6 +30,32 @@ def packet(time=1., yaw=.3, centre=(0.,-.10), tape=True, size=(.1,.055,.045),
 
 
 class EstimateTests(unittest.TestCase):
+    def test_clipped_complete_view_cannot_shrink_full_other_view(self):
+        from workstation.perception.rgbd_cartons import deproject
+        for yaw in (0.,.5):
+            p=packet(yaw=yaw,size=(.12,.065,.055))
+            full=p.cameras['scene_camera']
+            xy=deproject(full)[...,:2]-[0.,-.1]
+            axis=np.array([math.cos(yaw),math.sin(yaw)])
+            valid=full.valid_depth & (xy@axis<.051)
+            cameras=dict(p.cameras)
+            cameras['scene_camera']=replace(full,valid_depth=valid)
+            cameras['right_wrist_camera']=replace(full,name='right_wrist_camera')
+            p=replace(p,cameras=cameras,camera_status={**p.camera_status,'right_wrist_camera':'OK'})
+            priors=ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16),
+                carton_size_catalog_m=((.1,.055,.045),(.11,.06,.05),(.12,.065,.055)))
+            result=CartonEstimator(priors).estimate(p)
+            self.assertEqual(len(result.objects),1)
+            obj=result.objects[0]
+            if yaw==0.:
+                # This coarse raster lacks the fitter's full extent proof.
+                self.assertIn('CAMERA_SIZE_CONFLICT',obj.failures)
+                self.assertEqual(obj.posture,'UNKNOWN')
+                continue
+            self.assertEqual(obj.size_m,(.12,.065,.055))
+            self.assertFalse(obj.failures)
+            self.assertLess(np.linalg.norm(np.asarray(obj.position_m)-[0.,-.1,.7875]),.003)
+
     def setUp(self):
         self.estimator = CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)))
 

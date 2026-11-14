@@ -164,6 +164,13 @@ class CartonEstimator:
             best = group[0]
             # Incomplete views cannot override good geometry or assert inversion.
             good = [o for o in group if not o.failures]
+            size_conflict=len({o.size_m for o in good})>1
+            if size_conflict:
+                resolved=self._resolve_complete_size_conflict(group,masks,packet)
+                if resolved is not None:best=resolved
+                else:
+                    best=replace(best,posture='UNKNOWN',visibility='PARTIAL_OR_UNCERTAIN',
+                        failures=best.failures+('CAMERA_SIZE_CONFLICT',))
             conflict = any(np.linalg.norm(np.asarray(o.position_m)-best.position_m) > .010
                            or axis_error(o.axis_yaw_rad, best.axis_yaw_rad) > math.radians(10)
                            for o in good)
@@ -175,7 +182,7 @@ class CartonEstimator:
                 best=replace(best,posture='UNKNOWN',hypotheses=self._flat_hypotheses(
                     best.axis_yaw_rad,'UNKNOWN','conflicting current camera packaging cues'))
             top = next((o for o in good if o.posture in ('UPRIGHT','INVERTED')), None)
-            if top is not None and not conflict and not appearance_conflict:
+            if top is not None and not conflict and not appearance_conflict and not best.failures:
                 quality=dict(best.quality)
                 quality.update({key:value for key,value in top.quality.items() if key.startswith('tape_')})
                 best = replace(best, posture=top.posture, hypotheses=top.hypotheses,quality=quality)
@@ -244,6 +251,31 @@ class CartonEstimator:
         scene=self._associate_measured_fragments(packet,scene,previous_anchors)
         self._association_snapshot('output',scene.objects)
         return scene
+
+    def _resolve_complete_size_conflict(self,group,masks,packet):
+        """Resolve competing catalogue sizes from the union of CURRENT views."""
+        from workstation.perception.cuboid_pose import fit_cuboid_pose,measured_cuboid_supported
+        from workstation.observations.camera_geometry import pose_matrix
+        scene=SceneEstimate(packet.observation_time_s,packet.assembled_time_s,'workcell',
+                            tuple(group),(),packet.camera_status,masks)
+        refs={ref for obj in group for ref in obj.mask_refs}
+        accepted={}
+        for obj in group:
+            if obj.failures or obj.posture not in ('UPRIGHT','INVERTED'):continue
+            rotation=pose_matrix([0,0,0],obj.hypotheses[0].orientation_wxyz)[:3,:3]
+            fit=fit_cuboid_pose(packet,scene,obj.position_m,rotation,obj.size_m,self.priors)
+            span=fit.get('top_rectangle',{}).get('measured_xy_m')
+            if (not measured_cuboid_supported(fit,packet.observation_time_s) or
+                    set(fit['mask_refs'])!=refs or span is None or
+                    np.max(np.abs(np.sort(span)-np.sort(obj.size_m[:2])))>.003):continue
+            # A smaller rectangle with inflated coverage must not defeat a
+            # larger currently measured extent in another camera.
+            r=np.asarray(fit['rotation'])
+            accepted[obj.size_m]=replace(obj,position_m=tuple(fit['position_m']),
+                axis_yaw_rad=math.atan2(r[1,0],r[0,0]),visibility='OBSERVED_CUBOID',
+                measured_cuboid=fit,uncertainty_m=fit['uncertainty_m'],
+                size_source='current multi-view measured extent resolves catalogue disagreement')
+        return next(iter(accepted.values())) if len(accepted)==1 else None
 
     def _associate_measured_fragments(self,packet,scene,anchors):
         """Reconcile clipped identities using current independently fitted planes.
