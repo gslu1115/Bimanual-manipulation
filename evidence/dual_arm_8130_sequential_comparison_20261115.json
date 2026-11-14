@@ -1,0 +1,2300 @@
+{
+  "date": "2026-11-15",
+  "scope": "Original 8130 initial scene and saved GraspGen poses; live RGB-D, physics, joint drive, verification. Not fresh model samples or generalized success rate.",
+  "runs": [
+    {
+      "run": "sequential-v1-sequential-end-8130",
+      "controller_commit_short": "0579b52",
+      "seed": 8130,
+      "policy": "sequential-end",
+      "replayed": true,
+      "success": false,
+      "last_phase": "transfer",
+      "failure_reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "action_wall_s": 93.00513498997316,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "sequential-end",
+        "selected": "sequential-end",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "sequential-end",
+          "feasible": true,
+          "planning_wall_s": 6.600361936958507
+        }
+      ],
+      "sequential_plan": {
+        "staging_fraction": 0.8,
+        "order": [
+          "panda_left",
+          "panda_right"
+        ],
+        "stage_tcp_m": {
+          "panda_left": [
+            -0.2031130049438166,
+            -0.3292161584964468,
+            0.9835823536877978
+          ],
+          "panda_right": [
+            0.03761756302496014,
+            -0.3325978267904013,
+            0.9882244589498417
+          ]
+        }
+      },
+      "sequential_staging_checks": [],
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.2777761167689555,
+          "arm_surface_gap_m": 0.31391951440262944
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.12464843129812073,
+          "arm_surface_gap_m": 0.18169041920747217
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 1.038112994050607,
+        "initial_lift": 0.7717899440322071,
+        "lift": 1.0651371420826763,
+        "preview_sequential_stage": 2.9126250490080565,
+        "preview_sequential_first_transfer": 0.6341974299866706,
+        "preview_sequential_first_align": 2.0354328439570963,
+        "preview_sequential_first_lower": 1.0164423750247806,
+        "sequential_shared_transfer": 2.85700531094335,
+        "sequential_panda_left_transfer": 0.6123507691081613
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 9.212845666101202,
+          "overlap_ticks": 561,
+          "ticks": 629
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.8901731548830867,
+          "overlap_ticks": 122,
+          "ticks": 161
+        },
+        "lift": {
+          "execution_wall_s": 7.650532417930663,
+          "overlap_ticks": 380,
+          "ticks": 423
+        },
+        "sequential_shared_transfer": {
+          "execution_wall_s": 25.893664237111807,
+          "overlap_ticks": 806,
+          "ticks": 896
+        },
+        "sequential_panda_left_transfer": {
+          "execution_wall_s": 6.513097473885864,
+          "overlap_ticks": 10,
+          "ticks": 210
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.675,
+        "initial_lift": 1.0166666666666666,
+        "lift": 3.1666666666666665,
+        "sequential_shared_transfer": 6.716666666666667,
+        "sequential_panda_left_transfer": 0.08333333333333333
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "sequential-end"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "1b033ae6ef3e52e717dfd4d672c1458dce2ac1381293ac578348b172e52157b5",
+        "config_used.json": "2ac478d8fdea821adefbe17c9ea3fa7e5adc0d64da1e208c47e732092d22b2e2",
+        "pair_final_truth.json": "efea425bed131704b6e6ddb9c43d23bd10b275e20165e45f22b46b8f7bf4bd4a",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      }
+    },
+    {
+      "run": "sequential-v1-orient-first-8130",
+      "controller_commit_short": "0579b52",
+      "seed": 8130,
+      "policy": "orient-first",
+      "replayed": true,
+      "success": true,
+      "last_phase": "verify",
+      "action_wall_s": 158.8752430130262,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "orient-first",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "orient-first",
+          "feasible": true,
+          "planning_wall_s": 8.126046856166795
+        }
+      ],
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0050",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.000340905785560619,
+            0.0003201603889465554
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0051",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.00012176856398582458,
+            0.0010203659534454568
+          ]
+        }
+      },
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.2869357672421567,
+          "arm_surface_gap_m": 0.3159648792187775
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.08090298729874071,
+          "arm_surface_gap_m": 0.11933028055456915
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 1.0011093709617853,
+        "initial_lift": 0.7989510761108249,
+        "lift": 1.081045350059867,
+        "preview_orient": 3.92735717096366,
+        "preview_after_orient": 4.197776664048433,
+        "transfer_orient": 3.951567397918552,
+        "transfer_after_orient": 3.509505758062005,
+        "align": 0.7688392309937626,
+        "lower": 1.1136500120628625,
+        "retreat": 0.6597988361027092
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.20011043329879244,
+            -0.3999715786700284,
+            0.7947882052029639
+          ],
+          "tilt_deg": 0.0611580161130814,
+          "gap_upper_m": 0.017136821157300627,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.00010769422604195336,
+            -0.3982793026828339,
+            0.7940943413881631
+          ],
+          "tilt_deg": 0.395377790796335,
+          "gap_upper_m": 0.014305193390714083,
+          "measurement": "GRASP_CONSTRAINED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.769859445979819,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.7696019099093974,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 7.294024033006281,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "transfer_orient": {
+          "execution_wall_s": 28.79832226689905,
+          "overlap_ticks": 842,
+          "ticks": 1103
+        },
+        "transfer_after_orient": {
+          "execution_wall_s": 29.36904404591769,
+          "overlap_ticks": 988,
+          "ticks": 1084
+        },
+        "align": {
+          "execution_wall_s": 1.7539316460024565,
+          "overlap_ticks": 4,
+          "ticks": 66
+        },
+        "lower": {
+          "execution_wall_s": 5.060919926967472,
+          "overlap_ticks": 146,
+          "ticks": 207
+        },
+        "retreat": {
+          "execution_wall_s": 1.7114816079847515,
+          "overlap_ticks": 116,
+          "ticks": 163
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "transfer_orient": 7.016666666666667,
+        "transfer_after_orient": 8.233333333333333,
+        "align": 0.03333333333333333,
+        "lower": 1.2166666666666666,
+        "retreat": 0.9666666666666667
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "orient-first"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "12eb54051b78fe1edbcb16c8bdf633348b51adc1685f4d10b83fa3d3a9c59cf5",
+        "config_used.json": "2e638e129c69d7f718d00b417edb65e21937c252ebb44b3f4e05c92f8a10c125",
+        "pair_final_truth.json": "7c2f0572f09ddff2d0792d24ac8e6a2d08a75dcbddad3796b330e8b68886bad0",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.3383129835128895,
+          "y": 0.11300444602968529,
+          "radial": 0.3566870892475206
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": -0.0250416651397245,
+          "y": 1.0148823261261208,
+          "radial": 1.0151912237978302
+        }
+      },
+      "parked_final_dxy_mm": 0.2708676988341207
+    },
+    {
+      "run": "sequential-v2-sequential-end-8130",
+      "controller_commit_short": "d750ebf",
+      "seed": 8130,
+      "policy": "sequential-end",
+      "replayed": true,
+      "success": false,
+      "last_phase": "transfer",
+      "failure_reason": "STATIC_PATH_BLOCKED:visual_0063",
+      "action_wall_s": 173.35566018312238,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "sequential-end",
+        "selected": "sequential-end",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "sequential-end",
+          "feasible": true,
+          "planning_wall_s": 6.489902152912691
+        }
+      ],
+      "sequential_plan": {
+        "staging_fraction": 0.8,
+        "order": [
+          "panda_left",
+          "panda_right"
+        ],
+        "stage_tcp_m": {
+          "panda_left": [
+            -0.20309085882478362,
+            -0.3292089046242373,
+            0.9838646732300526
+          ],
+          "panda_right": [
+            0.03758914990905152,
+            -0.33256184411042844,
+            0.9882117387141574
+          ]
+        }
+      },
+      "sequential_staging_checks": [],
+      "sequential_first_placement": {
+        "arm": "panda_left",
+        "track_id": "visual_0005",
+        "position_m": [
+          -0.19961915910243988,
+          -0.39921513199806213,
+          0.7824999354208338
+        ],
+        "time_s": 44.2666666666648,
+        "stable_duration_s": 0.5999999999999659
+      },
+      "sequential_hold_checks": [
+        {
+          "arm": "panda_left",
+          "phase": "transfer",
+          "time_s": 25.124999999999215,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.18723853418436476,
+          "position_m": [
+            -0.20431308084671557,
+            -0.32859285278606976,
+            0.970460282354134
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 25.124999999999215,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18399985415189002,
+          "position_m": [
+            0.03580695390030185,
+            -0.33313996243035854,
+            0.9726677761855698
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_left",
+          "phase": "transfer",
+          "time_s": 26.958333333332444,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19039518409162592,
+          "position_m": [
+            -0.2011609662220323,
+            -0.4000648506215432,
+            0.9736169322613951
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 26.958333333332444,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18337263852963503,
+          "position_m": [
+            0.03652457297239319,
+            -0.3328518271449941,
+            0.9719466546020736
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_left",
+          "phase": "align",
+          "time_s": 34.63333333333201,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19059658240538402,
+          "position_m": [
+            -0.20045845209157387,
+            -0.400324299457381,
+            0.9738183305751532
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "align",
+          "time_s": 34.63333333333201,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18281116495180438,
+          "position_m": [
+            0.03605348846373026,
+            -0.3322121827336058,
+            0.9711942177506281
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 43.66666666666483,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17884426530738018,
+          "position_m": [
+            0.03403369692408202,
+            -0.32975980681561307,
+            0.9687918691784673
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 43.766666666664825,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17884469228709887,
+          "position_m": [
+            0.03403353611253435,
+            -0.3297596443779933,
+            0.968780277109686
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 43.86666666666482,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788406740556049,
+          "position_m": [
+            0.034033266854629804,
+            -0.32975986636906074,
+            0.9687802150332261
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 43.966666666664814,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.178843817892966,
+          "position_m": [
+            0.034032932527417514,
+            -0.32975961026543044,
+            0.9687681206969383
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.06666666666481,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788607057891073,
+          "position_m": [
+            0.03493966926546471,
+            -0.33007228325811944,
+            0.9683956846670415
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.1666666666648,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788533038602742,
+          "position_m": [
+            0.034960722641862396,
+            -0.33007999646349245,
+            0.968394462128231
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.2666666666648,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788601622195951,
+          "position_m": [
+            0.034961036236372006,
+            -0.3300802047803973,
+            0.9683951750952811
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.2666666666648,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788639471824921,
+          "position_m": [
+            0.035137205203677184,
+            -0.33014741852980656,
+            0.9683918250859135
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        }
+      ],
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.2784266193448081,
+          "arm_surface_gap_m": 0.3147347072927376
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.12436540325993087,
+          "arm_surface_gap_m": 0.17870792449937695
+        }
+      },
+      "released_clearances": {
+        "panda_right": {
+          "carton_axis_gap_m": 0.1300612074779689,
+          "arm_surface_gap_m": 0.22601702824053158
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 0.9676414069253951,
+        "initial_lift": 0.781415879027918,
+        "lift": 1.1652198859956115,
+        "preview_sequential_stage": 2.8732318540569395,
+        "preview_sequential_first_transfer": 0.6235387967899442,
+        "preview_sequential_first_align": 1.997690425021574,
+        "preview_sequential_first_lower": 0.9942264498677105,
+        "sequential_shared_transfer": 2.7839038150850683,
+        "sequential_panda_left_transfer": 0.6398934649769217,
+        "sequential_panda_left_align": 2.1296395040117204,
+        "sequential_panda_left_lower": 1.0124239400029182,
+        "sequential_panda_left_retreat": 0.5424495958723128
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.20002581216088117,
+            -0.40003647939876785,
+            0.7947207912270625
+          ],
+          "tilt_deg": 0.06864340339492372,
+          "gap_upper_m": 0.016940168105395267,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.377955865114927,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.7309205918572843,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 7.392320811981335,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "sequential_shared_transfer": {
+          "execution_wall_s": 24.548971720971167,
+          "overlap_ticks": 801,
+          "ticks": 889
+        },
+        "sequential_panda_left_transfer": {
+          "execution_wall_s": 6.242757765809074,
+          "overlap_ticks": 9,
+          "ticks": 208
+        },
+        "sequential_panda_left_align": {
+          "execution_wall_s": 27.800521667813882,
+          "overlap_ticks": 10,
+          "ticks": 909
+        },
+        "sequential_panda_left_lower": {
+          "execution_wall_s": 4.63682129397057,
+          "overlap_ticks": 12,
+          "ticks": 161
+        },
+        "sequential_panda_left_retreat": {
+          "execution_wall_s": 4.395423318026587,
+          "overlap_ticks": 7,
+          "ticks": 160
+        },
+        "sequential_panda_left_clear": {
+          "overlap_ticks": 8,
+          "ticks": 649
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "sequential_shared_transfer": 6.675,
+        "sequential_panda_left_transfer": 0.075,
+        "sequential_panda_left_align": 0.08333333333333333,
+        "sequential_panda_left_lower": 0.1,
+        "sequential_panda_left_retreat": 0.058333333333333334,
+        "sequential_panda_left_clear": 0.06666666666666667
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "sequential-end"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "17223bd3f59c2efa80bea4a390b9a95bfab83fa2fb86250ef7ed249158e770d4",
+        "config_used.json": "2ac478d8fdea821adefbe17c9ea3fa7e5adc0d64da1e208c47e732092d22b2e2",
+        "pair_final_truth.json": "a29409755fd84a40ed03ddfb8343d838547ab7cf803d3300e7afe0b32cd5257e",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      }
+    },
+    {
+      "run": "sequential-v2-orient-first-8130",
+      "controller_commit_short": "d750ebf",
+      "seed": 8130,
+      "policy": "orient-first",
+      "replayed": true,
+      "success": true,
+      "last_phase": "verify",
+      "action_wall_s": 155.67053708806634,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "orient-first",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "orient-first",
+          "feasible": true,
+          "planning_wall_s": 7.371578610967845
+        }
+      ],
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0050",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.0004903197288513295,
+            0.0005238294601440652
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0051",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.00011734291911125183,
+            0.0009557545185089333
+          ]
+        }
+      },
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.287132349380874,
+          "arm_surface_gap_m": 0.3150626214818778
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.08086783452131,
+          "arm_surface_gap_m": 0.11933896622801057
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 0.9924356159754097,
+        "initial_lift": 0.8110292099881917,
+        "lift": 1.133877184940502,
+        "preview_orient": 3.954251702874899,
+        "preview_after_orient": 3.4167454759590328,
+        "transfer_orient": 3.94603482587263,
+        "transfer_after_orient": 3.6330124030355364,
+        "align": 0.8026586228515953,
+        "lower": 1.0905217740219086,
+        "retreat": 0.626177096972242
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.20002313492737156,
+            -0.39992474570592684,
+            0.7944777161515536
+          ],
+          "tilt_deg": 0.39282032734972006,
+          "gap_upper_m": 0.016167056409170443,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.00010654827590961496,
+            -0.3982282929259562,
+            0.7940943354369465
+          ],
+          "tilt_deg": 0.3942718620261533,
+          "gap_upper_m": 0.014306342209789952,
+          "measurement": "GRASP_CONSTRAINED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.632402691990137,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.886721283895895,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 7.859078586800024,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "transfer_orient": {
+          "execution_wall_s": 28.885491201886907,
+          "overlap_ticks": 838,
+          "ticks": 1098
+        },
+        "transfer_after_orient": {
+          "execution_wall_s": 28.009881074074656,
+          "overlap_ticks": 992,
+          "ticks": 1089
+        },
+        "align": {
+          "execution_wall_s": 1.5783326560631394,
+          "overlap_ticks": 7,
+          "ticks": 63
+        },
+        "lower": {
+          "execution_wall_s": 4.8881548589561135,
+          "overlap_ticks": 144,
+          "ticks": 205
+        },
+        "retreat": {
+          "execution_wall_s": 1.6970569731201977,
+          "overlap_ticks": 115,
+          "ticks": 162
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "transfer_orient": 6.983333333333333,
+        "transfer_after_orient": 8.266666666666666,
+        "align": 0.058333333333333334,
+        "lower": 1.2,
+        "retreat": 0.9583333333333334
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "orient-first"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "5566f3112d3fb75e742da4b800cbad6612cb5773af6bf84bae077b4feb4078b9",
+        "config_used.json": "2e638e129c69d7f718d00b417edb65e21937c252ebb44b3f4e05c92f8a10c125",
+        "pair_final_truth.json": "f43b54b9f36ed987ca21eb6fa4b6fd8bc4a248b4d74d66a1602594099a400b3c",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.4579395055770985,
+          "y": 0.199401378631614,
+          "radial": 0.49946921883974565
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": -0.015208595868898556,
+          "y": 0.9521484375000222,
+          "radial": 0.9522698926365556
+        }
+      },
+      "parked_final_dxy_mm": 0.270615154895173
+    },
+    {
+      "run": "sequential-v3-sequential-end-8130",
+      "controller_commit_short": "61037ea",
+      "seed": 8130,
+      "policy": "sequential-end",
+      "replayed": true,
+      "success": false,
+      "last_phase": "retreat",
+      "failure_reason": "STATIC_PATH_BLOCKED:visual_0052",
+      "action_wall_s": 135.81520242686383,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "sequential-end",
+        "selected": "sequential-end",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "sequential-end",
+          "feasible": true,
+          "planning_wall_s": 6.687493058852851
+        }
+      ],
+      "sequential_plan": {
+        "staging_fraction": 0.8,
+        "order": [
+          "panda_left",
+          "panda_right"
+        ],
+        "stage_tcp_m": {
+          "panda_left": [
+            -0.20309093231982214,
+            -0.3292089424664171,
+            0.9838618961859443
+          ],
+          "panda_right": [
+            0.03758859403454687,
+            -0.33256170234248955,
+            0.9882117293561733
+          ]
+        }
+      },
+      "sequential_staging_checks": [],
+      "sequential_hold_checks": [
+        {
+          "arm": "panda_left",
+          "phase": "transfer",
+          "time_s": 25.191666666665878,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.18727182319417834,
+          "position_m": [
+            -0.20429934022754437,
+            -0.32874835047582057,
+            0.9704875660797927
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 25.191666666665878,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18389897805314925,
+          "position_m": [
+            0.037004165785131694,
+            -0.33349651864600016,
+            0.9727069452995266
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_left",
+          "phase": "transfer",
+          "time_s": 27.041666666665773,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19040043167201703,
+          "position_m": [
+            -0.20105678786216633,
+            -0.4000496901408531,
+            0.9736161745576314
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 27.041666666665773,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18336341572411696,
+          "position_m": [
+            0.036528640080308795,
+            -0.3328537822274648,
+            0.971948767910877
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_left",
+          "phase": "align",
+          "time_s": 34.68333333333201,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19191052257176833,
+          "position_m": [
+            -0.2003359721241198,
+            -0.4004303270897211,
+            0.9751262654573827
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "align",
+          "time_s": 34.68333333333201,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18280760667150342,
+          "position_m": [
+            0.03663234870318538,
+            -0.33241859966811016,
+            0.9711957611991938
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        }
+      ],
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.27841608652841465,
+          "arm_surface_gap_m": 0.31272909192414156
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.12436581893158166,
+          "arm_surface_gap_m": 0.18035156210125328
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 1.018951758975163,
+        "initial_lift": 0.7998536420054734,
+        "lift": 1.1335439870599657,
+        "preview_sequential_stage": 2.9475328989792615,
+        "preview_sequential_first_transfer": 0.6467174759600312,
+        "preview_sequential_first_align": 2.064562916988507,
+        "preview_sequential_first_lower": 1.0268763601779938,
+        "sequential_shared_transfer": 2.9203172200359404,
+        "sequential_panda_left_transfer": 0.6610782691277564,
+        "sequential_panda_left_align": 2.1058681008871645,
+        "sequential_panda_left_lower": 1.050641109002754
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.20011594424463588,
+            -0.3999837951145935,
+            0.7937860786636607
+          ],
+          "tilt_deg": 0.06711804241333946,
+          "gap_upper_m": 0.016761440603942305,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.953554874984547,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.870012015104294,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 7.487411465961486,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "sequential_shared_transfer": {
+          "execution_wall_s": 26.4392220180016,
+          "overlap_ticks": 808,
+          "ticks": 897
+        },
+        "sequential_panda_left_transfer": {
+          "execution_wall_s": 6.277820233022794,
+          "overlap_ticks": 9,
+          "ticks": 210
+        },
+        "sequential_panda_left_align": {
+          "execution_wall_s": 25.02118748310022,
+          "overlap_ticks": 9,
+          "ticks": 905
+        },
+        "sequential_panda_left_lower": {
+          "execution_wall_s": 4.58304928499274,
+          "overlap_ticks": 13,
+          "ticks": 161
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "sequential_shared_transfer": 6.733333333333333,
+        "sequential_panda_left_transfer": 0.075,
+        "sequential_panda_left_align": 0.075,
+        "sequential_panda_left_lower": 0.10833333333333334
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "sequential-end"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "0f522f5b2b0e9d392871bf4ad3a4a63fb928d7e8fbc362298aa3917f013fd907",
+        "config_used.json": "2ac478d8fdea821adefbe17c9ea3fa7e5adc0d64da1e208c47e732092d22b2e2",
+        "pair_final_truth.json": "c749600fc5bb523e4ce5e4da2ff3a9b0c36591c6b4558a2ceb4bf1dd657df133",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      }
+    },
+    {
+      "run": "sequential-v3-orient-first-8130",
+      "controller_commit_short": "61037ea",
+      "seed": 8130,
+      "policy": "orient-first",
+      "replayed": true,
+      "success": true,
+      "last_phase": "verify",
+      "action_wall_s": 159.61902952101082,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "orient-first",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "orient-first",
+          "feasible": true,
+          "planning_wall_s": 7.3940197641495615
+        }
+      ],
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0050",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.0003077208995819203,
+            0.00027861595153810814
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0052",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            4.3019652366638184e-05,
+            0.0010247766971588357
+          ]
+        }
+      },
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.2868584708850832,
+          "arm_surface_gap_m": 0.31620407142684887
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.0812937943636314,
+          "arm_surface_gap_m": 0.119919785304755
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 0.9889661360066384,
+        "initial_lift": 0.832015526946634,
+        "lift": 1.110433892114088,
+        "preview_orient": 3.9233532559592277,
+        "preview_after_orient": 3.4699767930433154,
+        "transfer_orient": 3.9114997361321002,
+        "transfer_after_orient": 4.098011829890311,
+        "align": 0.8641138109378517,
+        "lower": 1.1609046559315175,
+        "retreat": 0.6490380631294101
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.199958322553277,
+            -0.4000304780624419,
+            0.7946255572624469
+          ],
+          "tilt_deg": 0.06401489423955999,
+          "gap_upper_m": 0.0166550519217712,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.00012055505726308245,
+            -0.3982815044314735,
+            0.7940916773999688
+          ],
+          "tilt_deg": 0.391621506521702,
+          "gap_upper_m": 0.014295272165325305,
+          "measurement": "GRASP_CONSTRAINED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.314090569037944,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.749131459975615,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 7.196449811104685,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "transfer_orient": {
+          "execution_wall_s": 27.637247120961547,
+          "overlap_ticks": 841,
+          "ticks": 1102
+        },
+        "transfer_after_orient": {
+          "execution_wall_s": 32.703055524034426,
+          "overlap_ticks": 989,
+          "ticks": 1084
+        },
+        "align": {
+          "execution_wall_s": 1.5907479599118233,
+          "overlap_ticks": 4,
+          "ticks": 66
+        },
+        "lower": {
+          "execution_wall_s": 4.828674302902073,
+          "overlap_ticks": 120,
+          "ticks": 162
+        },
+        "retreat": {
+          "execution_wall_s": 1.920556945959106,
+          "overlap_ticks": 115,
+          "ticks": 162
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "transfer_orient": 7.008333333333333,
+        "transfer_after_orient": 8.241666666666667,
+        "align": 0.03333333333333333,
+        "lower": 1.0,
+        "retreat": 0.9583333333333334
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "orient-first"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "25f6a89083e31f44a96f1f1ac37206624dd61d521af9c5eadc9703dad028684e",
+        "config_used.json": "2e638e129c69d7f718d00b417edb65e21937c252ebb44b3f4e05c92f8a10c125",
+        "pair_final_truth.json": "53900d5ff3db09235acbd3fe1082ff068c993b1548649a81810a703439755f0c",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.30243098735810436,
+          "y": -0.08509159088132545,
+          "radial": 0.3141736477700075
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": 0.08650133531773463,
+          "y": 0.8335053920746072,
+          "radial": 0.8379819327582163
+        }
+      },
+      "parked_final_dxy_mm": 0.26893154482848103
+    },
+    {
+      "run": "sequential-v4-sequential-end-8130",
+      "controller_commit_short": "bf988cf",
+      "seed": 8130,
+      "policy": "sequential-end",
+      "replayed": true,
+      "success": true,
+      "last_phase": "verify",
+      "action_wall_s": 235.466306948103,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "sequential-end",
+        "selected": "sequential-end",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "sequential-end",
+          "feasible": true,
+          "planning_wall_s": 6.5908847351092845
+        }
+      ],
+      "sequential_plan": {
+        "staging_fraction": 0.8,
+        "order": [
+          "panda_left",
+          "panda_right"
+        ],
+        "stage_tcp_m": {
+          "panda_left": [
+            -0.2030932635927058,
+            -0.32920916163400976,
+            0.9838666861655443
+          ],
+          "panda_right": [
+            0.03758838116360083,
+            -0.33256163821902957,
+            0.9882115889498679
+          ]
+        }
+      },
+      "sequential_staging_checks": [],
+      "sequential_first_placement": {
+        "arm": "panda_left",
+        "track_id": "visual_0005",
+        "position_m": [
+          -0.1995963156223297,
+          -0.39955389499664307,
+          0.7824999145587872
+        ],
+        "time_s": 44.44999999999812,
+        "stable_duration_s": 0.5999999999999659
+      },
+      "sequential_hold_checks": [
+        {
+          "arm": "panda_left",
+          "phase": "transfer",
+          "time_s": 25.19999999999921,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.18731587523902093,
+          "position_m": [
+            -0.20427308930177945,
+            -0.3285714660320262,
+            0.9705444339752796
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 25.19999999999921,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18391715713892665,
+          "position_m": [
+            0.037014650320376534,
+            -0.3334992653732518,
+            0.9727064108642126
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_left",
+          "phase": "transfer",
+          "time_s": 27.041666666665773,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19039045171029056,
+          "position_m": [
+            -0.20119460494750227,
+            -0.4000206610355387,
+            0.9736190104465492
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 27.041666666665773,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18338126751643014,
+          "position_m": [
+            0.036527090284676725,
+            -0.3328516926543892,
+            0.9719470111644868
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_left",
+          "phase": "align",
+          "time_s": 34.71666666666534,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19137509051296964,
+          "position_m": [
+            -0.20023850720846792,
+            -0.4003451528011633,
+            0.9746036492492283
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "align",
+          "time_s": 34.71666666666534,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1828154299608854,
+          "position_m": [
+            0.03605433326356585,
+            -0.33221076988303627,
+            0.9711925782017697
+          ],
+          "currently_carried": [
+            "panda_left",
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "release",
+          "time_s": 36.90833333333188,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.18146251055420815,
+          "position_m": [
+            0.03543290978814695,
+            -0.3313491428926108,
+            0.9701736495498977
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 43.849999999998154,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17885404367237956,
+          "position_m": [
+            0.0342475729418752,
+            -0.32982834724156307,
+            0.9687920788615311
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 43.94999999999815,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17885259061278025,
+          "position_m": [
+            0.03424807167067684,
+            -0.32982791991354543,
+            0.9687918625197681
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.04999999999814,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17885536909112387,
+          "position_m": [
+            0.034248757516832366,
+            -0.3298277843418856,
+            0.9687806950450514
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.14999999999814,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17886471550269945,
+          "position_m": [
+            0.03476207236436543,
+            -0.33000248891664197,
+            0.9684224438931275
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.24999999999813,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788644080764049,
+          "position_m": [
+            0.03474853746516386,
+            -0.3299976199028393,
+            0.9684230109922715
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.349999999998126,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17886755250697728,
+          "position_m": [
+            0.03477756549744346,
+            -0.3300084495379115,
+            0.9684225693897609
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.44999999999812,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.1788570694233821,
+          "position_m": [
+            0.03424872567831658,
+            -0.32982769475814944,
+            0.9687919597280912
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "clear_for_verification",
+          "time_s": 44.44999999999812,
+          "status": "GRASP_CONSTRAINED",
+          "height_gain_lower_bound_m": 0.17885707026822872,
+          "position_m": [
+            0.03424808646638995,
+            -0.3298274818405699,
+            0.96879217706592
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "transfer",
+          "time_s": 46.708333333331325,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.18966135071687984,
+          "position_m": [
+            -0.0008174407543496989,
+            -0.3988792151190048,
+            0.9749874389703731
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "phase": "align",
+          "time_s": 53.60833333333093,
+          "status": "GEOMETRY_OBSERVED",
+          "height_gain_lower_bound_m": 0.19076454767977524,
+          "position_m": [
+            -0.0012915895024310988,
+            -0.39886546777333,
+            0.9760906359332685
+          ],
+          "currently_carried": [
+            "panda_right"
+          ]
+        }
+      ],
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0095",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.0002697378396988026,
+            0.0004422307014465554
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0097",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.001198846846818924,
+            0.0016110479831695779
+          ]
+        }
+      },
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.2784257930241228,
+          "arm_surface_gap_m": 0.3139369157594062
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.08149407725149538,
+          "arm_surface_gap_m": 0.11913103537772249
+        }
+      },
+      "released_clearances": {
+        "panda_right": {
+          "carton_axis_gap_m": 0.08498715687469659,
+          "arm_surface_gap_m": 0.13737509471472176
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 1.018977914005518,
+        "initial_lift": 0.7991063478402793,
+        "lift": 1.1200240550097078,
+        "preview_sequential_stage": 2.889437851961702,
+        "preview_sequential_first_transfer": 0.6124234078451991,
+        "preview_sequential_first_align": 2.0983640050981194,
+        "preview_sequential_first_lower": 0.9889983229804784,
+        "sequential_shared_transfer": 2.8220446999184787,
+        "sequential_panda_left_transfer": 0.6531491950154305,
+        "sequential_panda_left_align": 2.112857973901555,
+        "sequential_panda_left_lower": 1.034268873045221,
+        "sequential_panda_left_retreat": 0.5379638520535082,
+        "sequential_panda_right_transfer": 0.6746046280022711,
+        "sequential_panda_right_align": 1.6890569899696857,
+        "sequential_panda_right_lower": 0.8954388769343495,
+        "sequential_panda_right_retreat": 0.59144445694983
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.20011142423444891,
+            -0.39997146063114264,
+            0.7937690531841991
+          ],
+          "tilt_deg": 0.06346756914144513,
+          "gap_upper_m": 0.015815096006745077,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.0011765431028708674,
+            -0.3982886311110299,
+            0.7956866351426828
+          ],
+          "tilt_deg": 0.4074684680268921,
+          "gap_upper_m": 0.01588059889257401,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 9.136883450904861,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.9140815131831914,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 7.429027020931244,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "sequential_shared_transfer": {
+          "execution_wall_s": 25.9250688389875,
+          "overlap_ticks": 810,
+          "ticks": 898
+        },
+        "sequential_panda_left_transfer": {
+          "execution_wall_s": 6.135718531906605,
+          "overlap_ticks": 10,
+          "ticks": 209
+        },
+        "sequential_panda_left_align": {
+          "execution_wall_s": 25.822319524129853,
+          "overlap_ticks": 10,
+          "ticks": 909
+        },
+        "sequential_panda_left_lower": {
+          "execution_wall_s": 4.735675384989008,
+          "overlap_ticks": 12,
+          "ticks": 161
+        },
+        "sequential_panda_left_retreat": {
+          "execution_wall_s": 3.9143316510599107,
+          "overlap_ticks": 7,
+          "ticks": 160
+        },
+        "sequential_panda_left_clear": {
+          "overlap_ticks": 8,
+          "ticks": 649
+        },
+        "sequential_panda_right_transfer": {
+          "execution_wall_s": 6.627558671869338,
+          "overlap_ticks": 0,
+          "ticks": 259
+        },
+        "sequential_panda_right_align": {
+          "execution_wall_s": 20.808591527165845,
+          "overlap_ticks": 0,
+          "ticks": 816
+        },
+        "sequential_panda_right_lower": {
+          "execution_wall_s": 3.8420711709186435,
+          "overlap_ticks": 0,
+          "ticks": 159
+        },
+        "sequential_panda_right_retreat": {
+          "execution_wall_s": 2.320137983886525,
+          "overlap_ticks": 0,
+          "ticks": 159
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "sequential_shared_transfer": 6.75,
+        "sequential_panda_left_transfer": 0.08333333333333333,
+        "sequential_panda_left_align": 0.08333333333333333,
+        "sequential_panda_left_lower": 0.1,
+        "sequential_panda_left_retreat": 0.058333333333333334,
+        "sequential_panda_left_clear": 0.06666666666666667,
+        "sequential_panda_right_transfer": 0.0,
+        "sequential_panda_right_align": 0.0,
+        "sequential_panda_right_lower": 0.0,
+        "sequential_panda_right_retreat": 0.0
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "sequential-end"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "243eebf4da8c190f5b6c63ee207326e1ec70d9a507a0c7a450868dd088c2f8f3",
+        "config_used.json": "2ac478d8fdea821adefbe17c9ea3fa7e5adc0d64da1e208c47e732092d22b2e2",
+        "pair_final_truth.json": "bfe1d7dd18d47c5d7ca2af6b25d8b70add228622d44cc9f99f9d04aba78b607f",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.2698272466659657,
+          "y": 0.3202795982361062,
+          "radial": 0.4187908357278338
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": 1.0989244328811765,
+          "y": 1.223409175872825,
+          "radial": 1.6444953392433315
+        }
+      },
+      "parked_final_dxy_mm": 0.3336407013062109
+    },
+    {
+      "run": "sequential-v4-orient-first-8130",
+      "controller_commit_short": "bf988cf",
+      "seed": 8130,
+      "policy": "orient-first",
+      "replayed": true,
+      "success": true,
+      "last_phase": "verify",
+      "action_wall_s": 154.12479588808492,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "orient-first",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "orient-first",
+          "feasible": true,
+          "planning_wall_s": 7.454316491028294
+        }
+      ],
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0051",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.0005010485649108998,
+            0.00026013851165773705
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0050",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -0.00011117756366729736,
+            0.001030230522155784
+          ]
+        }
+      },
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.28701912514593153,
+          "arm_surface_gap_m": 0.31561778663077844
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.08077906032397024,
+          "arm_surface_gap_m": 0.11943302980707979
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 1.016901683062315,
+        "initial_lift": 0.827475915895775,
+        "lift": 1.117578589124605,
+        "preview_orient": 4.0174992110114545,
+        "preview_after_orient": 3.435781827196479,
+        "transfer_orient": 3.9612491379957646,
+        "transfer_after_orient": 3.5408406630158424,
+        "align": 0.7995311750564724,
+        "lower": 1.178077895194292,
+        "retreat": 0.6341357859782875
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.2000048483980769,
+            -0.3999397470461832,
+            0.7947444896741607
+          ],
+          "tilt_deg": 0.06190547568771221,
+          "gap_upper_m": 0.016992090061492212,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.00010661009278844104,
+            -0.3982667489490612,
+            0.7940969763481579
+          ],
+          "tilt_deg": 0.39563700641325594,
+          "gap_upper_m": 0.014310090736382682,
+          "measurement": "GRASP_CONSTRAINED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.928182419855148,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.787883175071329,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 8.50615151412785,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "transfer_orient": {
+          "execution_wall_s": 27.778240305138752,
+          "overlap_ticks": 837,
+          "ticks": 1098
+        },
+        "transfer_after_orient": {
+          "execution_wall_s": 26.832164690829813,
+          "overlap_ticks": 984,
+          "ticks": 1078
+        },
+        "align": {
+          "execution_wall_s": 1.7696850029751658,
+          "overlap_ticks": 5,
+          "ticks": 65
+        },
+        "lower": {
+          "execution_wall_s": 3.964493687963113,
+          "overlap_ticks": 120,
+          "ticks": 162
+        },
+        "retreat": {
+          "execution_wall_s": 1.798631861107424,
+          "overlap_ticks": 117,
+          "ticks": 164
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "transfer_orient": 6.975,
+        "transfer_after_orient": 8.2,
+        "align": 0.041666666666666664,
+        "lower": 1.0,
+        "retreat": 0.975
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "orient-first"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "97510ad322693de82b8299115d64e7468e58fae92bba9e00427c17518a899892",
+        "config_used.json": "2e638e129c69d7f718d00b417edb65e21937c252ebb44b3f4e05c92f8a10c125",
+        "pair_final_truth.json": "98542ae7fb85918bd74154a6ee9bad14edef022ce0823b27091aa0ba45966623",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.4997074604034535,
+          "y": 0.07849335670473412,
+          "radial": 0.5058347091982179
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": -0.00585239149586414,
+          "y": 1.0305881500244363,
+          "radial": 1.0306047668514884
+        }
+      },
+      "parked_final_dxy_mm": 0.26855273647796035
+    },
+    {
+      "run": "sequential-v4-auto-8130",
+      "controller_commit_short": "bf988cf",
+      "seed": 8130,
+      "policy": "auto",
+      "replayed": true,
+      "success": true,
+      "last_phase": "verify",
+      "action_wall_s": 155.02864783909172,
+      "simultaneous_grasp_verified": true,
+      "transfer_strategy": {
+        "requested": "auto",
+        "selected": "orient-first",
+        "selection": "first feasible deterministic plan; no learned score or duration optimization",
+        "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+      },
+      "transfer_strategy_checks": [
+        {
+          "strategy": "orient-first",
+          "feasible": true,
+          "planning_wall_s": 7.287401270121336
+        }
+      ],
+      "placements": {
+        "panda_left": {
+          "initial_track": "visual_0002",
+          "grasp_track": "visual_0005",
+          "observed_track": "visual_0050",
+          "goal_xy": [
+            -0.2,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            0.0005679845809936634,
+            0.00036748647689821556
+          ]
+        },
+        "panda_right": {
+          "initial_track": "visual_0001",
+          "grasp_track": "visual_0004",
+          "observed_track": "visual_0052",
+          "goal_xy": [
+            0.0,
+            -0.4
+          ],
+          "visual_error_xy_m": [
+            -2.2862106561660767e-05,
+            0.0010215580463409646
+          ]
+        }
+      },
+      "parked_clearances": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.28680511614394216,
+          "arm_surface_gap_m": 0.3155770233555885
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.08110654086082852,
+          "arm_surface_gap_m": 0.11983710859712235
+        }
+      },
+      "motion_planning_wall_s": {
+        "approach": 0.9761591989081353,
+        "initial_lift": 0.8193767578341067,
+        "lift": 1.105457334080711,
+        "preview_orient": 3.8308288662228733,
+        "preview_after_orient": 3.4557966459542513,
+        "transfer_orient": 4.524234216893092,
+        "transfer_after_orient": 3.428116203052923,
+        "align": 0.8263400848954916,
+        "lower": 1.1121806849259883,
+        "retreat": 0.657050000037998
+      },
+      "release_check": {
+        "panda_left": {
+          "centre_m": [
+            -0.19999171363708593,
+            -0.39996062441800667,
+            0.7937578384605332
+          ],
+          "tilt_deg": 0.47895821161746427,
+          "gap_upper_m": 0.015936306041340765,
+          "measurement": "GEOMETRY_OBSERVED",
+          "waypoint_reacquisition": null
+        },
+        "panda_right": {
+          "centre_m": [
+            0.0001198369715845061,
+            -0.398198850065206,
+            0.7940893020520897
+          ],
+          "tilt_deg": 0.3924636356911634,
+          "gap_upper_m": 0.014297020895017849,
+          "measurement": "GRASP_CONSTRAINED",
+          "waypoint_reacquisition": null
+        }
+      },
+      "phase_timing": {
+        "approach": {
+          "execution_wall_s": 8.639354588929564,
+          "overlap_ticks": 562,
+          "ticks": 632
+        },
+        "initial_lift": {
+          "execution_wall_s": 2.8937161990907043,
+          "overlap_ticks": 117,
+          "ticks": 156
+        },
+        "lift": {
+          "execution_wall_s": 8.139223298989236,
+          "overlap_ticks": 379,
+          "ticks": 422
+        },
+        "transfer_orient": {
+          "execution_wall_s": 28.430805368116125,
+          "overlap_ticks": 840,
+          "ticks": 1101
+        },
+        "transfer_after_orient": {
+          "execution_wall_s": 27.120447027962655,
+          "overlap_ticks": 988,
+          "ticks": 1082
+        },
+        "align": {
+          "execution_wall_s": 1.5942172990180552,
+          "overlap_ticks": 4,
+          "ticks": 66
+        },
+        "lower": {
+          "execution_wall_s": 5.01891343598254,
+          "overlap_ticks": 146,
+          "ticks": 207
+        },
+        "retreat": {
+          "execution_wall_s": 1.7229272278491408,
+          "overlap_ticks": 116,
+          "ticks": 163
+        }
+      },
+      "motion_overlap_sim_s": {
+        "approach": 4.683333333333334,
+        "initial_lift": 0.975,
+        "lift": 3.158333333333333,
+        "transfer_orient": 7.0,
+        "transfer_after_orient": 8.233333333333333,
+        "align": 0.03333333333333333,
+        "lower": 1.2166666666666666,
+        "retreat": 0.9666666666666667
+      },
+      "configuration_differences": {
+        "pair_transfer_policy": {
+          "original": null,
+          "replay": "auto"
+        }
+      },
+      "scene_configuration_matches_original": true,
+      "initial_release_states_match_original": true,
+      "eligible_destinations_match_original": true,
+      "selected_model_poses_match_original": true,
+      "sha256": {
+        "graspgen_pair_check.json": "354be8bb308c5e14cd317e7061c7461df3dada926730a30b101c8f54c679fde1",
+        "config_used.json": "48af8e0e606b9a2065df423815a8c829498670eedec9913004eab00b71f36e0d",
+        "pair_final_truth.json": "51eef76d0771083ad0ff55db94cc8cfb0716b17b20384437efa9b58b435c18f2",
+        "release_states.json": "6c742c3833d8e7535386538f2095a86581f8028e250b001d48ead471ae6c2e67"
+      },
+      "offline_xy_mm": {
+        "panda_left": {
+          "body": "box_00",
+          "x": 0.5315065383911244,
+          "y": 0.199401378631614,
+          "radial": 0.5676795840548646
+        },
+        "panda_right": {
+          "body": "box_01",
+          "x": 0.07654144428670406,
+          "y": 0.8264422416687234,
+          "radial": 0.8299791392004495
+        }
+      },
+      "parked_final_dxy_mm": 0.27078351745121554
+    }
+  ],
+  "controller_commit": "bf988cf5dc3f57f65d75ea334a65aee2826ed8ee",
+  "selection_rule": {
+    "default": "auto",
+    "order": [
+      "orient-first",
+      "sequential-end"
+    ],
+    "inputs": [
+      "current three-view RGB-D SceneEstimate",
+      "synchronous measured joint state",
+      "calibration",
+      "fixed robot/workcell collision geometry"
+    ],
+    "criterion": "first feasible checked plan; deterministic priority; no learned selector, seed lookup or duration predictor",
+    "fallback_scope": "preflight geometric rejection only; execution/perception failure stops",
+    "physical_coverage": "8130 auto selects orient-first. Sequential-end is separately forced for physical comparison. Actual automatic fallback after an orient-first rejection is unit-tested, not physically triggered by this scene."
+  },
+  "comparison": {
+    "same_controller_and_original_scene": true,
+    "orient_first_wall_s": 154.12479588808492,
+    "sequential_end_wall_s": 235.466306948103,
+    "sequential_extra_wall_s": 81.34151106001809,
+    "sequential_extra_percent": 52.77639499297884,
+    "timing_boundary": "first motion to final visual acceptance, including intervening planning, perception and diagnostic costs; excludes startup/proposal preparation",
+    "sampling_limit": "one forced run per strategy on the final controller, plus one auto run; not a statistical speed estimate"
+  },
+  "depth_split_failure_frame_analysis": [
+    {
+      "track_id": "visual_0057",
+      "ref": "right_wrist_camera/324/component_1",
+      "point_count": 89386,
+      "catalogue_diagonal_bound_m": 0.1531393896956216,
+      "total_xyz_span_m": [
+        0.257691042544636,
+        0.12131341838179749,
+        0.2335874027371877
+      ],
+      "largest_z_gap_m": 0.15432672244175183,
+      "split_parts": 2,
+      "part_sizes": [
+        8146,
+        81240
+      ],
+      "all_valid_pixels_retained": true,
+      "part_z_bounds_m": [
+        [
+          0.7605014093603948,
+          0.8052598711362102
+        ],
+        [
+          0.959586593577962,
+          0.9940888120975825
+        ]
+      ]
+    },
+    {
+      "track_id": "visual_0063",
+      "ref": "left_wrist_camera/324/component_1",
+      "point_count": 2542,
+      "catalogue_diagonal_bound_m": 0.1531393896956216,
+      "total_xyz_span_m": [
+        0.22874533651813062,
+        0.15914076915695496,
+        0.2322720283737617
+      ],
+      "largest_z_gap_m": 0.13900448919036512,
+      "split_parts": 2,
+      "part_sizes": [
+        802,
+        1740
+      ],
+      "all_valid_pixels_retained": true,
+      "part_z_bounds_m": [
+        [
+          0.7612589770213377,
+          0.8049998756704063
+        ],
+        [
+          0.9440043648607714,
+          0.9935310053950994
+        ]
+      ]
+    }
+  ],
+  "development_fixes": [
+    "Unique current measured cuboid surface support for failed held fragments; keep ambiguous/outlier obstacles.",
+    "Retain first released carton as an obstacle while the second carton is held; refresh stationary boxes, current free-slot observations and waiting payload evidence.",
+    "Split a merged depth component when total span exceeds the public catalogue diagonal and measured layers have a clear >=30 mm gap with >=60 points each; retain both groups.",
+    "Reconcile still-held payload on the fresh post-open image before the empty first arm retreats."
+  ],
+  "validation": {
+    "date": "2026-11-15",
+    "runtime": "local Isaac SDK Python 3.12, D:/isaacsim/python.bat",
+    "commands": [
+      "-m unittest discover -s tests -q",
+      "-m workstation --mode graspgen-pair-place --pair-transfer-policy auto --validate-only"
+    ],
+    "tests_passed": 629,
+    "tests_elapsed_s": 25.817,
+    "configuration_valid": true,
+    "extra_check": "28 focused tests after the depth split; 31 focused tests after post-release refresh; final full suite above supersedes earlier counts.",
+    "uncovered": [
+      "fresh GraspGen sampling",
+      "new-scene success rate",
+      "continuous collision guarantee",
+      "general clutter/multiple boxes",
+      "real hardware",
+      "8131 on this new controller",
+      "extra held-fragment association branch was not physically triggered in the three final runs"
+    ]
+  },
+  "skipped": [
+    {
+      "run": "sequential-v3-auto-8130",
+      "reason": "Obsolete controller; reserved output directory prevented launch. No experiment occurred."
+    }
+  ],
+  "archive": {
+    "filename": "sequential-8130-20261115-full.tgz",
+    "sha256": "9bb6d69e16ccaba58a2577ae55c77448987acdc25c92c97e60154efc90aaeefe",
+    "bytes": 29470442,
+    "scope": "All nine executed runs, one skip marker, raw outputs/logs, four frozen source archives, experiment/collection scripts and summaries; stored both on original server and locally.",
+    "file_count": 241,
+    "all_manifest_hashes_verified_locally": true
+  },
+  "historical_fresh_first_attempt_success": "1/3, unchanged; these saved-proposal replays are separate."
+}
