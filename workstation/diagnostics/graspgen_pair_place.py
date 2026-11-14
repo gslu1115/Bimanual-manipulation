@@ -1123,7 +1123,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         held=bool(carried_arms)
         robot.held_visual_geometry=None
         for a in active:released_references[a]=measurements[a].copy()
-        packet=observe()
+        # A new frame after opening must reconcile the STILL HELD carton too;
+        # otherwise its clipped detections become false stationary obstacles
+        # for the withdrawing empty hand.
+        if carried_arms:refresh_payloads()
+        else:packet=observe()
         move('retreat',{a:(places[a][0]+[0.,0.,.18],places[a][1]) for a in active},True,
              active=active,carrying=carried_arms,label=prefix+'retreat')
         for a in active:clear_empty_arm(a)
