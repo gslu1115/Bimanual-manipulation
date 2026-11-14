@@ -1,0 +1,1272 @@
+{
+  "scope": "Isaac Sim 6.1 headless on ANL RTX 4090. Two separated upright cartons with a physical carton parked on the right conveyor slot. The two destination lanes were selected from current visual evidence. The single-arm check has no parked obstacle.",
+  "controller_commit": "99946984106ded3dda70678d1fd172c12ba886a3",
+  "controller_fingerprint": {
+    "remote_workstation_python_files": 79,
+    "lf_normalized_path_and_content_sha256": "bcc49fff09569d5626004610f2e2f9f0ac099f547deaf3525d86fc0c3a411577",
+    "comparison": "All files matched the local commit after LF normalization except the approach_clearance docstring in workstation/planning/task_targets.py. Executable source was unchanged."
+  },
+  "protocol": {
+    "closeout_baseline": "The development cases are preserved chronologically below, including the original 8084 failure. Runs with replayed=true use historical GraspGen proposals and still execute both arms in one live simulation. Repeated seed numbers do not denote independent trials.",
+    "primary": "Three previously unused seeds fixed before execution, 8130, 8131 and 8132. Each uses fresh GraspGen proposals. Right slot occupancy held constant; one trial for each cyclic size assignment. All four roundclose jobs used the same frozen source.",
+    "outcome": "1 of 3 fresh final-controller dual-arm trials passed on first attempt. Seed 8119 passed its matched replay. No population success rate inferred.",
+    "timing": "Wall seconds from action start to final verification or stop, including computation during actions. No action time reported for pre-action failure. Overlap is measured from both arms' joint motion on a common simulated clock.",
+    "scoring": "Initial visual target XY matched to a unique simulator body within 25 mm; nearest alternative must be farther than 100 mm. That body was followed to its final position for scoring only. offline_xy_mm lists signed X, signed Y, radial error. parked_final_dxy_mm is horizontal start-to-end displacement. Failed trials have no scored placements.",
+    "clearance": "Reported clearance minima cover protected planning and encoder samples, including candidate timing checks; the carton measure uses maximum axis separation between enclosing boxes. These are collision-model diagnostics."
+  },
+  "summary": {
+    "historical_case_8084_recovered": true,
+    "final_fresh_passed": 1,
+    "final_fresh_total": 3,
+    "final_fresh_seeds": [
+      8130,
+      8131,
+      8132
+    ],
+    "single_seed": 8098,
+    "cpu_tests_passed": 619
+  },
+  "outstanding": {
+    "8130": "Both grasps confirmed at lift; scheduler found no valid paired transfer timing for the candidate paths. The individual rejecting collision pair was not recorded. No placements.",
+    "8131": "Right reference age 9.342 s at pregrasp; 6 s freshness limit. Current RGB-D labelled wide carton as medium; current-frame offline fit with the original wide hypothesis measured a full pose at [0.19793,-0.05666,0.78750] m, supported by global and right wrist. New right target track had no velocity estimate. No placements."
+  },
+  "runs": [
+    {
+      "run": "sidemask-20261114-034425-pair-8084",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 75.446,
+      "overlap_s": 9.233,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        -144.77,
+        -47.89,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.109,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [],
+      "refitted_after_view": false
+    },
+    {
+      "run": "liftguard-20261114-035425-pair-8084",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 139.841,
+      "overlap_s": 9.192,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        -144.77,
+        -47.89,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.016,
+          -0.066,
+          0.068
+        ],
+        "panda_right": [
+          -0.13,
+          0.119,
+          0.176
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.19,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "liftguard-20261114-035425-pair-8090",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 134.516,
+      "overlap_s": 8.083,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        -147.8,
+        -57.91,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.209,
+          -0.029,
+          0.211
+        ],
+        "panda_right": [
+          0.127,
+          0.774,
+          0.785
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.173,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "liftguard-20261114-035425-pair-8093",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 134.091,
+      "overlap_s": 8.017,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        96.19,
+        6.25,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.088,
+          0.105,
+          0.137
+        ],
+        "panda_right": [
+          -0.024,
+          0.58,
+          0.581
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.163,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "liftguard-20261114-035425-pair-8096",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 77.393,
+      "overlap_s": 8.425,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        44.69,
+        -129.89,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.089,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "liftguard-20261114-035425-small_medium-8098",
+      "passed": true,
+      "reason": null,
+      "phase": null,
+      "action_s": 52.132,
+      "overlap_s": null,
+      "model_calls": 1,
+      "replayed": false,
+      "sizes": [
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        147
+      ],
+      "offline_xy_mm": {
+        "panda_right": [
+          0.145,
+          0.209,
+          0.254
+        ]
+      },
+      "goals": [
+        [
+          0.2,
+          -0.4
+        ]
+      ]
+    },
+    {
+      "run": "liftsizes-20261114-040930-pair-8100",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 72.701,
+      "overlap_s": 8.058,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_reference",
+        "small_medium",
+        "small_reference"
+      ],
+      "initial_yaw_deg": [
+        -38.59,
+        -96.05,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.132,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "liftsizes-20261114-040930-pair-8101",
+      "passed": false,
+      "reason": "PAIR_TARGET_LOST",
+      "phase": null,
+      "action_s": null,
+      "overlap_s": null,
+      "model_calls": 36,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        103.67,
+        -19.88,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.089,
+      "both_grasps_verified": false,
+      "guard_anchor_phases": [],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardpatch-20261114-041437-pair-8096",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 133.586,
+      "overlap_s": 8.483,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        44.69,
+        -129.89,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          -0.186,
+          1.902,
+          1.911
+        ],
+        "panda_right": [
+          0.336,
+          1.228,
+          1.273
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.166,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardpatch-20261114-041437-pair-8105",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 135.298,
+      "overlap_s": 8.267,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        -25.85,
+        173.78,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          -0.704,
+          0.219,
+          0.737
+        ],
+        "panda_right": [
+          0.078,
+          -0.863,
+          0.866
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.166,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardalt-20261114-042153-pair-8100",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "align",
+      "action_s": 111.953,
+      "overlap_s": 8.125,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_reference",
+        "small_medium",
+        "small_reference"
+      ],
+      "initial_yaw_deg": [
+        -38.59,
+        -96.05,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.173,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardalt-20261114-042153-pair-8110",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 71.37,
+      "overlap_s": 7.825,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -62.07,
+        6.52,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.127,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "returnview-20261114-042728-pair-8101",
+      "passed": false,
+      "reason": "PAIR_TARGET_LOST",
+      "phase": null,
+      "action_s": null,
+      "overlap_s": null,
+      "model_calls": 36,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        103.67,
+        -19.88,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.089,
+      "both_grasps_verified": false,
+      "guard_anchor_phases": [],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardcontinuity-20261114-043026-pair-8100",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 139.017,
+      "overlap_s": 8.092,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_reference",
+        "small_medium",
+        "small_reference"
+      ],
+      "initial_yaw_deg": [
+        -38.59,
+        -96.05,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.617,
+          -0.09,
+          0.623
+        ],
+        "panda_right": [
+          0.229,
+          1.207,
+          1.229
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.242,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "returnsize-20261114-043405-pair-8101",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 77.284,
+      "overlap_s": 7.658,
+      "model_calls": 36,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        103.67,
+        -19.88,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.204,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": true
+    },
+    {
+      "run": "returnsize-20261114-043405-pair-8113",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 80.791,
+      "overlap_s": 8.692,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        1.41,
+        91.32,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.163,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "parkedsize-20261114-044257-pair-8113",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "align",
+      "action_s": 126.643,
+      "overlap_s": 8.717,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        1.41,
+        91.32,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.209,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardviews-20261114-044629-pair-8101",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 129.282,
+      "overlap_s": 7.342,
+      "model_calls": 54,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        103.67,
+        -19.88,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.145,
+          0.661,
+          0.677
+        ],
+        "panda_right": [
+          -0.081,
+          0.086,
+          0.118
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.297,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": true
+    },
+    {
+      "run": "guardviews-20261114-044629-pair-8110",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 70.094,
+      "overlap_s": 7.808,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -62.07,
+        6.52,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.127,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardviews-20261114-044629-pair-8116",
+      "passed": false,
+      "reason": "HELD_CARTON_PATH_BLOCKED:visual_0040",
+      "phase": "lower",
+      "action_s": 117.03,
+      "overlap_s": 7.767,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -121.49,
+        -39.12,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.193,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardconfirm-20261114-045736-pair-8113",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 159.976,
+      "overlap_s": 8.708,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        1.41,
+        91.32,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          -0.171,
+          0.359,
+          0.397
+        ],
+        "panda_right": [
+          0.248,
+          -0.199,
+          0.318
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.284,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardseparate-20261114-050146-pair-8110",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 74.079,
+      "overlap_s": 7.892,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -62.07,
+        6.52,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.127,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardseparate-20261114-050146-pair-8119",
+      "passed": false,
+      "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+      "phase": "transfer",
+      "action_s": 73.329,
+      "overlap_s": 7.892,
+      "model_calls": 18,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -65.47,
+        -174.92,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.127,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardproxy-20261114-050651-pair-8116",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 153.81,
+      "overlap_s": 7.808,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -121.49,
+        -39.12,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.208,
+          0.793,
+          0.82
+        ],
+        "panda_right": [
+          0.065,
+          -0.232,
+          0.241
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.268,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardproxy-20261114-050651-pair-8122",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 145.819,
+      "overlap_s": 7.8,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -137.41,
+        -95.61,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.129,
+          1.977,
+          1.981
+        ],
+        "panda_right": [
+          0.187,
+          1.447,
+          1.459
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.246,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "guardside-20261114-051430-pair-8110",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 130.565,
+      "overlap_s": 7.842,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -62.07,
+        6.52,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          0.365,
+          0.037,
+          0.367
+        ],
+        "panda_right": [
+          0.156,
+          1.381,
+          1.39
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.233,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "roundclose-20261114-213138-pair-8119",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 131.536,
+      "overlap_s": 7.9,
+      "model_calls": 6,
+      "replayed": true,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        -65.47,
+        -174.92,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          -4.74,
+          0.192,
+          4.744
+        ],
+        "panda_right": [
+          -0.045,
+          0.937,
+          0.938
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.233,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "roundclose-20261114-213138-pair-8130",
+      "passed": false,
+      "reason": "NO_CLEAR_PAIRED_TRANSFER_SCHEDULE",
+      "phase": "transfer",
+      "action_s": 57.723,
+      "overlap_s": null,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_reference",
+        "small_medium",
+        "small_reference"
+      ],
+      "initial_yaw_deg": [
+        97.06,
+        -108.73,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.121,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    },
+    {
+      "run": "roundclose-20261114-213138-pair-8131",
+      "passed": false,
+      "reason": "PAIR_TARGET_UNSUPPORTED:panda_right:PRECLOSE_REFERENCE_EXPIRED",
+      "phase": "pregrasp_recheck",
+      "action_s": 15.864,
+      "overlap_s": null,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_medium",
+        "small_wide",
+        "small_medium"
+      ],
+      "initial_yaw_deg": [
+        73.07,
+        -151.8,
+        0
+      ],
+      "offline_xy_mm": {},
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.061,
+      "both_grasps_verified": false,
+      "guard_anchor_phases": [],
+      "refitted_after_view": false
+    },
+    {
+      "run": "roundclose-20261114-213138-pair-8132",
+      "passed": true,
+      "reason": null,
+      "phase": "verify",
+      "action_s": 166.344,
+      "overlap_s": 7.417,
+      "model_calls": 6,
+      "replayed": false,
+      "sizes": [
+        "small_wide",
+        "small_reference",
+        "small_wide"
+      ],
+      "initial_yaw_deg": [
+        92.59,
+        -120.31,
+        0
+      ],
+      "offline_xy_mm": {
+        "panda_left": [
+          -0.088,
+          0.101,
+          0.134
+        ],
+        "panda_right": [
+          -0.052,
+          -0.849,
+          0.85
+        ]
+      },
+      "goals": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0,
+          -0.4
+        ]
+      ],
+      "parked_final_dxy_mm": 0.215,
+      "both_grasps_verified": true,
+      "guard_anchor_phases": [
+        "lift"
+      ],
+      "refitted_after_view": false
+    }
+  ]
+}
