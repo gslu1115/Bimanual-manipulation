@@ -1,5 +1,6 @@
 """Two independently grasped cartons, joint commands on a shared physics clock."""
 import math
+from time import perf_counter
 from dataclasses import replace, asdict
 import numpy as np
 
@@ -49,6 +50,31 @@ def transfer_schedule(robot,paths,payload_guard,*,rejections=None):
             continue
         return scheduled,detail
     raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
+
+
+def path_rejection(reason):
+    return reason.startswith(('IK_','JOINT_LIMIT','NO_CLEAR_','OTHER_ARM_COLLISION','SELF_COLLISION',
+                              'STATIC_PATH_BLOCKED','OBSERVED_PATH_OBSTACLE','HELD_CARTON_',
+                              'PAYLOAD_','PARKED_CARTON_CLEARANCE'))
+
+
+def choose_transfer_strategy(policy,planners,attempts):
+    """Try deterministic feasibility plans only. Execution errors never enter here."""
+    if policy not in ('auto','orient-first','sequential-end'):raise ValueError('Unknown pair transfer policy')
+    order=('parallel','orient-first','sequential-end') if policy=='auto' else (policy,)
+    for name in order:
+        start=perf_counter()
+        try:plan=planners[name]()
+        except RuntimeError as error:
+            # Missing perception/holding evidence must stop, not trigger motion
+            # through a different plan with the same invalid state estimate.
+            reason=str(error)
+            attempts.append(dict(strategy=name,feasible=False,reason=reason,planning_wall_s=perf_counter()-start))
+            if not path_rejection(reason):raise
+            continue
+        attempts.append(dict(strategy=name,feasible=True,planning_wall_s=perf_counter()-start))
+        return name,plan
+    raise RuntimeError('NO_CLEAR_PAIRED_PLACEMENT_STRATEGY')
 
 
 def stationary_slot_tracks(workspace, scene, positions):
@@ -274,13 +300,19 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     release_trackers = {}
     measurements = {}
     held = False
+    carried_arms=set(arms)
+    released_references={}
+    sequential=False
+    fresh_scene=scene
     before_transfer={}
     phases = report['phases'] = {}
 
     def observe():
-        nonlocal scene
+        nonlocal scene,fresh_scene
         packet = env.get_observation_packet(refresh=True)
         scene = estimator.estimate(packet)
+        fresh_scene=scene
+        if released_references:refresh_released(packet)
         robot.set_observation(packet, scene, priors)
         slots.observe(robot.observed_workspace)
         return packet
@@ -297,6 +329,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     def carried_clearance(left, right):
         boxes = []
         for arm, q, other, other_q in zip(arms, (left, right), reversed(arms), (right, left)):
+            if arm not in carried_arms:continue
             pos, rot = robot.fk(arm, q)
             t = trackers[arm]
             centre = pos + rot @ t.offset
@@ -322,6 +355,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     raise PairClearanceError('PAYLOAD_OTHER_ARM_COLLISION',
                         [payload,dict(arm=other,link_index=link,sphere_index=index)],gap,.002)
             boxes.append((box,payload))
+        if len(boxes)!=2:return
         (a,part_a),(b,part_b)=boxes
         if np.all(np.abs(a.centre-b.centre) <= (a.size+b.size)/2+.002):
             gap=float(np.max(np.abs(a.centre-b.centre)-(a.size+b.size)/2))
@@ -433,7 +467,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report.setdefault('parked_protection',[]).append(dict(phase=report['last_phase'],time_s=time_s,
                 xy=list(xy),track_id=o.track_id,centre_m=list(o.position_m),size_m=box.size.tolist()))
 
-    def verify_slots(packet):
+    def verify_slots(packet,active=arms):
         nonlocal scene
         # Reconcile BOTH carried cartons before testing the slot underneath
         # either one. Register the current arm-specific payload to explain its
@@ -441,10 +475,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         observed=stationary_slot_tracks(robot.observed_workspace,scene,unused)
         current={xy:o for xy,o in observed.items() if matches_parked_reference(xy,o)}
         parked_ids={o.track_id for o in current.values()}
-        carried_ids={objects[a].track_id for a in arms}
+        carried_ids={objects[a].track_id for a in carried_arms}
+        released_ids={objects[a].track_id for a in released_references}
         enclosed=set()
         if env.conveyor.state=='WAITING' and not env.safe_to_index:
-            if report['last_phase']=='transfer':protect_stationary(current,packet.observation_time_s)
+            protect_stationary(current,packet.observation_time_s)
             for xy in parked.keys()-current.keys():
                 ids=robot.observed_workspace.slot(xy)['observed_objects']
                 fragments=[o for o in scene.objects if o.track_id in ids]
@@ -515,7 +550,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 report.setdefault('parked_surface_bounds',[]).append(proof)
                 parked_ids.add(proxy.track_id);enclosed.add(xy)
         supported=parked_unchanged(current,enclosed)
-        for arm in arms:
+        for arm in active:
             t=trackers[arm]
             robot.set_observation(packet,scene,priors)
             robot.held_visual_geometry=dict(arm=arm,target_id=objects[arm].track_id,offset=t.offset,
@@ -524,11 +559,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
             xy=goals[arm]
             view=robot.observed_workspace.slot(xy)
-            accounted=(len(carried_ids)==2 and supported and carried_ids.isdisjoint(parked_ids) and
-                       {o.track_id for o in scene.objects}==carried_ids|parked_ids and
+            if sequential and view['free']:before_transfer[xy]=view
+            accounted=(len(carried_ids|released_ids)==2 and supported and carried_ids.isdisjoint(parked_ids) and
+                       {o.track_id for o in scene.objects}==carried_ids|released_ids|parked_ids and
+                       all(report['released_bounds'][a]['time_s']==packet.observation_time_s for a in released_references) and
                        all(measurements[a]['time_s']==packet.observation_time_s and
                            measurements[a]['position_m'][2]-np.linalg.norm(trackers[a].size)/2>
-                           robot.place_support_z+.04 for a in arms))
+                           robot.place_support_z+.04 for a in carried_arms))
             evidence=slots.approach_clearance(arm,xy,view,before_transfer.get(xy),accounted_for=accounted,
                 stationary_belt=env.conveyor.state=='WAITING' and not env.safe_to_index)
             report.setdefault('destination_checks',[]).append(dict(arm=arm,phase=report['last_phase'],
@@ -556,17 +593,21 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 renewed=references[arm] is not prior))
         robot.set_observation(packet,scene,priors)
 
-    def move(phase, destinations, contact=False,*,active=arms,carrying=None):
+    def move(phase, destinations, contact=False,*,active=arms,carrying=None,
+             dry_run=False,start_states=None,label=None):
         nonlocal next_approach_check
         report['last_phase'] = phase
+        label=label or phase
+        start_wall=perf_counter()
+        carrying=(set(arms) if held else set()) if carrying is None else set(carrying)
         paths = []
         for arm in arms:
             o = objects[arm]
-            q = robot.read_states()[arm].joint_positions_rad
+            q = (robot.read_states()[arm].joint_positions_rad if start_states is None else start_states[arm])
             if arm not in active:
                 paths.append([q,q])
                 continue
-            carries=held if carrying is None else arm in carrying
+            carries=arm in carrying
             pos, rot = robot.fk(arm, q)
             goal, goal_rot = destinations[arm]
             try:
@@ -609,10 +650,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             try:
                 robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if carries else None,
                     support_contact=contact and carries, target_contact=contact and not carries,
-                    check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach')
+                    check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach',
+                    other_joint_positions_rad=None if start_states is None else start_states[next(a for a in arms if a!=arm)])
             except RuntimeError:
                 from workstation.diagnostics.vision_check import save_observation
-                save_observation(env.output,'pair_blocked_'+phase,packet,scene)
+                if not dry_run:save_observation(env.output,'pair_blocked_'+phase,packet,scene)
                 report['path_failure']=dict(arm=arm, details=robot.last_plan_check,
                     robot_pixels_removed=estimator.last_robot_filter_counts.copy())
                 raise
@@ -620,26 +662,35 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         # Final Cartesian contact is verified below in metres/radians. The
         # per-step 0.04 rad stop and actual two-arm collision checks stay active.
         transfer=phase in ('transfer','align','transfer_orient','transfer_after_orient')
-        if transfer:
-            rejections=report.setdefault(phase+'_schedule_rejections',[])
+        if transfer or sequential:
+            rejections=report.setdefault(label+'_schedule_rejections',[])
             try:
                 paths,schedule=transfer_schedule(robot,paths,carried_clearance,rejections=rejections)
             except RuntimeError:
-                report[phase+'_rejected_paths_rad']={arm:np.asarray(path).tolist() for arm,path in zip(arms,paths)}
+                report[label+'_rejected_paths_rad']={arm:np.asarray(path).tolist() for arm,path in zip(arms,paths)}
                 raise
-            report[phase+'_schedule']=schedule
-        both_loaded=held and (carrying is None or set(carrying)==set(arms))
+            report[label+'_schedule']=schedule
+        report.setdefault('motion_planning_wall_s',{})[label]=perf_counter()-start_wall
+        if dry_run:return {a:np.asarray(path[-1]) for a,path in zip(arms,paths)}
+        both_loaded=held and carrying==set(arms)
         renew_reference=phase in ('approach','regrasp_pregrasp','regrasp_approach')
         if renew_reference:next_approach_check=3.
-        phases[phase] = drive_empty_pregrasps(robot, paths, carried_clearance if both_loaded else None,
+        def guard(left,right):
+            if sequential:
+                reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None,margin=.008)
+                if reason:raise RuntimeError('PAIR_SEQUENTIAL_'+reason)
+            carried_clearance(left,right)
+        execution_start=perf_counter()
+        phases[label] = drive_empty_pregrasps(robot, paths, guard if both_loaded or sequential else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
                                               speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
                                               progress_check=(lambda elapsed:refresh_approach_references(elapsed,active)) if renew_reference else None)
+        phases[label]['execution_wall_s']=perf_counter()-execution_start
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
             angle=float(np.arccos(np.clip((np.trace(rot.T@goal_rot)-1.)/2.,-1.,1.)))
-            phases[phase].setdefault('tcp_errors',{})[arm]=dict(position_m=error,angle_rad=angle)
+            phases[label].setdefault('tcp_errors',{})[arm]=dict(position_m=error,angle_rad=angle)
             if error>.005 or angle>math.radians(3):
                 raise RuntimeError('PAIR_TCP_GOAL_MISSED:'+arm)
 
@@ -891,100 +942,210 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         rot=robot.fk(a)[1]
         centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
         overhead[a]=(centre-rot@t.offset,rot)
-    try:
-        move('transfer',overhead)
-    except RuntimeError as error:
-        if str(error)!='NO_CLEAR_PAIRED_TRANSFER_SCHEDULE':raise
-        # Timing cannot fix intersecting endpoint hand geometry. Rotate at the
-        # separated pickup locations, then translate with the slot attitude.
-        # The rejected schedule has executed no motion; every new path retains
-        # the same robot, payload, parked-object and 8 mm paired checks.
-        orient={}
-        for a in arms:
-            t=trackers[a]
-            pos,rot=robot.fk(a)
-            centre=pos+rot@t.offset
-            goal_rot=places[a][1]
-            orient[a]=(centre-goal_rot@t.offset,goal_rot)
-        report['transfer_replan']=dict(reason=str(error),strategy='orient_at_separated_pickup_then_translate')
-        move('transfer_orient',orient)
-        packet=observe_destinations()
-        for a in arms:measure_held(a,packet)
-        robot.set_observation(packet,scene,priors)
-        overhead={}
-        for a in arms:
-            t=trackers[a]
-            rot=robot.fk(a)[1]
-            centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
-            overhead[a]=(centre-rot@t.offset,rot)
-        move('transfer_after_orient',overhead)
-    packet=observe_destinations()
-    for a in arms:
-        observed=measure_held(a,packet)
-        t=trackers[a]
-        places[a]=placement_goal(goals[a],robot.place_support_z,t.size,.012,
-                                 observed['rotation'],t.offset,t.relative_rotation)
-    verify_slots(packet)
-    robot.set_observation(packet,scene,priors)
-    move('align',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()})
-    packet=observe_destinations()
-    for a in arms:
-        observed=measure_held(a,packet)
-        t=trackers[a]
-        places[a]=placement_goal(goals[a],robot.place_support_z,t.size,.012,
-                                 observed['rotation'],t.offset,t.relative_rotation)
-    verify_slots(packet)
-    robot.set_observation(packet,scene,priors)
-    move('lower',places,True)
-    packet=observe()
-    for a in arms:
-        measurement=measure_held(a,packet)
-        rotation=np.asarray(measurement['rotation'])
-        height=np.asarray(measurement['position_m'])[2]-np.abs(rotation[2])@(trackers[a].size/2)
-        upper_gap=height-robot.place_support_z+measurement['uncertainty_m']
-        report.setdefault('release_check',{})[a]=dict(centre_m=measurement['position_m'],
-            tilt_deg=math.degrees(math.acos(np.clip(rotation[2,2],-1,1))),gap_upper_m=float(upper_gap),
-            measurement=measurement['status'],waypoint_reacquisition=measurement.get('waypoint_reacquisition'))
-        if upper_gap>.020:raise RuntimeError('PAIR_RELEASE_HEIGHT_UNSUPPORTED:'+a)
-    report['last_phase']='release'
-    fingers(False)
-    held=False
-    robot.held_visual_geometry=None
-    packet=observe()
-    for a in arms:
-        m=measurements[a]
-        from workstation.planning.selection import nearest_upright_slot_rotation
-        fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
-            max_drop_m=max(0.,report['release_check'][a]['gap_upper_m']),
-            reference_position_m=m['position_m'],reference_rotation=m['rotation'],allow_partial=True)
-        if fit is None:
-            # A tilted bottom edge may settle flat on release. The new
-            # depth image must support that level orientation and the footprint.
-            trial=nearest_upright_slot_rotation(np.asarray(m['rotation']))
-            hint=np.asarray(m['position_m']).copy()
-            hint[2]=robot.place_support_z+trackers[a].size[2]/2
+
+    def refresh_released(current_packet):
+        nonlocal scene
+        packet=current_packet
+        for a,m in released_references.items():
+            from workstation.planning.selection import nearest_upright_slot_rotation
             fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
-                reference_position_m=hint,reference_rotation=trial,allow_partial=True)
-        if fit is None:raise RuntimeError('PAIR_RELEASED_GEOMETRY_UNCERTAIN:'+a)
-        tid=objects[a].track_id
-        scene=estimator.associate_supported_target(scene,tid,fit)
-        obj=next((o for o in scene.objects if o.track_id==tid),None)
-        if obj is None:raise RuntimeError('PAIR_RELEASED_TRACK_UNRESOLVED:'+a)
-        dimensions=fit.get('collision_size_m',trackers[a].size)
-        bounded=replace(obj,position_m=fit['position_m'],axis_yaw_rad=fit['axis_yaw_rad'],
-            size_m=tuple(trackers[a].size),uncertainty_m=fit['uncertainty_m'],measured_cuboid=None,
-            posture='UNKNOWN',hypotheses=(),visibility='RELEASE_BOUNDED_CUBOID',failures=(),
-            quality={**obj.quality,'geometric_length_m':dimensions[0],'geometric_width_m':dimensions[1],
-                     'observed_height_m':dimensions[2]})
-        scene=replace(scene,objects=tuple(bounded if o.track_id==tid else o for o in scene.objects))
-        report.setdefault('released_bounds',{})[a]=fit
-    robot.set_observation(packet,scene,priors)
-    move('retreat',{a:(p+[0.,0.,.18],r) for a,(p,r) in places.items()},True)
-    # Clear the two camera sightlines. The last measured release envelopes
-    # remain stationary obstacles while the empty arms leave the conveyor.
-    report['last_phase']='clear_for_verification'
+                max_drop_m=max(0.,report['release_check'][a]['gap_upper_m']),
+                reference_position_m=m['position_m'],reference_rotation=m['rotation'],allow_partial=True)
+            if fit is None:
+                # A tilted bottom edge may settle flat on release. The new
+                # depth image must support that level orientation and the footprint.
+                trial=nearest_upright_slot_rotation(np.asarray(m['rotation']))
+                hint=np.asarray(m['position_m']).copy()
+                hint[2]=robot.place_support_z+trackers[a].size[2]/2
+                fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+                    reference_position_m=hint,reference_rotation=trial,allow_partial=True)
+            if fit is None:raise RuntimeError('PAIR_RELEASED_GEOMETRY_UNCERTAIN:'+a)
+            tid=objects[a].track_id
+            scene=estimator.associate_supported_target(scene,tid,fit)
+            obj=next((o for o in scene.objects if o.track_id==tid),None)
+            if obj is None:raise RuntimeError('PAIR_RELEASED_TRACK_UNRESOLVED:'+a)
+            dimensions=fit.get('collision_size_m',trackers[a].size)
+            bounded=replace(obj,position_m=fit['position_m'],axis_yaw_rad=fit['axis_yaw_rad'],
+                size_m=tuple(trackers[a].size),uncertainty_m=fit['uncertainty_m'],measured_cuboid=None,
+                posture='UNKNOWN',hypotheses=(),visibility='RELEASE_BOUNDED_CUBOID',failures=(),
+                quality={**obj.quality,'geometric_length_m':dimensions[0],'geometric_width_m':dimensions[1],
+                         'observed_height_m':dimensions[2]})
+            scene=replace(scene,objects=tuple(bounded if o.track_id==tid else o for o in scene.objects))
+            report.setdefault('released_bounds',{})[a]=fit
+
+    def refresh_payloads():
+        nonlocal packet
+        packet=observe_destinations()
+        for a in arms:
+            if a in carried_arms:measure_held(a,packet)
+        robot.set_observation(packet,scene,priors)
+
+    def update_places(active):
+        for a in active:
+            t=trackers[a]
+            places[a]=placement_goal(goals[a],robot.place_support_z,t.size,.012,
+                                     measurements[a]['rotation'],t.offset,t.relative_rotation)
+
+    def clear_empty_arm(a):
+        report['last_phase']='clear_for_verification'
+        if not carried_arms:
+            robot.execute_joint(a,robot.home,scene,None)
+            return
+        # Keep the waiting loaded arm on the SAME clock and enforce both
+        # its payload clearance and measured arm separation during withdrawal.
+        robot.held_visual_geometry=None
+        path,_=robot.checked_joint_plan(a,robot.read_states()[a].joint_positions_rad,robot.home[:7],scene,None)
+        paths=[path if arm==a else [robot.read_states()[arm].joint_positions_rad]*2 for arm in arms]
+        paths,_=transfer_schedule(robot,paths,carried_clearance)
+        def guard(left,right):
+            reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None,margin=.008)
+            if reason:raise RuntimeError('PAIR_SEQUENTIAL_'+reason)
+            carried_clearance(left,right)
+        phases['sequential_'+a+'_clear']=drive_empty_pregrasps(robot,paths,guard,
+            require_overlap=False,speed_fraction=.4,loaded_transfer=True)
+
+    def confirm_first_placement(a):
+        nonlocal packet
+        stable=None;previous=None
+        for _ in range(20):
+            robot.hold(.1)
+            refresh_payloads()
+            matches=[o for o in fresh_scene.objects if o.posture=='UPRIGHT' and not o.failures
+                and pose_is_observed(o,fresh_scene)
+                and np.linalg.norm(np.asarray(o.position_m[:2])-goals[a])<=.018
+                and abs(o.position_m[2]-robot.place_support_z-o.size_m[2]/2)<=.008
+                and abs((o.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(8)
+                and o.velocity_m_s is not None and np.linalg.norm(o.velocity_m_s)<=.015
+                and np.allclose(o.size_m,objects[a].size_m,atol=.002,rtol=0)]
+            if len(matches)!=1:
+                stable=None;continue
+            o,=matches
+            if stable is None or o.track_id!=previous:stable=packet.observation_time_s
+            previous=o.track_id
+            if packet.observation_time_s-stable>=.5:
+                report['sequential_first_placement']=dict(arm=a,track_id=o.track_id,
+                    position_m=o.position_m,time_s=packet.observation_time_s,stable_duration_s=packet.observation_time_s-stable)
+                return
+        raise RuntimeError('PAIR_FIRST_RELEASE_NOT_STABLE:'+a)
+
+    def finish(active):
+        nonlocal packet,held
+        prefix=('sequential_'+active[0]+'_') if sequential else ''
+        refresh_payloads()
+        update_places(active)
+        verify_slots(packet,active)
+        move('align',{a:(places[a][0]+[0.,0.,.18],places[a][1]) for a in active},
+             active=active,carrying=carried_arms,label=prefix+'align')
+        refresh_payloads()
+        update_places(active)
+        verify_slots(packet,active)
+        move('lower',{a:places[a] for a in active},True,
+             active=active,carrying=carried_arms,label=prefix+'lower')
+        packet=observe()
+        for a in arms:
+            if a in carried_arms:measure_held(a,packet)
+        for a in active:
+            measurement=measurements[a]
+            rotation=np.asarray(measurement['rotation'])
+            height=np.asarray(measurement['position_m'])[2]-np.abs(rotation[2])@(trackers[a].size/2)
+            upper_gap=height-robot.place_support_z+measurement['uncertainty_m']
+            report.setdefault('release_check',{})[a]=dict(centre_m=measurement['position_m'],
+                tilt_deg=math.degrees(math.acos(np.clip(rotation[2,2],-1,1))),gap_upper_m=float(upper_gap),
+                measurement=measurement['status'],waypoint_reacquisition=measurement.get('waypoint_reacquisition'))
+            if upper_gap>.020:raise RuntimeError('PAIR_RELEASE_HEIGHT_UNSUPPORTED:'+a)
+        report['last_phase']='release'
+        fingers(False,active)
+        carried_arms.difference_update(active)
+        held=bool(carried_arms)
+        robot.held_visual_geometry=None
+        for a in active:released_references[a]=measurements[a].copy()
+        packet=observe()
+        move('retreat',{a:(places[a][0]+[0.,0.,.18],places[a][1]) for a in active},True,
+             active=active,carrying=carried_arms,label=prefix+'retreat')
+        for a in active:clear_empty_arm(a)
+
+    orient={}
     for a in arms:
-        robot.execute_joint(a,robot.home,scene,None)
+        t=trackers[a];pos,rot=robot.fk(a)
+        centre=pos+rot@t.offset;goal_rot=places[a][1]
+        orient[a]=(centre-goal_rot@t.offset,goal_rot)
+
+    def plan_orient():
+        q=move('transfer_orient',orient,dry_run=True,label='preview_orient')
+        dest={}
+        for a in arms:
+            t=trackers[a];rot=orient[a][1]
+            centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
+            dest[a]=(centre-rot@t.offset,rot)
+        move('transfer_after_orient',dest,dry_run=True,start_states=q,label='preview_after_orient')
+        return orient
+
+    def plan_sequential():
+        nonlocal sequential
+        sequential=True
+        attempts=report.setdefault('sequential_staging_checks',[])
+        initial={a:robot.fk(a) for a in arms}
+        # Progress is geometric and independent of seed, box identity or truth.
+        for fraction in (.8,.65,.5):
+            stage={a:(initial[a][0]+fraction*(overhead[a][0]-initial[a][0]),initial[a][1]) for a in arms}
+            try:q=move('transfer',stage,dry_run=True,label='preview_sequential_stage')
+            except RuntimeError as error:
+                if not path_rejection(str(error)):raise
+                attempts.append(dict(fraction=fraction,reason=str(error)));continue
+            for first in arms:
+                try:
+                    q1=move('transfer',{first:overhead[first]},active=(first,),dry_run=True,
+                            start_states=q,label='preview_sequential_first_transfer')
+                    q2=move('align',{first:(places[first][0]+[0,0,.18],places[first][1])},
+                            active=(first,),dry_run=True,start_states=q1,label='preview_sequential_first_align')
+                    move('lower',{first:places[first]},True,active=(first,),dry_run=True,
+                            start_states=q2,label='preview_sequential_first_lower')
+                except RuntimeError as error:
+                    if not path_rejection(str(error)):raise
+                    attempts.append(dict(fraction=fraction,first_arm=first,reason=str(error)));continue
+                return dict(fraction=fraction,stage=stage,order=(first,next(a for a in arms if a!=first)))
+        raise RuntimeError('NO_CLEAR_SEQUENTIAL_END_PLACEMENT')
+
+    policy=env.c.get('pair_transfer_policy','auto')
+    attempts=report.setdefault('transfer_strategy_checks',[])
+    strategy,plan=choose_transfer_strategy(policy,{
+        'parallel':lambda:move('transfer',overhead,dry_run=True,label='preview_parallel'),
+        'orient-first':plan_orient,'sequential-end':plan_sequential},attempts)
+    sequential=strategy=='sequential-end'
+    report['transfer_strategy']=dict(requested=policy,selected=strategy,
+        selection='first feasible deterministic plan; no learned score or duration optimization',
+        execution_failure_policy='stop; never switch strategy after a drive/perception failure')
+    if strategy=='parallel':
+        move('transfer',overhead)
+        finish(arms)
+    elif strategy=='orient-first':
+        report['transfer_replan']=dict(strategy='orient_at_separated_pickup_then_translate')
+        move('transfer_orient',orient)
+        refresh_payloads()
+        dest={}
+        for a in arms:
+            t=trackers[a];rot=robot.fk(a)[1]
+            centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
+            dest[a]=(centre-rot@t.offset,rot)
+        move('transfer_after_orient',dest)
+        finish(arms)
+    else:
+        report['sequential_plan']=dict(staging_fraction=plan['fraction'],order=plan['order'],
+            stage_tcp_m={a:p.tolist() for a,(p,r) in plan['stage'].items()})
+        move('transfer',plan['stage'],label='sequential_shared_transfer')
+        if not phases['sequential_shared_transfer']['overlap_ticks']:
+            raise RuntimeError('NO_MEASURED_PARALLEL_TRANSFER')
+        for index,a in enumerate(plan['order']):
+            refresh_payloads()
+            t=trackers[a];rot=robot.fk(a)[1]
+            centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
+            move('transfer',{a:(centre-rot@t.offset,rot)},active=(a,),carrying=carried_arms,
+                 label='sequential_'+a+'_transfer')
+            finish((a,))
+            if index==0:confirm_first_placement(a)
+    # Both hands are clear. Final acceptance uses fresh unrestricted perception,
+    # never the release envelopes or the first-placement intermediate check.
+    released_references.clear()
     report['last_phase']='verify'
     stable_since=None
     previous_ids=None

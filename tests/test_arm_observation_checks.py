@@ -6,6 +6,17 @@ from workstation.simulation.robot_driver import RobotMotion
 
 
 class ArmObservationChecksTests(unittest.TestCase):
+    def test_forecast_other_arm_changes_geometry_without_rewriting_feedback(self):
+        robot=self.driver(self.workspace())
+        robot.spheres=lambda arm,q,*args:[(5,np.array([0.,0.,1.]) if arm=='left' else np.array([q[0]+1.,0.,1.]),.03)]
+        scene=SimpleNamespace(objects=[]);path=[np.zeros(7),np.ones(7)*.01]
+        robot.validate_path('left',path,scene,'v')
+        forecast=np.zeros(7);forecast[0]=-1.
+        with self.assertRaisesRegex(RuntimeError,'OTHER_ARM_COLLISION'):
+            robot.validate_path('left',path,scene,'v',other_joint_positions_rad=forecast)
+        self.assertEqual(robot.last_plan_check['other_arm_state_source'],'planned predecessor; not measured')
+        np.testing.assert_array_equal(robot.read_states()['right'].joint_positions_rad,np.zeros(7))
+
     def driver(self,workspace):
         robot=RobotMotion.__new__(RobotMotion)
         state=RobotState(1.,np.zeros(7),np.full(2,.04))

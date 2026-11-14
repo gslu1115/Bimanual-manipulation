@@ -10,6 +10,38 @@ from workstation.simulation.visual_fixtures import initial_cartons
 
 
 class PairTests(unittest.TestCase):
+    def test_strategy_priority_falls_back_only_after_plan_rejection(self):
+        from workstation.diagnostics.graspgen_pair_place import choose_transfer_strategy
+        calls=[];attempts=[]
+        def reject(name):
+            calls.append(name)
+            raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
+        planners={'parallel':lambda:reject('parallel'),'orient-first':lambda:reject('orient-first'),
+                  'sequential-end':lambda:calls.append('sequential-end') or {'order':['left','right']}}
+        name,plan=choose_transfer_strategy('auto',planners,attempts)
+        self.assertEqual(calls,['parallel','orient-first','sequential-end'])
+        self.assertEqual(name,'sequential-end')
+        self.assertEqual([a['feasible'] for a in attempts],[False,False,True])
+        calls.clear();planners['orient-first']=lambda:calls.append('orient-first') or 'clear'
+        self.assertEqual(choose_transfer_strategy('auto',planners,[]),('orient-first','clear'))
+        self.assertEqual(calls,['parallel','orient-first'])
+
+    def test_strategy_never_recovers_missing_payload_evidence_as_path_failure(self):
+        from workstation.diagnostics.graspgen_pair_place import choose_transfer_strategy
+        def missing():raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:panda_left')
+        with self.assertRaisesRegex(RuntimeError,'PAIR_PAYLOAD_GEOMETRY'):
+            choose_transfer_strategy('auto',{'parallel':missing},[])
+
+    def test_strategy_comparison_flag_is_explicit_and_placement_only(self):
+        import contextlib,io
+        from workstation.app import build_parser,load_config
+        parser=build_parser()
+        for name in ('auto','orient-first','sequential-end'):
+            args=parser.parse_args(['--mode','graspgen-pair-place','--pair-transfer-policy',name])
+            self.assertEqual(load_config(args,parser)['pair_transfer_policy'],name)
+        args=parser.parse_args(['--mode','scene','--pair-transfer-policy','sequential-end'])
+        with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):load_config(args,parser)
+
     def test_returned_view_rechecks_size_against_table_height_and_current_planes(self):
         from dataclasses import replace
         from tests.test_cuboid_pose import synthetic_observation,visual_object,CENTRE,SIZE,PRIORS

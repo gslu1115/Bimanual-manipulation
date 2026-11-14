@@ -290,10 +290,14 @@ class RobotMotion:
         return spheres
 
     def validate_path(self,arm,knots,scene,target_id,held_size=None,held_yaw=0.,support_contact=False,target_contact=False,
-                      target_boxes_override=None,finger_positions=None,check_local_unknown=True,check_approach_corridor=True):
+                      target_boxes_override=None,finger_positions=None,check_local_unknown=True,check_approach_corridor=True,
+                      other_joint_positions_rad=None):
         states=self.read_states()
         other=next(name for name in states if name != arm)
-        other_spheres=self.spheres(other,states[other].joint_positions_rad)
+        other_q=(states[other].joint_positions_rad if other_joint_positions_rad is None
+                 else np.asarray(other_joint_positions_rad,float))
+        if other_q.shape!=(7,) or not np.isfinite(other_q).all():raise ValueError('Invalid forecast other-arm joints')
+        other_spheres=self.spheres(other,other_q)
         obstacles=list(self.static)+scene_obstacles(scene,target_id)
         keepout=getattr(self,'stationary_payload_keepout',None)
         if keepout is not None:obstacles.append(keepout)
@@ -340,7 +344,8 @@ class RobotMotion:
                 if reason:
                     self.last_plan_check=dict(rejection=reason,arm=arm,other_arm=other,
                         clearance_m=float(clearance),candidate_joint_positions_rad=q.tolist(),
-                        other_arm_joint_positions_rad=states[other].joint_positions_rad.tolist(),
+                        other_arm_joint_positions_rad=other_q.tolist(),
+                        other_arm_state_source='encoders' if other_joint_positions_rad is None else 'planned predecessor; not measured',
                         source='robot encoder FK, official collision spheres and fixed/visual obstacles')
                     raise RuntimeError(reason)
                 if workspace is not None:
