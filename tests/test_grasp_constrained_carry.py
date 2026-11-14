@@ -65,6 +65,11 @@ class GraspConstrainedCarryTests(unittest.TestCase):
         cameras=dict(p.cameras);cameras['scene_camera']=None
         status=dict(p.camera_status);status['scene_camera']='MISSING'
         self.assertIsNone(bound(replace(p,cameras=cameras,camera_status=status)))
+        from workstation.diagnostics.graspgen_pair_place import parked_side_with_top
+        single_view=replace(p,cameras=cameras,camera_status=status)
+        self.assertIsNotNone(parked_side_with_top(single_view,s,reference,[ref],PRIORS,guarded=True))
+        displaced=dict(reference,position_m=CENTRE+[.02,0,0])
+        self.assertIsNone(parked_side_with_top(single_view,s,displaced,[ref],PRIORS,guarded=True))
 
     def test_two_fragments_may_independently_measure_the_whole_parked_pose(self):
         from workstation.diagnostics.graspgen_pair_place import parked_surface_envelope

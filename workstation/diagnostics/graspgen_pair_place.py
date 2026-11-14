@@ -140,7 +140,7 @@ def parked_depth_top(packet,reference,instance_refs,*,allow_partial=False):
     return None
 
 
-def parked_side_with_top(packet,scene,reference,refs,priors):
+def parked_side_with_top(packet,scene,reference,refs,priors,*,guarded=False):
     """A whole vertical side patch and a separate camera's top returns bound a parked obstacle."""
     from workstation.perception.cuboid_pose import _plane_patch
     from workstation.perception.rgbd_cartons import deproject
@@ -171,7 +171,7 @@ def parked_side_with_top(packet,scene,reference,refs,priors):
         level=np.median(offsets[:,axis])
         if abs(abs(level)-size[axis]/2)>margin:continue
         if np.any(np.ptp(np.quantile(offsets[:,[1-axis,2]],[.05,.95],axis=0),axis=0)<.012):continue
-        if not parked_top_still_visible(packet,reference,exclude_camera=name):continue
+        if not guarded and not parked_top_still_visible(packet,reference,exclude_camera=name):continue
         return centre+direction*(level-np.sign(level)*size[axis]/2),rotation,1-axis,margin
     return None
 
@@ -437,6 +437,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     recent_transfer_top=(report['last_phase']=='align' and xy in transfer_top_seen
                         and seen<=transfer_top_seen[xy]<packet.observation_time_s)
                     occluded=shadow and not patch and (age<=8. or recent_transfer_top)
+                    side_face=(bool(refs) and not patch and 0<age<=20. and
+                        parked_side_with_top(packet,scene,parked[xy],refs,priors,guarded=True) is not None)
                     # During a protected transfer both wrists can look away.
                     # Require the global view to witness occlusion of the full
                     # grid and reject any contrary depth in either wrist view.
@@ -447,16 +449,29 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                         occluded=parked_top_occluded(packet,parked[xy],allow_wrist_out_of_view=True)
                     # A catalogue/centre conflict on a nominally complete observation
                     # requires the explicit cuboid fit below, even with a visible top.
-                    if xy not in observed and (patch or component is not None or occluded):
+                    if xy not in observed and (patch or side_face or component is not None or occluded):
                         if component is not None and report['last_phase']=='transfer':
                             transfer_top_seen[xy]=packet.observation_time_s
                         enclosed.add(xy)
-                        parked_ids.update(ids)
+                        if ids and (patch or side_face):
+                            # Every complete contributing mask was checked against
+                            # the protected carton. Keep one obstacle at its guarded
+                            # bounds instead of placing another cube at a face centroid.
+                            obj=fragments[0]
+                            proxy=replace(obj,position_m=tuple(box.centre),axis_yaw_rad=0.,
+                                size_m=tuple(box.size),mask_refs=tuple(refs),posture='UNKNOWN',
+                                visibility='PARKED_COLLISION_ENVELOPE',failures=(),hypotheses=(),
+                                measured_cuboid=None,quality={**obj.quality,'geometric_length_m':box.size[0],
+                                    'geometric_width_m':box.size[1],'observed_height_m':box.size[2]})
+                            scene=replace(scene,objects=tuple(o for o in scene.objects if o.track_id not in ids)+(proxy,))
+                            parked_ids.add(proxy.track_id)
+                        else:parked_ids.update(ids)
                         report.setdefault('parked_occlusion_checks',[]).append(dict(
                             xy=list(xy),mask_refs=refs,time_s=packet.observation_time_s,last_surface_s=seen,
                             depth_component=component[0] if component is not None else None,
                             prior_transfer_top_s=transfer_top_seen.get(xy) if occluded else None,
-                            source=('current top-depth patch' if patch or component is not None else 'foreground occlusion in current depth views')
+                            source=('current signed side plane' if side_face else 'current top-depth patch'
+                                    if patch or component is not None else 'foreground occlusion in current depth views')
                                    +' and continuously protected collision envelope'))
                         continue
                 if not fragments:continue
