@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-15",
+  "source_commit": "3faa657aa9b41df2ca1455596de082bb570121d2",
+  "scope": "Post-physical-validation task identity registry correction; no additional physical run.",
+  "triggering_run": "persistent-task-v2-live-6",
+  "physical_source_commit": "803551883b2ea9d7d34525a692d318ee7e202ed0",
+  "finding": "Four original task identities were delivered correctly, but four fresh discharge-belt visual tracks were also registered as available identities. They were never selected again because remaining-source keys were explicit.",
+  "original_task_keys": [
+    "visual_0001",
+    "visual_0003",
+    "visual_0002",
+    "visual_0004"
+  ],
+  "recorded_registry": [
+    {
+      "identity_id": "visual_0001",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "confirmed_at_s": 2.999999999999992,
+      "last_observed_s": 23.99999999999928,
+      "state": "delivered"
+    },
+    {
+      "identity_id": "visual_0002",
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "confirmed_at_s": 2.999999999999992,
+      "last_observed_s": 86.13333333334795,
+      "state": "delivered"
+    },
+    {
+      "identity_id": "visual_0003",
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "confirmed_at_s": 2.999999999999992,
+      "last_observed_s": 23.99999999999928,
+      "state": "delivered"
+    },
+    {
+      "identity_id": "visual_0004",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "confirmed_at_s": 2.999999999999992,
+      "last_observed_s": 86.13333333334795,
+      "state": "delivered"
+    },
+    {
+      "identity_id": "visual_0034",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "confirmed_at_s": 40.56666666666501,
+      "last_observed_s": 108.77500000003263,
+      "state": "available"
+    },
+    {
+      "identity_id": "visual_0035",
+      "size_m": [
+        0.11,
+        0.06,
+        0.05
+      ],
+      "confirmed_at_s": 40.56666666666501,
+      "last_observed_s": 109.57500000003327,
+      "state": "available"
+    },
+    {
+      "identity_id": "visual_0068",
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "confirmed_at_s": 104.66666666669603,
+      "last_observed_s": 107.975000000032,
+      "state": "available"
+    },
+    {
+      "identity_id": "visual_0069",
+      "size_m": [
+        0.1,
+        0.055,
+        0.045
+      ],
+      "confirmed_at_s": 104.66666666669603,
+      "last_observed_s": 108.37500000003232,
+      "state": "available"
+    }
+  ],
+  "fix": "set_task_identities closes registration after the initial four visual sources are confirmed. Subsequent non-task detections remain in SceneEstimate.objects and collision checks without becoming new task identities.",
+  "checks": {
+    "command": "D:/isaacsim/python.bat -m unittest discover -s tests -q",
+    "tests": 675,
+    "elapsed_s": 27.202,
+    "success": true,
+    "entry_command": "D:/isaacsim/python.bat -m workstation --mode graspgen-pair-sort --pair-transfer-policy auto --validate-only",
+    "entry_success": true
+  },
+  "physical_validation_not_repeated": true,
+  "log_sha256": {
+    "persistent-task-final-tests.log": "e5a11af8daf6b4ebda13539e9c0f8d78f8dc5e2b4641dbaae83d3fbea84aeaa2",
+    "persistent-task-final-validation.log": "47e4b0fa0d4880792b5454a838ce319cb26db91d2039fc2a90872e0e7ee91517"
+  },
+  "archive": {
+    "filename": "persistent-task-registry-20261115-checks.tgz",
+    "bytes": 976131,
+    "files": 4,
+    "sha256": "a878ab61de443d892c16c0096d0b268d1738b2a3da9ffdd8fdd77dc870675118",
+    "verified": true
+  }
+}
