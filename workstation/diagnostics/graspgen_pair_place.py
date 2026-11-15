@@ -738,6 +738,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 if reason:raise RuntimeError('PAIR_SEQUENTIAL_'+reason)
             carried_clearance(left,right)
         execution_start=perf_counter()
+        if phase=='approach':report['empty_approach_started']=True
         phases[label] = drive_empty_pregrasps(robot, paths, guard if both_loaded or sequential else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
                                               speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
@@ -847,6 +848,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             scene=reconcile_preclose_target(estimator,scene,proof)
             references[a]=references[a].renewed(scene,proof)
     report['last_phase']='close'
+    report['closure_started']=True
     fingers(True)
     packet = observe()
     closed_states=robot.read_states()

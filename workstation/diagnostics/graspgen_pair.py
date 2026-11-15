@@ -68,6 +68,7 @@ def preferred_assignments(targets, bases):
     left,right=sorted(bases)
     def distance(arm,obj):
         return np.linalg.norm(np.asarray(bases[arm]['base_xyz'])[:2]-np.asarray(obj.position_m)[:2])
+    if len(targets)>2:return {o.track_id:min(bases,key=lambda arm:distance(arm,o)) for o in targets}
     a,b=targets
     if distance(left,b)+distance(right,a)<distance(left,a)+distance(right,b):
         a,b=b,a
@@ -107,7 +108,7 @@ def synchronized_knots(left, right, max_step=.025):
             yield tuple(p[i-1]+(p[i]-p[i-1])*n/steps for p in aligned)
 
 
-def paired_pregrasp(robot, rows, states, scene):
+def paired_pregrasp(robot, rows, states, scene,selection_policy=None):
     arms = ('panda_left', 'panda_right')
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
                  and a.candidate.arm == arm and a.terms.get('full_pose_checked')] for arm in arms]
@@ -120,7 +121,8 @@ def paired_pregrasp(robot, rows, states, scene):
         return sum(abs(row.candidate.metadata.get('source_visual_object',{}).get(
                        'position_m',row.candidate.position_m)[0]-row.terms['slot_xy'][0])
                    for row in pair if row.terms.get('slot_xy') is not None)
-    pairs.sort(key=lambda pair: (slot_cost(pair),-(pair[0].score+pair[1].score)))
+    pairs.sort(key=lambda pair: ((selection_policy.priority(pair) if selection_policy else ())+
+                                (slot_cost(pair),-(pair[0].score+pair[1].score))))
     paths = {}
     rejected = []
     for pair in pairs:
@@ -146,10 +148,15 @@ def paired_pregrasp(robot, rows, states, scene):
         if reason:
             rejected.append(dict(ids=[a.candidate.candidate_id for a in pair], reason=reason))
             continue
-        return dict(selection=[asdict(a.candidate) for a in pair],
+        result=dict(selection=[asdict(a.candidate) for a in pair],
                     slots=[a.terms.get('slot_xy') for a in pair],
                     pregrasp_knots=[np.asarray(paths[a.candidate.candidate_id]).tolist() for a in pair],
-                    sample_count=sampled, min_clearance_m=minimum), rejected
+                    sample_count=sampled, min_clearance_m=minimum)
+        if selection_policy:
+            result['joint_choice']=dict(source_keys=[selection_policy.key(a.candidate) for a in pair],
+                history_penalty=selection_policy.priority(pair)[0],visibility=selection_policy.visibility(pair),
+                feasible_pair_count=len(pairs),eligible_source_count=len({r.candidate.target_id for r in rows if r.feasible}))
+        return result, rejected
     return None, rejected
 
 
@@ -223,7 +230,12 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                 arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace)
 
 
-def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None):
+class PairAttemptError(RuntimeError):
+    def __init__(self,reason,report):
+        super().__init__(reason);self.report=report
+
+
+def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None,selection_policy=None):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
     from workstation.planning.selection import visual_pinch_balance, upright_contact_cost, distinct_pinches
@@ -236,10 +248,10 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     def fail(reason):
         report['failure_reason'] = reason
         env._write_json('graspgen_pair_check.json', report)
-        raise RuntimeError(reason)
+        raise PairAttemptError(reason,report)
     select_targets=target_selector or (lambda current:source_cartons(current,env.c['table']))
     targets=select_targets(scene)
-    if len(targets)!=2 or len({o.track_id for o in targets})!=2:
+    if ((len(targets)<2 if selection_policy else len(targets)!=2) or len({o.track_id for o in targets})!=len(targets)):
         fail('PAIR_REQUIRES_TWO_OBSERVED_UPRIGHT_TRACKS')
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if not execute:env.timeline.pause()
@@ -249,6 +261,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     estimator.robot_point_filter=robot.observed_robot_points
     estimator.robot_filter_factory=robot.prepare_observed_robot_filter
     robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
+    if selection_policy:selection_policy.prepare(robot,packet,scene)
+    diversity_start=len(selection_policy.diversity) if selection_policy else 0
     slots = ConveyorSlots(env.c)
     destinations=[slots.positions[i] for i in env.c.get('pair_slot_indices',range(len(slots.positions)))]
     report['eligible_destinations']=destinations
@@ -277,7 +291,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
             pick_failures[c.candidate_id]=result
         return result
-    for attempt in range(1,8):
+    for attempt in range(1,3 if selection_policy else 8):
         retained={}
         preferred=preferred_assignments(targets,robot.base_config)
         feasible={(r.candidate.target_id,r.candidate.arm) for r in rows if r.feasible}
@@ -385,9 +399,10 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 depth=opening.get('estimated_tip_engagement_m',0.)/obj.size_m[2]
                 return offset+abs(depth-.45)+abs(opening['centre_offset_m'])/.02+upright_contact_cost(c,obj)
             for arm in states:
-                if attempt<=4 and arm!=preferred.get(obj.track_id):continue
+                if selection_policy is None and attempt<=4 and arm!=preferred.get(obj.track_id):continue
                 ordered=sorted((c for c in allowed if c.arm==arm),key=pinch_cost)
-                candidates.setdefault(obj.track_id,[]).extend(distinct_pinches(ordered,4))
+                chosen=(selection_policy.diverse(ordered,obj,4) if selection_policy else distinct_pinches(ordered,4))
+                candidates.setdefault(obj.track_id,[]).extend(chosen)
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
@@ -402,8 +417,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                     reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
                     phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
         report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}
-        pair,rejections=paired_pregrasp(robot,rows,states,scene)
+        pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy)
         report.update(pair=pair, rejected_pairs=rejections)
+        if selection_policy:report['grasp_diversity']=selection_policy.diversity[diversity_start:]
         if pair is not None:break
     if pair is None:fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
     assigned_slots={c['arm']:xy for c,xy in zip(pair['selection'],pair['slots'])}
@@ -464,6 +480,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             current,_=paired_pregrasp(robot,checked,states,updated)
             if current is None:raise RuntimeError('PAIR_CHANGED_BEFORE_APPROACH')
             report.update(pair=current,scope='physical_empty_arm_pregrasp_only',physical_execution=True)
+            if selection_policy:
+                report['joint_choice']=pair['joint_choice']
             env._write_json('graspgen_pair_check.json',report)
             action_start=time.monotonic()
             report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
