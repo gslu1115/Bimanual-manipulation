@@ -264,6 +264,7 @@ class CartonEstimator:
                 best = replace(best, posture=top.posture, hypotheses=top.hypotheses,quality=quality)
             fused.append(replace(best, mask_refs=tuple(r for o in group for r in o.mask_refs),
                                  cameras=tuple(dict.fromkeys(n for o in group for n in o.cameras)), failures=reasons))
+        fused=self._deduplicate_merged_views(fused,masks,packet)
         now = packet.observation_time_s
         if self._last_time is not None and now < self._last_time:
             raise ValueError('Observation time moved backwards')
@@ -732,6 +733,50 @@ class CartonEstimator:
                 velocity_m_s=None,measured_cuboid=None)))
         absorbed=set().union(*(members for members,_ in joined)) if joined else set()
         return [obj for i,obj in enumerate(detections) if i not in absorbed]+[obj for _,obj in joined]
+
+    def _deduplicate_merged_views(self,detections,masks,packet):
+        """A multi-object mask adds no obstacle when ALL its depth is covered.
+
+        Keep the independently measured objects and raw depth. Do not turn a
+        failed merged fit's size residual into a third enormous carton. One
+        unexplained pixel, missing depth or stale evidence keeps the original.
+        """
+        now=packet.observation_time_s
+        if not 0<=packet.assembled_time_s-now<=self.priors.max_age_s:return detections
+        known=[o for o in detections if not o.failures and o.visibility=='COMPLETE_TOP'
+               and abs(o.time_s-now)<=1e-6 and .003<=o.uncertainty_m<=.008 and o.mask_refs
+               and all(ref in masks and packet.camera_status.get(ref.split('/')[0])=='OK'
+                       for ref in o.mask_refs)]
+        if len(known)<2:return detections
+        retained=[];clouds={}
+        for obj in detections:
+            if ('PARTIAL_OR_MERGED_GEOMETRY' not in obj.failures or not obj.mask_refs or
+                    abs(obj.time_s-now)>1e-6):
+                retained.append(obj);continue
+            chunks=[]
+            for ref in obj.mask_refs:
+                name=ref.split('/')[0];frame=packet.cameras.get(name);mask=masks.get(ref)
+                if (frame is None or packet.camera_status.get(name)!='OK' or mask is None or
+                        abs(frame.sample_time_s-now)>1e-6 or mask.shape!=frame.depth_m.shape or
+                        not mask.any() or not frame.valid_depth[mask].all()):break
+                if name not in clouds:clouds[name]=deproject(frame)
+                chunks.append(clouds[name][mask])
+            else:
+                points=np.concatenate(chunks);covered=np.zeros(len(points),bool);contributors=[]
+                for other in known:
+                    c,s=math.cos(other.axis_yaw_rad),math.sin(other.axis_yaw_rad)
+                    rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+                    local=(points-other.position_m)@rotation
+                    inside=np.all(np.abs(local)<=np.asarray(other.size_m)/2+
+                                  other.uncertainty_m+self.priors.optical_depth_error_margin_m,axis=1)
+                    if np.count_nonzero(inside&~covered)>=60:contributors.append(other)
+                    covered|=inside
+                if len(contributors)>=2 and covered.all():
+                    self._association_event('redundant_merged_view',mask_refs=obj.mask_refs,
+                        covering_mask_refs=[o.mask_refs for o in contributors],points=len(points),coverage=1.)
+                    continue
+            retained.append(obj)
+        return retained
 
     def _join_visible_fragments(self,detections,masks,packet):
         """Associate partial visible surfaces to a RECENT visual box, never a USD ID.
