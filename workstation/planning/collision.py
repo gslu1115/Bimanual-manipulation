@@ -8,6 +8,45 @@ class AABB:
     name: str
     centre: tuple
     size: tuple
+    kind: str = 'fixed'
+
+
+def partial_carton_extent(obj,scene):
+    """Collision bound only: a clipped area need not erase measured axis spans.
+
+    Require fresh masks, near-complete measured spans in all three dimensions
+    and consistent horizontal depth. This does not promote UNKNOWN semantics
+    to an independently observed pose or provide a grasp/success proof.
+    """
+    if (set(obj.failures)!={'PARTIAL_OR_MERGED_GEOMETRY'} or
+            getattr(obj,'visibility','')!='PARTIAL_OR_UNCERTAIN'):
+        return None
+    q=obj.quality
+    required=('geometric_length_m','geometric_width_m','observed_height_m',
+              'observed_length_m','observed_width_m','observed_vertical_span_m',
+              'surface_tilt_deg','plane_residual_m','geometry_inlier_ratio','footprint_coverage')
+    if not all(k in q and np.isfinite(q[k]) for k in required):return None
+    if (getattr(scene,'frame',None)!='workcell' or
+            not 0<=scene.assembled_time_s-scene.observation_time_s<=.15 or
+            abs(obj.time_s-scene.observation_time_s)>1e-6 or not obj.mask_refs or
+            not all(ref in scene.masks and scene.camera_status.get(ref.split('/')[0])=='OK'
+                    for ref in obj.mask_refs)):
+        return None
+    size=np.array([q[k] for k in required[:3]])
+    observed=np.array([q[k] for k in required[3:6]])
+    if (np.any(size<=0) or not np.allclose(np.sort(size),np.sort(obj.size_m),atol=1e-6,rtol=0) or
+            np.max(np.abs(observed[:2]-size[:2]))>.004 or
+            abs(observed[2]-size[2])>.008 or not 0<=q['surface_tilt_deg']<=3 or
+            not 0<=q['plane_residual_m']<=.002 or not .98<=q['geometry_inlier_ratio']<=1 or
+            not .5<=q['footprint_coverage']<=1 or not .003<=obj.uncertainty_m<=.008):
+        return None
+    # Include the measured span excess and a tilt allowance on every axis.
+    return np.maximum(size,observed)+np.linalg.norm(size)*np.sin(np.deg2rad(q['surface_tilt_deg']))
+
+
+def carton_contact_allowed(a,b):
+    """Only carton/carton contact is permitted; unknown kinds remain obstacles."""
+    return a.kind=='carton' and b.kind=='carton'
 
 
 def sphere_box_clearance(centre,radius,box):
@@ -56,18 +95,21 @@ def scene_obstacles(scene,target_id,extra_margin=.004):
         if measured is not None:
             extent=np.abs(np.asarray(measured['rotation']))@np.asarray(measured['size_m'])
             margin=measured['uncertainty_m']+extra_margin
-            boxes.append(AABB(obj.track_id,tuple(measured['position_m']),tuple(extent+2*margin)))
+            boxes.append(AABB(obj.track_id,tuple(measured['position_m']),tuple(extent+2*margin),'carton'))
             continue
         sx,sy,sz=(obj.quality.get('geometric_length_m',obj.size_m[0]),
                   obj.quality.get('geometric_width_m',obj.size_m[1]),
                   obj.quality.get('observed_height_m',obj.size_m[2]))
         if obj.failures or getattr(obj,'visibility','')=='OBSERVED_CUBOID':
-            # An incomplete face must not shrink an uncertain obstacle.
-            sx=sy=sz=max(obj.size_m)
+            bounded=partial_carton_extent(obj,scene)
+            if bounded is None:
+                sx=sy=sz=max(obj.size_m)
+            else:
+                sx,sy,sz=bounded
         c,s=abs(np.cos(obj.axis_yaw_rad)),abs(np.sin(obj.axis_yaw_rad))
         margin=obj.uncertainty_m+extra_margin
         boxes.append(AABB(obj.track_id,obj.position_m,
-                          (c*sx+s*sy+2*margin,s*sx+c*sy+2*margin,sz+2*margin)))
+                          (c*sx+s*sy+2*margin,s*sx+c*sy+2*margin,sz+2*margin),'carton'))
     return boxes
 
 
@@ -93,6 +135,10 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,reject
     rejected=np.flatnonzero((static < margin).any(axis=1) | (mutual < margin).any(axis=1))
     if len(rejected):
         row=int(rejected[0]);bad=np.flatnonzero(static[row] < margin)
+        if rejection is not None and len(bad):
+            col=int(bad[0])
+            rejection.update(sphere_index=row,link_index=int(links[row]),obstacle=obstacles[col].name,
+                             obstacle_kind=obstacles[col].kind,clearance_m=float(static[row,col]),required_m=margin)
         if rejection is not None and not len(bad):
             col=int(np.flatnonzero(mutual[row]<margin)[0])
             rejection.update(sphere_indices=[row,col],link_indices=[int(links[row]),int(other_spheres[col][0])],

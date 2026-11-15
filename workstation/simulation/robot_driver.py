@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import numpy as np
 from workstation.observations.observation_packet import PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
-from workstation.planning.collision import AABB, check_spheres, station_obstacles, scene_obstacles, sphere_box_clearance
+from workstation.planning.collision import AABB, check_spheres, station_obstacles, scene_obstacles, sphere_box_clearance, carton_contact_allowed
 from workstation.planning.selection import (UPRIGHT_TCP_HEIGHT_M, UPRIGHT_PLACE_TCP_CLEARANCE_M,
     nearest_aligned_yaw, nearest_upright_slot_rotation, UPRIGHT_RELEASE_GAP_M)
 
@@ -339,11 +339,12 @@ class RobotMotion:
                     raise RuntimeError('JOINT_LIMIT')
                 fingers=states[arm].finger_positions_m if finger_positions is None else np.asarray(finger_positions)
                 own_spheres=self.spheres(arm,q,float(np.max(fingers)))
-                reason,clearance=check_spheres(own_spheres,other_spheres,obstacles,arm+'_mount')
+                rejection={}
+                reason,clearance=check_spheres(own_spheres,other_spheres,obstacles,arm+'_mount',rejection=rejection)
                 minimum=min(minimum,clearance)
                 if reason:
                     self.last_plan_check=dict(rejection=reason,arm=arm,other_arm=other,
-                        clearance_m=float(clearance),candidate_joint_positions_rad=q.tolist(),
+                        clearance_m=float(clearance),collision_pair=rejection,candidate_joint_positions_rad=q.tolist(),
                         other_arm_joint_positions_rad=other_q.tolist(),
                         other_arm_state_source='encoders' if other_joint_positions_rad is None else 'planned predecessor; not measured',
                         source='robot encoder FK, official collision spheres and fixed/visual obstacles')
@@ -408,7 +409,9 @@ class RobotMotion:
                                 workspace=workspace.report())
                             raise RuntimeError(reason)
                     # Target contact is allowed only at the calibrated support plane.
+                    payload_box=AABB(target_id,centre_box,2*half,'carton')
                     for box in obstacles:
+                        if carton_contact_allowed(payload_box,box):continue
                         gap=np.abs(centre_box-box.centre)-half-np.asarray(box.size)/2
                         if np.all(gap < 0):
                             depth=float(-gap[2])
@@ -444,6 +447,7 @@ class RobotMotion:
             model='official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs',
             observed_space_body_model='Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks',
             whole_arm_unknown_space_verified=False,
+            carton_carton_contact_allowed=True,
             finger_shell_visibility_required=False,
             approach_corridor_unknown_space_checked=bool(check_local_unknown and check_approach_corridor and target_contact and held_size is None),
             approach_corridor_applicable=bool(check_approach_corridor),

@@ -8,7 +8,7 @@ from workstation.observations.camera_geometry import pose_matrix, quaternion_fro
 from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors, pose_is_observed
-from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres
+from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres, carton_contact_allowed
 from workstation.planning.graspgen_candidates import revalidate_candidate
 from workstation.planning.selection import GraspCandidate
 from workstation.skills.cumotion_pick_place import placement_goal
@@ -339,8 +339,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         c,s=abs(math.cos(ref['axis_yaw_rad'])),abs(math.sin(ref['axis_yaw_rad']))
         sx,sy,sz=ref['size_m']
         source_keepouts.append((AABB('unselected_'+key,np.asarray(ref['position_m']),
-            np.array([c*sx+s*sy,s*sx+c*sy,sz])+.024),scene.observation_time_s))
+            np.array([c*sx+s*sy,s*sx+c*sy,sz])+.024,'carton'),scene.observation_time_s))
     report['unselected_source_references']=source_references
+    report['contact_policy']=dict(carton_carton='allowed; geometric gaps recorded, not contact forces',
+        robot_self='protected',robot_robot='protected',robot_carton='protected',fixed_station='protected')
     trackers = {}
     release_trackers = {}
     measurements = {}
@@ -380,7 +382,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             t = trackers[arm]
             centre = pos + rot @ t.offset
             extent = np.abs(rot @ t.relative_rotation) @ (t.size + 2*t.uncertainty_m)
-            box = AABB(objects[arm].track_id, centre, extent)
+            box = AABB(objects[arm].track_id, centre, extent,'carton')
             payload=dict(arm=arm,track_id=box.name)
             keepouts=list(partial_keepout.values())+list(released_keepout.values())+source_keepouts
             for keepout,_ in keepouts:
@@ -392,7 +394,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 stats=report.setdefault(key,{}).setdefault(arm,{})
                 for label,gap in [('carton_axis_gap_m',payload_gap),('arm_surface_gap_m',robot_gap)]:
                     stats[label]=min(stats.get(label,gap),float(gap))
-                if payload_gap<=.008:
+                if payload_gap<=.008 and not carton_contact_allowed(box,keepout):
                     raise PairClearanceError('PARKED_CARTON_CLEARANCE', [payload,dict(obstacle=keepout.name)],
                                              payload_gap,.008)
                 if robot_gap<.008:
@@ -406,8 +408,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             boxes.append((box,payload))
         if len(boxes)!=2:return
         (a,part_a),(b,part_b)=boxes
-        if np.all(np.abs(a.centre-b.centre) <= (a.size+b.size)/2+.002):
-            gap=float(np.max(np.abs(a.centre-b.centre)-(a.size+b.size)/2))
+        gap=float(np.max(np.abs(a.centre-b.centre)-(a.size+b.size)/2))
+        report['payload_pair_min_axis_gap_m']=min(report.get('payload_pair_min_axis_gap_m',gap),gap)
+        if gap<=.002 and not carton_contact_allowed(a,b):
             raise PairClearanceError('PAYLOAD_PAYLOAD_COLLISION',[part_a,part_b],gap,.002)
 
     def measure_held(arm,packet):
@@ -510,7 +513,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         for xy,o in current.items():
             c,s=math.cos(o.axis_yaw_rad),math.sin(o.axis_yaw_rad)
             R=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
-            box=AABB('parked_carton',np.asarray(o.position_m),np.abs(R)@np.asarray(o.size_m)+.016)
+            box=AABB('parked_carton',np.asarray(o.position_m),np.abs(R)@np.asarray(o.size_m)+.016,'carton')
             partial_keepout[xy]=(box,time_s)
             robot.stationary_payload_keepout=box
             report.setdefault('parked_protection',[]).append(dict(phase=report['last_phase'],time_s=time_s,
@@ -592,7 +595,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 bound=parked_surface_envelope(packet,scene,parked[xy],fragments,priors,goals.values())
                 if bound is None:continue
                 proxy,proof=bound
-                box=AABB('parked_carton',np.asarray(proxy.position_m),np.asarray(proxy.size_m))
+                box=AABB('parked_carton',np.asarray(proxy.position_m),np.asarray(proxy.size_m),'carton')
                 partial_keepout[xy]=(box,packet.observation_time_s)
                 robot.stationary_payload_keepout=box
                 scene=replace(scene,objects=tuple(o for o in scene.objects if o.track_id not in ids)+(proxy,))
@@ -891,7 +894,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             # Its observed carton remains a separate obstacle for the moving arm.
             m=measurements[other]
             robot.stationary_payload_keepout=AABB(objects[other].track_id,np.asarray(m['position_m']),
-                np.abs(m['rotation'])@(trackers[other].size+2*m['uncertainty_m']))
+                np.abs(m['rotation'])@(trackers[other].size+2*m['uncertainty_m']),'carton')
             try:
                 m=measurements[a]
                 bottom=m['position_m'][2]-np.abs(np.asarray(m['rotation'])[2])@(trackers[a].size/2)
@@ -1034,7 +1037,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             c,s=math.cos(fit['axis_yaw_rad']),math.sin(fit['axis_yaw_rad'])
             rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
             released_keepout[a]=(AABB('released_'+a,np.asarray(fit['position_m']),
-                np.abs(rotation)@np.asarray(dimensions)+2*fit['uncertainty_m']),packet.observation_time_s)
+                np.abs(rotation)@np.asarray(dimensions)+2*fit['uncertainty_m'],'carton'),packet.observation_time_s)
 
     def refresh_payloads():
         nonlocal packet,scene
