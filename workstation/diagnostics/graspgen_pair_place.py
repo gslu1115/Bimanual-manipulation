@@ -1089,7 +1089,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             if any(packet.camera_status.get(n)!='OK' for n in
                    ('scene_camera','left_wrist_camera','right_wrist_camera')):
                 raise RuntimeError('PAIR_SLOT_REOBSERVE_CAMERA_UNAVAILABLE')
-            view=robot.observed_workspace.slot(goals[a])
+            view=robot.observed_workspace.slot_from_current_depth(goals[a])
             if abs(view['observation_time_s']-packet.observation_time_s)>1e-6:
                 raise RuntimeError('SLOT_REOBSERVE_STALE_OR_WRONG_VIEW')
             save_observation(env.output,'slot_reobserve_'+a+'_'+str(len(entry['checks'])),packet,scene)

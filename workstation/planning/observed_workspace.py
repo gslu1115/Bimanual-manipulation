@@ -448,6 +448,16 @@ class ObservedWorkspace:
                 np.sum(np.maximum(np.abs(p-centre)-r,0)**2,axis=1)<=radius**2,clip):return 'UNOBSERVED_PATH_SPACE'
         return None
 
+    def slot_from_current_depth(self,xy):
+        """Reacquire empty-space evidence without history or robot/payload shadows.
+
+        Fixed workcell geometry still accounts for the support boundary;
+        current detected objects remain obstacles in the ordinary slot check.
+        A separate map avoids reusing cached historical free-space results.
+        """
+        current=ObservedWorkspace(self.packet,self.priors,self.scene,self.static,resolution=self.resolution)
+        return current.slot(xy)
+
     def slot(self, xy):
         length,width,height=self.priors.carton_size_m
         size=np.array([length+.04,width+.04,height+.02])

@@ -36,6 +36,21 @@ class WorkspaceTests(unittest.TestCase):
     def test_clear_depth_and_support_evidence_allows_slot(self):
         ws=self.workspace();self.assertTrue(ws.slot((0,0))['free'])
 
+    def test_slot_reobservation_cannot_refresh_historical_empty_space(self):
+        ws=self.workspace(valid=False)
+        ws.occlusion_memory=SimpleNamespace(free=lambda points,current:np.ones(len(points),bool))
+        self.assertTrue(ws.slot((0,0))['free'])
+        self.assertEqual(ws.slot_from_current_depth((0,0))['reason'],'UNOBSERVED_PATH_SPACE')
+
+    def test_slot_reobservation_does_not_count_robot_occupancy_as_empty_depth(self):
+        ws=self.workspace(valid=False);ws.robots=((8,np.array([0.,0.,.82]),.2),)
+        self.assertTrue(ws.slot((0,0))['free'])
+        self.assertFalse(ws.slot_from_current_depth((0,0))['free'])
+
+    def test_slot_reobservation_accepts_current_depth_and_rejects_new_obstacles(self):
+        self.assertTrue(self.workspace().slot_from_current_depth((0,0))['free'])
+        self.assertFalse(self.workspace(.94).slot_from_current_depth((0,0))['free'])
+
     def test_elevated_carton_still_requires_independent_clear_slot_depth(self):
         carton=SimpleNamespace(track_id='carried',position_m=(0,0,1.05),
                                size_m=(.1,.055,.045),uncertainty_m=.003)
