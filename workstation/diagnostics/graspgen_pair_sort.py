@@ -82,7 +82,7 @@ def run(env,args):
             if any(np.min(s.finger_positions_m)<.035 for s in packet.robot_state.values()):
                 raise RuntimeError('PAIR_RECOVERY_FINGERS_NOT_OPEN')
             save_observation(env.output,'recovery_start',packet,scene)
-            culprit=failed.get('path_failure',{}).get('arm')
+            culprit=(failed.get('perception_failure') or failed.get('path_failure',{})).get('arm')
             order=sorted(packet.robot_state,key=lambda a:a!=culprit)
             for arm in order:
                 packet,scene=observe()

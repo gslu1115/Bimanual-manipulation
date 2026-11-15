@@ -53,6 +53,28 @@ class JointPairTests(unittest.TestCase):
                        dict(last_phase='lift'),dict(failure_reason='JOINT_TRACKING_ERROR'),dict(motion=None)):
             self.assertFalse(recoverable_empty_failure(dict(r,**change)))
 
+    def test_reference_failure_can_reobserve_only_before_descent_and_closure(self):
+        r=dict(last_phase='pregrasp_recheck',motion=dict(ticks=939),
+            failure_reason='PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED')
+        self.assertTrue(recoverable_empty_failure(r))
+        for change in (dict(empty_approach_started=True),dict(closure_started=True),
+                       dict(last_phase='close'),dict(last_phase='approach'),dict(motion=None),
+                       dict(failure_reason='JOINT_TRACKING_ERROR')):
+            self.assertFalse(recoverable_empty_failure(dict(r,**change)))
+        self.assertTrue(recoverable_empty_failure(dict(r,failure_reason='PAIR_PREGRASP_REACQUISITION_LOST:panda_left')))
+
+    def test_perception_failure_blacklists_culprit_pose_without_banning_other_arm(self):
+        p=self.policy();left=self.candidate();right=self.candidate(.2,arm='panda_right')
+        r=dict(pair=dict(selection=[vars(left),vars(right)]),
+            failure_reason='PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED',
+            perception_failure=dict(arm='panda_left'))
+        evidence=p.record_failure(r)
+        self.assertEqual(evidence['culprit_arm'],'panda_left')
+        self.assertEqual(len(p.failed_grasps['-0.2']),1)
+        self.assertEqual(p.failed_grasps['0.2'],[])
+        p.proposed={}
+        self.assertEqual(p.diverse([left],NS(position_m=(-.2,0,.8),size_m=(.1,.055,.045))),[])
+
     def test_visibility_ranking_uses_frustum_and_occluding_spheres(self):
         camera=np.eye(4);K=np.array([[100.,0.,50.],[0.,100.,50.],[0.,0.,1.]])
         points=np.array([[0.,0.,1.],[.05,0.,1.]])

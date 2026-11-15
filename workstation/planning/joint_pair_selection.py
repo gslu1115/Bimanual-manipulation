@@ -114,7 +114,7 @@ class JointPairSelection:
         keys=tuple(sorted(self.key(c) for c in selected))
         if len(keys)!=2:raise RuntimeError('JOINT_SELECTION_FAILURE_HAS_NO_PAIR')
         self.failed_pairs[keys]+=1
-        culprit=report.get('path_failure',{}).get('arm')
+        culprit=(report.get('perception_failure') or report.get('path_failure',{})).get('arm')
         for c in selected:
             if culprit is not None and c['arm']!=culprit:continue
             key=self.key(c);self.failed_sources[key]+=1;self.failed_grasps[key].append(c)
@@ -124,6 +124,11 @@ class JointPairSelection:
 def recoverable_empty_failure(report):
     if report.get('empty_approach_started') or report.get('closure_started'):return False
     reason=report.get('failure_reason','')
-    return (report.get('last_phase') in ('pregrasp_recheck','approach') and bool(report.get('motion')) and
-            reason.startswith(('STATIC_PATH_BLOCKED:','OBSERVED_PATH_OBSTACLE','UNOBSERVED_PATH_SPACE',
-                               'PAIR_TARGET_UNCERTAIN','PAIR_UNSELECTED_CARTONS_UNCONFIRMED')))
+    if report.get('last_phase') not in ('pregrasp_recheck','approach') or not report.get('motion'):return False
+    if reason.startswith(('STATIC_PATH_BLOCKED:','OBSERVED_PATH_OBSTACLE','UNOBSERVED_PATH_SPACE',
+                          'PAIR_TARGET_UNCERTAIN','PAIR_UNSELECTED_CARTONS_UNCONFIRMED')):return True
+    # Reobserve through the checked empty retreat, then request diverse fresh
+    # candidates. Never reuse this branch after descent/contact or closure.
+    return report.get('last_phase')=='pregrasp_recheck' and reason.startswith((
+        'PAIR_TARGET_UNSUPPORTED:panda_left:','PAIR_TARGET_UNSUPPORTED:panda_right:',
+        'PAIR_PREGRASP_REACQUISITION_LOST:','PAIR_PREGRASP_REACQUIRED_TARGET_CHANGED:'))

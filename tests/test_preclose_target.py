@@ -5,7 +5,8 @@ import numpy as np
 
 from tests.test_cuboid_pose import synthetic_observation, visual_object, CENTRE, SIZE, PRIORS, turn
 from workstation.perception.rgbd_cartons import CartonEstimator, deproject
-from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
+from workstation.perception.preclose_target import (PreCloseTarget, preclose_supported, reconcile_preclose_target,
+                                                   reconcile_reacquired_target)
 from workstation.perception.cuboid_pose import (measured_cuboid_supported,
     grasp_constrained_cuboid_supported, reference_constrained_cuboid_supported)
 from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
@@ -192,6 +193,60 @@ class PreCloseTargetTests(unittest.TestCase):
         self.assertFalse(pose_is_observed(obj,result));self.assertEqual(obj.posture,'UNKNOWN')
         self.assertIs(result.masks,scene.masks)
         self.assertEqual(est._anchors[self.reference.track_id].time_s,.9)
+
+    def conflict_fragments(self,tape=True):
+        packet,scene=synthetic_observation(np.eye(3));cameras={}
+        for name,frame in packet.cameras.items():
+            if frame is None:cameras[name]=None;continue
+            xyz=deproject(frame);rgb=frame.rgb.copy()
+            if tape:
+                stripe=(np.abs(xyz[...,2]-CENTRE[2]-SIZE[2]/2)<.001)&(np.abs(xyz[...,1]-CENTRE[1])<.006)
+                rgb[stripe]=[205,160,100]
+            cameras[name]=replace(frame,rgb=rgb)
+        objects=[]
+        for i,ref in enumerate(scene.masks):
+            objects.append(replace(self.reference,time_s=1.,track_id='part_'+str(i),
+                position_m=tuple(CENTRE+[.025*i,0,0]),size_m=(.09,.05,.04),posture='UNKNOWN',
+                mask_refs=(ref,),cameras=(ref.split('/')[0],),visibility='PARTIAL_OR_UNCERTAIN',
+                failures=('CAMERA_SIZE_CONFLICT',) if i==0 else ('PARTIAL_OR_MERGED_GEOMETRY',),
+                quality=dict(self.reference.quality,observed_top_z_m=CENTRE[2]+SIZE[2]/2)))
+        return replace(packet,cameras=cameras),replace(scene,objects=tuple(objects))
+
+    def test_current_geometry_resolves_size_conflict_and_merges_only_supported_fragments(self):
+        p,s=self.conflict_fragments();current=self.check.reacquire(p,s)
+        self.assertIsNotNone(current)
+        self.assertEqual(current.size_m,tuple(SIZE));self.assertEqual(current.posture,'UPRIGHT')
+        self.assertEqual(current.quality['preclose_resolved_size_conflict'],1.)
+        self.assertEqual(current.quality['preclose_reacquired_source_tracks'],len(s.objects))
+        other=replace(s.objects[0],track_id='other',position_m=(.4,0,.8),mask_refs=('unrelated',))
+        s=replace(s,objects=s.objects+(other,));est=CartonEstimator(self.priors)
+        updated=reconcile_reacquired_target(est,s,current)
+        self.assertEqual(len(updated.objects),2);self.assertIn(other,updated.objects)
+        fresh=PreCloseTarget(current,updated,self.priors)
+        self.assertTrue(fresh.confirm(p,updated)['supported'])
+        self.assertEqual(self.check.obj.time_s,.9)
+
+    def test_conflict_reacquisition_requires_current_packaging_and_fresh_complete_geometry(self):
+        p,s=self.conflict_fragments(tape=False)
+        self.assertIsNone(self.check.reacquire(p,s))
+        p,s=self.conflict_fragments()
+        self.assertIsNone(self.check.reacquire(replace(p,assembled_time_s=1.2),s))
+        self.assertIsNone(self.check.reacquire(self.missing_packet(),s))
+        bad=replace(s,objects=(replace(s.objects[0],quality=dict(s.objects[0].quality,packaging_conflict=1.)),)+s.objects[1:])
+        self.assertIsNone(self.check.reacquire(p,bad))
+        partial_p,partial_s=self.partial()
+        partial_s=replace(partial_s,objects=s.objects)
+        self.assertIsNone(self.check.reacquire(partial_p,partial_s))
+
+    def test_reacquired_merge_rejects_stale_proof_and_preserves_unmatched_neighbour(self):
+        p,s=self.conflict_fragments();current=self.check.reacquire(p,s)
+        est=CartonEstimator(self.priors)
+        with self.assertRaisesRegex(RuntimeError,'PROOF_INVALID'):
+            reconcile_reacquired_target(est,replace(s,assembled_time_s=1.2),current)
+        neighbour=replace(s.objects[0],track_id='independent',position_m=tuple(CENTRE+[.06,0,0]),mask_refs=('unrelated',))
+        updated=reconcile_reacquired_target(est,replace(s,objects=s.objects+(neighbour,)),current)
+        self.assertIn(neighbour,updated.objects)
+        with self.assertRaises(ValueError):PreCloseTarget(current,updated,self.priors)
 
     def test_close_initialization_still_needs_current_holding_support(self):
         tcp=CENTRE+[0,0,.009];r=np.diag([1.,-1.,-1.])

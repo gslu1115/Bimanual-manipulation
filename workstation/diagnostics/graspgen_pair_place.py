@@ -6,7 +6,8 @@ import numpy as np
 
 from workstation.observations.camera_geometry import pose_matrix, quaternion_from_matrix
 from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
-from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
+from workstation.perception.preclose_target import (PreCloseTarget, preclose_supported, reconcile_preclose_target,
+                                                  reconcile_reacquired_target)
 from workstation.perception.scene_estimate import ScenePriors, pose_is_observed
 from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres, carton_contact_allowed
 from workstation.planning.graspgen_candidates import revalidate_candidate
@@ -370,6 +371,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         proof=references[arm].confirm(packet,scene,closed=closed)
         report.setdefault('preclose_evidence',[]).append(proof)
         if not preclose_supported(proof,packet.observation_time_s):
+            report['perception_failure']=dict(arm=arm,reason=proof['reason'],phase=report['last_phase'])
             save_observation(env.output,'pair_'+arm+'_'+report['last_phase'],packet,scene)
             raise RuntimeError('PAIR_TARGET_UNSUPPORTED:'+arm+':'+proof['reason'])
         return proof
@@ -788,11 +790,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             references[a]=PreCloseTarget(current,scene,priors)
             objects[a]=current
         else:
-            if packet.observation_time_s-prior.time_s>6.:
-                current=references[a].reacquire(packet,scene)
-                if current is not None:
-                    recovery[a]=current
-                    continue
+            current=references[a].reacquire(packet,scene)
+            report.setdefault('pregrasp_reacquisition_checks',[]).append(dict(arm=a,
+                time_s=packet.observation_time_s,reference_age_s=packet.observation_time_s-prior.time_s,
+                supported=current is not None))
+            if current is not None:
+                recovery[a]=current
+                continue
             proof=confirm_target(a,packet)
             scene=reconcile_preclose_target(estimator,scene,proof)
             # A complete current 6-D fit (including all three translations)
@@ -814,6 +818,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 continue
             current=reference.reacquire(packet,scene)
             if current is None:
+                report['perception_failure']=dict(arm=a,reason='PAIR_PREGRASP_REACQUISITION_LOST',phase='pregrasp_recheck')
                 save_observation(env.output,'pair_'+a+'_pregrasp_reacquisition',packet,scene)
                 raise RuntimeError('PAIR_PREGRASP_REACQUISITION_LOST:'+a)
             previous=recovery[a]
@@ -824,13 +829,14 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             current=replace(current,velocity_m_s=velocity)
             candidate=GraspCandidate(**selected[a])
             expected=replace(candidate,target_id=current.track_id)
-            updated=replace(scene,objects=tuple(current if o.track_id==current.track_id else o for o in scene.objects))
+            updated=reconcile_reacquired_target(estimator,scene,current)
             try:
                 checked=revalidate_candidate(expected,current,updated,seq)
                 renewed=PreCloseTarget(current,updated,priors)
-            except (RuntimeError,ValueError):
+            except (RuntimeError,ValueError) as error:
                 save_observation(env.output,'pair_'+a+'_pregrasp_reacquisition',packet,scene)
-                raise
+                report['perception_failure']=dict(arm=a,reason=str(error),phase='pregrasp_recheck')
+                raise RuntimeError('PAIR_PREGRASP_REACQUIRED_TARGET_CHANGED:'+a+':'+str(error)) from error
             renewed.original=reference
             references[a]=renewed
             scene=updated
@@ -840,7 +846,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report.setdefault('pregrasp_current_refits',[]).append(dict(arm=a,
                 original_track=reference.obj.track_id,current_track=current.track_id,size_m=current.size_m,
                 first_time_s=previous.time_s,second_time_s=current.time_s,velocity_m_s=velocity,
-                measurement=current.measured_cuboid))
+                measurement=current.measured_cuboid,
+                source_tracks=current.quality.get('preclose_reacquired_source_tracks'),
+                resolved_size_conflict=bool(current.quality.get('preclose_resolved_size_conflict'))))
     robot.set_observation(packet,scene,priors)
     next_approach_check=3.
     move('approach', poses, True)

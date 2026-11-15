@@ -80,44 +80,77 @@ class PreCloseTarget:
         return new
 
     def reacquire(self,packet,scene):
-        """Find a fresh upright measurement near the original pick at pregrasp."""
+        """Rebuild a reference from current complete geometry, then join its masks.
+
+        Proximity and clipped per-view catalogue choices are proposals, not
+        identity proofs. Old pose/size only seed correspondence; all translation
+        axes, size/support consistency and packaging need current evidence.
+        """
         original=getattr(self,'original',self)
         obj=original.obj
         near=[other for other in scene.objects if
               np.linalg.norm(np.asarray(other.position_m)-obj.position_m)<.07]
-        if len(near)!=1:
-            return None
-        current,=near
-        if (current.posture!='UPRIGHT' or current.failures or current.quality.get('packaging_conflict',0) or
-                abs(current.time_s-packet.observation_time_s)>1e-6 or
-                any(other.track_id==obj.track_id and other is not current for other in scene.objects)):
-            return None
         # Select size using actual top elevation on the calibrated pickup
         # support. A cropped footprint may fit the next smaller catalogue entry.
-        height=current.quality.get('observed_top_z_m',float('nan'))-self.priors.support_z_m
         sizes=self.priors.carton_size_catalog_m or (self.priors.carton_size_m,)
-        matching=[size for size in sizes if abs(size[2]-height)<=.002]
-        if len(matching)!=1 or not np.allclose(matching[0],obj.size_m,rtol=0,atol=1e-6):
-            return None
+        height_supported=[]
+        for current in near:
+            height=current.quality.get('observed_top_z_m',float('nan'))-self.priors.support_z_m
+            matching=[size for size in sizes if abs(size[2]-height)<=.002]
+            if (len(matching)==1 and np.allclose(matching[0],obj.size_m,rtol=0,atol=1e-6) and
+                    abs(current.time_s-packet.observation_time_s)<=1e-6):height_supported.append(current)
+        if not height_supported:return None
         measured=fit_cuboid_pose(packet,scene,obj.position_m,original.rotation,obj.size_m,self.priors,
                                 measure_side_interiors=True)
         if (not measured_cuboid_supported(measured,packet.observation_time_s) or
                 measured['translation_difference_from_hint_m']>.002 or
                 measured['orientation_difference_from_hint_deg']>3. or
-                set(measured['mask_refs'])!=set(current.mask_refs) or
                 len({ref.split('/')[0] for ref in measured['mask_refs']})<2):
             return None
-        rotation=np.asarray(measured['rotation'])
-        quality=dict(current.quality,geometric_length_m=obj.size_m[0],geometric_width_m=obj.size_m[1],
-                     observed_height_m=obj.size_m[2],independent_cuboid_pose=1.)
-        return replace(current,position_m=tuple(measured['position_m']),size_m=obj.size_m,quality=quality,
+        refs=set(measured['mask_refs'])
+        members=[o for o in near if o.mask_refs and set(o.mask_refs)<=refs]
+        recoverable={'CAMERA_SIZE_CONFLICT','PARTIAL_OR_MERGED_GEOMETRY',
+                     'INCOMPATIBLE_SIZE_OR_SUPPORT','INSTANCE_GEOMETRY_INCONSISTENT','VERTICAL_EXTENT_UNRESOLVED'}
+        if (not members or not any(o in members for o in height_supported) or
+                {ref for o in members for ref in o.mask_refs}!=refs or
+                sum(len(o.mask_refs) for o in members)!=len(refs) or
+                sum(not o.failures for o in members)>1 or
+                any(not set(o.failures)<=recoverable or o.quality.get('packaging_conflict',0) or
+                    o.posture in ('INVERTED','SIDE') or abs(o.time_s-packet.observation_time_s)>1e-6
+                    for o in members) or
+                any(o.track_id==obj.track_id and o not in members for o in scene.objects)):
+            return None
+        current=min(members,key=lambda o:np.linalg.norm(np.asarray(o.position_m)-obj.position_m))
+        bounded=replace(current,position_m=tuple(measured['position_m']),size_m=obj.size_m,
             size_source='catalogue size verified by current top elevation and two-view cuboid fit',
-            axis_yaw_rad=math.atan2(rotation[1,0],rotation[0,0]),visibility='OBSERVED_CUBOID',
-            hypotheses=(PoseHypothesis('UPRIGHT',tuple(quaternion_from_matrix(rotation)),
-                'current packaging and two-view cuboid fit; height agrees with pickup support'),),
-            valid_depth_ratio=min(float(packet.cameras[ref.split('/')[0]].valid_depth[scene.masks[ref]].mean())
-                                  for ref in measured['mask_refs']),
-            measured_cuboid=measured,uncertainty_m=measured['uncertainty_m'],velocity_m_s=None)
+            mask_refs=tuple(measured['mask_refs']),cameras=tuple(sorted({ref.split('/')[0] for ref in refs})),
+            failures=(),measured_cuboid=measured,velocity_m_s=None)
+        from workstation.perception.rgbd_cartons import CartonEstimator
+        resolved=CartonEstimator(self.priors)._resolve_measured_flat_cuboid(packet,scene,bounded,measured,obj)
+        if (resolved.posture=='UNKNOWN' and not resolved.failures and len(members)==1 and
+                current.posture=='UPRIGHT' and not current.failures):
+            # Preserve an already valid CURRENT semantic observation. Conflicted
+            # or fragmented detections must instead resolve packaging above.
+            resolved=replace(resolved,posture='UPRIGHT',
+                hypotheses=tuple(h for h in resolved.hypotheses if h.label=='UPRIGHT'))
+        if resolved.posture!='UPRIGHT' or resolved.failures:return None
+        return replace(resolved,velocity_m_s=None,quality=dict(resolved.quality,
+            preclose_reacquired_source_tracks=float(len(members)),
+            preclose_resolved_size_conflict=float(any('CAMERA_SIZE_CONFLICT' in o.failures for o in members))))
+
+
+def reconcile_reacquired_target(estimator,scene,current):
+    """Remove only complete masks covered by this new independent fit."""
+    from workstation.perception.scene_estimate import current_cuboid_measurement
+    candidate=replace(scene,objects=(current,))
+    if current_cuboid_measurement(current,candidate) is None or current.posture!='UPRIGHT' or current.failures:
+        raise RuntimeError('PRECLOSE_REACQUISITION_PROOF_INVALID')
+    merged=estimator.associate_supported_target(scene,current.track_id,current.measured_cuboid)
+    matches=[o for o in merged.objects if o.track_id==current.track_id and set(o.mask_refs)==set(current.mask_refs)]
+    if len(matches)!=1:raise RuntimeError('PRECLOSE_REACQUISITION_ASSOCIATION_UNRESOLVED')
+    estimator._tracks[current.track_id]=current
+    estimator._anchors[current.track_id]=current
+    return replace(merged,objects=tuple(current if o.track_id==current.track_id else o for o in merged.objects))
 
 
 def preclose_supported(proof,time_s):
