@@ -1,0 +1,755 @@
+{
+  "date": "2026-11-15",
+  "run": "slot-reobserve-v2-live-6",
+  "source_commit": "99096d9d9e477c2dedb0bb46d7c77fc610e8b7ce",
+  "scope": "One all-live four-carton run via python -m workstation; fresh official GraspGen requests, no replay wrapper or saved IK seeds.",
+  "report": {
+    "success": false,
+    "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+    "rounds": [],
+    "indexing": [],
+    "attempts": [
+      {
+        "round": 1,
+        "attempt": 1,
+        "success": false,
+        "failure_reason": "STATIC_PATH_BLOCKED:visual_0018",
+        "action_wall_s": 17.879100063815713,
+        "joint_choice": {
+          "source_keys": [
+            "visual_0001",
+            "visual_0002"
+          ],
+          "history_penalty": 0,
+          "visibility": {
+            "risk": 0.0,
+            "surface_fraction_by_camera": {
+              "visual_0001": {
+                "scene_camera": 0.9791666666666666,
+                "left_wrist_camera": 1.0,
+                "right_wrist_camera": 0.0
+              },
+              "visual_0002": {
+                "scene_camera": 0.5416666666666666,
+                "left_wrist_camera": 0.0,
+                "right_wrist_camera": 1.0
+              },
+              "visual_0003": {
+                "scene_camera": 1.0,
+                "left_wrist_camera": 0.041666666666666664,
+                "right_wrist_camera": 0.0
+              },
+              "visual_0004": {
+                "scene_camera": 1.0,
+                "left_wrist_camera": 0.0,
+                "right_wrist_camera": 0.6458333333333334
+              }
+            },
+            "scope": "predicted pregrasp visibility of current measured surfaces; ranking only"
+          },
+          "feasible_pair_count": 340,
+          "eligible_source_count": 4
+        }
+      }
+    ],
+    "initial_visual_sources": {
+      "visual_0001": {
+        "position_m": [
+          -0.22001970559358597,
+          -0.1500072181224823,
+          0.7824998978644118
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "axis_yaw_rad": 0.34906531486776293
+      },
+      "visual_0002": {
+        "position_m": [
+          0.21999859809875488,
+          -0.15000304765999317,
+          0.7849998226276355
+        ],
+        "size_m": [
+          0.11,
+          0.06,
+          0.05
+        ],
+        "axis_yaw_rad": 2.7052597469029007
+      },
+      "visual_0003": {
+        "position_m": [
+          -0.1699720025062561,
+          0.035016387701034546,
+          0.7874999051209718
+        ],
+        "size_m": [
+          0.12,
+          0.065,
+          0.055
+        ],
+        "axis_yaw_rad": 0.7853990500857642
+      },
+      "visual_0004": {
+        "position_m": [
+          0.17006367444992065,
+          0.03493888024240732,
+          0.7824999688099088
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "axis_yaw_rad": 2.443435477968608
+      }
+    },
+    "failure_reason": "STATIC_PATH_BLOCKED:visual_0018",
+    "total_wall_s": 280.8971308961045,
+    "conveyor_events": []
+  },
+  "wrapper_exit": "6 1",
+  "status": {
+    "status": "failed",
+    "mode": "graspgen-pair-sort",
+    "error": "Traceback (most recent call last):\n  File \"/work/frozen/slot-reobserve-v2/workstation/diagnostics/graspgen_pair.py\", line 531, in check_pair\n    place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample)\n  File \"/work/frozen/slot-reobserve-v2/workstation/diagnostics/graspgen_pair_place.py\", line 867, in place_pair\n    move('initial_lift',{a:(p-[0.,0.,.12],r) for a,(p,r) in raised.items()},True)\n  File \"/work/frozen/slot-reobserve-v2/workstation/diagnostics/graspgen_pair_place.py\", line 708, in move\n    robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if carries else None,\n  File \"/work/frozen/slot-reobserve-v2/workstation/simulation/robot_driver.py\", line 350, in validate_path\n    raise RuntimeError(reason)\nRuntimeError: STATIC_PATH_BLOCKED:visual_0018\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/work/frozen/slot-reobserve-v2/workstation/app.py\", line 386, in main\n    run(env,args)\n  File \"/work/frozen/slot-reobserve-v2/workstation/diagnostics/graspgen_pair_sort.py\", line 138, in run\n    result=check_pair(env,pair_args,packet,scene,estimator,robot=robot,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/frozen/slot-reobserve-v2/workstation/diagnostics/graspgen_pair.py\", line 535, in check_pair\n    fail(str(error))\n  File \"/work/frozen/slot-reobserve-v2/workstation/diagnostics/graspgen_pair.py\", line 251, in fail\n    raise PairAttemptError(reason,report)\nworkstation.diagnostics.graspgen_pair.PairAttemptError: STATIC_PATH_BLOCKED:visual_0018\n"
+  },
+  "initial_states_match_original": true,
+  "configuration_matches_original": true,
+  "source_check": {
+    "success": true,
+    "source_commit": "99096d9d9e477c2dedb0bb46d7c77fc610e8b7ce",
+    "files": 320,
+    "archive_sha256": "e9d70bda806732c22c511fceaa2b0ea8a9eedbdae784752dba5c1711e8961222"
+  },
+  "attempts": [
+    {
+      "path": "round_1/attempt_1/graspgen_pair_check.json",
+      "sha256": "a5b72649a727e009a3938adf471688c1101003cbc81b5adfdd28642db035dba3",
+      "model_requests": [
+        {
+          "target_id": "visual_0001",
+          "request_id": "43cc612649204befb77fb520c2d89ab4",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_4",
+            "left_wrist_camera/48/component_1"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5975,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0001",
+          "request_id": "df66f17c32fe4bd9aca10221cd586a08",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_4",
+            "left_wrist_camera/48/component_1"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5975,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0001",
+          "request_id": "32b34374c728404080a7901aeea5907c",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_4",
+            "left_wrist_camera/48/component_1"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5975,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0003",
+          "request_id": "4d30ca43e3c14945aa3c5356a24bbfdd",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_3",
+            "right_wrist_camera/48/component_1"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 8382,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0003",
+          "request_id": "e73497cf0d7f4c658ec21ee2ddf0e6a1",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_3",
+            "right_wrist_camera/48/component_1"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 8382,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0003",
+          "request_id": "a27e0972649041f8999f6e78d18dbf96",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_3",
+            "right_wrist_camera/48/component_1"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 8382,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "ca6601210242426d94a6ce4f9b7c290d",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_1",
+            "right_wrist_camera/48/component_3"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5488,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "e40d8465e0024aed9549ccbe53274409",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_1",
+            "right_wrist_camera/48/component_3"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5488,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0002",
+          "request_id": "55592189d3a544a58f145106f7aa803d",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_1",
+            "right_wrist_camera/48/component_3"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5488,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0004",
+          "request_id": "d9b64808a7cc4ee68ee67c19219b9662",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_2",
+            "right_wrist_camera/48/component_2"
+          ],
+          "basis_yaw_rad": 0.0,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5166,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0004",
+          "request_id": "9fd17e2caef64067a4e6b9e0103f01b1",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_2",
+            "right_wrist_camera/48/component_2"
+          ],
+          "basis_yaw_rad": 2.0943951023931953,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5166,
+          "raw_grasps": 256
+        },
+        {
+          "target_id": "visual_0004",
+          "request_id": "988631e79a9f4c1bb53f3b63cbee85d1",
+          "attempt": 1,
+          "mask_refs": [
+            "scene_camera/48/component_2",
+            "right_wrist_camera/48/component_2"
+          ],
+          "basis_yaw_rad": 4.1887902047863905,
+          "basis_pitch_rad": 0.0,
+          "observed_input_points": 5166,
+          "raw_grasps": 256
+        }
+      ],
+      "selected_grasps": [
+        {
+          "arm": "panda_left",
+          "position_m": [
+            -0.22297300689074356,
+            -0.15069290233153723,
+            0.8023386199237672
+          ],
+          "orientation_wxyz": [
+            0.0012145455487656996,
+            -0.9829457069169206,
+            -0.17387361090153422,
+            -0.05986843546283113
+          ],
+          "source": {
+            "track_id": "visual_0001",
+            "time_s": 3.3999999999999906,
+            "position_m": [
+              -0.22001974284648895,
+              -0.15000719018280506,
+              0.7824999347263583
+            ],
+            "axis_yaw_rad": 0.34906587308069636,
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "posture": "UPRIGHT",
+            "body_rotation": [
+              [
+                0.9396926130282652,
+                -0.3420201646396173,
+                0.0
+              ],
+              [
+                0.3420201646396173,
+                0.9396926130282652,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          "base_pose": [
+            [
+              0.35352164881217196,
+              -0.9280461273778842,
+              0.11727249741140418,
+              -0.23329308748493854
+            ],
+            [
+              -0.9352148319481769,
+              -0.35331978684413023,
+              0.0232067471315045,
+              -0.1568797422284254
+            ],
+            [
+              0.019897764548659325,
+              -0.11787904798984528,
+              -0.9928287267684937,
+              0.9016973376274109
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "position_m": [
+            0.21975458764288097,
+            -0.1499188973400055,
+            0.8006741015733673
+          ],
+          "orientation_wxyz": [
+            0.008116713477025068,
+            0.21643771112406693,
+            0.9762619349377543,
+            -0.001212665369868143
+          ],
+          "source": {
+            "track_id": "visual_0003",
+            "time_s": 3.3999999999999906,
+            "position_m": [
+              0.21999479830265045,
+              -0.15001109428703785,
+              0.7849998831390088
+            ],
+            "axis_yaw_rad": 2.705258686970003,
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "posture": "UPRIGHT",
+            "body_rotation": [
+              [
+                -0.9063070881848904,
+                -0.42261976042989924,
+                0.0
+              ],
+              [
+                0.42261976042989924,
+                -0.9063070881848904,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          },
+          "base_pose": [
+            [
+              0.4386399725604699,
+              0.8985322551325466,
+              0.015323144537155192,
+              0.20551492561794457
+            ],
+            [
+              0.8986617210513913,
+              -0.43860290734706214,
+              -0.005881284215113627,
+              -0.14763135344027467
+            ],
+            [
+              0.0014362521469593048,
+              0.016350088641047478,
+              -0.9998652935028076,
+              0.900455892086029
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        }
+      ],
+      "selected_poses_matching_old_saved": 0,
+      "replay_metadata_present": false,
+      "success": false,
+      "failure_reason": "STATIC_PATH_BLOCKED:visual_0018",
+      "last_phase": "initial_lift",
+      "action_wall_s": 17.879100063815713,
+      "joint_choice": {
+        "source_keys": [
+          "visual_0001",
+          "visual_0002"
+        ],
+        "history_penalty": 0,
+        "visibility": {
+          "risk": 0.0,
+          "surface_fraction_by_camera": {
+            "visual_0001": {
+              "scene_camera": 0.9791666666666666,
+              "left_wrist_camera": 1.0,
+              "right_wrist_camera": 0.0
+            },
+            "visual_0002": {
+              "scene_camera": 0.5416666666666666,
+              "left_wrist_camera": 0.0,
+              "right_wrist_camera": 1.0
+            },
+            "visual_0003": {
+              "scene_camera": 1.0,
+              "left_wrist_camera": 0.041666666666666664,
+              "right_wrist_camera": 0.0
+            },
+            "visual_0004": {
+              "scene_camera": 1.0,
+              "left_wrist_camera": 0.0,
+              "right_wrist_camera": 0.6458333333333334
+            }
+          },
+          "scope": "predicted pregrasp visibility of current measured surfaces; ranking only"
+        },
+        "feasible_pair_count": 340,
+        "eligible_source_count": 4
+      },
+      "grasp_diversity": [
+        {
+          "source_key": "visual_0001",
+          "arm": "panda_left",
+          "available": 30,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 8,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0001",
+          "arm": "panda_right",
+          "available": 30,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 8,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0002",
+          "arm": "panda_left",
+          "available": 28,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 7,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0002",
+          "arm": "panda_right",
+          "available": 28,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 7,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0003",
+          "arm": "panda_left",
+          "available": 33,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 5,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0003",
+          "arm": "panda_right",
+          "available": 33,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 5,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0004",
+          "arm": "panda_left",
+          "available": 17,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 5,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        },
+        {
+          "source_key": "visual_0004",
+          "arm": "panda_right",
+          "available": 17,
+          "selected": 4,
+          "similar_to_failed": 0,
+          "near_duplicates": 5,
+          "translation_threshold_m": 0.008,
+          "rotation_threshold_deg": 20.0
+        }
+      ],
+      "empty_approach_started": true,
+      "closure_started": true,
+      "path_failure": {
+        "arm": "panda_left",
+        "details": {
+          "rejection": "STATIC_PATH_BLOCKED:visual_0018",
+          "arm": "panda_left",
+          "other_arm": "panda_right",
+          "clearance_m": -0.00019807507499449567,
+          "candidate_joint_positions_rad": [
+            0.050158966332674026,
+            0.532554566860199,
+            0.23074045777320862,
+            -2.562839984893799,
+            0.0966276079416275,
+            3.0836756229400635,
+            2.1593549251556396
+          ],
+          "other_arm_joint_positions_rad": [
+            -0.11821866035461426,
+            0.5361127257347107,
+            -0.09984288364648819,
+            -2.517305850982666,
+            0.632811427116394,
+            3.034687042236328,
+            -1.1832029819488525
+          ],
+          "other_arm_state_source": "encoders",
+          "source": "robot encoder FK, official collision spheres and fixed/visual obstacles"
+        },
+        "robot_pixels_removed": {
+          "scene_camera": 56,
+          "left_wrist_camera": 2274,
+          "right_wrist_camera": 2323
+        }
+      }
+    }
+  ],
+  "live_model_requests": 12,
+  "proxy_success_responses": 12,
+  "branch_coverage": {
+    "joint_selection": true,
+    "empty_failure_recovery": false,
+    "second_slot_reobservation": false,
+    "viewpoint_motion": false,
+    "failure_box_switch": false
+  },
+  "failure_reselections": [],
+  "diagnostic_replay_files_present": false,
+  "model_files_sha256": {
+    "graspgen_franka_panda_gen.pth": "0597583b89b322d42ceb4e596967d6ed68d1b56cba4039895909ccd5bdc66eff",
+    "graspgen_franka_panda_dis.pth": "e47d703c63b54c2d11fbc1effd43898f251b4147250888541e3b16e9c0d19e1c",
+    "graspgen_franka_panda.yml": "3b666d28ffb91001ddb6ba24a2e0c11458478a986b808b493cf6fa9a987c2abd"
+  },
+  "diagnosis": {
+    "blocked_scene_sha256": "5bd5ca5336083dc981706fba0f9dfda129475e628e7e61491f4efa9d79f0ca5a",
+    "arm": "panda_left",
+    "observed_obstacle": {
+      "track_id": "visual_0018",
+      "time_s": 11.62499999999998,
+      "position_m": [
+        -0.1699906885623932,
+        0.03499775379896164,
+        0.7874999367057215
+      ],
+      "axis_yaw_rad": 0.7853976475804411,
+      "size_m": [
+        0.12,
+        0.065,
+        0.055
+      ],
+      "size_source": "known_size_prior; footprint and visible surface measured",
+      "posture": "UNKNOWN",
+      "hypotheses": [
+        {
+          "label": "UPRIGHT",
+          "orientation_wxyz": [
+            0.9238796312085673,
+            0.0,
+            0.0,
+            0.3826831940886892
+          ],
+          "evidence": "top stripe in scene_camera; 180-degree axis symmetry"
+        },
+        {
+          "label": "UPRIGHT",
+          "orientation_wxyz": [
+            0.3826831940886892,
+            0.0,
+            0.0,
+            -0.9238796312085673
+          ],
+          "evidence": "top stripe in scene_camera; 180-degree axis symmetry"
+        },
+        {
+          "label": "INVERTED",
+          "orientation_wxyz": [
+            -0.0,
+            -0.9238796312085673,
+            -0.3826831940886892,
+            -0.0
+          ],
+          "evidence": "top stripe in scene_camera; 180-degree axis symmetry"
+        },
+        {
+          "label": "INVERTED",
+          "orientation_wxyz": [
+            0.0,
+            -0.3826831940886892,
+            0.9238796312085673,
+            0.0
+          ],
+          "evidence": "top stripe in scene_camera; 180-degree axis symmetry"
+        }
+      ],
+      "mask_refs": [
+        "scene_camera/96/component_1"
+      ],
+      "cameras": [
+        "scene_camera"
+      ],
+      "visibility": "PARTIAL_OR_UNCERTAIN",
+      "valid_depth_ratio": 1.0,
+      "quality": {
+        "footprint_coverage": 0.687989663583661,
+        "footprint_error_m": 1.6258310921182795e-05,
+        "plane_residual_m": 0.0003506562067333963,
+        "surface_tilt_deg": 0.23308445540695147,
+        "observed_length_m": 0.12000996773063652,
+        "observed_width_m": 0.06498374168907882,
+        "observed_height_m": 0.055,
+        "geometric_length_m": 0.12,
+        "geometric_width_m": 0.065,
+        "observed_vertical_span_m": 0.05246462412151942,
+        "geometry_inlier_ratio": 1.0,
+        "observed_top_z_m": 0.8149999367057215,
+        "tape_observed": 1.0,
+        "tape_visible_span_m": 0.05930422629442215,
+        "tape_partial_support": 1.0,
+        "tape_paired_bins": 6.0,
+        "tape_paired_span_m": 0.029600153229327658,
+        "tape_stripe_width_m": 0.009868552372002765,
+        "tape_camera_count": 1.0,
+        "tape_fold_upright_views": 0.0,
+        "tape_fold_inverted_views": 0.0,
+        "packaging_conflict": 0.0,
+        "boundary_refined_pixels": 0.0
+      },
+      "failures": [
+        "PARTIAL_OR_MERGED_GEOMETRY"
+      ],
+      "velocity_m_s": null,
+      "uncertainty_m": 0.003,
+      "measured_cuboid": null
+    },
+    "computed_collision_aabb": {
+      "centre": [
+        -0.1699906885623932,
+        0.03499775379896164,
+        0.7874999367057215
+      ],
+      "size": [
+        0.18370562748474883,
+        0.18370562748474883,
+        0.134
+      ]
+    },
+    "stage": "closed fingers; initial lift path rejected before initial_lift drive; independent lift/hold acceptance not reached",
+    "interpretation": "Current scene image shows left rear wide carton partly occluded by the left arm. PARTIAL_OR_MERGED_GEOMETRY invokes the conservative uncertain-obstacle envelope. No simulator contact truth was queried.",
+    "limitations": "Static rejection log has no link/sphere index. Reported clearance is a proxy minimum, not a physical contact measurement. Pregrasp visibility score does not predict grasp/lift visibility."
+  },
+  "archive": {
+    "filename": "slot-live-20261115-full.tgz",
+    "bytes": 5794524,
+    "sha256": "9e6902c30210474f67206a826aacd5eef5b12545da30ec056803fab72d4528f9",
+    "files": 43
+  },
+  "verified_manifest_files": 42,
+  "checks": {
+    "date": "2026-11-15",
+    "entry_command": "D:/isaacsim/python.bat -m workstation --mode graspgen-pair-sort --pair-transfer-policy auto --validate-only",
+    "entry_result": "passed",
+    "source_archive_file_comparison": 320,
+    "unit_tests_rerun": false,
+    "prior_unit_tests": {
+      "count": 651,
+      "source_commit": "99096d9d9e477c2dedb0bb46d7c77fc610e8b7ce",
+      "reference": "second_slot_reobserve_20261115.json"
+    }
+  },
+  "limits": [
+    "Exactly one new all-live physical run; no manual retry or controller change.",
+    "Joint selection executed. Empty failure recovery, box switch and second-slot reobservation were not reached.",
+    "No random-success-rate or complete integration-success claim. No safety margins or evidence ages changed."
+  ]
+}
