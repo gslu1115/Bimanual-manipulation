@@ -76,6 +76,20 @@ class CartonEstimator:
         self.persistent_identities=bool(persistent_identities)
         self._identities={}
         self._identity_hints={}  # Correspondence only; never emitted as a new pose.
+        self._identity_registration_open=True
+
+    def set_task_identities(self,identity_ids):
+        """Close task registration; later detections remain visible obstacles.
+
+        A new visual track on the discharge belt must not create another
+        available task object for an already delivered carton.
+        """
+        keys=set(identity_ids)
+        if not keys or not keys<=self._identities.keys():
+            raise ValueError('Task identities must already be visually confirmed')
+        self._identities={k:v for k,v in self._identities.items() if k in keys}
+        self._identity_hints={k:v for k,v in self._identity_hints.items() if k in keys}
+        self._identity_registration_open=False
 
     def mark_identity(self,identity_id,state):
         if state not in ('available','selected','held','placed','delivered'):raise ValueError('Invalid carton lifecycle')
@@ -114,7 +128,7 @@ class CartonEstimator:
         objects=[]
         for obj in scene.objects:
             identity=self._identities.get(obj.track_id)
-            if identity is None and not obj.failures and pose_is_observed(obj,scene):
+            if identity is None and self._identity_registration_open and not obj.failures and pose_is_observed(obj,scene):
                 identity=CartonIdentity(obj.track_id,tuple(obj.size_m),obj.time_s,obj.time_s)
             if identity is not None:
                 identity=replace(identity,last_observed_s=obj.time_s)

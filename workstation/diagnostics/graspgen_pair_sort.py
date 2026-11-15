@@ -132,6 +132,7 @@ def run(env,args):
         originals=source_cartons(scene,env.c['table'])
         if len(originals)!=4:raise RuntimeError('PAIR_TASK_REQUIRES_FOUR_OBSERVED_SOURCES')
         remaining={o.track_id:dict(position_m=o.position_m,size_m=o.size_m,axis_yaw_rad=o.axis_yaw_rad) for o in originals}
+        estimator.set_task_identities(remaining)
         report['initial_visual_sources']=remaining.copy()
         selection=JointPairSelection(remaining)
         pair_args=copy(args);pair_args.mode='graspgen-pair-place'

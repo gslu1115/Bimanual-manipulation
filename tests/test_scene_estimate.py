@@ -30,6 +30,28 @@ def packet(time=1., yaw=.3, centre=(0.,-.10), tape=True, size=(.1,.055,.045),
 
 
 class EstimateTests(unittest.TestCase):
+    def test_closed_task_registry_keeps_new_detections_without_new_task_objects(self):
+        est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
+        key=est.estimate(packet()).objects[0].identity_id
+        est.set_task_identities([key])
+        est.mark_identity(key,'delivered')
+        scene=est.estimate(packet(time=10.))
+        self.assertEqual(len(scene.objects),1)
+        self.assertIsNone(scene.objects[0].identity_id)
+        self.assertEqual(len(scene.identities),1)
+        self.assertEqual(scene.identities[0].state,'delivered')
+
+    def test_closed_task_registry_still_reacquires_known_available_source(self):
+        est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
+        key=est.estimate(packet()).objects[0].identity_id
+        with self.assertRaises(ValueError):est.set_task_identities(['unobserved'])
+        est.set_task_identities([key])
+        est.estimate(packet(time=10.,empty=True))
+        current=est.estimate(packet(time=11.))
+        self.assertEqual(current.objects[0].identity_id,key)
+        self.assertEqual(current.objects[0].time_s,11.)
+        self.assertEqual(len(current.identities),1)
+
     def test_identity_outlives_pose_but_missing_object_has_no_current_pose(self):
         est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
         first=est.estimate(packet())
