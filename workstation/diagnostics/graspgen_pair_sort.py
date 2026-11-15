@@ -88,7 +88,8 @@ def _run(env,args,timing):
     priors=ScenePriors.from_config(env.c)
     def new_estimator():
         return CartonEstimator(priors,robot_point_filter=robot.observed_robot_points,
-                               robot_filter_factory=robot.prepare_observed_robot_filter,persistent_identities=True)
+                               robot_filter_factory=robot.prepare_observed_robot_filter,persistent_identities=True,
+                               known_static=robot.static)
     estimator=new_estimator()
     def observe():
         packet=env.get_observation_packet(refresh=True)

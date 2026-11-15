@@ -4,6 +4,7 @@ from unittest.mock import patch
 import numpy as np
 from workstation.perception.rgbd_cartons import CartonEstimator
 from workstation.perception.scene_estimate import ScenePriors
+from workstation.planning.collision import AABB
 
 
 class MergedViewDeduplicationTests(unittest.TestCase):
@@ -24,7 +25,7 @@ class MergedViewDeduplicationTests(unittest.TestCase):
     def test_union_removes_only_redundant_failed_fit_and_keeps_real_objects_and_masks(self):
         est,p,m,d,points=self.fixture()
         with patch('workstation.perception.rgbd_cartons.deproject',return_value=points):
-            result=est._deduplicate_merged_views(d,m,p)
+            result=est._deduplicate_covered_views(d,m,p)
         self.assertEqual(result,d[:2]);self.assertEqual(len(m),3)
 
     def test_one_unexplained_point_or_missing_depth_retains_obstacle(self):
@@ -34,7 +35,7 @@ class MergedViewDeduplicationTests(unittest.TestCase):
             if kind=='invalid':p.cameras['camera'].valid_depth[0,0]=False
             if kind=='stale':p.assembled_time_s=2.
             with patch('workstation.perception.rgbd_cartons.deproject',return_value=points):
-                self.assertEqual(est._deduplicate_merged_views(d,m,p),d)
+                self.assertEqual(est._deduplicate_covered_views(d,m,p),d)
 
     def test_stale_reference_or_single_object_cannot_explain_merged_view(self):
         for kind in ('stale_reference','single_reference'):
@@ -42,9 +43,20 @@ class MergedViewDeduplicationTests(unittest.TestCase):
             if kind=='stale_reference':d[0].time_s=0.
             else:d.pop(0)
             with patch('workstation.perception.rgbd_cartons.deproject',return_value=points):
-                self.assertEqual(est._deduplicate_merged_views(d,m,p),d)
+                self.assertEqual(est._deduplicate_covered_views(d,m,p),d)
 
     def test_unknown_independent_object_is_not_removed(self):
         est,p,m,d,points=self.fixture();d[-1].failures=('APPEARANCE_AMBIGUOUS',)
         with patch('workstation.perception.rgbd_cartons.deproject',return_value=points):
-            self.assertEqual(est._deduplicate_merged_views(d,m,p),d)
+            self.assertEqual(est._deduplicate_covered_views(d,m,p),d)
+
+    def test_known_fixture_duplicate_removed_but_one_outside_point_kept(self):
+        for outside in (False,True):
+            est,p,m,d,points=self.fixture();d=d[-1:]
+            est.known_static=(AABB('fixture',(0,0,.825),(.4,.1,.05)),)
+            if outside:points[0,0]=[0,0,.9]
+            with patch('workstation.perception.rgbd_cartons.deproject',return_value=points):
+                result=est._deduplicate_covered_views(d,m,p)
+            self.assertEqual(result,d if outside else [])
+            self.assertEqual(est.redundant_views['fixed_geometry'],0 if outside else 1)
+            self.assertEqual(len(est.known_static),1)

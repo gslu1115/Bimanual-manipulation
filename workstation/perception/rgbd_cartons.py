@@ -56,8 +56,10 @@ def split_separated_depths(mask,valid,xyz,max_carton_diagonal):
 class CartonEstimator:
     def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None,
                  robot_filter_factory=None,camera_workers=3,track_retention_s=.6,
-                 record_association=False,persistent_identities=False):
+                 record_association=False,persistent_identities=False,known_static=()):
         self.priors = priors
+        self.known_static=tuple(known_static)
+        self.redundant_views=dict(merged_objects=0,fixed_geometry=0)
         self.segmenter = segmenter
         self.robot_point_filter=robot_point_filter
         self.robot_filter_factory=robot_filter_factory
@@ -264,7 +266,7 @@ class CartonEstimator:
                 best = replace(best, posture=top.posture, hypotheses=top.hypotheses,quality=quality)
             fused.append(replace(best, mask_refs=tuple(r for o in group for r in o.mask_refs),
                                  cameras=tuple(dict.fromkeys(n for o in group for n in o.cameras)), failures=reasons))
-        fused=self._deduplicate_merged_views(fused,masks,packet)
+        fused=self._deduplicate_covered_views(fused,masks,packet)
         now = packet.observation_time_s
         if self._last_time is not None and now < self._last_time:
             raise ValueError('Observation time moved backwards')
@@ -734,8 +736,8 @@ class CartonEstimator:
         absorbed=set().union(*(members for members,_ in joined)) if joined else set()
         return [obj for i,obj in enumerate(detections) if i not in absorbed]+[obj for _,obj in joined]
 
-    def _deduplicate_merged_views(self,detections,masks,packet):
-        """A multi-object mask adds no obstacle when ALL its depth is covered.
+    def _deduplicate_covered_views(self,detections,masks,packet):
+        """A failed fit adds no obstacle when ALL depth is already accounted for.
 
         Keep the independently measured objects and raw depth. Do not turn a
         failed merged fit's size residual into a third enormous carton. One
@@ -747,7 +749,7 @@ class CartonEstimator:
                and abs(o.time_s-now)<=1e-6 and .003<=o.uncertainty_m<=.008 and o.mask_refs
                and all(ref in masks and packet.camera_status.get(ref.split('/')[0])=='OK'
                        for ref in o.mask_refs)]
-        if len(known)<2:return detections
+        if len(known)<2 and not self.known_static:return detections
         retained=[];clouds={}
         for obj in detections:
             if ('PARTIAL_OR_MERGED_GEOMETRY' not in obj.failures or not obj.mask_refs or
@@ -763,6 +765,10 @@ class CartonEstimator:
                 chunks.append(clouds[name][mask])
             else:
                 points=np.concatenate(chunks);covered=np.zeros(len(points),bool);contributors=[]
+                for box in self.known_static:
+                    covered|=np.all(np.abs(points-box.centre)<=np.asarray(box.size)/2+
+                                    self.priors.optical_depth_error_margin_m,axis=1)
+                fixed_covered=bool(covered.any())
                 for other in known:
                     c,s=math.cos(other.axis_yaw_rad),math.sin(other.axis_yaw_rad)
                     rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
@@ -771,9 +777,12 @@ class CartonEstimator:
                                   other.uncertainty_m+self.priors.optical_depth_error_margin_m,axis=1)
                     if np.count_nonzero(inside&~covered)>=60:contributors.append(other)
                     covered|=inside
-                if len(contributors)>=2 and covered.all():
+                if (fixed_covered or len(contributors)>=2) and covered.all():
+                    category='fixed_geometry' if fixed_covered else 'merged_objects'
+                    self.redundant_views[category]+=1
                     self._association_event('redundant_merged_view',mask_refs=obj.mask_refs,
-                        covering_mask_refs=[o.mask_refs for o in contributors],points=len(points),coverage=1.)
+                        covering_mask_refs=[o.mask_refs for o in contributors],points=len(points),coverage=1.,
+                        fixed_geometry=fixed_covered)
                     continue
             retained.append(obj)
         return retained

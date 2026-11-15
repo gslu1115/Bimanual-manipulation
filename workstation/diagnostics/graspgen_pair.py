@@ -589,6 +589,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 report['action_tick_counts']={k:v-action_ticks_start.get(k,0)
                     for k,v in getattr(robot,'tick_counts',{}).items()}
                 report['physics_dt_s']=robot.dt
+                report['observation_deduplication']=dict(getattr(estimator,'redundant_views',{}))
                 for arm in states:
                     robot.command_velocities(arm,np.zeros(9))
                     robot.targets[arm][:7]=robot.read_states()[arm].joint_positions_rad
