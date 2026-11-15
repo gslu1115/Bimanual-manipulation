@@ -245,6 +245,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
 
     report = dict(success=False, scope='snapshot_and_synchronized_empty_pregrasp_only',
                   physical_execution=False, simultaneous_grasp_verified=False, model_requests=[])
+    timing=getattr(robot,'wall_timing',None)
+    preparation_start=timing.snapshot() if timing is not None else None
     def fail(reason):
         report['failure_reason'] = reason
         env._write_json('graspgen_pair_check.json', report)
@@ -283,11 +285,13 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     inspection_cloud=None
     report['slot_assessments']=[]
     pick_failures={}
+    from workstation.planning.plan_reuse import CandidatePrefixCache
+    pick_prefixes=CandidatePrefixCache()
     def check_destination(c,o,s,slot):
         # Pick IK, empty approach and finger closure do not depend on the
         # downstream slot. Reuse their failure only for this frozen snapshot.
         if c.candidate_id in pick_failures:return pick_failures[c.candidate_id]
-        result=robot.feasibility(c,o,s,slot)
+        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes)
         if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
             pick_failures[c.candidate_id]=result
         return result
@@ -416,6 +420,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                     feasible_by_target=dict(Counter(r.candidate.target_id for r in assigned if r.feasible)),
                     reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
                     phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
+        report['candidate_prefix_reuse']=pick_prefixes.report()
         report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}
         pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy)
         report.update(pair=pair, rejected_pairs=rejections)
@@ -484,6 +489,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 report['joint_choice']=pair['joint_choice']
             env._write_json('graspgen_pair_check.json',report)
             action_start=time.monotonic()
+            if timing is not None:
+                report['preparation_timing']=timing.delta(preparation_start)
+                action_timing_start=timing.snapshot()
             report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
             for selected,path in zip(current['selection'],current['pregrasp_knots']):
                 arm=selected['arm']
@@ -536,6 +544,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         finally:
             if action_start is not None:
                 report['action_wall_s']=time.monotonic()-action_start
+                if timing is not None:report['action_timing']=timing.delta(action_timing_start)
                 for arm in states:
                     robot.command_velocities(arm,np.zeros(9))
                     robot.targets[arm][:7]=robot.read_states()[arm].joint_positions_rad

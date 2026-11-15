@@ -458,6 +458,18 @@ class ObservedWorkspace:
         current=ObservedWorkspace(self.packet,self.priors,self.scene,self.static,resolution=self.resolution)
         return current.slot(xy)
 
+    @classmethod
+    def for_slot_observation(cls,packet,priors,static=()):
+        """Fresh raw-depth occupancy only; no object identity or free-space history.
+
+        All unsegmented surfaces remain obstacles. This query-only workspace
+        cannot supply pick targets, holding proofs or a full SceneEstimate.
+        """
+        from workstation.perception.scene_estimate import SceneEstimate
+        scene=SceneEstimate(packet.observation_time_s,packet.assembled_time_s,
+            'workcell',(),(),packet.camera_status,{})
+        return cls(packet,priors,scene,static)
+
     def slot(self, xy):
         length,width,height=self.priors.carton_size_m
         size=np.array([length+.04,width+.04,height+.02])

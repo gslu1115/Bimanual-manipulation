@@ -196,6 +196,46 @@ class GraspGenPlanningTests(unittest.TestCase):
         self.assertEqual(report['rejection_phase'],'PREGRASP')
         self.assertIsNone(driver.held_visual_geometry)
 
+    def test_pick_prefix_reused_across_slots_but_suffix_collision_and_new_state_rechecked(self):
+        from workstation.planning.plan_reuse import CandidatePrefixCache
+        item=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
+        driver=RobotMotion.__new__(RobotMotion)
+        driver.read_states=lambda:self.states;driver.home=np.zeros(9);driver.place_support_z=.76
+        driver.held_visual_geometry=None
+        counts=dict(solve=0,validate=0);blocked=[False]
+        def solve(*args,**kwargs):counts['solve']+=1;return np.zeros(7)
+        def joint(*args,**kwargs):driver.last_plan_check={};return [np.zeros(7),np.zeros(7)],.1
+        def validate(*args,**kwargs):
+            counts['validate']+=1
+            if blocked[0]:raise RuntimeError('SELF_COLLISION')
+            return .1
+        driver.solve_pregrasp=solve;driver.checked_joint_plan=joint
+        driver.cartesian_knots=lambda *a,**kw:[np.zeros(7),np.zeros(7)]
+        driver.validate_path=validate
+        cache=CandidatePrefixCache()
+        original=driver.pose_feasibility(item,self.obj,self.scene,(.2,0.))
+        first=driver.pose_feasibility(item,self.obj,self.scene,(.2,0.),prefix_cache=cache)
+        self.assertEqual(original,first)
+        count=counts['solve'];before=counts['validate']
+        second=driver.pose_feasibility(item,self.obj,self.scene,(-.2,0.),prefix_cache=cache)
+        self.assertFalse(second['reasons']);self.assertEqual(counts['solve'],count)
+        self.assertGreater(counts['validate'],before)
+        self.assertEqual(cache.hits,1)
+        blocked[0]=True
+        rejected=driver.pose_feasibility(item,self.obj,self.scene,(0.,0.),prefix_cache=cache)
+        self.assertEqual(rejected['reasons'],('SELF_COLLISION',))
+        self.assertEqual(rejected['rejection_phase'],'TRANSFER')
+        blocked[0]=False
+        self.scene=replace(self.scene)
+        driver.pose_feasibility(item,self.obj,self.scene,(.2,0.),prefix_cache=cache)
+        self.assertEqual(counts['solve'],count+1)
+        other=next(a for a in self.states if a!=item.arm)
+        self.states=dict(self.states)
+        self.states[other]=replace(self.states[other],joint_positions_rad=np.ones(7)*.01)
+        driver.pose_feasibility(item,self.obj,self.scene,(.2,0.),prefix_cache=cache)
+        self.assertEqual(counts['solve'],count+2)
+        self.assertIsNone(driver.held_visual_geometry)
+
     def test_balance_prefers_central_original_pose_despite_higher_edge_model_score(self):
         centred=candidates_from_result(self.result,self.obj,self.states,self.calibration,{})[0]
         edge=replace(centred,position_m=tuple(np.asarray(centred.position_m)+self.pose[:3,0]*.025),

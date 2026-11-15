@@ -26,12 +26,53 @@ def empty_arms_clear(robot,packet,config):
 
 
 def run(env,args):
+    from workstation.diagnostics.wall_timing import WallTiming
+    from workstation.planning.observed_workspace import ObservedWorkspace
+    from workstation.simulation.robot_driver import RobotMotion
+    from workstation.perception.held_surface import CuboidHoldingTracker,HeldSurfaceTracker
+    from workstation.diagnostics import graspgen_pair,graspgen_pair_place,graspgen_calibration
+    from workstation.models import graspgen_client
+    timing=WallTiming();root=env.output
+    for obj,name,label in (
+        (env,'step','physics_step'),(env.camera_system,'render','camera_render'),
+        (env,'get_observation_packet','sensor_read'),(env,'_write_json','json_write'),
+        (CartonEstimator,'estimate','scene_estimation'),
+        (CartonEstimator,'resolve_action_sources','source_pose_resolution'),
+        (ObservedWorkspace,'_build_occupied','depth_obstacle_mapping'),
+        (ObservedWorkspace,'_evaluate_unknown','free_space_mapping'),
+        (ObservedWorkspace,'slot','slot_query'),
+        (RobotMotion,'solve_pose','ik_solve'),
+        (RobotMotion,'validate_path','path_validation'),
+        (RobotMotion,'cartesian_knots','cartesian_ik'),
+        (RobotMotion,'checked_joint_plan','joint_planning'),
+        (RobotMotion,'pose_feasibility','candidate_feasibility'),
+        (RobotMotion,'set_observation','workspace_setup'),
+        (RobotMotion,'hold','hold'),(RobotMotion,'execute_joint','joint_execution'),
+        (CuboidHoldingTracker,'observe','held_pose_estimation'),
+        (HeldSurfaceTracker,'collision_estimate','released_pose_estimation'),
+        (graspgen_client,'infer_rotated_view','model_request'),
+        (graspgen_calibration,'verify','asset_calibration'),
+        (graspgen_pair,'assess','candidate_assessment'),
+        (graspgen_pair,'paired_pregrasp','pair_selection'),
+        (graspgen_pair,'drive_empty_pregrasps','pregrasp_execution'),
+        (graspgen_pair_place,'drive_empty_pregrasps','phase_execution'),
+        (graspgen_pair_place,'transfer_schedule','transfer_schedule')):
+        timing.wrap(obj,name,label)
+    try:
+        return _run(env,args,timing)
+    finally:
+        timing.restore();env.output=root
+        env._write_json('performance.json',timing.report())
+
+
+def _run(env,args,timing):
     from workstation.simulation.robot_driver import from_environment
     root=env.output;started=perf_counter()
     report=dict(success=False,scope='two_pairs_four_initial_cartons_live_model_and_visual_conveyor',rounds=[],indexing=[],attempts=[])
     env.safe_to_index=False
     env.conveyor=VisualConveyorIndex(env.c)
     robot=from_environment(env,paired_armature_floor=.01)
+    robot.wall_timing=timing
     priors=ScenePriors.from_config(env.c)
     def new_estimator():
         return CartonEstimator(priors,robot_point_filter=robot.observed_robot_points,
@@ -45,6 +86,14 @@ def run(env,args):
         if source_query:scene=estimator.resolve_action_sources(packet,scene,source_query)
         robot.set_observation(packet,scene,priors)
         return packet,scene
+    @timing.timed('conveyor_depth_observation')
+    def observe_slots():
+        from workstation.planning.observed_workspace import ObservedWorkspace
+        packet=env.get_observation_packet(refresh=True)
+        if any(packet.camera_status.get(n)!='OK' for n in ('scene_camera','left_wrist_camera','right_wrist_camera')):
+            raise RuntimeError('PAIR_TASK_CAMERA_UNAVAILABLE')
+        workspace=ObservedWorkspace.for_slot_observation(packet,priors,robot.static)
+        return packet,[workspace.slot(xy) for xy in env.c['conveyor']['slots_xy']]
     def index_pair(placements,round_index):
         robot.hold(.3);packet,scene=observe()
         ids=[f'round_{round_index}/{p["observed_track"]}' for p in placements.values()]
@@ -56,10 +105,10 @@ def run(env,args):
                 speed=env.conveyor.advance(robot.dt)
                 env.step(monitor_conveyor=False,render=False,conveyor_velocity_m_s=speed)
                 if env.conveyor.elapsed+1e-9<next_check:continue
-                packet,scene=observe();next_check=env.conveyor.elapsed+.2
-                views=[robot.observed_workspace.slot(xy) for xy in env.c['conveyor']['slots_xy']]
+                packet,views=observe_slots();next_check=env.conveyor.elapsed+.2
                 arms_clear=empty_arms_clear(robot,packet,env.c)
-                checks.append(dict(time_s=packet.observation_time_s,arms_clear=arms_clear,slot_views=views))
+                checks.append(dict(time_s=packet.observation_time_s,arms_clear=arms_clear,slot_views=views,
+                    perception_scope='current three-camera depth occupancy; no whole-table recognition'))
                 env.conveyor.observe(packet.observation_time_s,views,arms_clear)
         except Exception:
             env.conveyor.state='FAULT'

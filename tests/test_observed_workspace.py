@@ -7,6 +7,17 @@ from workstation.planning.observed_workspace import ObservedWorkspace
 
 
 class WorkspaceTests(unittest.TestCase):
+    def test_depth_only_slot_preserves_obstacle_missing_and_stale_depth_vetoes(self):
+        for depth,valid in ((1.,True),(.94,True),(1.,False)):
+            ws=self.workspace(depth,valid=valid)
+            query=ObservedWorkspace.for_slot_observation(ws.packet,ws.priors,ws.static)
+            self.assertEqual(query.slot((0,0))['free'],ws.slot_from_current_depth((0,0))['free'])
+            self.assertFalse(query.scene.objects)
+            self.assertIsNone(query.occlusion_memory)
+        ws=self.workspace()
+        ws.packet.assembled_time_s=ws.packet.observation_time_s+1.
+        self.assertFalse(ObservedWorkspace.for_slot_observation(ws.packet,ws.priors).slot((0,0))['free'])
+
     def test_calibrated_margin_still_rejects_behind_surface_and_invalid_depth(self):
         from dataclasses import replace
         ws=self.workspace();frame=next(ws._frames())

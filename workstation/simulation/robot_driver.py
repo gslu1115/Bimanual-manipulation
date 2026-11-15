@@ -535,9 +535,9 @@ class RobotMotion:
                 return knots
         raise RuntimeError('IK_DISCONTINUITY')
 
-    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M):
+    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None):
         if getattr(candidate,'orientation_wxyz',None) is not None:
-            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m)
+            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache)
         start=self.read_states()[candidate.arm].joint_positions_rad
         raised=np.asarray(candidate.position_m)+[0,0,.18]
         phase='PREGRASP'; self.last_plan_check={}
@@ -599,7 +599,7 @@ class RobotMotion:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
                         rejection_phase=phase,rejection_details=self.last_plan_check.copy())
 
-    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M):
+    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None):
         """Forecast complete model-pose paths; no commands or holding claims."""
         from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
         from workstation.planning.graspgen_candidates import upright_body_rotation
@@ -624,22 +624,45 @@ class RobotMotion:
         previous=getattr(self,'held_visual_geometry',None)
         phase='PREGRASP';phases=[];self.last_plan_check={}
         lift_palm_clearance=None
+        cache_key=(prefix_cache.key(self,candidate,obj,scene,pregrasp_hint,slot_xy is not None)
+                   if prefix_cache is not None else None)
+        cached=prefix_cache.get(cache_key) if prefix_cache is not None else None
+        count=max(1,math.ceil((.08-candidate.closing_width_m)/.002))
         try:
-            q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
-                                 pregrasp_hint,orientation_wxyz=orientation)
-            _,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
-            joint_plans={'PREGRASP':self.last_plan_check.copy()};phases.append(phase)
-            phase='APPROACH'
-            descend=self.cartesian_knots(arm,raised,pick,0.,0.,.05,q,
-                                         orientation0=orientation,orientation1=orientation)
-            minimum=min(minimum,self.validate_path(arm,descend,scene,candidate.target_id,
-                target_contact=True,finger_positions=np.full(2,.04)))
-            phases.append(phase);phase='CLOSE'
-            count=max(1,math.ceil((.08-candidate.closing_width_m)/.002))
-            for width in np.linspace(.08,candidate.closing_width_m,count+1):
-                minimum=min(minimum,self.validate_path(arm,[descend[-1],descend[-1]],scene,
-                    candidate.target_id,target_contact=True,finger_positions=np.full(2,width/2)))
-            phases.append(phase)
+            if cached is None:
+                q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
+                                     pregrasp_hint,orientation_wxyz=orientation)
+                _,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
+                joint_plans={'PREGRASP':self.last_plan_check.copy()};phases.append(phase)
+                phase='APPROACH'
+                descend=self.cartesian_knots(arm,raised,pick,0.,0.,.05,q,
+                                             orientation0=orientation,orientation1=orientation)
+                minimum=min(minimum,self.validate_path(arm,descend,scene,candidate.target_id,
+                    target_contact=True,finger_positions=np.full(2,.04)))
+                phases.append(phase);phase='CLOSE'
+                count=max(1,math.ceil((.08-candidate.closing_width_m)/.002))
+                for width in np.linspace(.08,candidate.closing_width_m,count+1):
+                    minimum=min(minimum,self.validate_path(arm,[descend[-1],descend[-1]],scene,
+                        candidate.target_id,target_contact=True,finger_positions=np.full(2,width/2)))
+                phases.append(phase)
+
+                lift_path=None
+                if slot_xy is not None:
+                    self.held_visual_geometry=relation;phase='LIFT'
+                    lift_path=self.cartesian_knots(arm,pick,pick+[0,0,.18],0.,0.,.05,descend[-1],
+                        orientation0=orientation,orientation1=orientation)
+                    minimum=min(minimum,self.validate_path(arm,lift_path,scene,candidate.target_id,
+                        held_size=obj.size_m,support_contact=True,
+                        finger_positions=np.full(2,candidate.closing_width_m/2),
+                        check_local_unknown=False,check_approach_corridor=True))
+                    lift_palm_clearance=self.last_plan_check.get('palm_clearance_m')
+                    phases.append(phase)
+                cached=dict(q=q.copy(),descend=descend,lift_path=lift_path,minimum=minimum,
+                    joint_plans=joint_plans.copy(),phases=phases[:],lift_palm_clearance=lift_palm_clearance)
+                if prefix_cache is not None:prefix_cache.put(cache_key,candidate,obj,cached)
+            q=cached['q'];descend=cached['descend'];minimum=cached['minimum']
+            joint_plans=cached['joint_plans'].copy();phases=cached['phases'][:]
+            lift_palm_clearance=cached['lift_palm_clearance']
             if slot_xy is not None:
                 self.held_visual_geometry=relation
                 desired_body=nearest_upright_slot_rotation(body_rotation)
@@ -647,11 +670,10 @@ class RobotMotion:
                 place_orientation=quaternion_from_matrix(place_rotation)
                 place_body=np.array([*slot_xy,self.place_support_z+obj.size_m[2]/2+release_gap_m])
                 place=place_body-place_rotation@relation['offset']
-                position=pick;current=descend[-1];old_orientation=orientation
+                position=pick+[0,0,.18];current=cached['lift_path'][-1];old_orientation=orientation
                 released=[AABB(candidate.target_id,(*slot_xy,self.place_support_z+obj.size_m[2]/2),
                     tuple(np.asarray(obj.size_m)+2*obj.uncertainty_m))]
                 for phase,destination,new_orientation,held,contact in (
-                    ('LIFT',pick+[0,0,.18],orientation,True,True),
                     ('TRANSFER',place+[0,0,.18],place_orientation,True,False),
                     ('LOWER',place,place_orientation,True,True),
                     ('RETREAT',place+[0,0,.18],place_orientation,False,True)):
@@ -662,8 +684,6 @@ class RobotMotion:
                         target_boxes_override=released if not held else None,
                         finger_positions=np.full(2,candidate.closing_width_m/2 if held else .04),
                         check_local_unknown=False,check_approach_corridor=phase!='RETREAT'))
-                    if phase=='LIFT':
-                        lift_palm_clearance=self.last_plan_check.get('palm_clearance_m')
                     if phase=='LOWER':
                         phase='OPEN'
                         for width in np.linspace(candidate.closing_width_m,.08,count+1):

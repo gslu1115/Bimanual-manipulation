@@ -44,6 +44,15 @@ class WallTiming:
             else:delattr(obj,attribute)
         self.originals.clear()
 
+    def snapshot(self):
+        return {name:dict(row) for name,row in self.rows.items()}
+
+    def delta(self,before):
+        return {name:{key:row[key]-before.get(name,{}).get(key,0)
+                      for key in ('calls','failed_calls','inclusive_s','exclusive_s')}
+                for name,row in self.rows.items()
+                if row['calls']!=before.get(name,{}).get('calls',0)}
+
     def report(self):
         return dict(scope='diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added',
                     wall_s=self.clock()-self.started,

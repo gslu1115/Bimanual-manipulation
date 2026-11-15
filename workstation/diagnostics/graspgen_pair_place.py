@@ -664,6 +664,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 renewed=references[arm] is not prior))
         robot.set_observation(packet,scene,priors)
 
+    from workstation.planning.plan_reuse import PreviewPlans,array_key,encoder_key
+    previews=PreviewPlans()
+
     def move(phase, destinations, contact=False,*,active=arms,carrying=None,
              dry_run=False,start_states=None,label=None):
         nonlocal next_approach_check
@@ -674,77 +677,98 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         print('[pair-phase] '+phase+' planning',flush=True)
         start_wall=perf_counter()
         carrying=(set(arms) if held else set()) if carrying is None else set(carrying)
-        paths = []
-        for arm in arms:
-            o = objects[arm]
-            q = (robot.read_states()[arm].joint_positions_rad if start_states is None else start_states[arm])
-            if arm not in active:
-                paths.append([q,q])
-                continue
-            carries=arm in carrying
-            pos, rot = robot.fk(arm, q)
-            goal, goal_rot = destinations[arm]
-            try:
-                path = robot.cartesian_knots(arm, pos, goal, 0., 0., .12, q,
-                    orientation0=quaternion_from_matrix(rot), orientation1=quaternion_from_matrix(goal_rot))
-            except RuntimeError as exc:
-                if phase!='approach' or str(exc)!='IK_DISCONTINUITY':raise
-                # Neither arm has started the descent. Check a nearby alternate
-                # from the actual pregrasp FK against the current target.
-                seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
-                for alt in (alternatives or {}).get(arm,()):
-                    if alt.candidate_id==selected[arm]['candidate_id']:continue
-                    try:
-                        alt=revalidate_candidate(replace(alt,target_id=o.track_id),o,scene,seq)
-                        orientation=pose_matrix(alt.position_m,alt.orientation_wxyz)[:3,:3]
-                        # Stay on the model's approach line. Move to its own
-                        # pregrasp first, then descend only along that line.
-                        pre=np.asarray(alt.position_m)-np.asarray(alt.approach_direction)*alt.pregrasp_distance_m
-                        prefix=robot.cartesian_knots(arm,pos,pre,0.,0.,.12,q,
-                            orientation0=quaternion_from_matrix(rot),orientation1=alt.orientation_wxyz)
-                        robot.validate_path(arm,prefix,scene,o.track_id)
-                        descent=robot.cartesian_knots(arm,pre,alt.position_m,0.,0.,.12,prefix[-1],
-                            orientation0=alt.orientation_wxyz,orientation1=alt.orientation_wxyz)
-                        robot.validate_path(arm,descent,scene,o.track_id,target_contact=True)
-                    except RuntimeError:continue
-                    report.setdefault('preclose_substitutions',[]).append(dict(arm=arm,
-                        previous=selected[arm]['candidate_id'],replacement=alt.candidate_id,reason=str(exc)))
-                    selected[arm]=asdict(alt)
-                    pair['selection'][arms.index(arm)]=selected[arm]
-                    destinations[arm]=(np.asarray(alt.position_m),orientation)
-                    path=prefix+descent[1:]
-                    break
-                else:raise
-            if carries:
-                t = trackers[arm]
-                robot.held_visual_geometry = dict(arm=arm, target_id=o.track_id, offset=t.offset,
-                    relative_rotation=t.relative_rotation, uncertainty_m=t.uncertainty_m,allow_grasp_translation=True)
-                if not robot.confirm_payload_observation(o.track_id,t,measurements[arm],packet):
-                    raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
-            try:
-                robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if carries else None,
-                    support_contact=contact and carries, target_contact=contact and not carries,
-                    check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach',
-                    other_joint_positions_rad=None if start_states is None else start_states[next(a for a in arms if a!=arm)])
-            except RuntimeError:
-                from workstation.diagnostics.vision_check import save_observation
-                if not dry_run:save_observation(env.output,'pair_blocked_'+phase,packet,scene)
-                report['next_action']='REPLAN' if phase=='approach' and not report.get('empty_approach_started') else 'STOP'
-                report['path_failure']=dict(arm=arm, details=robot.last_plan_check,
-                    robot_pixels_removed=estimator.last_robot_filter_counts.copy())
-                raise
-            paths.append(path)
-        # Final Cartesian contact is verified below in metres/radians. The
-        # per-step 0.04 rad stop and actual two-arm collision checks stay active.
+        # Reuse only an exactly unchanged live context. In particular the
+        # post-orientation payload refresh invalidates the translation preview.
+        # Cache misses use this same planner, not another recovery branch.
+        context=(phase,contact,held,tuple(active),tuple(sorted(carrying)),
+            id(packet),packet.observation_time_s,id(scene),encoder_key(robot.read_states()),
+            None if start_states is None else tuple((a,array_key(q)) for a,q in sorted(start_states.items())),
+            tuple((a,array_key(p),array_key(r)) for a,(p,r) in sorted(destinations.items())),
+            tuple((a,array_key(trackers[a].offset),array_key(trackers[a].relative_rotation),
+                   trackers[a].uncertainty_m) for a in sorted(carrying)),
+            repr(measurements),repr(getattr(robot,'stationary_payload_keepout',None)),sequential)
+        reused=None if dry_run else previews.get(phase,context)
+        if reused is not None:
+            paths,schedule=reused
+            if schedule is not None:report[label+'_schedule']=schedule
+        else:
+            schedule=None
+            paths = []
+            for arm in arms:
+                o = objects[arm]
+                q = (robot.read_states()[arm].joint_positions_rad if start_states is None else start_states[arm])
+                if arm not in active:
+                    paths.append([q,q])
+                    continue
+                carries=arm in carrying
+                pos, rot = robot.fk(arm, q)
+                goal, goal_rot = destinations[arm]
+                try:
+                    path = robot.cartesian_knots(arm, pos, goal, 0., 0., .12, q,
+                        orientation0=quaternion_from_matrix(rot), orientation1=quaternion_from_matrix(goal_rot))
+                except RuntimeError as exc:
+                    if phase!='approach' or str(exc)!='IK_DISCONTINUITY':raise
+                    # Neither arm has started the descent. Check a nearby alternate
+                    # from the actual pregrasp FK against the current target.
+                    seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
+                    for alt in (alternatives or {}).get(arm,()):
+                        if alt.candidate_id==selected[arm]['candidate_id']:continue
+                        try:
+                            alt=revalidate_candidate(replace(alt,target_id=o.track_id),o,scene,seq)
+                            orientation=pose_matrix(alt.position_m,alt.orientation_wxyz)[:3,:3]
+                            # Stay on the model's approach line. Move to its own
+                            # pregrasp first, then descend only along that line.
+                            pre=np.asarray(alt.position_m)-np.asarray(alt.approach_direction)*alt.pregrasp_distance_m
+                            prefix=robot.cartesian_knots(arm,pos,pre,0.,0.,.12,q,
+                                orientation0=quaternion_from_matrix(rot),orientation1=alt.orientation_wxyz)
+                            robot.validate_path(arm,prefix,scene,o.track_id)
+                            descent=robot.cartesian_knots(arm,pre,alt.position_m,0.,0.,.12,prefix[-1],
+                                orientation0=alt.orientation_wxyz,orientation1=alt.orientation_wxyz)
+                            robot.validate_path(arm,descent,scene,o.track_id,target_contact=True)
+                        except RuntimeError:continue
+                        report.setdefault('preclose_substitutions',[]).append(dict(arm=arm,
+                            previous=selected[arm]['candidate_id'],replacement=alt.candidate_id,reason=str(exc)))
+                        selected[arm]=asdict(alt)
+                        pair['selection'][arms.index(arm)]=selected[arm]
+                        destinations[arm]=(np.asarray(alt.position_m),orientation)
+                        path=prefix+descent[1:]
+                        break
+                    else:raise
+                if carries:
+                    t = trackers[arm]
+                    robot.held_visual_geometry = dict(arm=arm, target_id=o.track_id, offset=t.offset,
+                        relative_rotation=t.relative_rotation, uncertainty_m=t.uncertainty_m,allow_grasp_translation=True)
+                    if not robot.confirm_payload_observation(o.track_id,t,measurements[arm],packet):
+                        raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
+                try:
+                    robot.validate_path(arm,path,scene,o.track_id, held_size=o.size_m if carries else None,
+                        support_contact=contact and carries, target_contact=contact and not carries,
+                        check_local_unknown=not held and phase=='approach',check_approach_corridor=phase=='approach',
+                        other_joint_positions_rad=None if start_states is None else start_states[next(a for a in arms if a!=arm)])
+                except RuntimeError:
+                    from workstation.diagnostics.vision_check import save_observation
+                    if not dry_run:save_observation(env.output,'pair_blocked_'+phase,packet,scene)
+                    report['next_action']='REPLAN' if phase=='approach' and not report.get('empty_approach_started') else 'STOP'
+                    report['path_failure']=dict(arm=arm, details=robot.last_plan_check,
+                        robot_pixels_removed=estimator.last_robot_filter_counts.copy())
+                    raise
+                paths.append(path)
+            # Final Cartesian contact is verified below in metres/radians. The
+            # per-step 0.04 rad stop and actual two-arm collision checks stay active.
+            transfer=phase in ('transfer','align','transfer_orient','transfer_after_orient')
+            if transfer or sequential:
+                rejections=report.setdefault(label+'_schedule_rejections',[])
+                try:
+                    paths,schedule=transfer_schedule(robot,paths,carried_clearance,rejections=rejections)
+                except RuntimeError:
+                    report[label+'_rejected_paths_rad']={arm:np.asarray(path).tolist() for arm,path in zip(arms,paths)}
+                    raise
+                report[label+'_schedule']=schedule
+
+        if dry_run:previews.put(phase,context,paths,schedule)
+        report.setdefault('preview_path_reuse',[]).append(dict(phase=phase,dry_run=dry_run,
+            reused=reused is not None,scope='exact live observation, encoders, payload and goal; guards retained'))
         transfer=phase in ('transfer','align','transfer_orient','transfer_after_orient')
-        if transfer or sequential:
-            rejections=report.setdefault(label+'_schedule_rejections',[])
-            try:
-                paths,schedule=transfer_schedule(robot,paths,carried_clearance,rejections=rejections)
-            except RuntimeError:
-                report[label+'_rejected_paths_rad']={arm:np.asarray(path).tolist() for arm,path in zip(arms,paths)}
-                raise
-            report[label+'_schedule']=schedule
         report.setdefault('motion_planning_wall_s',{})[label]=perf_counter()-start_wall
         if dry_run:return {a:np.asarray(path[-1]) for a,path in zip(arms,paths)}
         both_loaded=held and carrying==set(arms)
