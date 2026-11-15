@@ -243,6 +243,18 @@ class PairAttemptError(RuntimeError):
         super().__init__(reason);self.report=report
 
 
+def approach_alternatives(rows,assigned_slots,completed_rows=None):
+    """Retain pending backups for on-demand validation by the substitution loop."""
+    completed_rows=completed_rows or {}
+    rows=[completed_rows.get((r.candidate.candidate_id,tuple(r.terms['slot_xy'])),r) for r in rows]
+    alternatives={arm:[] for arm in assigned_slots};seen=set()
+    for row in sorted(rows,key=lambda item:-item.score):
+        c=row.candidate
+        if row.feasible and row.terms['slot_xy']==assigned_slots[c.arm] and c.candidate_id not in seen:
+            alternatives[c.arm].append(c);seen.add(c.candidate_id)
+    return alternatives
+
+
 def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None,selection_policy=None):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
@@ -535,15 +547,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
-                alternatives={arm:[] for arm in assigned_slots}
-                seen=set()
-                alternative_rows=completed_rows.values() if selection_policy else rows
-                for row in sorted(alternative_rows,key=lambda item:-item.score):
-                    c=row.candidate
-                    if (row.feasible and row.terms['slot_xy']==assigned_slots[c.arm] and
-                            c.candidate_id not in seen):
-                        alternatives[c.arm].append(c)
-                        seen.add(c.candidate_id)
+                alternatives=approach_alternatives(rows,assigned_slots,completed_rows)
                 def resample(arm,obj,view,image,previous,goal):
                     seq={n:f.sequence_id for n,f in image.cameras.items() if f}
                     observed=visual_clouds(image,view,obj.track_id)

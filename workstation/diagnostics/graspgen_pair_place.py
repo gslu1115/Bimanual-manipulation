@@ -715,6 +715,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                         if alt.candidate_id==selected[arm]['candidate_id']:continue
                         try:
                             alt=revalidate_candidate(replace(alt,target_id=o.track_id),o,scene,seq)
+                            # Pending backups enter the same current-frame
+                            # prefix/descent checks below. Later lift/transfer
+                            # paths are checked before their own execution;
+                            # a prefix score never authorizes a future motion.
                             orientation=pose_matrix(alt.position_m,alt.orientation_wxyz)[:3,:3]
                             # Stay on the model's approach line. Move to its own
                             # pregrasp first, then descend only along that line.
