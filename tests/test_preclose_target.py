@@ -246,7 +246,59 @@ class PreCloseTargetTests(unittest.TestCase):
         neighbour=replace(s.objects[0],track_id='independent',position_m=tuple(CENTRE+[.06,0,0]),mask_refs=('unrelated',))
         updated=reconcile_reacquired_target(est,replace(s,objects=s.objects+(neighbour,)),current)
         self.assertIn(neighbour,updated.objects)
-        with self.assertRaises(ValueError):PreCloseTarget(current,updated,self.priors)
+        # A separate nearby carton remains an obstacle, not an identity veto.
+        PreCloseTarget(current,updated,self.priors)
+        duplicate=replace(neighbour,mask_refs=current.mask_refs)
+        with self.assertRaises(ValueError):
+            PreCloseTarget(current,replace(updated,objects=updated.objects+(duplicate,)),self.priors)
+
+    def test_stage_full_measurement_refreshes_expired_pose_without_retyping_size(self):
+        p,s=self.conflict_fragments()
+        self.check.obj=replace(self.check.obj,time_s=-10.)
+        fresh,proof=self.check.evaluate(p,s)
+        self.assertTrue(preclose_supported(proof,1.),proof)
+        self.assertIsNot(fresh,self.check)
+        self.assertEqual(fresh.obj.size_m,self.reference.size_m)
+        self.assertEqual(fresh.obj.time_s,1.)
+        self.assertEqual(proof['next_action'],'CONTINUE')
+        self.assertEqual(proof['reference_age_s'],0.)
+        self.assertEqual(self.check.obj.time_s,-10.)
+
+    def test_stage_partial_measurement_cannot_refresh_expired_hidden_axis(self):
+        fresh,proof=self.check.evaluate(self.packet,self.scene)
+        self.assertIs(fresh,self.check)
+        self.assertEqual(proof['reference_time_s'],.9)
+        self.check.obj=replace(self.check.obj,time_s=-10.)
+        fresh,proof=self.check.evaluate(self.packet,self.scene)
+        self.assertIs(fresh,self.check)
+        self.assertFalse(proof['supported'])
+        self.assertEqual(proof['next_action'],'OBSERVE')
+        self.assertEqual(proof['reason'],'PRECLOSE_REFERENCE_EXPIRED')
+
+    def test_stage_visible_motion_requires_replan(self):
+        p,s=self.partial(centre=CENTRE+[0,.006,0])
+        _,proof=self.check.evaluate(p,s)
+        self.assertFalse(proof['supported'])
+        self.assertEqual(proof['next_action'],'REPLAN')
+
+    def test_task_source_query_uses_confirmed_size_and_current_full_fit(self):
+        est=CartonEstimator(self.priors,persistent_identities=True)
+        original=est._retain_identities(self.reference_scene).objects[0]
+        p,s=self.conflict_fragments()
+        result=est.resolve_action_sources(p,s,[original.identity_id])
+        target=next(o for o in result.objects if o.identity_id==original.identity_id)
+        self.assertEqual(target.size_m,original.size_m)
+        self.assertEqual(target.time_s,p.observation_time_s)
+        self.assertFalse(target.failures)
+        self.assertTrue(pose_is_observed(target,result))
+
+    def test_task_source_query_never_publishes_old_hidden_pose(self):
+        est=CartonEstimator(self.priors,persistent_identities=True)
+        original=est._retain_identities(self.reference_scene).objects[0]
+        p,s=self.partial()
+        s=replace(s,objects=())
+        result=est.resolve_action_sources(p,s,[original.identity_id])
+        self.assertFalse(result.objects)
 
     def test_close_initialization_still_needs_current_holding_support(self):
         tcp=CENTRE+[0,0,.009];r=np.diag([1.,-1.,-1.])

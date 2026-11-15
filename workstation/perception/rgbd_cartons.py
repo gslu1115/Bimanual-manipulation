@@ -56,7 +56,7 @@ def split_separated_depths(mask,valid,xyz,max_carton_diagonal):
 class CartonEstimator:
     def __init__(self, priors: ScenePriors, segmenter=None,robot_point_filter=None,
                  robot_filter_factory=None,camera_workers=3,track_retention_s=.6,
-                 record_association=False):
+                 record_association=False,persistent_identities=False):
         self.priors = priors
         self.segmenter = segmenter
         self.robot_point_filter=robot_point_filter
@@ -73,6 +73,64 @@ class CartonEstimator:
         self._anchors = {}
         self.record_association=bool(record_association)
         self.association_events=[]
+        self.persistent_identities=bool(persistent_identities)
+        self._identities={}
+        self._identity_hints={}  # Correspondence only; never emitted as a new pose.
+
+    def mark_identity(self,identity_id,state):
+        if state not in ('available','selected','held','placed','delivered'):raise ValueError('Invalid carton lifecycle')
+        if identity_id in self._identities:
+            self._identities[identity_id]=replace(self._identities[identity_id],state=state)
+
+    def resolve_action_sources(self,packet,scene,source_ids):
+        """Request current pick geometry only for unresolved task candidates.
+
+        A missing catalogue/packaging classification does not erase identity.
+        Missing coordinates still require a new independent fit; old poses
+        cannot become pick targets just because the identity is remembered.
+        """
+        from workstation.perception.preclose_target import PreCloseTarget,reconcile_preclose_target
+        from workstation.perception.scene_estimate import pose_is_observed
+        for key in source_ids:
+            current=next((o for o in scene.objects if o.identity_id==key),None)
+            if current is not None and not current.failures and current.posture=='UPRIGHT' and pose_is_observed(current,scene):continue
+            hint=self._identity_hints.get(key);identity=self._identities.get(key)
+            if hint is None or identity is None or identity.state not in ('available','selected'):continue
+            try:reference=PreCloseTarget.from_identity(hint,identity,self.priors)
+            except ValueError:continue
+            fresh,proof=reference.evaluate(packet,scene)
+            if not proof['supported'] or not proof['full_pose_measured']:continue
+            scene=reconcile_preclose_target(self,scene,proof)
+            obj=fresh.obj
+            dt=obj.time_s-hint.time_s
+            velocity=tuple((np.asarray(obj.position_m)-hint.position_m)/dt) if 0<dt<=.6 else None
+            obj=replace(obj,velocity_m_s=velocity)
+            scene=replace(scene,objects=tuple(obj if o.track_id==key else o for o in scene.objects))
+        return self._retain_identities(scene)
+
+    def _retain_identities(self,scene):
+        if not self.persistent_identities:return scene
+        from workstation.perception.scene_estimate import CartonIdentity,pose_is_observed
+        objects=[]
+        for obj in scene.objects:
+            identity=self._identities.get(obj.track_id)
+            if identity is None and not obj.failures and pose_is_observed(obj,scene):
+                identity=CartonIdentity(obj.track_id,tuple(obj.size_m),obj.time_s,obj.time_s)
+            if identity is not None:
+                identity=replace(identity,last_observed_s=obj.time_s)
+                self._identities[obj.track_id]=identity
+                obj=replace(obj,identity_id=identity.identity_id)
+                if not np.allclose(obj.size_m,identity.size_m,atol=1e-6,rtol=0):
+                    obj=replace(obj,size_m=identity.size_m,measured_cuboid=None,posture='UNKNOWN',
+                        visibility='PARTIAL_OR_UNCERTAIN',
+                        failures=tuple(dict.fromkeys((*obj.failures,'CONFIRMED_SIZE_CONFLICT'))),
+                        quality=dict(obj.quality,confirmed_size_retained=1.))
+                # Last pose remains a search hint even if the next frame is absent.
+                # A partial glimpse cannot displace the last independently measured hint.
+                if not obj.failures and pose_is_observed(obj,scene):self._identity_hints[obj.track_id]=obj
+                self._tracks[obj.track_id]=obj
+            objects.append(obj)
+        return replace(scene,objects=tuple(objects),identities=tuple(self._identities.values()))
 
     def _association_event(self,event,**values):
         if self.record_association:self.association_events.append(dict(event=event,**values))
@@ -196,6 +254,19 @@ class CartonEstimator:
         if self._last_time is not None and now < self._last_time:
             raise ValueError('Observation time moved backwards')
         available = {k:v for k,v in self._tracks.items() if 0 <= now-v.time_s <= self.track_retention_s}
+        if self.persistent_identities:
+            # A unique current nearby detection may reconnect a known identity.
+            # This retains identity/size, NOT its expired pose, velocity or semantics.
+            for key,hint in self._identity_hints.items():
+                identity=self._identities[key]
+                if key in available or identity.state not in ('available','selected'):continue
+                nearby=[o for o in fused if np.linalg.norm(np.asarray(o.position_m)-hint.position_m)<.025]
+                if len(nearby)!=1:continue
+                current=nearby[0]
+                competing=[k for k,h in self._identity_hints.items() if
+                    self._identities[k].state in ('available','selected') and
+                    np.linalg.norm(np.asarray(current.position_m)-h.position_m)<.025]
+                if competing==[key]:available[key]=hint
         self._association_event('track_window',time_s=now,retention_s=self.track_retention_s,
             available_ids=list(available),expired_ids=[k for k in self._tracks if k not in available])
         tracked = []
@@ -253,6 +324,7 @@ class CartonEstimator:
         scene=SceneEstimate(now, packet.assembled_time_s, 'workcell', tuple(tracked),
                             tuple(failures), statuses, masks,tuple(edges))
         scene=self._associate_measured_fragments(packet,scene,previous_anchors)
+        scene=self._retain_identities(scene)
         self._association_snapshot('output',scene.objects)
         return scene
 
@@ -469,13 +541,16 @@ class CartonEstimator:
         quality=dict(best.quality,supported_target_identity_association=1.,
                      supported_target_source_tracks=float(len(ids)))
         joined=replace(best,track_id=target_id,quality=quality,
+            identity_id=target_id if target_id in self._identities else best.identity_id,
             mask_refs=tuple(dict.fromkeys(ref for obj in members for ref in obj.mask_refs)),
             cameras=tuple(dict.fromkeys(name for obj in members for name in obj.cameras)),
             # The old clipped fits are not a visual velocity measurement.
             velocity_m_s=None if best.failures else best.velocity_m_s)
         objects=tuple(joined if obj is best else obj for obj in scene.objects
                       if obj is best or obj.track_id not in ids)
-        for alias in ids-{target_id}:self._tracks.pop(alias,None);self._anchors.pop(alias,None)
+        for alias in ids-{target_id}:
+            self._tracks.pop(alias,None);self._anchors.pop(alias,None)
+            self._identities.pop(alias,None);self._identity_hints.pop(alias,None)
         self._tracks[target_id]=joined
         if not joined.failures and not measurement.get('reference_constrained') and not measurement.get('released_bounded'):
             self._anchors[target_id]=joined

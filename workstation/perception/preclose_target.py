@@ -16,28 +16,45 @@ from workstation.planning.graspgen_candidates import upright_body_rotation
 
 
 class PreCloseTarget:
+    @classmethod
+    def from_identity(cls,obj,identity,priors):
+        """Use confirmed task knowledge ONLY as a correspondence/search hint."""
+        if (obj.identity_id!=identity.identity_id or obj.size_m!=identity.size_m or
+                obj.failures or obj.posture!='UPRIGHT' or not pose_is_observed(obj)):
+            raise ValueError('Identity hint must come from confirmed geometry')
+        target=object.__new__(cls)
+        target.obj,target.priors,target.rotation=obj,priors,upright_body_rotation(obj)
+        return target
+
     def __init__(self,obj,scene,priors):
         if (obj.failures or obj.posture!='UPRIGHT' or not pose_is_observed(obj,scene)
                 or obj.uncertainty_m>.008 or abs(obj.time_s-scene.observation_time_s)>1e-6):
             raise ValueError('Pre-close reference requires a current confirmed upright target')
-        if any(other.track_id!=obj.track_id and np.linalg.norm(np.asarray(other.position_m)-obj.position_m)<.07
+        if any(other.track_id!=obj.track_id and set(other.mask_refs).intersection(obj.mask_refs)
                for other in scene.objects):
             raise ValueError('Pre-close reference has an ambiguous neighbour')
         self.obj,self.priors=obj,priors
         self.rotation=upright_body_rotation(obj)
 
-    def confirm(self,packet,scene,*,closed=False):
+    def confirm(self,packet,scene,*,closed=False,refresh_complete=False):
         age=packet.observation_time_s-self.obj.time_s
         proof=dict(supported=False,reference_time_s=self.obj.time_s,
             reference_age_s=age,time_s=packet.observation_time_s,target_id=self.obj.track_id,
             reference_position_m=list(self.obj.position_m),phase='closed' if closed else 'approach',
             assumption='target remains stationary in the one hidden planar direction during bounded approach/close',
             full_pose_measured=False,grasp_proven=False)
-        if not 0<=age<=6.:
+        if not refresh_complete and not 0<=age<=6.:
             return dict(proof,reason='PRECLOSE_REFERENCE_EXPIRED')
-        measured=fit_cuboid_pose(packet,scene,self.obj.position_m,self.rotation,self.obj.size_m,self.priors,
+        hint=getattr(self,'original',self) if refresh_complete else self
+        measured=fit_cuboid_pose(packet,scene,hint.obj.position_m,hint.rotation,self.obj.size_m,self.priors,
                                 allow_reference_translation=True,measure_side_interiors=True)
         proof['surface']=measured
+        # A new independent measurement has its own timestamp. A fit using
+        # the hidden-axis prior retains the old timestamp and the SAME 6 s limit.
+        if refresh_complete and measured_cuboid_supported(measured,packet.observation_time_s):
+            proof.update(reference_time_s=packet.observation_time_s,reference_age_s=0.)
+        elif not 0<=age<=6.:
+            return dict(proof,reason='PRECLOSE_REFERENCE_EXPIRED')
         if not (measured_cuboid_supported(measured,packet.observation_time_s) or
                 reference_constrained_cuboid_supported(measured,packet.observation_time_s)):
             return dict(proof,reason=measured.get('reason','PRECLOSE_SURFACES_UNSUPPORTED'))
@@ -58,6 +75,32 @@ class PreCloseTarget:
             return dict(proof,reason='PRECLOSE_TARGET_NOT_ON_SUPPORT')
         return dict(proof,supported=True,reason='CURRENT_SURFACES_SUPPORT_CONFIRMED_TARGET',
             full_pose_measured=measured['geometric_pose_measured'])
+
+    def evaluate(self,packet,scene,*,closed=False):
+        """One geometry check for pregrasp, approach and closure; no reclassification.
+
+        Identity/size are task knowledge. Current contradictory posture or
+        movement still invalidates the action. Only independently measured
+        coordinates refresh the complete reference.
+        """
+        proof=self.confirm(packet,scene,closed=closed,refresh_complete=True)
+        proof['next_action']=('CONTINUE' if proof['supported'] else
+            'REPLAN' if proof['reason']=='PRECLOSE_VISIBLE_TARGET_MOVED' else 'OBSERVE')
+        if not proof['supported'] or not proof['full_pose_measured'] or closed:return self,proof
+        m=proof['surface'];r=np.asarray(m['rotation'])
+        obj=replace(self.obj,time_s=packet.observation_time_s,position_m=tuple(m['position_m']),
+            axis_yaw_rad=math.atan2(r[1,0],r[0,0]),mask_refs=tuple(m['mask_refs']),
+            hypotheses=(PoseHypothesis('UPRIGHT',tuple(quaternion_from_matrix(r)),
+                'confirmed face identity with current complete geometry'),),
+            cameras=tuple(sorted({ref.split('/')[0] for ref in m['mask_refs']})),
+            visibility='OBSERVED_CUBOID',uncertainty_m=m['uncertainty_m'],measured_cuboid=m,
+            velocity_m_s=None)
+        new=object.__new__(PreCloseTarget)
+        new.obj,new.priors,new.rotation=obj,self.priors,r
+        new.original=getattr(self,'original',self)
+        # Compare subsequent fits with the selected pick, not a drifting chain.
+        new.rotation=new.original.rotation
+        return new,proof
 
     def renewed(self,scene,proof):
         """Refresh geometry age only from a full fit consistent with the original pick."""

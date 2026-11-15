@@ -7,7 +7,7 @@ from workstation.diagnostics.graspgen_pair import check_pair,source_cartons,Pair
 from workstation.diagnostics.vision_check import save_observation
 from workstation.perception.rgbd_cartons import CartonEstimator
 from workstation.perception.scene_estimate import ScenePriors
-from workstation.planning.pair_task import VisualConveyorIndex,match_stationary_sources
+from workstation.planning.pair_task import VisualConveyorIndex,match_task_sources
 from workstation.planning.joint_pair_selection import JointPairSelection,recoverable_empty_failure
 from workstation.planning.collision import AABB,sphere_box_clearance
 
@@ -35,13 +35,15 @@ def run(env,args):
     priors=ScenePriors.from_config(env.c)
     def new_estimator():
         return CartonEstimator(priors,robot_point_filter=robot.observed_robot_points,
-                               robot_filter_factory=robot.prepare_observed_robot_filter)
+                               robot_filter_factory=robot.prepare_observed_robot_filter,persistent_identities=True)
     estimator=new_estimator()
     def observe():
         packet=env.get_observation_packet(refresh=True)
         if any(packet.camera_status.get(n)!='OK' for n in ('scene_camera','left_wrist_camera','right_wrist_camera')):
             raise RuntimeError('PAIR_TASK_CAMERA_UNAVAILABLE')
-        scene=estimator.estimate(packet);robot.set_observation(packet,scene,priors)
+        scene=estimator.estimate(packet)
+        if source_query:scene=estimator.resolve_action_sources(packet,scene,source_query)
+        robot.set_observation(packet,scene,priors)
         return packet,scene
     def index_pair(placements,round_index):
         robot.hold(.3);packet,scene=observe()
@@ -84,19 +86,37 @@ def run(env,args):
             save_observation(env.output,'recovery_start',packet,scene)
             culprit=(failed.get('perception_failure') or failed.get('path_failure',{})).get('arm')
             order=sorted(packet.robot_state,key=lambda a:a!=culprit)
-            for arm in order:
-                packet,scene=observe()
-                robot.execute_joint(arm,robot.home,scene,None)
-                recovery['steps'].append(dict(arm=arm,plan_check=robot.last_plan_check.copy()))
-            robot.hold(.2);packet,scene=observe()
-            matches=match_stationary_sources(scene,remaining)
-            if matches.keys()!=remaining.keys():raise RuntimeError('PAIR_RECOVERY_SOURCES_UNCONFIRMED')
-            robot.hold(.1);packet,scene=observe();matches=match_stationary_sources(scene,remaining)
-            if (matches.keys()!=remaining.keys() or any(o.velocity_m_s is None or
+            # First use the existing view. If blocked, try a short checked
+            # observation lift, then HOME only if useful sources remain hidden.
+            matches=match_task_sources(scene,remaining)
+            if len(matches)<2 or failed.get('next_action')=='OBSERVE':
+                for arm in order:
+                    packet,scene=observe()
+                    try:
+                        robot.execute_observation_lift(arm,.06,scene)
+                    except RuntimeError as error:
+                        if robot.motion_started:raise
+                        recovery['steps'].append(dict(arm=arm,kind='view_lift_rejected',reason=str(error)))
+                        continue
+                    recovery['steps'].append(dict(arm=arm,kind='view_lift',plan_check=robot.last_plan_check.copy()))
+                    packet,scene=observe();matches=match_task_sources(scene,remaining)
+                    if len(matches)>=2:break
+            robot.hold(.1);packet,scene=observe();matches=match_task_sources(scene,remaining)
+            if len(matches)<2:
+                for arm in order:
+                    packet,scene=observe()
+                    robot.execute_joint(arm,robot.home,scene,None)
+                    recovery['steps'].append(dict(arm=arm,kind='home',plan_check=robot.last_plan_check.copy()))
+                robot.hold(.2);observe();robot.hold(.1);packet,scene=observe()
+                matches=match_task_sources(scene,remaining)
+            if (len(matches)<2 or any(o.velocity_m_s is None or
                     np.linalg.norm(o.velocity_m_s)>.015 for o in matches.values()) or
-                    not empty_arms_clear(robot,packet,env.c)):
+                    any(np.min(s.finger_positions_m)<.035 or s.joint_velocities_rad_s is None or
+                        np.max(np.abs(s.joint_velocities_rad_s))>.05 for s in packet.robot_state.values())):
                 raise RuntimeError('PAIR_RECOVERY_NOT_STABLE')
-            save_observation(env.output,'recovery_home',packet,scene)
+            for c in failed['pair']['selection']:
+                estimator.mark_identity(c['metadata']['source_visual_object'].get('identity_id'),'available')
+            save_observation(env.output,'recovery_ready',packet,scene)
             recovery.update(success=True,observation_time_s=packet.observation_time_s,
                 source_tracks={k:o.track_id for k,o in matches.items()})
         except Exception as error:
@@ -105,6 +125,7 @@ def run(env,args):
             recovery['wall_s']=perf_counter()-began
             env._write_json('empty_recovery.json',recovery)
         return recovery
+    source_query=()
     try:
         for _ in range(round(3/robot.dt)):env.step(monitor_conveyor=False,render=False)
         observe();robot.hold(.2);packet,scene=observe()
@@ -118,23 +139,25 @@ def run(env,args):
             begin=perf_counter()
             round_output=root/f'round_{round_index}';round_output.mkdir()
             for attempt in range(1,5):
+                source_query=tuple(remaining)
                 env.output=round_output/f'attempt_{attempt}';env.output.mkdir()
                 robot.held_visual_geometry=None;robot.stationary_payload_keepout=None
                 robot.plan_cache.clear()
                 from workstation.planning.occlusion_memory import OcclusionMemory
                 robot.occlusion_memory=OcclusionMemory()
-                estimator=new_estimator();observe();robot.hold(.2);packet,scene=observe()
-                matches=match_stationary_sources(scene,remaining)
-                if matches.keys()!=remaining.keys() or len(source_cartons(scene,env.c['table']))!=len(remaining):
+                observe();robot.hold(.2);packet,scene=observe()
+                matches=match_task_sources(scene,remaining)
+                if len(matches)<2:
                     raise RuntimeError('PAIR_TASK_REMAINING_SOURCES_UNCONFIRMED')
                 def select(current):
-                    matches=match_stationary_sources(current,remaining)
-                    if matches.keys()!=remaining.keys():raise RuntimeError('PAIR_TASK_RESERVED_SOURCE_LOST')
+                    matches=match_task_sources(current,remaining)
+                    if len(matches)<2:raise RuntimeError('PAIR_TASK_RESERVED_SOURCE_LOST')
                     return list(matches.values())
                 save_observation(env.output,'graspgen_source',packet,scene)
                 entry=dict(round=round_index,attempt=attempt,success=False)
                 report['attempts'].append(entry)
                 try:
+                    source_query=()
                     result=check_pair(env,pair_args,packet,scene,estimator,robot=robot,
                                       target_selector=select,selection_policy=selection)
                 except PairAttemptError as error:
@@ -142,6 +165,7 @@ def run(env,args):
                     entry.update(failure_reason=str(error),action_wall_s=failed.get('action_wall_s'),
                                  joint_choice=failed.get('joint_choice'))
                     if not recoverable_empty_failure(failed) or attempt==4:raise
+                    source_query=tuple(remaining)
                     entry['recovery']=recover_empty(failed,remaining)
                     entry['failure_memory']=selection.record_failure(failed)
                     continue
@@ -155,6 +179,8 @@ def run(env,args):
             if not result['success']:raise RuntimeError('PAIR_TASK_ROUND_FAILED')
             for key in selected_keys:del remaining[key]
             packet,scene=index_pair(result['placements'],round_index)
+            for key in selected_keys:estimator.mark_identity(key,'delivered')
+            report['object_identities']=[vars(v) for v in estimator._identities.values()]
             env.output=root;env._write_json('graspgen_pair_sort.json',report)
         if source_cartons(scene,env.c['table']):raise RuntimeError('PAIR_TASK_SOURCES_REMAIN')
         report.update(success=True,verified_placements=4,completed_pairs=2,visually_cleared_batches=env.conveyor.completed_batches)

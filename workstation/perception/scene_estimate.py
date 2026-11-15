@@ -61,6 +61,17 @@ class ObjectEstimate:
     # Optional CURRENT independent cuboid fit. Semantic/partial-view fields
     # above remain separate; consumers must validate this proof and its masks.
     measured_cuboid: Mapping | None = None
+    identity_id: str | None = None
+
+
+@dataclass(frozen=True)
+class CartonIdentity:
+    """Task knowledge, NOT a fresh pose or an observation of free space."""
+    identity_id: str
+    size_m: tuple[float, float, float]
+    confirmed_at_s: float
+    last_observed_s: float
+    state: str = 'available'
 
 
 def current_cuboid_measurement(obj,scene):
@@ -117,10 +128,12 @@ class SceneEstimate:
     masks: Mapping[str, np.ndarray] = field(repr=False, compare=False)
     edges: tuple[ObservedEdge, ...] = ()
     schema: str = 'scene_estimate_v1'
+    identities: tuple[CartonIdentity, ...] = ()
 
     def to_dict(self):
         return dict(schema=self.schema, observation_time_s=self.observation_time_s,
                     assembled_time_s=self.assembled_time_s, frame=self.frame,
                     objects=[asdict(obj) for obj in self.objects], failures=self.failures,
                     camera_status=dict(self.camera_status), mask_refs=list(self.masks),
-                    edges=[asdict(edge) for edge in self.edges])
+                    edges=[asdict(edge) for edge in self.edges],
+                    identities=[asdict(identity) for identity in self.identities])

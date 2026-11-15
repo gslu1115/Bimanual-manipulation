@@ -47,21 +47,21 @@ class JointPairTests(unittest.TestCase):
         right.target_id='new-track';self.assertEqual(p.key(right),'0.2')
 
     def test_only_proven_empty_pre_descent_failures_can_recover(self):
-        r=dict(last_phase='approach',motion=dict(ticks=20),failure_reason='STATIC_PATH_BLOCKED:fragment')
+        r=dict(last_phase='approach',motion=dict(ticks=20),next_action='REPLAN',failure_reason='STATIC_PATH_BLOCKED:fragment')
         self.assertTrue(recoverable_empty_failure(r))
         for change in (dict(empty_approach_started=True),dict(closure_started=True),
-                       dict(last_phase='lift'),dict(failure_reason='JOINT_TRACKING_ERROR'),dict(motion=None)):
+                       dict(last_phase='lift'),dict(next_action='STOP'),dict(motion=None)):
             self.assertFalse(recoverable_empty_failure(dict(r,**change)))
 
     def test_reference_failure_can_reobserve_only_before_descent_and_closure(self):
-        r=dict(last_phase='pregrasp_recheck',motion=dict(ticks=939),
+        r=dict(last_phase='pregrasp_recheck',motion=dict(ticks=939),next_action='OBSERVE',
             failure_reason='PAIR_TARGET_UNSUPPORTED:panda_left:PRECLOSE_REFERENCE_EXPIRED')
         self.assertTrue(recoverable_empty_failure(r))
         for change in (dict(empty_approach_started=True),dict(closure_started=True),
-                       dict(last_phase='close'),dict(last_phase='approach'),dict(motion=None),
-                       dict(failure_reason='JOINT_TRACKING_ERROR')):
+                       dict(last_phase='close'),dict(motion=None),dict(next_action='STOP'),dict(next_action=None)):
             self.assertFalse(recoverable_empty_failure(dict(r,**change)))
         self.assertTrue(recoverable_empty_failure(dict(r,failure_reason='PAIR_PREGRASP_REACQUISITION_LOST:panda_left')))
+        self.assertTrue(recoverable_empty_failure(dict(r,failure_reason='NEW_DIAGNOSTIC_TEXT')))
 
     def test_perception_failure_blacklists_culprit_pose_without_banning_other_arm(self):
         p=self.policy();left=self.candidate();right=self.candidate(.2,arm='panda_right')

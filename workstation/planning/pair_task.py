@@ -18,6 +18,24 @@ def match_stationary_sources(scene,references):
     return matched
 
 
+def match_task_sources(scene,references):
+    """Only candidates for the NEXT pick need a current usable pose.
+
+    Persistent identity tolerates measured motion. It never supplies an old pose
+    for an invisible source, and missing unrelated sources do not veto this pick.
+    """
+    result={}
+    for obj in scene.objects:
+        key=getattr(obj,'identity_id',None)
+        if (key in references and not obj.failures and obj.posture=='UPRIGHT' and
+                pose_is_observed(obj,scene) and abs(obj.time_s-scene.observation_time_s)<=1e-6 and
+                0<=scene.assembled_time_s-obj.time_s<=.15 and
+                np.allclose(obj.size_m,references[key]['size_m'],atol=1e-6,rtol=0)):
+            if key in result:return {}
+            result[key]=obj
+    return result
+
+
 def choose_source_pair(objects,bases):
     """Choose the currently observed front carton in each arm's half-workspace."""
     mid=sum(v['base_xyz'][0] for v in bases.values())/len(bases)

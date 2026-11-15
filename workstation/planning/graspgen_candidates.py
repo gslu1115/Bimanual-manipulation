@@ -120,6 +120,7 @@ def candidates_from_result(result,obj,arms,calibration,sequence_ids):
                 metadata=dict(request_id=result['request_id'],sequence_ids=sequence_ids,frame='workcell',
                     source_visual_object=dict(track_id=obj.track_id,time_s=obj.time_s,position_m=obj.position_m,
                         axis_yaw_rad=obj.axis_yaw_rad,size_m=obj.size_m,posture=obj.posture,
+                        identity_id=getattr(obj,'identity_id',None),
                         body_rotation=upright_body_rotation(obj).tolist()),
                     model=result['metadata'],calibration_sha256=digest,opening=evidence,
                     model_gripper_geometry_equivalent=bool(calibration.get('gripper_geometry_equivalence_verified')),

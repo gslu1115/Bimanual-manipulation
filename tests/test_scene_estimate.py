@@ -30,6 +30,46 @@ def packet(time=1., yaw=.3, centre=(0.,-.10), tape=True, size=(.1,.055,.045),
 
 
 class EstimateTests(unittest.TestCase):
+    def test_identity_outlives_pose_but_missing_object_has_no_current_pose(self):
+        est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
+        first=est.estimate(packet())
+        key=first.objects[0].identity_id
+        missing=est.estimate(packet(time=10.,empty=True))
+        self.assertFalse(missing.objects)
+        self.assertEqual(missing.identities[0].identity_id,key)
+        self.assertEqual(missing.identities[0].last_observed_s,1.)
+        current=est.estimate(packet(time=11.))
+        self.assertEqual(current.objects[0].identity_id,key)
+        self.assertEqual(current.objects[0].time_s,11.)
+        self.assertIsNone(current.objects[0].velocity_m_s)
+
+    def test_confirmed_size_is_not_replaced_by_clipped_catalogue_class(self):
+        est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
+        scene=est.estimate(packet())
+        original=scene.objects[0]
+        changed=replace(original,size_m=(.11,.06,.05),time_s=1.1)
+        result=est._retain_identities(replace(scene,objects=(changed,),observation_time_s=1.1))
+        self.assertEqual(result.objects[0].size_m,original.size_m)
+        self.assertEqual(result.identities[0].size_m,original.size_m)
+        self.assertIn('CONFIRMED_SIZE_CONFLICT',result.objects[0].failures)
+
+    def test_delivered_identity_is_not_reassigned_after_occlusion(self):
+        est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
+        key=est.estimate(packet()).objects[0].identity_id
+        est.mark_identity(key,'delivered')
+        current=est.estimate(packet(time=10.))
+        self.assertNotEqual(current.objects[0].identity_id,key)
+        self.assertEqual(est._identities[key].state,'delivered')
+
+    def test_next_pick_uses_current_identity_without_requiring_all_sources(self):
+        from workstation.planning.pair_task import match_task_sources
+        est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)),persistent_identities=True)
+        first=est.estimate(packet());obj=first.objects[0];key=obj.identity_id
+        refs={key:dict(size_m=obj.size_m,position_m=obj.position_m),'hidden':dict(size_m=obj.size_m)}
+        current=est.estimate(packet(time=1.1,centre=(.01,-.1)))
+        self.assertEqual(set(match_task_sources(current,refs)),{key})
+        self.assertFalse(match_task_sources(replace(current,assembled_time_s=2.),refs))
+
     def test_conflicting_sizes_without_top_rectangle_remain_unknown(self):
         from unittest.mock import patch
         from workstation.perception.rgbd_cartons import deproject

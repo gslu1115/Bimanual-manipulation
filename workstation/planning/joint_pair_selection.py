@@ -3,7 +3,7 @@ from collections import Counter
 import math
 import numpy as np
 from workstation.observations.camera_geometry import deproject_depth
-from workstation.planning.pair_task import match_stationary_sources
+from workstation.planning.pair_task import match_stationary_sources,match_task_sources
 
 
 def similar_grasp(a,b):
@@ -41,6 +41,7 @@ class JointPairSelection:
     def key(self,candidate):
         value=candidate if isinstance(candidate,dict) else vars(candidate)
         source=value.get('metadata',{}).get('source_visual_object',value)
+        if source.get('identity_id') in self.references:return source['identity_id']
         matches=[k for k,r in self.references.items() if
                  np.linalg.norm(np.subtract(source['position_m'],r['position_m']))<.025 and
                  ('size_m' not in source or np.allclose(source['size_m'],r['size_m'],atol=.002,rtol=0))]
@@ -51,7 +52,9 @@ class JointPairSelection:
         self.robot=robot;self.packet=packet;self.scene=scene;self.visibility_cache={}
         self.proposed={}
         self.points={};clouds={}
-        for key,obj in match_stationary_sources(scene,self.references).items():
+        matched=(match_task_sources(scene,self.references) if getattr(scene,'identities',())
+                 else match_stationary_sources(scene,self.references))
+        for key,obj in matched.items():
             parts=[]
             for ref in obj.mask_refs:
                 name=ref.split('/')[0];frame=packet.cameras[name]
@@ -60,7 +63,7 @@ class JointPairSelection:
                 values=clouds[name][mask]
                 if len(values):parts.append(values[np.linspace(0,len(values)-1,min(24,len(values)),dtype=int)])
             if parts:self.points[key]=np.concatenate(parts)
-        if self.points.keys()!=self.references.keys():raise RuntimeError('JOINT_SELECTION_SOURCE_SURFACES_MISSING')
+        if len(self.points)<2:raise RuntimeError('JOINT_SELECTION_SOURCE_SURFACES_MISSING')
         self.camera_mounts={}
         for name,arm in [('left_wrist_camera','panda_left'),('right_wrist_camera','panda_right')]:
             frame=packet.cameras[name];state=frame.robot_state_at_frame[arm]
@@ -69,7 +72,8 @@ class JointPairSelection:
             self.camera_mounts[name]=(arm,np.linalg.inv(hand)@frame.T_workcell_from_camera_cv)
 
     def diverse(self,ordered,obj,limit=4):
-        key=self.key(dict(position_m=obj.position_m,size_m=obj.size_m));chosen=[];failed=duplicates=0
+        key=self.key(dict(position_m=obj.position_m,size_m=obj.size_m,identity_id=getattr(obj,'identity_id',None)))
+        chosen=[];failed=duplicates=0
         for c in ordered:
             value=vars(c)
             if any(similar_grasp(value,old) for old in self.failed_grasps[key]):failed+=1;continue
@@ -122,13 +126,8 @@ class JointPairSelection:
 
 
 def recoverable_empty_failure(report):
-    if report.get('empty_approach_started') or report.get('closure_started'):return False
-    reason=report.get('failure_reason','')
-    if report.get('last_phase') not in ('pregrasp_recheck','approach') or not report.get('motion'):return False
-    if reason.startswith(('STATIC_PATH_BLOCKED:','OBSERVED_PATH_OBSTACLE','UNOBSERVED_PATH_SPACE',
-                          'PAIR_TARGET_UNCERTAIN','PAIR_UNSELECTED_CARTONS_UNCONFIRMED')):return True
-    # Reobserve through the checked empty retreat, then request diverse fresh
-    # candidates. Never reuse this branch after descent/contact or closure.
-    return report.get('last_phase')=='pregrasp_recheck' and reason.startswith((
-        'PAIR_TARGET_UNSUPPORTED:panda_left:','PAIR_TARGET_UNSUPPORTED:panda_right:',
-        'PAIR_PREGRASP_REACQUISITION_LOST:','PAIR_PREGRASP_REACQUIRED_TARGET_CHANGED:'))
+    """Recovery is an action decision plus physical state, never an error prefix."""
+    return (report.get('next_action') in ('OBSERVE','REPLAN') and
+            report.get('last_phase') in ('pregrasp_recheck','approach') and
+            bool(report.get('motion')) and not report.get('empty_approach_started') and
+            not report.get('closure_started'))

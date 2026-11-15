@@ -365,8 +365,11 @@ def main(argv=None):
         "sync_loads": True, "extra_args": extra_args},
         experience=str(PROJECT_ROOT/"config"/"sorting.kit"))
     env, failure = None, None
-    faulthandler.enable()
-    faulthandler.dump_traceback_later(600, repeat=True)
+    # Keep fatal diagnostics on the faulting thread. Progress checkpoints are
+    # written by the actor; no asynchronous traversal of live Python stacks.
+    # The previous native exit coincided with the 600 s watchdog dump; its
+    # precise native cause is not established by the saved Python traceback.
+    faulthandler.enable(all_threads=False)
     try:
         from workstation.simulation.environment import SortingEnvironment
         env_output=output/('seed_'+str(config['seed'])) if capture_seeds else output
@@ -457,7 +460,6 @@ def main(argv=None):
         env._write_json("run_report.json", env.report())
         env._write_json("run_status.json", {"status": "passed", "mode": args.mode})
         print("[ready] Outputs: "+str(output), flush=True)
-        faulthandler.cancel_dump_traceback_later()
         while args.keep_open and app.is_running():
             started = time.perf_counter()
             if env.timeline.is_playing():
@@ -472,12 +474,10 @@ def main(argv=None):
         (output/"failure.txt").write_text(failure, encoding="utf-8")
         (output/"run_status.json").write_text(json.dumps(
             {"status": "failed", "mode": args.mode, "error": failure}), encoding="utf-8")
-        faulthandler.cancel_dump_traceback_later()
         from workstation.interactive_failure import should_preserve_scene, preserve_failed_scene
         if should_preserve_scene(error, args.keep_open, app):
             preserve_failed_scene(app, env, error, output)
     finally:
-        faulthandler.cancel_dump_traceback_later()
         try:
             if env is not None:
                 env.close()

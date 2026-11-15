@@ -393,7 +393,10 @@ class SortingEnvironment:
         def default(value):
             if hasattr(value, 'tolist'): return value.tolist()
             return str(value)
-        (self.output/name).write_text(json.dumps(data, ensure_ascii=False, indent=2, default=default), encoding='utf-8')
+        target=self.output/name
+        pending=target.with_name(target.name+'.tmp')
+        pending.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=default), encoding='utf-8')
+        pending.replace(target)
 
     def close(self):
         self.belt_api.GetSurfaceVelocityAttr().Set(Gf.Vec3f(0))
