@@ -7,6 +7,8 @@ voxel/sampled check, not a continuous collision or unseen-object guarantee.
 from itertools import product
 from concurrent.futures import ThreadPoolExecutor
 import os
+from collections import OrderedDict
+from copy import deepcopy
 import numpy as np
 from workstation.perception.rgbd_cartons import deproject
 from workstation.planning.collision import scene_obstacles
@@ -19,7 +21,8 @@ def _occupancy_workers():
 
 
 class ObservedWorkspace:
-    def __init__(self, packet, priors, scene, static=(), robot_spheres=(), resolution=.01,robot_links=(),occlusion_memory=None):
+    def __init__(self, packet, priors, scene, static=(), robot_spheres=(), resolution=.01,robot_links=(),occlusion_memory=None,
+                 frame_cache=None):
         self.packet, self.priors, self.scene = packet, priors, scene
         self.static = tuple(static)
         self.robots = tuple(robot_spheres)
@@ -34,7 +37,11 @@ class ObservedWorkspace:
         self.unknown = self.occupied = None
         self._unknown_evaluated=None
         self._fine_cache=None
-        self._depth_footprints={}
+        # Share only immutable image-derived work within this exact packet.
+        self.frame_cache=frame_cache if frame_cache is not None and frame_cache['packet'] is packet else dict(
+            packet=packet,depth_footprints={},occupied=OrderedDict())
+        self._depth_footprints=self.frame_cache['depth_footprints']
+        self._slot_cache={}
         self.last_unknown_point=None
         self.last_unknown_sample=None
         self._robot_cache_ref=None
@@ -46,6 +53,8 @@ class ObservedWorkspace:
         No past-frame pose, commanded fingers or simulator target data suffices.
         Missing/stale/conflicting evidence leaves normal obstacle vetoes active.
         """
+        previous=self.payload_observation
+        previous_grids=(self.occupied,self.unknown,self._unknown_evaluated,self._fine_cache)
         self.payload_observation=None;self._fine_cache=None
         self.unknown=self.occupied=None
         self._unknown_evaluated=None
@@ -99,7 +108,27 @@ class ObservedWorkspace:
             time_s=self.packet.observation_time_s,
             source='partial RGB-D + latched grasp; conditional planning model' if constrained else
                    'current RGB-D supported holding geometry; planning model only')
+        # Validation above always runs. Repeating identical current support
+        # must not discard already evaluated cells; changed/invalid support does.
+        if previous is not None and all(
+                np.array_equal(previous[k],v) if isinstance(v,np.ndarray) else previous[k]==v
+                for k,v in self.payload_observation.items()):
+            self.occupied,self.unknown,self._unknown_evaluated,self._fine_cache=previous_grids
         return True
+
+    def _mapping_key(self):
+        def array(v):return np.asarray(v,dtype=float).tobytes()
+        def boxes(items):return tuple((b.name,array(b.centre),array(b.size)) for b in items)
+        payload=self.payload_observation
+        payload_key=None if payload is None else (
+            payload['target_id'],array(payload['centre']),array(payload['rotation']),array(payload['size']),
+            payload['uncertainty_m'],payload['time_s'],payload['mask_refs'],payload['support_mask_refs'],
+            payload['geometric_pose_measured'],payload['grasp_constrained'])
+        return (self.resolution,array(self.lower),array(self.upper),self.priors.max_age_s,
+                self.priors.sync_tolerance_s,self.packet.assembled_time_s,self.packet.observation_time_s,
+                tuple(id(f) for f in self._frames()),boxes(self.static),boxes(self.objects),
+                tuple((i,array(p),r) for i,p,r in self.robots),
+                tuple((id(m),array(p),array(r)) for m,p,r in self.robot_links),payload_key)
 
     def _robot_arrays(self):
         if self._robot_cache_ref is not self.robots:
@@ -308,6 +337,20 @@ class ObservedWorkspace:
         # Measured obstacles remain global: a local free-space query cannot
         # hide unsegmented depth obstacles elsewhere in the workspace.
         if self.occupied is not None:return
+        key=self._mapping_key();cache=self.frame_cache['occupied']
+        if key not in cache:
+            occupied=self._compute_occupied()
+            occupied.flags.writeable=False
+            cache[key]=occupied
+            if len(cache)>8:cache.popitem(last=False)
+        else:cache.move_to_end(key)
+        self.occupied=cache[key]
+        self.has_unmodelled_occupied=bool(self.occupied.any())
+        if self.unknown is None:
+            self.unknown=np.ones(self.shape,bool)
+            self._unknown_evaluated=np.zeros(self.shape,bool)
+
+    def _compute_occupied(self):
         frames=list(self._frames())
         workers=_occupancy_workers()
         if workers>1 and sum(frame.depth_m.size for frame in frames)>=100000:
@@ -325,11 +368,7 @@ class ObservedWorkspace:
         else:grids=[self._occupied_indices(frame) for frame in frames]
         occupied=np.zeros(self.shape,bool)
         for grid in grids:occupied[tuple(grid.T)]=True
-        self.occupied=occupied
-        self.has_unmodelled_occupied=bool(self.occupied.any())
-        if self.unknown is None:
-            self.unknown=np.ones(self.shape,bool)
-            self._unknown_evaluated=np.zeros(self.shape,bool)
+        return occupied
 
     def check_observed_sphere_obstacles(self,centre,radius):
         """Measured obstacle test; unknown arm space is explicitly unproven.
@@ -455,7 +494,12 @@ class ObservedWorkspace:
         current detected objects remain obstacles in the ordinary slot check.
         A separate map avoids reusing cached historical free-space results.
         """
-        current=ObservedWorkspace(self.packet,self.priors,self.scene,self.static,resolution=self.resolution)
+        key=(id(self.scene),self._mapping_key())
+        if getattr(self,'_current_depth_key',None)!=key:
+            self._current_depth_key=key
+            self._current_depth=ObservedWorkspace(self.packet,self.priors,self.scene,self.static,
+                resolution=self.resolution,frame_cache=self.frame_cache)
+        current=self._current_depth
         return current.slot(xy)
 
     @classmethod
@@ -471,6 +515,16 @@ class ObservedWorkspace:
         return cls(packet,priors,scene,static)
 
     def slot(self, xy):
+        # No historical free-space result crosses a packet or a geometry change.
+        key=(tuple(xy),self._mapping_key(),repr(self.priors),
+             tuple((o.track_id,tuple(o.position_m),tuple(o.size_m),o.uncertainty_m) for o in self.scene.objects),
+             tuple(id(w) for w in getattr(self.occlusion_memory,'snapshots',())),
+             tuple(id(w) for w in getattr(self.occlusion_memory,'anchors',())))
+        if key not in self._slot_cache:
+            self._slot_cache[key]=self._query_slot(xy)
+        return deepcopy(self._slot_cache[key])
+
+    def _query_slot(self,xy):
         length,width,height=self.priors.carton_size_m
         size=np.array([length+.04,width+.04,height+.02])
         centre=np.array([*xy,self.priors.support_z_m+size[2]/2])

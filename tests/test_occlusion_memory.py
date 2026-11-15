@@ -76,7 +76,7 @@ class OcclusionMemoryTests(unittest.TestCase):
         memory=OcclusionMemory();memory.add(self.workspace())
         current=self.workspace(2.,robot=True);current.occlusion_memory=memory
         self.assertIsNone(current.check_sphere((0.,0.,1.1),.005))
-        current.occupied[:]=True
+        current.occupied=np.ones_like(current.occupied)  # Inject an obstacle without mutating the shared frame map.
         self.assertEqual(current.check_sphere((0.,0.,1.1),.005),'OBSERVED_PATH_OBSTACLE')
 
     def payload(self,workspace,target_id='visual_held',centre=(0.,0.,1.13),size=(.1,.1,.04)):

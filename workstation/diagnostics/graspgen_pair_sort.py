@@ -32,15 +32,24 @@ def run(env,args):
     from workstation.perception.held_surface import CuboidHoldingTracker,HeldSurfaceTracker
     from workstation.diagnostics import graspgen_pair,graspgen_pair_place,graspgen_calibration
     from workstation.models import graspgen_client
+    from workstation.simulation import robot_driver
     timing=WallTiming();root=env.output
     for obj,name,label in (
         (env,'step','physics_step'),(env.camera_system,'render','camera_render'),
+        (env,'_physics_step','physics_engine'),(env,'_app_update','simulation_app_update'),
         (env,'get_observation_packet','sensor_read'),(env,'_write_json','json_write'),
         (CartonEstimator,'estimate','scene_estimation'),
         (CartonEstimator,'resolve_action_sources','source_pose_resolution'),
-        (ObservedWorkspace,'_build_occupied','depth_obstacle_mapping'),
+        (ObservedWorkspace,'_compute_occupied','depth_obstacle_mapping'),
         (ObservedWorkspace,'_evaluate_unknown','free_space_mapping'),
         (ObservedWorkspace,'slot','slot_query'),
+        (ObservedWorkspace,'_query_slot','slot_query_compute'),
+        (RobotMotion,'fk','fk_query'),(RobotMotion,'_compute_fk','fk_compute'),
+        (RobotMotion,'spheres','sphere_query'),(RobotMotion,'_compute_spheres','sphere_compute'),
+        (robot_driver,'check_spheres','collision_math'),
+        (graspgen_pair,'check_spheres','collision_math'),
+        (graspgen_pair_place,'check_spheres','collision_math'),
+        (graspgen_pair_place,'sphere_box_clearances','payload_collision_math'),
         (RobotMotion,'solve_pose','ik_solve'),
         (RobotMotion,'validate_path','path_validation'),
         (RobotMotion,'cartesian_knots','cartesian_ik'),
@@ -73,6 +82,9 @@ def _run(env,args,timing):
     env.conveyor=VisualConveyorIndex(env.c)
     robot=from_environment(env,paired_armature_floor=.01)
     robot.wall_timing=timing
+    for method,label in (('command','joint_command'),('command_velocities','velocity_command'),
+                         ('read_states','encoder_read')):
+        timing.wrap(robot,method,label)
     priors=ScenePriors.from_config(env.c)
     def new_estimator():
         return CartonEstimator(priors,robot_point_filter=robot.observed_robot_points,

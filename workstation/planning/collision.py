@@ -113,6 +113,14 @@ def scene_obstacles(scene,target_id,extra_margin=.004):
     return boxes
 
 
+def sphere_box_clearances(spheres,box):
+    """Same sphere/AABB distances in one batch, preserving sphere order."""
+    centres=np.asarray([s[1] for s in spheres],float).reshape(-1,3)
+    radii=np.asarray([s[2] for s in spheres],float)
+    outside=np.maximum(np.abs(centres-box.centre)-np.asarray(box.size)/2,0.)
+    return np.linalg.norm(outside,axis=1)-radii
+
+
 def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,rejection=None):
     """(link_index, centre, radius). Connected link groups excluded from self checks."""
     if not spheres: return None,float('inf')

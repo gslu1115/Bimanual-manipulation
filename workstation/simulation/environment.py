@@ -308,14 +308,20 @@ class SortingEnvironment:
             if conveyor_velocity_m_s is not None:raise RuntimeError('VISUAL_CONVEYOR_NOT_ENABLED')
             velocity = self.conveyor.update(self.observe_ground_truth(), dt, self.safe_to_index) if monitor_conveyor else 0.
         self.belt_api.GetSurfaceVelocityAttr().Set(Gf.Vec3f(velocity, 0, 0))
-        SimulationManager.step()
+        self._physics_step()
         self.time += dt
         self.ticks += 1
         if render and self.ticks % self.camera_system.settings['render_interval_steps'] == 0:
             self.camera_system.render()
             self.camera_system.record_if_due()
         elif self.ticks % 120 == 0:
-            self.app.update()
+            self._app_update()
+
+    def _physics_step(self):
+        SimulationManager.step()
+
+    def _app_update(self):
+        self.app.update()
 
     def settle(self):
         s = self.c['settle']

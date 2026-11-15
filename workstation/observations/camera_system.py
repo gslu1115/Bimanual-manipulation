@@ -24,6 +24,7 @@ class CameraSystem:
         self._closed = False
         self.last_metadata = {}
         self.render_frame_index = 0
+        self._refresh_ready = False
         self.rendered_tick, self.rendered_time = 0, 0.
         self.rendered_joint_positions = None
         self.rendered_robot_states = None
@@ -159,7 +160,9 @@ class CameraSystem:
         if not self.sensors:
             return dict(cameras={}, camera_errors={})
         if refresh:
-            for _ in range(self.settings['warmup_render_frames']): self.render()
+            count=self.settings['refresh_render_frames'] if self._refresh_ready else self.settings['warmup_render_frames']
+            for _ in range(count): self.render()
+            self._refresh_ready=True
         started = time.perf_counter()
         frames, errors = {}, {}
         for name, sensor in self.sensors.items():

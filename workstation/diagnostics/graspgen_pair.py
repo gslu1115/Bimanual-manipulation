@@ -180,7 +180,8 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
     overlap=0
     ticks=0
     trace=[]
-    def advance(desired):
+    tick_counts=dict(trajectory=0,tracking_wait=0,settling=0)
+    def advance(desired,kind='trajectory'):
         nonlocal previous,overlap,ticks,commanded
         # Also check tracking lag, not just the nominal synchronized paths.
         for left,right in synchronized_knots([previous[0],desired[0]],[previous[1],desired[1]]):
@@ -199,7 +200,11 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                 robot.command_velocities(a,np.r_[np.clip(feedforward+correction,
                     -robot.joint_speed,robot.joint_speed),0.,0.])
         commanded=desired.copy()
-        robot.tick()
+        previous_kind=getattr(robot,'_tick_kind','trajectory')
+        robot._tick_kind=kind
+        try:robot.tick()
+        finally:robot._tick_kind=previous_kind
+        tick_counts[kind]+=1
         states=robot.read_states()
         measured=np.array([states[a].joint_positions_rad for a in arms])
         if not np.isfinite(measured).all():
@@ -226,16 +231,17 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         # Let the physical drives catch up before advancing the common clock.
         for _ in range(math.ceil((.45 if loaded_transfer else .25)/robot.dt)):
             if np.max(np.abs(previous-desired))<=following_band:break
-            advance(desired)
+            advance(desired,'tracking_wait')
         else:
             errors=np.max(np.abs(previous-desired),axis=1)
             raise RuntimeError('PAIR_JOINT_TRACKING_ERROR: '+str(dict(zip(arms,errors.tolist()))))
     for _ in range(math.ceil(.3/robot.dt)):
-        advance(np.asarray([p[-1] for p in paths]))
+        advance(np.asarray([p[-1] for p in paths]),'settling')
     moved=np.max(np.abs(previous-start),axis=1)
     if require_overlap and (not overlap or np.min(moved)<.04):raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
     return dict(ticks=ticks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
-                arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace)
+                arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace,
+                tick_counts=tick_counts,sim_seconds={k:v*robot.dt for k,v in tick_counts.items()})
 
 
 class PairAttemptError(RuntimeError):
@@ -533,6 +539,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if timing is not None:
                 report['preparation_timing']=timing.delta(preparation_start)
                 action_timing_start=timing.snapshot()
+            action_ticks_start=dict(getattr(robot,'tick_counts',{}))
             report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
             for selected,path in zip(current['selection'],current['pregrasp_knots']):
                 arm=selected['arm']
@@ -579,6 +586,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if action_start is not None:
                 report['action_wall_s']=time.monotonic()-action_start
                 if timing is not None:report['action_timing']=timing.delta(action_timing_start)
+                report['action_tick_counts']={k:v-action_ticks_start.get(k,0)
+                    for k,v in getattr(robot,'tick_counts',{}).items()}
+                report['physics_dt_s']=robot.dt
                 for arm in states:
                     robot.command_velocities(arm,np.zeros(9))
                     robot.targets[arm][:7]=robot.read_states()[arm].joint_positions_rad

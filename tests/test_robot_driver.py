@@ -239,7 +239,7 @@ class RobotDriveTests(unittest.TestCase):
             return [np.zeros(7),middle,goal],.01
         driver.checked_joint_plan=plan;driver.dt=.01;driver.joint_speed=.2
         commands=[]
-        driver.tick=lambda:commands.append(driver.targets['left'].copy())
+        driver.tick=lambda kind=None:commands.append(driver.targets['left'].copy())
         driver.hold=lambda seconds:None
         driver.read_states=lambda:{'left':RobotState(1.,goal,np.full(2,.04))} if commands else {'left':state}
         driver.execute_joint('left',np.r_[goal,[.04,.04]],None,'v')

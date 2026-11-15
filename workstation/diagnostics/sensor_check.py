@@ -108,6 +108,31 @@ def check(env):
             raise RuntimeError("Injected camera/robot timestamp skew was not detected")
         report["timestamp_skew_fault_injection"] = dict(success=True,
             injected_offset_s=policy_adapter.sync_tolerance_s+.01, sync_ok=False)
+        # Offline diagnostic only: compare the normal refresh against the old
+        # warmup budget at the SAME physical state, including moved wrist views.
+        settings=env.camera_system.settings
+        normal=settings['refresh_render_frames']
+        try:
+            settings['refresh_render_frames']=settings['warmup_render_frames']
+            reference_packet=env.get_observation_packet(refresh=True)
+        finally:settings['refresh_render_frames']=normal
+        comparison={}
+        for name in FORMAL_CAMERA_NAMES:
+            a=packet.cameras[name];b=reference_packet.cameras[name]
+            valid=a.valid_depth & b.valid_depth
+            delta=np.abs(a.depth_m[valid]-b.depth_m[valid])
+            row=dict(depth_p99_m=float(np.quantile(delta,.99)) if len(delta) else float('inf'),
+                     valid_mask_agreement=float(np.mean(a.valid_depth==b.valid_depth)),
+                     rgb_mean_abs=float(np.mean(np.abs(a.rgb.astype(float)-b.rgb.astype(float)))),
+                     same_sample_time=a.sample_time_s==b.sample_time_s,
+                     refreshed_sequence=b.sequence_id>a.sequence_id)
+            comparison[name]=row
+            if (not row['same_sample_time'] or not row['refreshed_sequence'] or
+                    row['depth_p99_m']>.001 or row['valid_mask_agreement']<.999 or row['rgb_mean_abs']>2.):
+                report.setdefault('refresh_comparison',{})[label]=comparison
+                env._write_json('sensor_check_report.json',report)
+                raise RuntimeError('Refresh render budget did not match settled sensor output')
+        report.setdefault('refresh_comparison',{})[label]=comparison
         env._write_json("sensor_check_report.json", report)  # Preserve partial evidence on a later failure.
         return transforms
 

@@ -4,7 +4,8 @@ import math
 FORMAL_CAMERAS = ('scene_camera', 'left_wrist_camera', 'right_wrist_camera')
 ANNOTATIONS = ('rgb', 'distance_to_image_plane', 'instance_segmentation', 'camera_params')
 DEFAULTS = dict(enabled=True, save_images=False, recording_enabled=False,
-                render_interval_steps=4, capture_interval_steps=12, warmup_render_frames=12)
+                render_interval_steps=4, capture_interval_steps=12, warmup_render_frames=12,
+                refresh_render_frames=4)
 
 
 def camera_settings(config):
@@ -16,7 +17,7 @@ def validate_cameras(config):
     for key in ('enabled', 'save_images', 'recording_enabled'):
         if type(settings[key]) is not bool:
             raise ValueError(f'camera_system.{key} must be boolean')
-    for key in ('render_interval_steps', 'capture_interval_steps', 'warmup_render_frames'):
+    for key in ('render_interval_steps', 'capture_interval_steps', 'warmup_render_frames', 'refresh_render_frames'):
         if type(settings[key]) is not int or settings[key] < 1:
             raise ValueError(f'camera_system.{key} must be a positive integer')
     if settings['capture_interval_steps'] % settings['render_interval_steps']:

@@ -1,6 +1,7 @@
 """Robot-only joint drive port and Lula model; no carton or contact truth access."""
 from __future__ import annotations
 import math
+from collections import OrderedDict
 import numpy as np
 from workstation.observations.observation_packet import PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
 from workstation.planning.collision import AABB, check_spheres, station_obstacles, scene_obstacles, sphere_box_clearance, carton_contact_allowed
@@ -68,6 +69,8 @@ class RobotMotion:
 
     def set_observation(self,packet,scene,priors):
         from workstation.planning.observed_workspace import ObservedWorkspace
+        previous=getattr(self,'observed_workspace',None)
+        frame_cache=(previous.frame_cache if previous is not None and previous.packet is packet else None)
         image_spheres=[];image_links=[]
         for arm,state in packet.robot_state.items():
             image_spheres.extend(self.spheres(arm,state.joint_positions_rad,
@@ -81,7 +84,8 @@ class RobotMotion:
                 finger_p=p+r@np.array([0.,sign*state.finger_positions_m[index],.0584])
                 finger_r=r if sign>0 else r@np.diag([-1.,-1.,1.])
                 image_links.append((self.collision_links['finger'],finger_p,finger_r))
-        workspace=ObservedWorkspace(packet,priors,scene,self.static,image_spheres,robot_links=image_links)
+        workspace=ObservedWorkspace(packet,priors,scene,self.static,image_spheres,robot_links=image_links,
+                                    frame_cache=frame_cache)
         if hasattr(self,'occlusion_memory'):
             self.occlusion_memory.add(workspace)
             workspace.occlusion_memory=self.occlusion_memory
@@ -122,7 +126,19 @@ class RobotMotion:
 
     def fk(self,arm,q=None,frame='right_gripper'):
         q=self.read_states()[arm].joint_positions_rad if q is None else q
-        return self.solvers[arm].compute_forward_kinematics(frame,np.asarray(q))
+        q=np.asarray(q,dtype=float)
+        key=(arm,id(self.solvers[arm]),frame,q.shape,q.tobytes())
+        cache=getattr(self,'_fk_cache',None)
+        if cache is None:self._fk_cache=cache=OrderedDict()
+        if key not in cache:
+            cache[key]=tuple(np.asarray(v).copy() for v in self._compute_fk(arm,q,frame))
+            if len(cache)>256:cache.popitem(last=False)
+        else:cache.move_to_end(key)
+        # Callers may adjust a returned goal; never expose cached mutable arrays.
+        return tuple(v.copy() for v in cache[key])
+
+    def _compute_fk(self,arm,q,frame):
+        return self.solvers[arm].compute_forward_kinematics(frame,q)
 
     def collision_poses(self,arm,q,fingers=(.04,.04),finger_sweep=False):
         for i in range(8):
@@ -277,6 +293,20 @@ class RobotMotion:
         if np.linalg.norm(actual-start-[0,0,height])>.012:raise RuntimeError('TCP_TRACKING_ERROR')
 
     def spheres(self,arm,q,fingers=.04):
+        q=np.asarray(q,dtype=float)
+        key=(arm,q.shape,q.tobytes(),float(fingers),id(self.sphere_description),
+             id(getattr(self,'solvers',{}).get(arm)))
+        cache=getattr(self,'_sphere_cache',None)
+        if cache is None:self._sphere_cache=cache=OrderedDict()
+        if key not in cache:
+            values=self._compute_spheres(arm,q,fingers)
+            for _,centre,_ in values:centre.flags.writeable=False
+            cache[key]=tuple(values)
+            if len(cache)>32:cache.popitem(last=False)
+        else:cache.move_to_end(key)
+        return cache[key]
+
+    def _compute_spheres(self,arm,q,fingers):
         poses={}
         spheres=[]
         for link,index,centre,radius in self.sphere_description:
@@ -716,7 +746,10 @@ class RobotMotion:
         finally:
             self.held_visual_geometry=previous
 
-    def tick(self):
+    def tick(self,kind=None):
+        kind=kind or getattr(self,'_tick_kind','trajectory')
+        if not hasattr(self,'tick_counts'):self.tick_counts={}
+        self.tick_counts[kind]=self.tick_counts.get(kind,0)+1
         for name,q in self.targets.items(): self.command(name,q)
         self.step()
         sample=getattr(self,'record_control_step',None)
@@ -726,7 +759,7 @@ class RobotMotion:
         if refresh_display is not None:refresh_display()
 
     def hold(self,seconds):
-        for _ in range(math.ceil(seconds/self.dt)): self.tick()
+        for _ in range(math.ceil(seconds/self.dt)): self.tick('hold')
 
     def execute_joint(self,arm,target,scene,target_id):
         self.motion_started=False
@@ -745,13 +778,13 @@ class RobotMotion:
                     a=smooth(i/count)
                     self.targets[arm][:7]=q0+a*(q1-q0)
                     self.targets[arm][7:]=start[7:]+((travelled+a*length)/total)*(target[7:]-start[7:])
-                    self.tick()
+                    self.tick('joint_return')
                 travelled+=length
         else:
             duration=max(1.,1.875*np.max(np.abs(target[:7]-start[:7]))/self.joint_speed)
             count=math.ceil(duration/self.dt)
             for i in range(1,count+1):
-                self.targets[arm]=start+smooth(i/count)*(target-start); self.tick()
+                self.targets[arm]=start+smooth(i/count)*(target-start); self.tick('joint_return')
         self.hold(.4)
         self.last_plan_check=planned
         if np.max(np.abs(self.read_states()[arm].joint_positions_rad-target[:7])) > .04:

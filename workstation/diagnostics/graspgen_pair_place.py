@@ -8,7 +8,7 @@ from workstation.observations.camera_geometry import pose_matrix, quaternion_fro
 from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors, pose_is_observed
-from workstation.planning.collision import AABB, sphere_box_clearance, check_spheres, carton_contact_allowed
+from workstation.planning.collision import AABB, sphere_box_clearance, sphere_box_clearances, check_spheres, carton_contact_allowed
 from workstation.planning.graspgen_candidates import revalidate_candidate
 from workstation.skills.cumotion_pick_place import placement_goal
 from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps, synchronized_knots
@@ -18,6 +18,13 @@ class PairClearanceError(RuntimeError):
     def __init__(self, reason, parts, clearance, required):
         super().__init__(reason)
         self.details=dict(parts=parts,clearance_m=float(clearance),required_m=required)
+
+
+def write_phase_checkpoint(env,report):
+    """Atomic crash breadcrumb; full traces remain in the final attempt report."""
+    env._write_json('pair_phase_checkpoint.json',{key:report[key] for key in (
+        'success','last_phase','phase_checkpoint','closure_started','empty_approach_started',
+        'transfer_strategy','motion_planning_wall_s','next_action') if key in report})
 
 
 def transfer_schedule(robot,paths,payload_guard,*,rejections=None):
@@ -389,6 +396,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
 
     def carried_clearance(left, right):
         boxes = []
+        geometry={a:robot.spheres(a,q) for a,q in zip(arms,(left,right))}
         for arm, q, other, other_q in zip(arms, (left, right), reversed(arms), (right, left)):
             if arm not in carried_arms:continue
             pos, rot = robot.fk(arm, q)
@@ -400,8 +408,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             keepouts=list(partial_keepout.values())+list(released_keepout.values())+source_keepouts
             for keepout,_ in keepouts:
                 payload_gap=float(np.max(np.abs(centre-keepout.centre)-(extent+keepout.size)/2))
-                robot_gap,sphere,link=min((sphere_box_clearance(p,r,keepout),index,link)
-                    for index,(link,p,r) in enumerate(robot.spheres(arm,q)))
+                distances=sphere_box_clearances(geometry[arm],keepout)
+                sphere=int(np.argmin(distances));robot_gap=float(distances[sphere]);link=geometry[arm][sphere][0]
                 key=('unselected_clearances' if keepout.name.startswith('unselected_') else
                      'released_clearances' if keepout.name.startswith('released_') else 'parked_clearances')
                 stats=report.setdefault(key,{}).setdefault(arm,{})
@@ -413,11 +421,12 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 if robot_gap<.008:
                     raise PairClearanceError('PARKED_CARTON_CLEARANCE',
                         [dict(arm=arm,link_index=link,sphere_index=sphere),dict(obstacle=keepout.name)],robot_gap,.008)
-            for index,(link,c,r) in enumerate(robot.spheres(other,other_q)):
-                gap=sphere_box_clearance(c,r,box)
-                if gap<.002:
-                    raise PairClearanceError('PAYLOAD_OTHER_ARM_COLLISION',
-                        [payload,dict(arm=other,link_index=link,sphere_index=index)],gap,.002)
+            distances=sphere_box_clearances(geometry[other],box)
+            blocked=np.flatnonzero(distances<.002)
+            if len(blocked):
+                index=int(blocked[0]);link=geometry[other][index][0];gap=float(distances[index])
+                raise PairClearanceError('PAYLOAD_OTHER_ARM_COLLISION',
+                    [payload,dict(arm=other,link_index=link,sphere_index=index)],gap,.002)
             boxes.append((box,payload))
         if len(boxes)!=2:return
         (a,part_a),(b,part_b)=boxes
@@ -425,6 +434,9 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         report['payload_pair_min_axis_gap_m']=min(report.get('payload_pair_min_axis_gap_m',gap),gap)
         if gap<=.002 and not carton_contact_allowed(a,b):
             raise PairClearanceError('PAYLOAD_PAYLOAD_COLLISION',[part_a,part_b],gap,.002)
+
+    timing=getattr(robot,'wall_timing',None)
+    if timing is not None:carried_clearance=timing.timed('payload_clearance',carried_clearance)
 
     def measure_held(arm,packet):
         nonlocal scene
@@ -673,7 +685,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         report['last_phase'] = phase
         label=label or phase
         report['phase_checkpoint']=dict(phase=phase,event='planning',dry_run=dry_run)
-        env._write_json('graspgen_pair_check.json',report)
+        write_phase_checkpoint(env,report)
         print('[pair-phase] '+phase+' planning',flush=True)
         start_wall=perf_counter()
         carrying=(set(arms) if held else set()) if carrying is None else set(carrying)
@@ -785,7 +797,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             carried_clearance(left,right)
         execution_start=perf_counter()
         report['phase_checkpoint']=dict(phase=phase,event='executing',dry_run=False)
-        env._write_json('graspgen_pair_check.json',report)
+        write_phase_checkpoint(env,report)
         if phase=='approach':report['empty_approach_started']=True
         phases[label] = drive_empty_pregrasps(robot, paths, guard if both_loaded or sequential else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
@@ -793,7 +805,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                                               progress_check=(lambda elapsed:refresh_approach_references(elapsed,active)) if renew_reference else None)
         phases[label]['execution_wall_s']=perf_counter()-execution_start
         report['phase_checkpoint']=dict(phase=phase,event='completed',dry_run=False)
-        env._write_json('graspgen_pair_check.json',report)
+        write_phase_checkpoint(env,report)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
@@ -809,7 +821,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             for arm in active:
                 width = max(0., selected[arm]['closing_width_m']/2-.004) if close else .04
                 robot.targets[arm][7:] = starts[arm]+(width-starts[arm])*i/steps
-            robot.tick()
+            robot.tick('gripper')
         robot.hold(.15)
 
     poses = {a:(np.asarray(c['position_m']),pose_matrix(c['position_m'],c['orientation_wxyz'])[:3,:3])
