@@ -300,6 +300,26 @@ class PreCloseTargetTests(unittest.TestCase):
         result=est.resolve_action_sources(p,s,[original.identity_id])
         self.assertFalse(result.objects)
 
+    def test_complete_closed_stage_passes_matching_reference_to_holding(self):
+        p,s=self.conflict_fragments()
+        fresh,proof=self.check.evaluate(p,s,closed=True)
+        self.assertTrue(proof['full_pose_measured'])
+        self.assertEqual(fresh.obj.time_s,proof['reference_time_s'])
+        tcp=CENTRE+[0,0,.009];r=np.diag([1.,-1.,-1.])
+        tracker=CuboidHoldingTracker.from_preclose_support(fresh.obj,proof,tcp,r,self.priors,packet=p)
+        self.assertTrue(tracker.allow_grasp_translation)
+        with self.assertRaises(ValueError):
+            CuboidHoldingTracker.from_preclose_support(self.reference,proof,tcp,r,self.priors,packet=p)
+
+    def test_partial_closed_stage_keeps_matching_original_reference(self):
+        fresh,proof=self.check.evaluate(self.packet,self.scene,closed=True)
+        self.assertFalse(proof['full_pose_measured'])
+        self.assertIs(fresh,self.check)
+        self.assertEqual(proof['reference_time_s'],self.reference.time_s)
+        tracker=CuboidHoldingTracker.from_preclose_support(fresh.obj,proof,CENTRE+[0,0,.009],
+            np.diag([1.,-1.,-1.]),self.priors,packet=self.packet)
+        self.assertTrue(tracker.allow_grasp_translation)
+
     def test_close_initialization_still_needs_current_holding_support(self):
         tcp=CENTRE+[0,0,.009];r=np.diag([1.,-1.,-1.])
         opened=self.check.confirm(self.packet,self.scene)

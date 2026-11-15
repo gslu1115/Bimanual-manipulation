@@ -86,7 +86,7 @@ class PreCloseTarget:
         proof=self.confirm(packet,scene,closed=closed,refresh_complete=True)
         proof['next_action']=('CONTINUE' if proof['supported'] else
             'REPLAN' if proof['reason']=='PRECLOSE_VISIBLE_TARGET_MOVED' else 'OBSERVE')
-        if not proof['supported'] or not proof['full_pose_measured'] or closed:return self,proof
+        if not proof['supported'] or not proof['full_pose_measured']:return self,proof
         m=proof['surface'];r=np.asarray(m['rotation'])
         obj=replace(self.obj,time_s=packet.observation_time_s,position_m=tuple(m['position_m']),
             axis_yaw_rad=math.atan2(r[1,0],r[0,0]),mask_refs=tuple(m['mask_refs']),
