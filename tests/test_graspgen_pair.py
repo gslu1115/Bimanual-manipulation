@@ -277,3 +277,12 @@ class PairTests(unittest.TestCase):
         pair,_=paired_pregrasp(robot,[a,candidate(arms[1],'two')],states,None)
         self.assertEqual(len(pair['selection']),2)
         self.assertGreater(pair['min_clearance_m'],0)
+        from dataclasses import replace
+        # An optimistic prefix cannot reach pair planning when its actual
+        # destination path is rejected by the same full feasibility checker.
+        robot.checked_joint_plan=lambda *args:self.fail('Unverified suffix reached pair path planning')
+        def reject_suffix(row):
+            return replace(row,feasible=False,reasons=('SELF_COLLISION',))
+        pair,_=paired_pregrasp(robot,[a,candidate(arms[1],'two')],states,None,
+                              complete_assessment=reject_suffix)
+        self.assertIsNone(pair)

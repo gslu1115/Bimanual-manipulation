@@ -108,7 +108,7 @@ def synchronized_knots(left, right, max_step=.025):
             yield tuple(p[i-1]+(p[i]-p[i-1])*n/steps for p in aligned)
 
 
-def paired_pregrasp(robot, rows, states, scene,selection_policy=None):
+def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None):
     arms = ('panda_left', 'panda_right')
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
                  and a.candidate.arm == arm and a.terms.get('full_pose_checked')] for arm in arms]
@@ -121,11 +121,17 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None):
         return sum(abs(row.candidate.metadata.get('source_visual_object',{}).get(
                        'position_m',row.candidate.position_m)[0]-row.terms['slot_xy'][0])
                    for row in pair if row.terms.get('slot_xy') is not None)
-    pairs.sort(key=lambda pair: ((selection_policy.priority(pair) if selection_policy else ())+
-                                (slot_cost(pair),-(pair[0].score+pair[1].score))))
+    def rank(pair):
+        return ((selection_policy.priority(pair) if selection_policy else ())+
+                (slot_cost(pair),-(pair[0].score+pair[1].score)))
+    pairs.sort(key=rank)
+    if complete_assessment is not None:
+        from workstation.planning.plan_reuse import complete_ranked_pairs
+        ordered=complete_ranked_pairs(pairs,rank,complete_assessment)
+    else:ordered=pairs
     paths = {}
     rejected = []
-    for pair in pairs:
+    for pair in ordered:
         for arm, a in zip(arms, pair):
             c = a.candidate
             if c.candidate_id not in paths:
@@ -155,7 +161,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None):
         if selection_policy:
             result['joint_choice']=dict(source_keys=[selection_policy.key(a.candidate) for a in pair],
                 history_penalty=selection_policy.priority(pair)[0],visibility=selection_policy.visibility(pair),
-                feasible_pair_count=len(pairs),eligible_source_count=len({r.candidate.target_id for r in rows if r.feasible}))
+                feasible_pair_count=len(pairs),
+                pair_count_scope='prefix-feasible combinations, suffixes refined in rank order' if complete_assessment else 'fully assessed combinations',
+                eligible_source_count=len({r.candidate.target_id for r in rows if r.feasible}))
         return result, rejected
     return None, rejected
 
@@ -287,11 +295,21 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     pick_failures={}
     from workstation.planning.plan_reuse import CandidatePrefixCache
     pick_prefixes=CandidatePrefixCache()
+    completed_rows={}
+    def complete_assessment(row):
+        c=row.candidate;slot=row.terms['slot_xy'];key=(c.candidate_id,tuple(slot))
+        if key not in completed_rows:
+            checked=assess(scene,states,
+                lambda c,o,s:robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes),robot.home,
+                candidate_provider=lambda o,_:[c] if o.track_id==c.target_id else [])
+            result=checked[0];result.terms['slot_xy']=slot
+            completed_rows[key]=result
+        return completed_rows[key]
     def check_destination(c,o,s,slot):
         # Pick IK, empty approach and finger closure do not depend on the
         # downstream slot. Reuse their failure only for this frozen snapshot.
         if c.candidate_id in pick_failures:return pick_failures[c.candidate_id]
-        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes)
+        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,prefix_only=selection_policy is not None)
         if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
             pick_failures[c.candidate_id]=result
         return result
@@ -338,6 +356,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 old={row.candidate.candidate_id:row.candidate for row in rows if row.feasible}
                 rows.clear()
                 pick_failures.clear()
+                completed_rows.clear()
                 seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
                 for candidate in old.values():
                     try:renewed=renew_view_candidate(candidate,scene,seq)
@@ -416,13 +435,23 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             for arm in states:
                 assigned=[r for r in scored if r.candidate.arm==arm]
                 report['slot_assessments'].append(dict(attempt=attempt,slot_xy=slot,arm=arm,
+                    scope='pick prefix only; destination pending' if selection_policy else 'whole path',
                     feasible=sum(r.feasible for r in assigned),
                     feasible_by_target=dict(Counter(r.candidate.target_id for r in assigned if r.feasible)),
                     reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
                     phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
         report['candidate_prefix_reuse']=pick_prefixes.report()
         report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}
-        pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy)
+        report['feasible_per_arm_scope']='pick prefix only' if selection_policy else 'whole path'
+        pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy,
+                                      complete_assessment if selection_policy else None)
+        report['candidate_prefix_reuse']=pick_prefixes.report()
+        report['destination_evaluation']=dict(mode='score-upper-bound refinement' if selection_policy else 'exhaustive',
+            prefix_rows=len(rows),completed_rows=len(completed_rows),
+            feasible_completed_rows=sum(r.feasible for r in completed_rows.values()),
+            skipped_destination_rows=sum(r.feasible and (r.candidate.candidate_id,tuple(r.terms['slot_xy'])) not in completed_rows for r in rows),
+            failures=[dict(candidate_id=r.candidate.candidate_id,slot_xy=r.terms['slot_xy'],reasons=r.reasons)
+                      for r in completed_rows.values() if not r.feasible])
         report.update(pair=pair, rejected_pairs=rejections)
         if selection_policy:report['grasp_diversity']=selection_policy.diversity[diversity_start:]
         if pair is not None:break
@@ -508,7 +537,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 report['scope']='two_cartons_same_physics_scene'
                 alternatives={arm:[] for arm in assigned_slots}
                 seen=set()
-                for row in sorted(rows,key=lambda item:-item.score):
+                alternative_rows=completed_rows.values() if selection_policy else rows
+                for row in sorted(alternative_rows,key=lambda item:-item.score):
                     c=row.candidate
                     if (row.feasible and row.terms['slot_xy']==assigned_slots[c.arm] and
                             c.candidate_id not in seen):

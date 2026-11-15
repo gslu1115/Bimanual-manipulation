@@ -214,6 +214,11 @@ class GraspGenPlanningTests(unittest.TestCase):
         driver.validate_path=validate
         cache=CandidatePrefixCache()
         original=driver.pose_feasibility(item,self.obj,self.scene,(.2,0.))
+        prefix=driver.pose_feasibility(item,self.obj,self.scene,(.2,0.),prefix_only=True)
+        self.assertFalse(prefix['whole_task_template_checked'])
+        self.assertFalse(prefix['candidate_execution_authorized'])
+        self.assertEqual(prefix['checked_phases'],['PREGRASP','APPROACH','CLOSE','LIFT'])
+        self.assertGreaterEqual(prefix['path_clearance_m'],original['path_clearance_m'])
         first=driver.pose_feasibility(item,self.obj,self.scene,(.2,0.),prefix_cache=cache)
         self.assertEqual(original,first)
         count=counts['solve'];before=counts['validate']

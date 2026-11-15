@@ -535,9 +535,9 @@ class RobotMotion:
                 return knots
         raise RuntimeError('IK_DISCONTINUITY')
 
-    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None):
+    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False):
         if getattr(candidate,'orientation_wxyz',None) is not None:
-            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache)
+            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache,prefix_only=prefix_only)
         start=self.read_states()[candidate.arm].joint_positions_rad
         raised=np.asarray(candidate.position_m)+[0,0,.18]
         phase='PREGRASP'; self.last_plan_check={}
@@ -599,7 +599,7 @@ class RobotMotion:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
                         rejection_phase=phase,rejection_details=self.last_plan_check.copy())
 
-    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None):
+    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False):
         """Forecast complete model-pose paths; no commands or holding claims."""
         from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
         from workstation.planning.graspgen_candidates import upright_body_rotation
@@ -663,7 +663,8 @@ class RobotMotion:
             q=cached['q'];descend=cached['descend'];minimum=cached['minimum']
             joint_plans=cached['joint_plans'].copy();phases=cached['phases'][:]
             lift_palm_clearance=cached['lift_palm_clearance']
-            if slot_xy is not None:
+            complete_slot=slot_xy is not None and not prefix_only
+            if complete_slot:
                 self.held_visual_geometry=relation
                 desired_body=nearest_upright_slot_rotation(body_rotation)
                 place_rotation=desired_body@relation['relative_rotation'].T
@@ -699,12 +700,13 @@ class RobotMotion:
                 minimum=min(minimum,clearance);phases.append(phase)
                 joint_plans['HOME']=self.last_plan_check.copy()
             return dict(reasons=(),joint_cost=float(np.linalg.norm(q-start)),path_clearance_m=minimum,
-                full_pose_checked=True,checked_phases=phases,whole_task_template_checked=slot_xy is not None,
+                full_pose_checked=True,checked_phases=phases,whole_task_template_checked=complete_slot,
                 lift_palm_clearance_m=lift_palm_clearance,
-                whole_task_check_scope='full model SE(3); sampled project-robot collisions; future local visibility deferred',
+                whole_task_check_scope=('pick prefix only; destination pending' if prefix_only else
+                    'full model SE(3); sampled project-robot collisions; future local visibility deferred'),
                 pending_observation_phases=['LIFT','TRANSFER','LOWER','OPEN','RETREAT'] if slot_xy is not None else [],
                 joint_plans=joint_plans,pregrasp_joint_positions_rad=q.tolist(),
-                placement_body_rotation=desired_body.tolist() if slot_xy is not None else None,
+                placement_body_rotation=desired_body.tolist() if complete_slot else None,
                 placement_release_gap_m=release_gap_m,
                 nominal_visual_payload_relation={k:(v.tolist() if isinstance(v,np.ndarray) else v) for k,v in relation.items()},
                 candidate_execution_authorized=False)

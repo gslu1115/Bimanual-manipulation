@@ -48,12 +48,34 @@ class PreviewPlans:
         self.rows={};self.hits=0;self.misses=0
 
     def put(self,phase,context,paths,schedule):
-        self.rows[phase]=(context,[np.array(p,copy=True) for p in paths],schedule)
+        self.rows[phase,context]=([np.array(p,copy=True) for p in paths],schedule)
 
     def get(self,phase,context):
-        row=self.rows.get(phase)
-        if row is None or row[0]!=context:
+        row=self.rows.get((phase,context))
+        if row is None:
             self.misses+=1
             return None
         self.hits+=1
-        return [p.copy() for p in row[1]],row[2]
+        return [p.copy() for p in row[0]],row[1]
+
+
+def complete_ranked_pairs(pairs,rank,complete):
+    """Best-first exact refinement of optimistic scores, not a new policy.
+
+    Prefix clearance upper-bounds full-path clearance. The remaining rank
+    terms do not change: visibility uses the same checked pregrasp joints.
+    Refine and reinsert before yielding, so no unchecked optimistic candidate
+    can displace a fully checked better pair. Failed suffixes remain rejected.
+    """
+    import heapq
+    pending=[(rank(pair),i,pair) for i,pair in enumerate(pairs)]
+    heapq.heapify(pending)
+    while pending:
+        optimistic,index,pair=heapq.heappop(pending)
+        checked=tuple(complete(row) for row in pair)
+        if not all(row.feasible for row in checked):continue
+        actual=rank(checked)
+        if actual!=optimistic:
+            heapq.heappush(pending,(actual,index,checked))
+            continue
+        yield checked
