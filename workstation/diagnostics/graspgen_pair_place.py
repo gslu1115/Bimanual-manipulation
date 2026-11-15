@@ -1070,6 +1070,52 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             places[a]=placement_goal(goals[a],robot.place_support_z,t.size,.012,
                                      measurements[a]['rotation'],t.offset,t.relative_rotation)
 
+    def reobserve_second_slot(a):
+        from workstation.planning.task_targets import reobserve_reserved_slot
+        from workstation.diagnostics.vision_check import save_observation
+        if carried_arms!={a} or not report.get('sequential_first_placement'):
+            raise RuntimeError('PAIR_SLOT_REOBSERVE_PHASE_UNSUPPORTED')
+        entry=dict(arm=a,checks=[],success=False,prior=before_transfer.get(goals[a]),
+                   scope='new depth before second placement; expiry remains 20 seconds')
+        report.setdefault('slot_reobservations',[]).append(entry)
+        start=perf_counter();after=packet.observation_time_s
+        origin,rotation=robot.fk(a)
+        direction=np.asarray(robot.base_config[a]['base_xyz'][:2])-goals[a]
+        direction=direction/max(float(np.linalg.norm(direction)),1e-9)
+        candidates=[origin+np.r_[direction*back,height] for back,height in
+                    ((.08,.03),(.14,.03),(.20,.06),(.10,.12))]
+        def fresh_view():
+            robot.hold(.1);refresh_payloads()
+            if any(packet.camera_status.get(n)!='OK' for n in
+                   ('scene_camera','left_wrist_camera','right_wrist_camera')):
+                raise RuntimeError('PAIR_SLOT_REOBSERVE_CAMERA_UNAVAILABLE')
+            view=robot.observed_workspace.slot(goals[a])
+            if abs(view['observation_time_s']-packet.observation_time_s)>1e-6:
+                raise RuntimeError('SLOT_REOBSERVE_STALE_OR_WRONG_VIEW')
+            save_observation(env.output,'slot_reobserve_'+a+'_'+str(len(entry['checks'])),packet,scene)
+            return view
+        def adjust(position):
+            label='slot_reobserve_'+a+'_'+str(len(entry['checks']))
+            check=dict(kind='viewpoint',tcp_m=position.tolist(),executed=False)
+            entry['checks'].append(check)
+            try:
+                move('transfer',{a:(position,rotation)},active=(a,),carrying=carried_arms,
+                     dry_run=True,label='preview_'+label)
+            except RuntimeError as error:
+                if not path_rejection(str(error)) and not str(error).startswith('UNOBSERVED_PATH_SPACE'):raise
+                check['planning_rejection']=str(error);return False
+            # Never catch a drive/holding failure and try another viewpoint.
+            move('transfer',{a:(position,rotation)},active=(a,),carrying=carried_arms,label=label)
+            check['executed']=True
+            return True
+        try:
+            view=reobserve_reserved_slot(slots,a,goals[a],after,fresh_view,candidates,adjust,entry['checks'])
+            before_transfer[goals[a]]=dict(view)
+            entry.update(success=True,fresh_empty_view=dict(view))
+        except Exception as error:
+            entry['failure_reason']=str(error);raise
+        finally:entry['wall_s']=perf_counter()-start
+
     def clear_empty_arm(a):
         report['last_phase']='clear_for_verification'
         if not carried_arms:
@@ -1225,6 +1271,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             raise RuntimeError('NO_MEASURED_PARALLEL_TRANSFER')
         for index,a in enumerate(plan['order']):
             refresh_payloads()
+            if index==1:reobserve_second_slot(a)
             t=trackers[a];rot=robot.fk(a)[1]
             centre=np.array([*goals[a],robot.place_support_z+t.size[2]/2+.012+.18])
             move('transfer',{a:(centre-rot@t.offset,rot)},active=(a,),carrying=carried_arms,

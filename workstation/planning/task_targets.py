@@ -9,6 +9,29 @@ def visual_target_slots(config):
     return (tuple(slots[index]),)
 
 
+def reobserve_reserved_slot(slots,arm,xy,after,observe,candidates,try_adjust,checks):
+    """Require new empty depth; only checked, bounded viewpoint moves may retry.
+
+    try_adjust returns False for a planning rejection only. Execution and
+    payload-observation errors propagate; neither can trigger another move.
+    """
+    if slots.owners.get(xy)!=arm:raise RuntimeError('SLOT_REOBSERVE_RESERVATION_LOST')
+    candidates=iter(candidates)
+    while True:
+        view=observe();checks.append(dict(kind='observation',view=dict(view)))
+        time=view['observation_time_s']
+        if tuple(view['xy'])!=xy or time<=after:
+            raise RuntimeError('SLOT_REOBSERVE_STALE_OR_WRONG_VIEW')
+        after=time
+        if slots.owners.get(xy)!=arm:raise RuntimeError('SLOT_REOBSERVE_RESERVATION_LOST')
+        if view['free'] and not view['observed_objects'] and view['reason'] is None:return view
+        if view['observed_objects'] or view['reason']!='UNOBSERVED_PATH_SPACE':
+            raise RuntimeError('SLOT_REOBSERVE_NOT_EMPTY:'+str(view['reason']))
+        for candidate in candidates:
+            if try_adjust(candidate):break
+        else:raise RuntimeError('SLOT_REOBSERVE_NO_VISIBLE_CHECKED_POSE')
+
+
 class ConveyorSlots:
     """The paired controller owns reservations; perception owns availability."""
 
