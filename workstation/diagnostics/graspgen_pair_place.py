@@ -86,18 +86,14 @@ def execute_parallel_home(robot,scene):
         path,_=robot.checked_joint_plan(arm,states[arm].joint_positions_rad,robot.home[:7],scene,None)
         paths.append(path);plans.append(robot.last_plan_check.copy())
     paths,durations=home_clock_paths(robot,paths,plans)
-    paths,schedule=transfer_schedule(robot,paths,lambda left,right:None)
-    obstacles=list(robot.static)+scene_obstacles(scene,None)
-    def guard(left,right):
-        geometry=[robot.spheres(a,q) for a,q in zip(arms,(left,right))]
-        # Both measured arms retain self/fixed/box protection. No payload or
-        # new recovery state is introduced after both cartons were released.
-        for i,a in enumerate(arms):
-            reason,_=check_spheres(geometry[i],[],obstacles,a+'_mount')
-            if reason:raise RuntimeError(reason)
-    execution_start=perf_counter()
-    result=drive_empty_pregrasps(robot,paths,guard,require_overlap=False,
-        trajectory_kind='joint_return',settle_seconds=.4)
+    obstacles=tuple(robot.static)+tuple(scene_obstacles(scene,None))
+    # Keep preflight geometry until this home ends, using the same exact keys.
+    # Measured deviations still generate new geometry and undergo all checks.
+    with robot.geometry_cache_scope(2*sum(map(len,paths))):
+        paths,schedule=transfer_schedule(robot,paths,lambda left,right:None)
+        execution_start=perf_counter()
+        result=drive_empty_pregrasps(robot,paths,require_overlap=False,
+            trajectory_kind='joint_return',settle_seconds=.4,collision_obstacles=obstacles)
     final=robot.read_states()
     if any(np.max(np.abs(final[a].joint_positions_rad-robot.home[:7]))>.04 for a in arms):
         raise RuntimeError('JOINT_TRACKING_ERROR')

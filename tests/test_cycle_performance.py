@@ -4,7 +4,7 @@ from unittest.mock import Mock,patch
 import numpy as np
 
 from workstation.planning.collision import AABB,SphereGeometry,check_spheres
-from workstation.simulation.robot_driver import TickStateReader
+from workstation.simulation.robot_driver import TickStateReader,RobotMotion
 from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps
 from workstation.diagnostics.graspgen_pair_place import home_clock_paths,execute_parallel_home
 from tests import test_observed_workspace as fixtures
@@ -83,8 +83,29 @@ class CyclePerformanceTests(unittest.TestCase):
         self.assertTrue(any(np.array_equal(q,paths[1][1]) for q in sampled[1]))
         self.assertLess(max(durations),sum(durations))
 
+    def test_combined_cycle_check_keeps_right_arm_fixed_collision(self):
+        robot,q=self.robot()
+        paths=[[np.zeros(7),np.full(7,.12)] for _ in range(2)]
+        obstacle=AABB('right_path',(.09,0,0),(.015,.015,.015))
+        with self.assertRaisesRegex(RuntimeError,'STATIC_PATH_BLOCKED:right_path'):
+            drive_empty_pregrasps(robot,paths,collision_obstacles=(obstacle,))
+
+    def test_preflight_cache_scope_is_bounded_and_restored_after_error(self):
+        from tests.test_execution_reuse import ExecutionReuseTests
+        robot=ExecutionReuseTests().driver();first=robot.spheres('left',np.zeros(7))
+        with self.assertRaisesRegex(RuntimeError,'stop'):
+            with robot.geometry_cache_scope(100):
+                for i in range(90):robot.spheres('left',np.full(7,i*.001))
+                self.assertIs(first,robot.spheres('left',np.zeros(7)))
+                self.assertLessEqual(len(robot._sphere_cache),100)
+                raise RuntimeError('stop')
+        self.assertEqual(robot._sphere_cache_capacity,32)
+        self.assertLessEqual(len(robot._sphere_cache),32)
+
     def test_parallel_home_rejects_crossing_before_any_commands(self):
         robot,q=self.robot();robot.home=np.full(9,.1);robot.static=[]
+        from contextlib import nullcontext
+        robot.geometry_cache_scope=lambda _:nullcontext()
         robot.last_plan_check={}
         robot.checked_joint_plan=lambda a,start,target,scene,t:([start,target],1.)
         robot.tick=Mock()

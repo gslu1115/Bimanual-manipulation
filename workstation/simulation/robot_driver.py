@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from workstation.planning.collision import SphereGeometry
 from collections import OrderedDict
+from contextlib import contextmanager
 import numpy as np
 from workstation.observations.observation_packet import PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
 from workstation.planning.collision import AABB, check_spheres, station_obstacles, scene_obstacles, sphere_box_clearance, carton_contact_allowed
@@ -320,9 +321,20 @@ class RobotMotion:
         if key not in cache:
             values=self._compute_spheres(arm,q,fingers)
             cache[key]=values
-            if len(cache)>32:cache.popitem(last=False)
+            if len(cache)>getattr(self,'_sphere_cache_capacity',32):cache.popitem(last=False)
         else:cache.move_to_end(key)
         return cache[key]
+
+    @contextmanager
+    def geometry_cache_scope(self,capacity):
+        """Bounded exact-state reuse from a local preflight into its execution."""
+        previous=getattr(self,'_sphere_cache_capacity',32)
+        self._sphere_cache_capacity=max(32,min(int(capacity),8192))
+        try:yield
+        finally:
+            self._sphere_cache_capacity=previous
+            cache=getattr(self,'_sphere_cache',{})
+            while len(cache)>previous:cache.popitem(last=False)
 
     def _compute_spheres(self,arm,q,fingers):
         # Topology/local coordinates are constant; transform each link in bulk.

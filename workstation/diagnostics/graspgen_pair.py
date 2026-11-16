@@ -170,7 +170,7 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
 
 def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.,
                           require_overlap=True,loaded_transfer=False,progress_check=None,
-                          trajectory_kind='trajectory',settle_seconds=.3):
+                          trajectory_kind='trajectory',settle_seconds=.3,collision_obstacles=None):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     states=robot.read_states()
@@ -191,7 +191,14 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         if last_geometry is not None and all(a is b for a,b in zip(pair,last_geometry)):
             geometry_checks['reused']+=1
             return None
-        reason,_=check_spheres(*pair,[],None)
+        if collision_obstacles is None:
+            reason,_=check_spheres(*pair,[],None)
+        else:
+            # One predicate per arm: left also checks mutual separation.
+            # The same frozen obstacles apply to commanded and measured poses.
+            reason,_=check_spheres(*pair,collision_obstacles,arms[0]+'_mount')
+            if reason is None:
+                reason,_=check_spheres(pair[1],[],collision_obstacles,arms[1]+'_mount')
         geometry_checks['computed']+=1
         last_geometry=pair if reason is None else None
         return reason
