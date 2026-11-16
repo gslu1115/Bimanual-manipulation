@@ -76,6 +76,6 @@ class CartonContactTests(unittest.TestCase):
         robot.spheres=lambda *args:[];robot.static=[]
         robot.fk=lambda *args:(np.array([0.,0.,1.]),np.eye(3))
         robot.limits=(np.full(7,-10.),np.full(7,10.))
-        robot.observed_workspace=NS(check_oriented_box=lambda *a,**k:'UNOBSERVED_PATH_SPACE',report=lambda:{})
+        robot.observed_workspace=NS(_mapping_key=lambda:(),check_oriented_box=lambda *a,**k:'UNOBSERVED_PATH_SPACE',report=lambda:{})
         with self.assertRaisesRegex(RuntimeError,'UNOBSERVED_PATH_SPACE'):
             robot.validate_path('left',[np.zeros(7),np.full(7,.01)],NS(objects=[]),'held',(.1,.055,.045))

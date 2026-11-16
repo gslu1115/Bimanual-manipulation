@@ -29,10 +29,13 @@ class ArmObservationChecksTests(unittest.TestCase):
 
     def workspace(self):
         checked=[];unknown=[]
-        return SimpleNamespace(checked=checked,unknown=unknown,
+        ws=SimpleNamespace(checked=checked,unknown=unknown,
             check_observed_sphere_obstacles=lambda p,r:checked.append((p,r)),
             check_sphere=lambda p,r:unknown.append((p,r)),
             last_unknown_sample=None,report=lambda:{'scope':'fixture'})
+        ws._mapping_key=lambda:(id(ws.check_observed_sphere_obstacles),id(ws.check_sphere))
+        ws.first_observed_sphere_obstacle=lambda spheres:next((i for i,(_,p,r) in enumerate(spheres) if ws.check_observed_sphere_obstacles(p,r)),None)
+        return ws
 
     def test_body_obstacles_and_tcp_corridor_remain(self):
         workspace=self.workspace();robot=self.driver(workspace)

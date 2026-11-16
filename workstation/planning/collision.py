@@ -149,19 +149,22 @@ def sphere_box_clearances(spheres,box):
     return np.linalg.norm(outside,axis=1)-radii
 
 
-def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,rejection=None):
+def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,rejection=None,prepared=None,body_key=None):
     """(link_index, centre, radius). Connected link groups excluded from self checks."""
     if not spheres: return None,float('inf')
     links,centres,radii=sphere_arrays(spheres);n=len(spheres)
-    static=np.full((n,len(obstacles)),np.inf)
-    if obstacles:
+    distances=None
+    if prepared is not None:
+        static,mutual,distances=prepared.distances(spheres,other_spheres,own_mount,body_key)
+    else:static=np.full((n,len(obstacles)),np.inf)
+    if prepared is None and obstacles:
         outside=np.maximum(np.abs(centres[:,None,:]-np.asarray([b.centre for b in obstacles]))-
                            np.asarray([b.size for b in obstacles])/2,0.)
         static=np.linalg.norm(outside,axis=2)-radii[:,None]
         # Intended mounting contact only; no hand/forearm body exemption.
         static[(links[:,None] == 0) & np.asarray([b.name == own_mount for b in obstacles])[None,:]]=np.inf
-    mutual=np.full((n,len(other_spheres)),np.inf)
-    if other_spheres:
+    if prepared is None:mutual=np.full((n,len(other_spheres)),np.inf)
+    if prepared is None and other_spheres:
         _,other,other_r=sphere_arrays(other_spheres)
         mutual=np.linalg.norm(centres[:,None,:]-other[None,:,:],axis=2)-radii[:,None]-other_r[None,:]
     minimum=min(float(static.min()) if static.size else float('inf'),
@@ -179,7 +182,8 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,reject
             rejection.update(sphere_indices=[row,col],link_indices=[int(links[row]),int(other_spheres[col][0])],
                              clearance_m=float(mutual[row,col]),required_m=margin)
         return ('STATIC_PATH_BLOCKED:'+obstacles[int(bad[0])].name if len(bad) else 'OTHER_ARM_COLLISION'),minimum
-    distance=np.linalg.norm(centres[:,None,:]-centres[None,:,:],axis=2)-radii[:,None]-radii[None,:]
+    distance=(np.linalg.norm(centres[:,None,:]-centres[None,:,:],axis=2)-radii[:,None]-radii[None,:]
+              if distances is None else distances)
     eligible=spheres.self_pairs if isinstance(spheres,SphereGeometry) else _self_pairs(tuple(links))
     if eligible.any():
         minimum=min(minimum,float(distance[eligible].min()))

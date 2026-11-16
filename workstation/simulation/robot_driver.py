@@ -69,6 +69,13 @@ class RobotMotion:
             if tuple(solver.get_joint_names()) != PANDA_ARM_JOINT_NAMES:
                 raise RuntimeError('Lula joint names require an explicit mapping')
             self.solvers[robot['name']]=solver
+        from workstation.planning.kinematic_chain import KinematicChain,rpy_rotation
+        frames=tuple(dict.fromkeys([item[0] for item in self.sphere_description]+
+                                  ['panda_link'+str(i) for i in range(8)]+['panda_hand','right_gripper']))
+        self.chain_models={name:KinematicChain(description['urdf_path'],PANDA_ARM_JOINT_NAMES,frames,
+            base['base_xyz'],rpy_rotation([0.,0.,math.radians(base['yaw_deg'])]),root=geometry['root_link'])
+            for name,base in self.base_config.items()}
+        self._chain_cache=OrderedDict()
         self.limits=next(iter(self.solvers.values())).get_cspace_position_limits()
         self.targets={name:state.qpos.copy() for name,state in self.read_states().items()}
         self.plan_cache={}
@@ -147,6 +154,9 @@ class RobotMotion:
     def fk(self,arm,q=None,frame='right_gripper'):
         q=self.read_states()[arm].joint_positions_rad if q is None else q
         q=np.asarray(q,dtype=float)
+        if hasattr(self,'chain_models') and frame in self.chain_models[arm].frames:
+            poses=self.chain_poses(arm,q)
+            return tuple(v.copy() for v in poses[frame])
         key=(arm,id(self.solvers[arm]),frame,q.shape,q.tobytes())
         cache=getattr(self,'_fk_cache',None)
         if cache is None:self._fk_cache=cache=OrderedDict()
@@ -156,6 +166,17 @@ class RobotMotion:
         else:cache.move_to_end(key)
         # Callers may adjust a returned goal; never expose cached mutable arrays.
         return tuple(v.copy() for v in cache[key])
+
+    def chain_poses(self,arm,q):
+        key=(arm,id(self.chain_models[arm]),q.shape,q.tobytes())
+        if key not in self._chain_cache:
+            self._chain_cache[key]=self._compute_chain(arm,q)
+            if len(self._chain_cache)>256:self._chain_cache.popitem(last=False)
+        else:self._chain_cache.move_to_end(key)
+        return self._chain_cache[key]
+
+    def _compute_chain(self,arm,q):
+        return self.chain_models[arm].poses(q)
 
     def _compute_fk(self,arm,q,frame):
         return self.solvers[arm].compute_forward_kinematics(frame,q)
@@ -243,7 +264,7 @@ class RobotMotion:
                 q=solve(warm)
                 if any(np.max(np.abs(q-old))<.015 for old in solutions):continue
                 solutions.append(q)
-                self.validate_path(arm,[q,q],scene,target_id)
+                self.validate_path(arm,[q,q],scene,target_id,validation_stage="ik_endpoint")
                 self.last_plan_check['ik_seed_index']=index
                 return q
             except RuntimeError as exc:
@@ -315,7 +336,7 @@ class RobotMotion:
     def spheres(self,arm,q,fingers=.04):
         q=np.asarray(q,dtype=float)
         key=(arm,q.shape,q.tobytes(),float(fingers),id(self.sphere_description),
-             id(getattr(self,'solvers',{}).get(arm)))
+             id(getattr(self,'solvers',{}).get(arm)),getattr(self,'chain_models',{}).get(arm))
         cache=getattr(self,'_sphere_cache',None)
         if cache is None:self._sphere_cache=cache=OrderedDict()
         if key not in cache:
@@ -348,15 +369,79 @@ class RobotMotion:
             self._sphere_links=np.array([item[1] for item in self.sphere_description]+[9]*6)
             self._sphere_radii=np.array([item[3] for item in self.sphere_description]+[.009]*6)
         centres=np.empty((len(self._sphere_links),3))
+        poses=self.chain_poses(arm,q) if hasattr(self,'chain_models') else None
         for link,indices,local in self._sphere_layout:
-            p,r=self.fk(arm,q,link)
+            p,r=poses[link] if poses is not None else self.fk(arm,q,link)
             centres[indices]=local@r.T+p
-        p,r=self.fk(arm,q,'panda_hand')
+        p,r=poses['panda_hand'] if poses is not None else self.fk(arm,q,'panda_hand')
         local=np.array([[0,sign*(fingers+.004),z] for sign in (-1,1) for z in (.060,.080,.095)])
         centres[-6:]=local@r.T+p
         return SphereGeometry(self._sphere_links,centres,self._sphere_radii)
 
-    def validate_path(self,arm,knots,scene,target_id,held_size=None,held_yaw=0.,support_contact=False,target_contact=False,
+    def validate_path(self,*args,validation_stage='unspecified',**kwargs):
+        timing=getattr(self,'wall_timing',None)
+        call=self._validate_path if timing is None else timing.timed('path_stage_'+validation_stage,self._validate_path)
+        return call(*args,**kwargs)
+
+    def _path_context(self,arm,knots,scene,target_id,held_size,held_yaw,support_contact,target_contact,
+                      target_boxes_override,finger_positions,check_local_unknown,check_approach_corridor,
+                      other_joint_positions_rad):
+        from workstation.planning.validation_context import value_key
+        states=self.read_states();ws=getattr(self,'observed_workspace',None)
+        memory=getattr(ws,'occlusion_memory',None)
+        key=(arm,id(scene),id(ws),None if ws is None else ws._mapping_key(),
+             repr(getattr(ws,'priors',None)),tuple(id(x) for x in getattr(memory,'snapshots',())),
+             tuple(id(x) for x in getattr(memory,'anchors',())),
+             tuple((name,value_key(state.joint_positions_rad),value_key(state.finger_positions_m),
+                    getattr(state,'sample_time_s',None)) for name,state in states.items()),
+             value_key(self.static),value_key(getattr(self,'stationary_payload_keepout',None)),
+             id(getattr(self,'sphere_description',None)),
+             tuple((name,id(model)) for name,model in getattr(self,'solvers',{}).items()),
+             tuple((name,id(model)) for name,model in getattr(self,'chain_models',{}).items()),value_key(self.limits),target_id,
+             value_key(held_size),held_yaw,support_contact,target_contact,value_key(target_boxes_override),
+             check_local_unknown,check_approach_corridor,value_key(other_joint_positions_rad),
+             value_key(getattr(self,'held_visual_geometry',None)))
+        if not hasattr(self,'_path_contexts'):
+            self._path_contexts=OrderedDict()
+            self.validation_reuse=dict(contexts=0,samples=0,collision_body_checks=0,observed_body_checks=0,target_checks=0,payload_checks=0)
+        if key not in self._path_contexts:
+            self._path_contexts[key]=self._prepare_path_context(arm,knots,scene,target_id,held_size,held_yaw,
+                support_contact,target_contact,target_boxes_override,finger_positions,check_local_unknown,
+                check_approach_corridor,other_joint_positions_rad)
+            if len(self._path_contexts)>24:self._path_contexts.popitem(last=False)
+        else:
+            self._path_contexts.move_to_end(key);self.validation_reuse['contexts']+=1
+        return self._path_contexts[key]
+
+    def _validate_observed(self,ctx,q,spheres,check_tcp=True):
+        workspace=ctx.workspace
+        first=workspace.first_observed_sphere_obstacle(spheres) if spheres else None
+        reason=None;link=None
+        if first is not None:link=spheres[first][0];reason='OBSERVED_PATH_OBSTACLE'
+        if reason is None and check_tcp and ctx.check_local_unknown and ctx.check_approach_corridor and ctx.target_contact and ctx.held_size is None:
+            tcp,_=self.fk(ctx.arm,q)
+            reason=workspace.check_sphere(np.asarray(tcp),.003);link='TCP_APPROACH_CORRIDOR'
+        if reason:
+            self.last_plan_check=dict(rejection=reason,link_index=link,workspace=workspace.report())
+            self.last_plan_check.update(self.unknown_body_diagnostic(ctx.arm,q,workspace.last_unknown_sample))
+            raise RuntimeError(reason)
+
+    def _validate_target_bodies(self,ctx,spheres):
+        from workstation.planning.collision import sphere_arrays
+        links,centres,radii=sphere_arrays(spheres)
+        for box in ctx.target_boxes:
+            points=(centres-np.asarray(box.centre))@ctx.target_rotation if ctx.target_rotation is not None else centres
+            target=ctx.local_target if ctx.target_rotation is not None else box
+            distances=np.linalg.norm(np.maximum(np.abs(points-target.centre)-np.asarray(target.size)/2,0.),axis=1)-radii
+            bad=np.flatnonzero((distances<.002)&((links!=9) if ctx.target_contact else True))
+            if len(bad):
+                i=int(bad[0])
+                self.last_plan_check=dict(rejection='TARGET_BODY_COLLISION',link_index=int(links[i]),
+                    sphere_centre_m=centres[i].tolist(),sphere_radius_m=float(radii[i]),
+                    target_centre_m=box.centre,target_size_m=box.size)
+                raise RuntimeError('TARGET_BODY_COLLISION')
+
+    def _prepare_path_context(self,arm,knots,scene,target_id,held_size=None,held_yaw=0.,support_contact=False,target_contact=False,
                       target_boxes_override=None,finger_positions=None,check_local_unknown=True,check_approach_corridor=True,
                       other_joint_positions_rad=None):
         states=self.read_states()
@@ -387,6 +472,94 @@ class RobotMotion:
         workspace=getattr(self,'observed_workspace',None)
         if workspace is None and getattr(self,'require_observed_workspace',False):
             raise RuntimeError('MISSING_WORKSPACE_OBSERVATION')
+        from types import SimpleNamespace
+        from workstation.planning.validation_context import CollisionMatrices
+        return SimpleNamespace(arm=arm,scene=scene,target_id=target_id,held_size=held_size,
+            held_yaw=held_yaw,support_contact=support_contact,target_contact=target_contact,
+            check_local_unknown=check_local_unknown,check_approach_corridor=check_approach_corridor,
+            states=states,other=other,other_q=other_q,other_spheres=other_spheres,obstacles=obstacles,
+            target_boxes=target_boxes,target_rotation=target_rotation,
+            local_target=locals().get('local_target'),workspace=workspace,
+            model_sources=(getattr(self,'sphere_description',None),tuple(getattr(self,'solvers',{}).values()),tuple(getattr(self,'chain_models',{}).values())),
+            collision=CollisionMatrices(obstacles),samples=OrderedDict(),observed=set(),targets=set(),payloads={})
+
+    def _validate_payload(self,ctx,q,own_spheres):
+        arm,target_id,held_size=ctx.arm,ctx.target_id,ctx.held_size
+        workspace,obstacles,other_spheres=ctx.workspace,ctx.obstacles,ctx.other_spheres
+        check_local_unknown,support_contact=ctx.check_local_unknown,ctx.support_contact
+        palm_clearance=None
+        tcp,tcp_rotation=self.fk(arm,q)
+        # Swept orientation at EACH FK sample, not destination yaw.
+        # Nominal upright template has a shared TCP/box offset;
+        # visual monitoring must reject slip/unknown holding.
+        visual=getattr(self,'held_visual_geometry',None)
+        if visual is not None and visual['arm']==arm and visual['target_id']==target_id:
+            body_rotation=np.asarray(tcp_rotation)@visual['relative_rotation']
+            centre_box=np.asarray(tcp)+np.asarray(tcp_rotation)@visual['offset']
+            padding=float(visual.get('uncertainty_m',.003))
+        else:
+            # Nominal preflight only. Runtime stores the SAME
+            # measured relation as the visual holding observer.
+            body_rotation=np.asarray(tcp_rotation)@np.diag([1.,-1.,-1.])
+            centre_box=np.asarray(tcp)+np.asarray(tcp_rotation)@np.array([0.,0.,UPRIGHT_TCP_HEIGHT_M])
+            padding=.003
+        if not np.isfinite(padding) or not 0<=padding<=.008:
+            raise RuntimeError('HELD_POSE_UNCERTAINTY_UNBOUNDED')
+        padding=max(.003,padding)
+        local_half=np.asarray(held_size)/2+padding
+        half=np.abs(body_rotation)@local_half
+        if workspace is not None:
+            reason=workspace.check_oriented_box(centre_box,2*local_half,body_rotation,
+                                                check_unknown=check_local_unknown)
+            if reason:
+                self.last_plan_check=dict(rejection=reason,held_centre_m=centre_box.tolist(),
+                    held_rotation=body_rotation.tolist(),held_local_size_m=(2*local_half).tolist(),
+                    held_space_query='oriented cuboid; enclosing AABB corners excluded',
+                    workspace=workspace.report())
+                raise RuntimeError(reason)
+        # Target contact is allowed only at the calibrated support plane.
+        payload_box=AABB(target_id,centre_box,2*half,'carton')
+        for box in obstacles:
+            if carton_contact_allowed(payload_box,box):continue
+            gap=np.abs(centre_box-box.centre)-half-np.asarray(box.size)/2
+            if np.all(gap < 0):
+                depth=float(-gap[2])
+                if support_contact and box.name in ('table','belt') and depth <= .007:
+                    continue
+                self.last_plan_check=dict(rejection='HELD_CARTON_PATH_BLOCKED:'+box.name,
+                    held_centre_m=centre_box.tolist(),held_half_extent_m=half.tolist(),
+                    obstacle_centre_m=list(box.centre),obstacle_size_m=list(box.size))
+                raise RuntimeError('HELD_CARTON_PATH_BLOCKED:'+box.name)
+        from workstation.planning.collision import sphere_arrays
+        _,other_centres,other_radii=sphere_arrays(other_spheres)
+        other_local=(other_centres-centre_box)@body_rotation
+        other_distances=np.linalg.norm(np.maximum(np.abs(other_local)-local_half,0),axis=1)
+        if np.any(other_distances<other_radii+.002):raise RuntimeError('HELD_CARTON_OTHER_ARM_COLLISION')
+        links,centres,radii=sphere_arrays(own_spheres)
+        local=(centres-centre_box)@body_rotation
+        clearances=np.linalg.norm(np.maximum(np.abs(local)-local_half,0),axis=1)-radii
+        palms=clearances[links==8]
+        if len(palms):palm_clearance=float(palms.min())
+        bad=np.flatnonzero((links!=9)&(clearances<.002))
+        if len(bad):
+            i=int(bad[0])
+            self.last_plan_check=dict(rejection='HELD_CARTON_OWN_BODY_COLLISION',
+                link_index=int(links[i]),clearance_m=float(clearances[i]),
+                sphere_radius_m=float(radii[i]),sphere_local_m=local[i].tolist(),
+                held_local_half_m=local_half.tolist(),held_padding_m=padding,
+                required_clearance_m=.002,
+                nominal_clearance_m=float(np.linalg.norm(np.maximum(
+                    np.abs(local[i])-np.asarray(held_size)/2,0))-radii[i]))
+            raise RuntimeError('HELD_CARTON_OWN_BODY_COLLISION')
+        return palm_clearance
+
+    def _validate_path(self,arm,knots,scene,target_id,held_size=None,held_yaw=0.,support_contact=False,target_contact=False,
+                      target_boxes_override=None,finger_positions=None,check_local_unknown=True,check_approach_corridor=True,
+                      other_joint_positions_rad=None):
+        ctx=self._path_context(arm,knots,scene,target_id,held_size,held_yaw,support_contact,target_contact,
+            target_boxes_override,finger_positions,check_local_unknown,check_approach_corridor,other_joint_positions_rad)
+        states,other,other_q=ctx.states,ctx.other,ctx.other_q
+        other_spheres,obstacles,workspace=ctx.other_spheres,ctx.obstacles,ctx.workspace
         minimum=float('inf'); samples=0;checked_samples=set()
         palm_clearance=None
         refresh_display=getattr(self,'refresh_display',None)
@@ -405,9 +578,18 @@ class RobotMotion:
                 if np.any(q < self.limits[0]) or np.any(q > self.limits[1]):
                     raise RuntimeError('JOINT_LIMIT')
                 fingers=states[arm].finger_positions_m if finger_positions is None else np.asarray(finger_positions)
+                sample_key=(key,np.asarray(fingers,dtype=float).tobytes())
+                if sample_key in ctx.samples:
+                    clearance,cached_palm=ctx.samples[sample_key]
+                    minimum=min(minimum,clearance)
+                    if cached_palm is not None:palm_clearance=cached_palm if palm_clearance is None else min(palm_clearance,cached_palm)
+                    self.validation_reuse['samples']+=1
+                    continue
                 own_spheres=self.spheres(arm,q,float(np.max(fingers)))
                 rejection={}
-                reason,clearance=check_spheres(own_spheres,other_spheres,obstacles,arm+'_mount',rejection=rejection)
+                prior=ctx.collision.body_reuses
+                reason,clearance=check_spheres(own_spheres,other_spheres,obstacles,arm+'_mount',rejection=rejection,prepared=ctx.collision,body_key=key)
+                self.validation_reuse['collision_body_checks']+=ctx.collision.body_reuses-prior
                 minimum=min(minimum,clearance)
                 if reason:
                     self.last_plan_check=dict(rejection=reason,arm=arm,other_arm=other,
@@ -417,98 +599,24 @@ class RobotMotion:
                         source='robot encoder FK, official collision spheres and fixed/visual obstacles')
                     raise RuntimeError(reason)
                 if workspace is not None:
-                    # Preserve observed obstacles for EVERY sphere and
-                    # unknown-space evidence for TCP corridor/held box.
-                    # Never-observed whole-arm space is NOT proven safe.
-                    queries=[]
-                    for link,centre,radius in own_spheres:
-                        reason=workspace.check_observed_sphere_obstacles(centre,radius)
-                        if reason:queries.append((link,reason));break
-                    if not queries and check_local_unknown and check_approach_corridor and target_contact and held_size is None:
-                        tcp,_=self.fk(arm,q)
-                        reason=workspace.check_sphere(np.asarray(tcp),.003)
-                        if reason:queries.append(('TCP_APPROACH_CORRIDOR',reason))
-                    for link,reason in queries:
-                        if reason:
-                            self.last_plan_check=dict(rejection=reason,link_index=link,
-                                workspace=workspace.report())
-                            self.last_plan_check.update(self.unknown_body_diagnostic(arm,q,workspace.last_unknown_sample))
-                            raise RuntimeError(reason)
+                    previous=key in ctx.observed
+                    selected=(tuple(s for s in own_spheres if s[0]==9) if previous else own_spheres)
+                    self._validate_observed(ctx,q,selected,check_tcp=not previous)
+                    ctx.observed.add(key)
+                    if previous:self.validation_reuse['observed_body_checks']+=1
                 if held_size is None:
-                    for box in target_boxes:
-                        for link,centre,radius in own_spheres:
-                            if link == 9 and target_contact: continue
-                            clearance=(sphere_box_clearance((centre-np.asarray(box.centre))@target_rotation,radius,local_target)
-                                       if target_rotation is not None else sphere_box_clearance(centre,radius,box))
-                            if clearance < .002:
-                                self.last_plan_check=dict(rejection='TARGET_BODY_COLLISION',link_index=link,
-                                    sphere_centre_m=np.asarray(centre).tolist(),sphere_radius_m=radius,
-                                    target_centre_m=box.centre,target_size_m=box.size)
-                                raise RuntimeError('TARGET_BODY_COLLISION')
+                    if not (target_contact and key in ctx.targets):
+                        self._validate_target_bodies(ctx,own_spheres)
+                        if target_contact:ctx.targets.add(key)
+                    else:self.validation_reuse['target_checks']+=1
+                sample_palm=None
                 if held_size is not None:
-                    tcp,tcp_rotation=self.fk(arm,q)
-                    # Swept orientation at EACH FK sample, not destination yaw.
-                    # Nominal upright template has a shared TCP/box offset;
-                    # visual monitoring must reject slip/unknown holding.
-                    visual=getattr(self,'held_visual_geometry',None)
-                    if visual is not None and visual['arm']==arm and visual['target_id']==target_id:
-                        body_rotation=np.asarray(tcp_rotation)@visual['relative_rotation']
-                        centre_box=np.asarray(tcp)+np.asarray(tcp_rotation)@visual['offset']
-                        padding=float(visual.get('uncertainty_m',.003))
-                    else:
-                        # Nominal preflight only. Runtime stores the SAME
-                        # measured relation as the visual holding observer.
-                        body_rotation=np.asarray(tcp_rotation)@np.diag([1.,-1.,-1.])
-                        centre_box=np.asarray(tcp)+np.asarray(tcp_rotation)@np.array([0.,0.,UPRIGHT_TCP_HEIGHT_M])
-                        padding=.003
-                    if not np.isfinite(padding) or not 0<=padding<=.008:
-                        raise RuntimeError('HELD_POSE_UNCERTAINTY_UNBOUNDED')
-                    padding=max(.003,padding)
-                    local_half=np.asarray(held_size)/2+padding
-                    half=np.abs(body_rotation)@local_half
-                    if workspace is not None:
-                        reason=workspace.check_oriented_box(centre_box,2*local_half,body_rotation,
-                                                            check_unknown=check_local_unknown)
-                        if reason:
-                            self.last_plan_check=dict(rejection=reason,held_centre_m=centre_box.tolist(),
-                                held_rotation=body_rotation.tolist(),held_local_size_m=(2*local_half).tolist(),
-                                held_space_query='oriented cuboid; enclosing AABB corners excluded',
-                                workspace=workspace.report())
-                            raise RuntimeError(reason)
-                    # Target contact is allowed only at the calibrated support plane.
-                    payload_box=AABB(target_id,centre_box,2*half,'carton')
-                    for box in obstacles:
-                        if carton_contact_allowed(payload_box,box):continue
-                        gap=np.abs(centre_box-box.centre)-half-np.asarray(box.size)/2
-                        if np.all(gap < 0):
-                            depth=float(-gap[2])
-                            if support_contact and box.name in ('table','belt') and depth <= .007:
-                                continue
-                            self.last_plan_check=dict(rejection='HELD_CARTON_PATH_BLOCKED:'+box.name,
-                                held_centre_m=centre_box.tolist(),held_half_extent_m=half.tolist(),
-                                obstacle_centre_m=list(box.centre),obstacle_size_m=list(box.size))
-                            raise RuntimeError('HELD_CARTON_PATH_BLOCKED:'+box.name)
-                    for _,centre,radius in other_spheres:
-                        local=body_rotation.T@(np.asarray(centre)-centre_box)
-                        if np.linalg.norm(np.maximum(np.abs(local)-local_half,0)) < radius+.002:
-                            raise RuntimeError('HELD_CARTON_OTHER_ARM_COLLISION')
-                    for link,centre,radius in own_spheres:
-                        if link == 9: continue  # Intended finger contact only.
-                        # Sphere distance to the ORIENTED box. Its enclosing
-                        # world AABB creates false palm collisions at yaw != 0.
-                        local=body_rotation.T@(np.asarray(centre)-centre_box)
-                        clearance=float(np.linalg.norm(np.maximum(np.abs(local)-local_half,0))-radius)
-                        if link==8:
-                            palm_clearance=clearance if palm_clearance is None else min(palm_clearance,clearance)
-                        if clearance < .002:
-                            self.last_plan_check=dict(rejection='HELD_CARTON_OWN_BODY_COLLISION',
-                                link_index=link,clearance_m=clearance,
-                                sphere_radius_m=float(radius),sphere_local_m=local.tolist(),
-                                held_local_half_m=local_half.tolist(),held_padding_m=padding,
-                                required_clearance_m=.002,
-                                nominal_clearance_m=float(np.linalg.norm(np.maximum(
-                                    np.abs(local)-np.asarray(held_size)/2,0))-radius))
-                            raise RuntimeError('HELD_CARTON_OWN_BODY_COLLISION')
+                    if key not in ctx.payloads:ctx.payloads[key]=self._validate_payload(ctx,q,own_spheres)
+                    else:self.validation_reuse['payload_checks']+=1
+                    sample_palm=ctx.payloads[key]
+                    if sample_palm is not None:palm_clearance=sample_palm if palm_clearance is None else min(palm_clearance,sample_palm)
+                ctx.samples[sample_key]=(clearance,sample_palm)
+                if len(ctx.samples)>4096:ctx.samples.popitem(last=False)
         self.last_plan_check=dict(samples=samples,unique_samples=len(checked_samples),clearance_m=minimum,
             palm_clearance_m=palm_clearance,
             model='official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs',
@@ -532,7 +640,7 @@ class RobotMotion:
         path=self.joint_knots(np.asarray(start),np.asarray(target))
         def validate(knots):
             return self.validate_path(arm,knots,scene,target_id,
-                target_boxes_override=target_boxes_override)
+                target_boxes_override=target_boxes_override,validation_stage="joint_path")
         try:
             clearance=validate(path)
             self.last_plan_check['joint_planner']='quintic straight joint path'
@@ -646,7 +754,7 @@ class RobotMotion:
                         minimum=min(minimum,self.validate_path(candidate.arm,path,scene,candidate.target_id,
                             obj.size_m if held else None,new_yaw,contact,not held,target_boxes_override=released,
                             finger_positions=np.full(2,min(.04,obj.size_m[1]/2+obj.uncertainty_m)) if held else np.full(2,.04),
-                            check_local_unknown=False,check_approach_corridor=phase!='RETREAT'))
+                            check_local_unknown=False,check_approach_corridor=phase!='RETREAT',validation_stage=phase.lower()))
                         current=path[-1];position=destination;yaw=new_yaw;phases.append(phase)
                     phase='HOME'
                     _,home_clearance=self.checked_joint_plan(candidate.arm,current,self.home[:7],
@@ -705,12 +813,12 @@ class RobotMotion:
                 descend=self.cartesian_knots(arm,raised,pick,0.,0.,.05,q,
                                              orientation0=orientation,orientation1=orientation)
                 minimum=min(minimum,self.validate_path(arm,descend,scene,candidate.target_id,
-                    target_contact=True,finger_positions=np.full(2,.04)))
+                    target_contact=True,finger_positions=np.full(2,.04),validation_stage="approach"))
                 phases.append(phase);phase='CLOSE'
                 count=max(1,math.ceil((.08-candidate.closing_width_m)/.002))
                 for width in np.linspace(.08,candidate.closing_width_m,count+1):
                     minimum=min(minimum,self.validate_path(arm,[descend[-1],descend[-1]],scene,
-                        candidate.target_id,target_contact=True,finger_positions=np.full(2,width/2)))
+                        candidate.target_id,target_contact=True,finger_positions=np.full(2,width/2),validation_stage="close"))
                 phases.append(phase)
 
                 lift_path=None
@@ -721,7 +829,7 @@ class RobotMotion:
                     minimum=min(minimum,self.validate_path(arm,lift_path,scene,candidate.target_id,
                         held_size=obj.size_m,support_contact=True,
                         finger_positions=np.full(2,candidate.closing_width_m/2),
-                        check_local_unknown=False,check_approach_corridor=True))
+                        check_local_unknown=False,check_approach_corridor=True,validation_stage="lift"))
                     lift_palm_clearance=self.last_plan_check.get('palm_clearance_m')
                     phases.append(phase)
                 cached=dict(q=q.copy(),descend=descend,lift_path=lift_path,minimum=minimum,
@@ -751,13 +859,13 @@ class RobotMotion:
                         held_size=obj.size_m if held else None,support_contact=contact,target_contact=not held,
                         target_boxes_override=released if not held else None,
                         finger_positions=np.full(2,candidate.closing_width_m/2 if held else .04),
-                        check_local_unknown=False,check_approach_corridor=phase!='RETREAT'))
+                        check_local_unknown=False,check_approach_corridor=phase!='RETREAT',validation_stage=phase.lower()))
                     if phase=='LOWER':
                         phase='OPEN'
                         for width in np.linspace(candidate.closing_width_m,.08,count+1):
                             minimum=min(minimum,self.validate_path(arm,[path[-1],path[-1]],scene,candidate.target_id,
                                 held_size=obj.size_m,support_contact=True,target_contact=True,
-                                finger_positions=np.full(2,width/2),check_local_unknown=False))
+                                finger_positions=np.full(2,width/2),check_local_unknown=False,validation_stage="open"))
                         phases.extend(['LOWER','OPEN'])
                     else:phases.append(phase)
                     current=path[-1];position=destination;old_orientation=new_orientation

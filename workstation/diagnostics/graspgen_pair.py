@@ -294,6 +294,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                   physical_execution=False, simultaneous_grasp_verified=False, model_requests=[])
     timing=getattr(robot,'wall_timing',None)
     preparation_start=timing.snapshot() if timing is not None else None
+    preparation_validation_start=dict(getattr(robot,'validation_reuse',{}))
     def fail(reason):
         report['failure_reason'] = reason
         env._write_json('graspgen_pair_check.json', report)
@@ -560,6 +561,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if timing is not None:
                 report['preparation_timing']=timing.delta(preparation_start)
                 action_timing_start=timing.snapshot()
+            validation_start=dict(getattr(robot,'validation_reuse',{}))
+            report['preparation_validation_reuse']={k:v-preparation_validation_start.get(k,0) for k,v in validation_start.items()}
             action_ticks_start=dict(getattr(robot,'tick_counts',{}))
             reader=getattr(robot,'encoder_snapshot_reader',None)
             encoder_start=(reader.reads,reader.reuses) if reader is not None else (0,0)
@@ -612,6 +615,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 report['action_tick_counts']={k:v-action_ticks_start.get(k,0)
                     for k,v in getattr(robot,'tick_counts',{}).items()}
                 report['physics_dt_s']=robot.dt
+                report['action_validation_reuse']={k:v-validation_start.get(k,0) for k,v in getattr(robot,'validation_reuse',{}).items()}
                 if reader is not None:
                     report['action_encoder_snapshots']=dict(acquisitions=reader.reads-encoder_start[0],
                         reuses=reader.reuses-encoder_start[1])

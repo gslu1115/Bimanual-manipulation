@@ -409,6 +409,29 @@ class ObservedWorkspace:
         gap=np.maximum(np.abs(cells-centre)-self.resolution/2,0.)
         return 'OBSERVED_PATH_OBSTACLE' if np.any(np.sum(gap**2,axis=1)<=radius**2) else None
 
+    def first_observed_sphere_obstacle(self,spheres):
+        """Exact batch equivalent of the scalar voxel test, in sphere order."""
+        from workstation.planning.collision import sphere_arrays
+        self._build_occupied()
+        if not self.has_unmodelled_occupied:return None
+        _,centres,radii=sphere_arrays(spheres)
+        if getattr(self,'_occupied_indices_source',None) is not self.occupied:
+            self._occupied_indices_source=self.occupied
+            self._occupied_cells=np.argwhere(self.occupied)
+        indices=self._occupied_cells
+        lo=np.maximum(np.floor((centres-radii[:,None]-self.lower)/self.resolution).astype(int),0)
+        hi=np.minimum(np.ceil((centres+radii[:,None]-self.lower)/self.resolution).astype(int),self.shape)
+        blocked=np.zeros(len(spheres),bool)
+        for start in range(0,len(indices),1024):
+            current=indices[start:start+1024]
+            inside=np.all((current[None,:,:]>=lo[:,None,:])&(current[None,:,:]<hi[:,None,:]),axis=2)
+            cells=self.lower+(current+.5)*self.resolution
+            gap=np.maximum(np.abs(cells[None,:,:]-centres[:,None,:])-self.resolution/2,0.)
+            blocked |= np.any(inside & (np.sum(gap**2,axis=2)<=radii[:,None]**2),axis=1)
+            if len(blocked) and blocked[0]:break
+        found=np.flatnonzero(blocked)
+        return int(found[0]) if len(found) else None
+
     def check_observed_box_obstacles(self,centre,size):
         """Observed obstacle veto for a future stage, not a free-space claim."""
         self._build_occupied()

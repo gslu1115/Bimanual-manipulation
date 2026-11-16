@@ -93,7 +93,7 @@ class PathPreflightTests(unittest.TestCase):
     def test_runtime_held_sweep_uses_latched_visual_relation(self):
         robot=self.driver();robot.fk=lambda *args:(np.array([0.,0.,1.]),np.eye(3))
         queries=[]
-        robot.observed_workspace=SimpleNamespace(check_oriented_box=lambda p,s,r,**kw:queries.append(
+        robot.observed_workspace=SimpleNamespace(_mapping_key=lambda:(),check_oriented_box=lambda p,s,r,**kw:queries.append(
             (p.copy(),s.copy(),r.copy(),kw)))
         robot.held_visual_geometry=dict(arm='left',target_id='observed',offset=np.array([.004,-.003,-.010]),
             relative_rotation=np.eye(3))
@@ -120,7 +120,7 @@ class PathPreflightTests(unittest.TestCase):
     def test_held_sweep_retains_visual_uncertainty_and_rejects_unbounded_value(self):
         robot=self.driver();robot.fk=lambda *args:(np.array([0.,0.,1.]),np.eye(3))
         queries=[]
-        robot.observed_workspace=SimpleNamespace(check_oriented_box=lambda p,s,r,**kw:queries.append(s.copy()))
+        robot.observed_workspace=SimpleNamespace(_mapping_key=lambda:(),check_oriented_box=lambda p,s,r,**kw:queries.append(s.copy()))
         robot.held_visual_geometry=dict(arm='left',target_id='v',offset=np.zeros(3),
                                        relative_rotation=np.eye(3),uncertainty_m=.006)
         path=[np.zeros(7),np.ones(7)*.01];scene=SimpleNamespace(objects=[])

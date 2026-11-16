@@ -22,6 +22,7 @@ class RobotDriveTests(unittest.TestCase):
         with patch('workstation.perception.scene_estimate.current_cuboid_measurement',return_value=proof):
             robot.validate_path('left',[q,q],scene,'carton',target_contact=True)
             centre[:]=rotation[:,1]*.026
+            robot.sphere_description=object()  # New calibrated collision model at the same joints.
             with self.assertRaisesRegex(RuntimeError,'TARGET_BODY_COLLISION'):
                 robot.validate_path('left',[q,q],scene,'carton',target_contact=True)
 
@@ -132,7 +133,7 @@ class RobotDriveTests(unittest.TestCase):
         driver.limits=(np.full(7,-3.),np.full(7,3.));driver.last_plan_check={}
         hint=np.full(7,.2);warms=[];checks=[]
         driver.solve=lambda arm,p,yaw,warm:warms.append(warm.copy()) or warm+.001
-        driver.validate_path=lambda arm,path,*args:checks.append(path[0].copy()) or .01
+        driver.validate_path=lambda arm,path,*args,**kwargs:checks.append(path[0].copy()) or .01
         q=driver.solve_pregrasp('left',[0,0,1],0,np.zeros(7),None,'v',pregrasp_hint=hint)
         np.testing.assert_array_equal(warms[0],hint)
         np.testing.assert_array_equal(checks[0],q)
@@ -251,7 +252,7 @@ class RobotDriveTests(unittest.TestCase):
         driver.limits=(np.full(7,-3.),np.full(7,3.));driver.last_plan_check={}
         driver.solve=lambda arm,p,yaw,warm:warm+.01
         checked=[]
-        def validate(arm,path,*args):
+        def validate(arm,path,*args,**kwargs):
             checked.append(path[0].copy())
             if path[0][2]<.3:raise RuntimeError('UNOBSERVED_PATH_SPACE')
             return .01
