@@ -149,6 +149,8 @@ GraspGen 负责生成抓姿候选，不负责选择这两种搬运方案。
 
 `graspgen-pair-sort` 自动在任务目录保存 `performance.json`；`categories` 中 `inclusive_s` 包含子调用，`exclusive_s` 扣除已计时的子调用，不能把嵌套耗时重复相加。每轮 `graspgen_pair_check.json` 的 `preparation_timing`、`action_timing` 分别记录准备和动作范围；`destination_evaluation` 记录后段初评与跳过数；`candidate_prefix_reuse`、`preview_path_reuse` 记录本次运行中的复用，不读取历史抓姿或 IK。
 
+新增 `path_stage_*`（接近/闭爪/抬升/搬运/开爪等）、`validation_context_*`、`validation_observed_obstacles`、`validation_target_body`、`validation_payload` 与 `chain_fk_compute` 分项；每轮 `preparation_validation_reuse`/`action_validation_reuse` 为各自范围的缓存命中计数。`chain_fk_compute` 一次输出整条臂链，不能与旧 `fk_compute` 的单坐标系次数直接比较。
+
 动作计时进一步分为 FK 查询/实际计算、碰撞球体查询/实际生成、球体碰撞、持盒净空、关节指令、编码器读取、物理引擎与 Kit 更新。`depth_obstacle_mapping` 现在只计实际建图，不再把缓存命中计作重建；`slot_query_compute` 区分槽查询实际计算。`action_tick_counts × physics_dt_s` 给出轨迹推进、跟随等待、段末稳定、夹爪动作、回位及保持的仿真时长；它们不是墙钟计算耗时，也不等于已验证的真机时长。
 
 同周期优化进一步记录 `depth_fixed_filter`（同帧固定工位与机器人过滤）、`encoder_acquisition`（实际编码器采集）、`json_encode / json_file_replace`（序列化与文件替换）。`action_encoder_snapshots` 记录动作阶段的采集和同周期复用数，各动作的 `geometry_checks` 记录纯机械臂几何检查的实算和精确端点复用数。持盒证据检查不借用此缓存；新状态、新模型、变化的图像或过期证据不能复用旧结论。动作观察按需要查询槽位，最终落位仍完整更新槽状态并独立验证稳定性。
@@ -163,7 +165,9 @@ GraspGen 负责生成抓姿候选，不负责选择这两种搬运方案。
 
 `6395329` 动作优化修正版同一四盒初态全新候选完成 **4/4** 与两次清槽：总任务 **571.366 → 411.146 秒**，两轮动作 **358.124 → 247.206 秒**。693 项 Windows/Linux 检查通过。两次开发停止（重复合并检测、托盘挡边误识别）已独立记录；GPU 编号和新候选不同，完整时间差不等于隔离提速比例。见 [该轮证据](evidence/action_performance_four_live_20261116.json) 与交接 §20.70。
 
-`6e91b44` 同周期检查与双臂回位最终版同场景新候选 **4/4**、两次清槽通过：任务 **411.146 → 379.247 秒（减少 7.8%）**，非 step/render 动作耗时 **159.632 → 146.315 秒**；回位移动 **27.433 → 14.000 仿真秒**，回位墙钟 **26.246 → 29.757 秒**。18 次全新模型请求，701 项 Windows/Linux 检查通过。开发版 375.131 秒及回位计算回退独立保留。见 [最终证据](evidence/cycle_performance_four_live_20261116.json) 与交接 §20.71。
+2026-11-16 最新：整链 FK、臂身/手指分离与精确上下文路径复用版 `3691f88`，同一四盒初态全新抓姿完成 **4/4**。任务 **379.247 → 357.492 秒**；候选路径验证 **84.789 → 37.709 秒**；动作 FK/几何 **60.911 → 47.377 秒**；首轮并行回位墙钟 **13.388 → 11.929 秒**。详见 §20.72，尚未满足工业节拍验收。两轮动作反而由 226.933 增至 255.635 秒：第二轮选中已有末端依次放置策略，并通过 8.318 秒目标槽补看继续完成。全场回位墙钟因该串行流程缺少一段独立计时，不能宣称整体提速。详见 [本轮证据](evidence/chain_performance_four_live_20261116.json)。
+
+此前：`6e91b44` 同周期检查与双臂回位最终版同场景新候选 **4/4**、两次清槽通过：任务 **411.146 → 379.247 秒（减少 7.8%）**，非 step/render 动作耗时 **159.632 → 146.315 秒**；回位移动 **27.433 → 14.000 仿真秒**，回位墙钟 **26.246 → 29.757 秒**。18 次全新模型请求，701 项 Windows/Linux 检查通过。开发版 375.131 秒及回位计算回退独立保留。见 [最终证据](evidence/cycle_performance_four_live_20261116.json) 与交接 §20.71。
 
 ## 许可
 
