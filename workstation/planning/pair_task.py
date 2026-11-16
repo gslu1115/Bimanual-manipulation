@@ -45,6 +45,11 @@ def choose_source_pair(objects,bases):
     return [min(side,key=lambda o:(o.position_m[1],o.track_id)) for side in (left,right)]
 
 
+def observed_batch_size(matches,free_slots):
+    """Prefer two arms, bounded by currently usable sources and free slots."""
+    return min(2,len(matches),len(free_slots))
+
+
 class VisualConveyorIndex:
     """Only fresh depth free-space and measured empty-arm clearance finish indexing."""
     visual_control=True
@@ -57,7 +62,8 @@ class VisualConveyorIndex:
         self.elapsed=0.;self.distance=0.;self.stable=None;self.batch=[];self.last_observation=None
 
     def start(self,verified_ids,arms_clear):
-        if (self.state!='WAITING' or not arms_clear or len(verified_ids)!=2 or len(set(verified_ids))!=2
+        if (self.state!='WAITING' or not arms_clear or not 1<=len(verified_ids)<=len(self.positions)
+                or len(set(verified_ids))!=len(verified_ids)
                 or self.delivered.intersection(verified_ids)):
             raise RuntimeError('VISUAL_INDEX_START_UNSUPPORTED')
         self.batch=list(verified_ids);self.state='INDEXING';self.elapsed=0.;self.distance=0.

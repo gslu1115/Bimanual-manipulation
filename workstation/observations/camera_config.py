@@ -5,7 +5,7 @@ FORMAL_CAMERAS = ('scene_camera', 'left_wrist_camera', 'right_wrist_camera')
 ANNOTATIONS = ('rgb', 'distance_to_image_plane', 'instance_segmentation', 'camera_params')
 DEFAULTS = dict(enabled=True, save_images=False, recording_enabled=False,
                 render_interval_steps=4, capture_interval_steps=12, warmup_render_frames=12,
-                refresh_render_frames=4)
+                refresh_render_frames=2)
 
 
 def camera_settings(config):

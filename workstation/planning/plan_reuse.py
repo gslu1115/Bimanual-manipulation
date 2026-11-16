@@ -59,6 +59,22 @@ class PreviewPlans:
         return [p.copy() for p in row[0]],row[1]
 
 
+def complete_first_feasible_pairs(pairs,complete):
+    """Check ranked proposals lazily; do not optimize after finding a safe pair.
+
+    The caller still verifies synchronized pregrasp motion and can request the
+    next pair after rejection. A failed first arm never triggers needless work
+    on its partner. Completion retains every existing full-path predicate.
+    """
+    for pair in pairs:
+        checked=[]
+        for row in pair:
+            row=complete(row)
+            if not row.feasible:break
+            checked.append(row)
+        if len(checked)==len(pair):yield tuple(checked)
+
+
 def complete_ranked_pairs(pairs,rank,complete):
     """Best-first exact refinement of optimistic scores, not a new policy.
 

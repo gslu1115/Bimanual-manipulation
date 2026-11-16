@@ -1,0 +1,2296 @@
+{
+  "date": "2026-11-16",
+  "source_snapshot": "source-dev3.tar",
+  "source_manifest_sha256": "773dc094402b9cb7d6cd1e0f47f3e7abae3dd39cc033d6deb8ccb3047d3e0e67",
+  "runs": [
+    {
+      "run": "best-ranked-dev4-seed6",
+      "report": {
+        "success": false,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [
+          {
+            "round": 1,
+            "success": true,
+            "reserved_source_keys": [
+              "visual_0001",
+              "visual_0003"
+            ],
+            "wall_s": 125.95348573406227,
+            "action_wall_s": 76.99988237791695,
+            "placements": {
+              "panda_left": {
+                "initial_track": "visual_0001",
+                "grasp_track": "visual_0001",
+                "observed_track": "visual_0035",
+                "goal_xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  0.0001800626516342274,
+                  0.0019339561462402566
+                ]
+              },
+              "panda_right": {
+                "initial_track": "visual_0003",
+                "grasp_track": "visual_0003",
+                "observed_track": "visual_0036",
+                "goal_xy": [
+                  0.2,
+                  -0.4
+                ],
+                "visual_error_xy_m": [
+                  0.00020782947540282093,
+                  0.0012944579124450906
+                ]
+              }
+            },
+            "transfer_strategy": {
+              "requested": "auto",
+              "selected": "orient-first",
+              "selection": "first feasible deterministic plan; no learned score or duration optimization",
+              "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+            },
+            "model_request_count": 12
+          }
+        ],
+        "indexing": [
+          {
+            "round": 1,
+            "success": true,
+            "wall_s": 12.03111429605633,
+            "elapsed_sim_s": 5.008333333333372,
+            "checks": [
+              {
+                "time_s": 34.19166666666537,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.19166666666537
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 34.19166666666537
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.19166666666537
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 34.39166666666536,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.39166666666536
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 34.39166666666536
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.39166666666536
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 34.59166666666535,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.59166666666535
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 34.59166666666535
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.59166666666535
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 34.791666666665336,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.791666666665336
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.791666666665336
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.791666666665336
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 34.991666666665324,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 34.991666666665324
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.991666666665324
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "UNOBSERVED_PATH_SPACE",
+                    "observed_objects": [],
+                    "observation_time_s": 34.991666666665324
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 35.19166666666531,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.19166666666531
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 35.19166666666531
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.19166666666531
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 35.3916666666653,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.3916666666653
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 35.3916666666653
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.3916666666653
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 35.59166666666529,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.59166666666529
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 35.59166666666529
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.59166666666529
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 35.79166666666528,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.79166666666528
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 35.79166666666528
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.79166666666528
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 35.99166666666527,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 35.99166666666527
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 35.99166666666527
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 35.99166666666527
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 36.191666666665256,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.191666666665256
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 36.191666666665256
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 36.191666666665256
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 36.391666666665245,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.391666666665245
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.391666666665245
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 36.391666666665245
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 36.59166666666523,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.59166666666523
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.59166666666523
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 36.59166666666523
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 36.79166666666522,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.79166666666522
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.79166666666522
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 36.79166666666522
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 36.99166666666521,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.99166666666521
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 36.99166666666521
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 36.99166666666521
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 37.1916666666652,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.1916666666652
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.1916666666652
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 37.1916666666652
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 37.39166666666519,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.39166666666519
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.39166666666519
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": false,
+                    "reason": "OBSERVED_PATH_OBSTACLE",
+                    "observed_objects": [],
+                    "observation_time_s": 37.39166666666519
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 37.591666666665176,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.591666666665176
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.591666666665176
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.591666666665176
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 37.791666666665165,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.791666666665165
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.791666666665165
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.791666666665165
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 37.991666666665154,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.991666666665154
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.991666666665154
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 37.991666666665154
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 38.19166666666514,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.19166666666514
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.19166666666514
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.19166666666514
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 38.39166666666513,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.39166666666513
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.39166666666513
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.39166666666513
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 38.59166666666512,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.59166666666512
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.59166666666512
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.59166666666512
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 38.79166666666511,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.79166666666511
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.79166666666511
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.79166666666511
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 38.9916666666651,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.9916666666651
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.9916666666651
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 38.9916666666651
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              },
+              {
+                "time_s": 39.191666666665085,
+                "arms_clear": true,
+                "slot_views": [
+                  {
+                    "xy": [
+                      -0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 39.191666666665085
+                  },
+                  {
+                    "xy": [
+                      0.0,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 39.191666666665085
+                  },
+                  {
+                    "xy": [
+                      0.2,
+                      -0.4
+                    ],
+                    "free": true,
+                    "reason": null,
+                    "observed_objects": [],
+                    "observation_time_s": 39.191666666665085
+                  }
+                ],
+                "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+              }
+            ],
+            "stopped_slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 39.799999999998384
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 39.799999999998384
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 39.799999999998384
+              }
+            ]
+          }
+        ],
+        "attempts": [
+          {
+            "round": 1,
+            "attempt": 1,
+            "success": true,
+            "joint_choice": {
+              "source_keys": [
+                "visual_0001",
+                "visual_0003"
+              ],
+              "history_penalty": 0,
+              "visibility": {
+                "risk": 0.0,
+                "surface_fraction_by_camera": {
+                  "visual_0001": {
+                    "scene_camera": 0.6666666666666666,
+                    "left_wrist_camera": 1.0,
+                    "right_wrist_camera": 0.0
+                  },
+                  "visual_0003": {
+                    "scene_camera": 0.5625,
+                    "left_wrist_camera": 0.0,
+                    "right_wrist_camera": 1.0
+                  },
+                  "visual_0002": {
+                    "scene_camera": 1.0,
+                    "left_wrist_camera": 0.041666666666666664,
+                    "right_wrist_camera": 0.0
+                  },
+                  "visual_0004": {
+                    "scene_camera": 1.0,
+                    "left_wrist_camera": 0.0,
+                    "right_wrist_camera": 0.0
+                  }
+                },
+                "scope": "predicted pregrasp visibility of current measured surfaces; ranking only"
+              },
+              "feasible_pair_count": 948,
+              "pair_count_scope": "prefix-feasible combinations, suffixes refined in rank order",
+              "eligible_source_count": 4
+            },
+            "action_wall_s": 76.99988237791695
+          },
+          {
+            "round": 2,
+            "attempt": 1,
+            "success": false,
+            "failure_reason": "IK_DISCONTINUITY",
+            "action_wall_s": 10.631925481138751,
+            "joint_choice": {
+              "source_keys": [
+                "visual_0002",
+                "visual_0004"
+              ],
+              "history_penalty": 0,
+              "visibility": {
+                "risk": 0.0,
+                "surface_fraction_by_camera": {
+                  "visual_0002": {
+                    "scene_camera": 0.875,
+                    "left_wrist_camera": 1.0,
+                    "right_wrist_camera": 0.0
+                  },
+                  "visual_0004": {
+                    "scene_camera": 0.875,
+                    "left_wrist_camera": 0.0,
+                    "right_wrist_camera": 1.0
+                  }
+                },
+                "scope": "predicted pregrasp visibility of current measured surfaces; ranking only"
+              },
+              "feasible_pair_count": 132,
+              "pair_count_scope": "prefix-feasible combinations, suffixes refined in rank order",
+              "eligible_source_count": 2
+            }
+          }
+        ],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              -0.22001970559358597,
+              -0.1500072181224823,
+              0.7824998978644118
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 0.34906531486776293
+          },
+          "visual_0003": {
+            "position_m": [
+              0.21999859809875488,
+              -0.15000304765999317,
+              0.7849998226276355
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 2.7052597469029007
+          },
+          "visual_0002": {
+            "position_m": [
+              -0.1699720025062561,
+              0.035016387701034546,
+              0.7874999051209718
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "axis_yaw_rad": 0.7853990500857642
+          },
+          "visual_0004": {
+            "position_m": [
+              0.17006367444992065,
+              0.03493888024240732,
+              0.7824999687974666
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 2.443435477968608
+          }
+        },
+        "object_identities": [
+          {
+            "identity_id": "visual_0001",
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "confirmed_at_s": 2.999999999999992,
+            "last_observed_s": 23.149999999999327,
+            "state": "delivered"
+          },
+          {
+            "identity_id": "visual_0002",
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "confirmed_at_s": 2.999999999999992,
+            "last_observed_s": 39.799999999998384,
+            "state": "available"
+          },
+          {
+            "identity_id": "visual_0003",
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "confirmed_at_s": 2.999999999999992,
+            "last_observed_s": 23.149999999999327,
+            "state": "delivered"
+          },
+          {
+            "identity_id": "visual_0004",
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "confirmed_at_s": 2.999999999999992,
+            "last_observed_s": 39.799999999998384,
+            "state": "available"
+          }
+        ],
+        "failure_reason": "IK_DISCONTINUITY",
+        "total_wall_s": 186.29794762120582,
+        "conveyor_events": [
+          {
+            "event": "index_started",
+            "visual_placements": [
+              "round_1/visual_0035",
+              "round_1/visual_0036"
+            ]
+          },
+          {
+            "event": "visually_cleared",
+            "time_s": 39.191666666665085,
+            "elapsed_s": 5.008333333333372,
+            "commanded_distance_m": 0.8013333333333396,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 39.191666666665085
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 39.191666666665085
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 39.191666666665085
+              }
+            ]
+          }
+        ]
+      },
+      "failure": {
+        "success": false,
+        "failure_reason": "IK_DISCONTINUITY",
+        "last_phase": "approach",
+        "phase_checkpoint": {
+          "phase": "approach",
+          "event": "planning",
+          "dry_run": false
+        },
+        "next_action": "CONTINUE",
+        "search_mode": "best-ranked",
+        "destination_evaluation": {
+          "mode": "score-upper-bound refinement",
+          "prefix_rows": 48,
+          "completed_rows": 2,
+          "feasible_completed_rows": 2,
+          "skipped_destination_rows": 37,
+          "failures": []
+        },
+        "empty_pregrasp_motion_recorded": true
+      },
+      "model_requests": 18,
+      "performance": {
+        "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+        "wall_s": 186.30479696393013,
+        "categories": {
+          "physics_engine": {
+            "calls": 5698,
+            "failed_calls": 0,
+            "inclusive_s": 29.109025469282642,
+            "exclusive_s": 29.109025469282642,
+            "max_s": 0.016614235937595367
+          },
+          "collision_math": {
+            "calls": 44335,
+            "failed_calls": 0,
+            "inclusive_s": 23.363942955387756,
+            "exclusive_s": 23.363942955387756,
+            "max_s": 0.007783198030665517
+          },
+          "scene_estimation": {
+            "calls": 29,
+            "failed_calls": 0,
+            "inclusive_s": 14.772926409263164,
+            "exclusive_s": 14.743736745091155,
+            "max_s": 0.9534455640241504
+          },
+          "camera_render": {
+            "calls": 228,
+            "failed_calls": 0,
+            "inclusive_s": 14.19125844957307,
+            "exclusive_s": 14.075204980792478,
+            "max_s": 0.12280407687649131
+          },
+          "pair_selection": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 16.02563165151514,
+            "exclusive_s": 10.017117789713666,
+            "max_s": 11.72798316180706
+          },
+          "validation_payload": {
+            "calls": 13424,
+            "failed_calls": 0,
+            "inclusive_s": 9.562552008312196,
+            "exclusive_s": 9.26873223646544,
+            "max_s": 0.004997566109523177
+          },
+          "depth_fixed_filter": {
+            "calls": 47,
+            "failed_calls": 0,
+            "inclusive_s": 8.106769534759223,
+            "exclusive_s": 8.106769534759223,
+            "max_s": 0.5889268869068474
+          },
+          "sphere_compute": {
+            "calls": 50078,
+            "failed_calls": 0,
+            "inclusive_s": 14.70961644523777,
+            "exclusive_s": 7.793996248394251,
+            "max_s": 0.007384286029264331
+          },
+          "ik_solve": {
+            "calls": 48191,
+            "failed_calls": 0,
+            "inclusive_s": 7.61829350120388,
+            "exclusive_s": 7.61829350120388,
+            "max_s": 0.0038556200452148914
+          },
+          "slot_query_compute": {
+            "calls": 127,
+            "failed_calls": 0,
+            "inclusive_s": 15.625490382080898,
+            "exclusive_s": 7.373274727491662,
+            "max_s": 2.0725755400490016
+          },
+          "chain_fk_compute": {
+            "calls": 48277,
+            "failed_calls": 0,
+            "inclusive_s": 5.70961111295037,
+            "exclusive_s": 5.70961111295037,
+            "max_s": 0.0060353949666023254
+          },
+          "model_request": {
+            "calls": 18,
+            "failed_calls": 0,
+            "inclusive_s": 4.638645052909851,
+            "exclusive_s": 4.638645052909851,
+            "max_s": 0.8846672761719674
+          },
+          "simulation_app_update": {
+            "calls": 47,
+            "failed_calls": 0,
+            "inclusive_s": 3.180290585150942,
+            "exclusive_s": 3.180290585150942,
+            "max_s": 0.11196062504313886
+          },
+          "velocity_command": {
+            "calls": 8552,
+            "failed_calls": 0,
+            "inclusive_s": 2.9017270244657993,
+            "exclusive_s": 2.9017270244657993,
+            "max_s": 0.0036244639195501804
+          },
+          "validation_observed_obstacles": {
+            "calls": 32611,
+            "failed_calls": 0,
+            "inclusive_s": 5.447710687760264,
+            "exclusive_s": 2.806033878820017,
+            "max_s": 0.6118660389911383
+          },
+          "cartesian_ik": {
+            "calls": 156,
+            "failed_calls": 6,
+            "inclusive_s": 10.29269601451233,
+            "exclusive_s": 2.697148903273046,
+            "max_s": 0.4811841438058764
+          },
+          "joint_command": {
+            "calls": 9472,
+            "failed_calls": 0,
+            "inclusive_s": 2.696422725915909,
+            "exclusive_s": 2.696422725915909,
+            "max_s": 0.004311441909521818
+          },
+          "sphere_query": {
+            "calls": 71418,
+            "failed_calls": 0,
+            "inclusive_s": 17.25629749870859,
+            "exclusive_s": 2.54668105347082,
+            "max_s": 0.0074501310009509325
+          },
+          "phase_execution": {
+            "calls": 9,
+            "failed_calls": 0,
+            "inclusive_s": 33.03894202504307,
+            "exclusive_s": 1.9982342252042145,
+            "max_s": 9.379847008967772
+          },
+          "encoder_acquisition": {
+            "calls": 4565,
+            "failed_calls": 0,
+            "inclusive_s": 1.9414604874327779,
+            "exclusive_s": 1.9414604874327779,
+            "max_s": 0.0016326650511473417
+          },
+          "free_space_mapping": {
+            "calls": 10569,
+            "failed_calls": 0,
+            "inclusive_s": 1.5379423934500664,
+            "exclusive_s": 1.5379423934500664,
+            "max_s": 0.02144015207886696
+          },
+          "sensor_read": {
+            "calls": 55,
+            "failed_calls": 0,
+            "inclusive_s": 15.70741834724322,
+            "exclusive_s": 1.4913138169795275,
+            "max_s": 0.786449464969337
+          },
+          "path_stage_approach": {
+            "calls": 56,
+            "failed_calls": 1,
+            "inclusive_s": 14.218863790621981,
+            "exclusive_s": 1.490023338701576,
+            "max_s": 0.7964930199086666
+          },
+          "chain_geometry_query": {
+            "calls": 86115,
+            "failed_calls": 0,
+            "inclusive_s": 7.14964329986833,
+            "exclusive_s": 1.4400321869179606,
+            "max_s": 0.007087548030540347
+          },
+          "payload_clearance": {
+            "calls": 4653,
+            "failed_calls": 0,
+            "inclusive_s": 3.2760720001533628,
+            "exclusive_s": 1.3790716805960983,
+            "max_s": 0.0036540089640766382
+          },
+          "held_pose_estimation": {
+            "calls": 14,
+            "failed_calls": 0,
+            "inclusive_s": 1.3515216892119497,
+            "exclusive_s": 1.3515216892119497,
+            "max_s": 0.1313918421510607
+          },
+          "path_stage_lift": {
+            "calls": 52,
+            "failed_calls": 6,
+            "inclusive_s": 15.386252601398155,
+            "exclusive_s": 1.1634236816316843,
+            "max_s": 0.6393858080264181
+          },
+          "pregrasp_execution": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 17.8096182171721,
+            "exclusive_s": 1.1571817337535322,
+            "max_s": 9.765404558973387
+          },
+          "validation_context_query": {
+            "calls": 1152,
+            "failed_calls": 0,
+            "inclusive_s": 1.107513717841357,
+            "exclusive_s": 1.0256676180288196,
+            "max_s": 0.0069379000924527645
+          },
+          "depth_obstacle_mapping": {
+            "calls": 57,
+            "failed_calls": 0,
+            "inclusive_s": 9.116686099907383,
+            "exclusive_s": 1.0099165651481599,
+            "max_s": 0.6109195579774678
+          },
+          "validation_target_body": {
+            "calls": 18462,
+            "failed_calls": 0,
+            "inclusive_s": 0.8957349976990372,
+            "exclusive_s": 0.8957349976990372,
+            "max_s": 0.0025711439084261656
+          },
+          "payload_collision_math": {
+            "calls": 27918,
+            "failed_calls": 0,
+            "inclusive_s": 0.8350037364289165,
+            "exclusive_s": 0.8350037364289165,
+            "max_s": 0.0009029267821460962
+          },
+          "path_stage_joint_path": {
+            "calls": 76,
+            "failed_calls": 0,
+            "inclusive_s": 6.695014228578657,
+            "exclusive_s": 0.6429779406171292,
+            "max_s": 0.19866213202476501
+          },
+          "physics_step": {
+            "calls": 5698,
+            "failed_calls": 0,
+            "inclusive_s": 32.87155868136324,
+            "exclusive_s": 0.5822426269296557,
+            "max_s": 0.11322351801209152
+          },
+          "fk_query": {
+            "calls": 36037,
+            "failed_calls": 0,
+            "inclusive_s": 0.7937298435717821,
+            "exclusive_s": 0.5585913953837007,
+            "max_s": 0.002620721934363246
+          },
+          "json_encode": {
+            "calls": 31,
+            "failed_calls": 0,
+            "inclusive_s": 0.3852079901844263,
+            "exclusive_s": 0.3852079901844263,
+            "max_s": 0.10276163811795413
+          },
+          "path_stage_transfer": {
+            "calls": 8,
+            "failed_calls": 0,
+            "inclusive_s": 4.613243756815791,
+            "exclusive_s": 0.34879375668242574,
+            "max_s": 0.7958379560150206
+          },
+          "json_file_replace": {
+            "calls": 31,
+            "failed_calls": 0,
+            "inclusive_s": 0.3473255876451731,
+            "exclusive_s": 0.3473255876451731,
+            "max_s": 0.14180330489762127
+          },
+          "released_pose_estimation": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 0.19900144217535853,
+            "exclusive_s": 0.19900144217535853,
+            "max_s": 0.10480512911453843
+          },
+          "path_stage_lower": {
+            "calls": 8,
+            "failed_calls": 0,
+            "inclusive_s": 2.3581593248527497,
+            "exclusive_s": 0.1795714539475739,
+            "max_s": 0.3246482079848647
+          },
+          "path_stage_retreat": {
+            "calls": 8,
+            "failed_calls": 0,
+            "inclusive_s": 1.4024235976394266,
+            "exclusive_s": 0.17159613501280546,
+            "max_s": 0.19273125915788114
+          },
+          "path_stage_unspecified": {
+            "calls": 18,
+            "failed_calls": 0,
+            "inclusive_s": 3.8257637636270374,
+            "exclusive_s": 0.16291038179770112,
+            "max_s": 0.7072455750312656
+          },
+          "encoder_read": {
+            "calls": 5962,
+            "failed_calls": 0,
+            "inclusive_s": 1.9596620057709515,
+            "exclusive_s": 0.15968560078181326,
+            "max_s": 0.0017169129569083452
+          },
+          "path_stage_close": {
+            "calls": 756,
+            "failed_calls": 0,
+            "inclusive_s": 1.0007201563566923,
+            "exclusive_s": 0.10993099329061806,
+            "max_s": 0.007508163107559085
+          },
+          "transfer_schedule": {
+            "calls": 5,
+            "failed_calls": 0,
+            "inclusive_s": 1.2338978238403797,
+            "exclusive_s": 0.08299202681519091,
+            "max_s": 0.7929485898930579
+          },
+          "candidate_feasibility": {
+            "calls": 146,
+            "failed_calls": 0,
+            "inclusive_s": 55.478938509942964,
+            "exclusive_s": 0.07607031799852848,
+            "max_s": 3.7015067180618644
+          },
+          "slot_query": {
+            "calls": 143,
+            "failed_calls": 0,
+            "inclusive_s": 15.690379790961742,
+            "exclusive_s": 0.06488940888084471,
+            "max_s": 2.073293361114338
+          },
+          "parallel_home": {
+            "calls": 1,
+            "failed_calls": 0,
+            "inclusive_s": 9.539639548864216,
+            "exclusive_s": 0.05951270996592939,
+            "max_s": 9.539639548864216
+          },
+          "candidate_assessment": {
+            "calls": 12,
+            "failed_calls": 0,
+            "inclusive_s": 55.51481452467851,
+            "exclusive_s": 0.03587601473554969,
+            "max_s": 24.091364044928923
+          },
+          "asset_calibration": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 0.03930699895136058,
+            "exclusive_s": 0.03499849233776331,
+            "max_s": 0.02307980600744486
+          },
+          "path_validation": {
+            "calls": 1152,
+            "failed_calls": 7,
+            "inclusive_s": 49.847155168885365,
+            "exclusive_s": 0.033504576655104756,
+            "max_s": 0.7965373650658876
+          },
+          "validation_context_prepare": {
+            "calls": 136,
+            "failed_calls": 0,
+            "inclusive_s": 0.06853855750523508,
+            "exclusive_s": 0.0289522644598037,
+            "max_s": 0.0021309438161551952
+          },
+          "workspace_setup": {
+            "calls": 43,
+            "failed_calls": 0,
+            "inclusive_s": 0.05373666062951088,
+            "exclusive_s": 0.027695927303284407,
+            "max_s": 0.0028570678550750017
+          },
+          "path_stage_open": {
+            "calls": 112,
+            "failed_calls": 0,
+            "inclusive_s": 0.17625681636855006,
+            "exclusive_s": 0.017481524497270584,
+            "max_s": 0.00873940996825695
+          },
+          "joint_planning": {
+            "calls": 76,
+            "failed_calls": 0,
+            "inclusive_s": 6.711286656092852,
+            "exclusive_s": 0.013642622856423259,
+            "max_s": 0.19898867304436862
+          },
+          "hold": {
+            "calls": 17,
+            "failed_calls": 0,
+            "inclusive_s": 2.045981900766492,
+            "exclusive_s": 0.013608013512566686,
+            "max_s": 0.5035740018356591
+          },
+          "path_stage_ik_endpoint": {
+            "calls": 58,
+            "failed_calls": 0,
+            "inclusive_s": 0.13695255597122014,
+            "exclusive_s": 0.009220411069691181,
+            "max_s": 0.004627632908523083
+          },
+          "conveyor_depth_observation": {
+            "calls": 26,
+            "failed_calls": 0,
+            "inclusive_s": 10.451525789918378,
+            "exclusive_s": 0.0056287969928234816,
+            "max_s": 0.46118315402418375
+          },
+          "source_pose_resolution": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 0.0013413270935416222,
+            "exclusive_s": 0.0013413270935416222,
+            "max_s": 0.0003560609184205532
+          },
+          "json_write": {
+            "calls": 31,
+            "failed_calls": 0,
+            "inclusive_s": 0.7336799246259034,
+            "exclusive_s": 0.0011463467963039875,
+            "max_s": 0.14210803294554353
+          }
+        }
+      }
+    },
+    {
+      "run": "first-feasible-dev5-seed7",
+      "report": {
+        "success": false,
+        "scope": "two_pairs_four_initial_cartons_live_model_and_visual_conveyor",
+        "rounds": [],
+        "indexing": [],
+        "attempts": [
+          {
+            "round": 1,
+            "attempt": 1,
+            "success": false,
+            "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+            "action_wall_s": null,
+            "joint_choice": null
+          }
+        ],
+        "initial_visual_sources": {
+          "visual_0001": {
+            "position_m": [
+              0.16839683055877686,
+              0.022272292524576187,
+              0.7849998508942191
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 1.7493996022701181
+          },
+          "visual_0002": {
+            "position_m": [
+              -0.2137451469898224,
+              -0.10925076901912689,
+              0.7849998347002227
+            ],
+            "size_m": [
+              0.11,
+              0.06,
+              0.05
+            ],
+            "axis_yaw_rad": 1.7321844363220513
+          },
+          "visual_0004": {
+            "position_m": [
+              0.2062670737504959,
+              -0.16299189627170563,
+              0.7874998354372916
+            ],
+            "size_m": [
+              0.12,
+              0.065,
+              0.055
+            ],
+            "axis_yaw_rad": 2.3471053516086124
+          },
+          "visual_0003": {
+            "position_m": [
+              -0.19476960599422455,
+              0.0688316598534584,
+              0.7824999837007766
+            ],
+            "size_m": [
+              0.1,
+              0.055,
+              0.045
+            ],
+            "axis_yaw_rad": 1.8675329775325997
+          }
+        },
+        "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "total_wall_s": 39.45770522300154,
+        "conveyor_events": []
+      },
+      "failure": {
+        "success": false,
+        "failure_reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "search_mode": "first-feasible",
+        "destination_evaluation": {
+          "mode": "first-feasible",
+          "prefix_rows": 48,
+          "completed_rows": 15,
+          "feasible_completed_rows": 4,
+          "skipped_destination_rows": 3,
+          "failures": [
+            {
+              "candidate_id": "01162941a68d4bf7a0746c0f048d71db:186:panda_left",
+              "slot_xy": [
+                -0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "2612bbeebca941789e58b85270f735cc:112:panda_left",
+              "slot_xy": [
+                0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "2612bbeebca941789e58b85270f735cc:112:panda_left",
+              "slot_xy": [
+                0.0,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "01162941a68d4bf7a0746c0f048d71db:186:panda_left",
+              "slot_xy": [
+                0.0,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "01162941a68d4bf7a0746c0f048d71db:186:panda_left",
+              "slot_xy": [
+                0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "2612bbeebca941789e58b85270f735cc:112:panda_left",
+              "slot_xy": [
+                -0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "2612bbeebca941789e58b85270f735cc:112:panda_right",
+              "slot_xy": [
+                0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "2612bbeebca941789e58b85270f735cc:112:panda_right",
+              "slot_xy": [
+                0.0,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "2612bbeebca941789e58b85270f735cc:112:panda_right",
+              "slot_xy": [
+                -0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "1f601a912ece4d8892c195fd23b90ad9:15:panda_left",
+              "slot_xy": [
+                0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            },
+            {
+              "candidate_id": "01162941a68d4bf7a0746c0f048d71db:186:panda_right",
+              "slot_xy": [
+                -0.2,
+                -0.4
+              ],
+              "reasons": [
+                "IK_DISCONTINUITY"
+              ]
+            }
+          ]
+        },
+        "empty_pregrasp_motion_recorded": false
+      },
+      "model_requests": 10,
+      "performance": {
+        "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+        "wall_s": 39.459226780803874,
+        "categories": {
+          "ik_solve": {
+            "calls": 62540,
+            "failed_calls": 0,
+            "inclusive_s": 9.185201539192349,
+            "exclusive_s": 9.185201539192349,
+            "max_s": 0.004191885935142636
+          },
+          "collision_math": {
+            "calls": 10460,
+            "failed_calls": 0,
+            "inclusive_s": 5.557044768705964,
+            "exclusive_s": 5.557044768705964,
+            "max_s": 0.005081583047285676
+          },
+          "cartesian_ik": {
+            "calls": 95,
+            "failed_calls": 11,
+            "inclusive_s": 12.35187505511567,
+            "exclusive_s": 3.179889509221539,
+            "max_s": 1.1813161908648908
+          },
+          "model_request": {
+            "calls": 10,
+            "failed_calls": 0,
+            "inclusive_s": 2.808186715003103,
+            "exclusive_s": 2.808186715003103,
+            "max_s": 0.8791947849094868
+          },
+          "validation_payload": {
+            "calls": 3529,
+            "failed_calls": 30,
+            "inclusive_s": 2.543795561650768,
+            "exclusive_s": 2.46554638678208,
+            "max_s": 0.003976684994995594
+          },
+          "scene_estimation": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 2.1748552648350596,
+            "exclusive_s": 2.169923266628757,
+            "max_s": 0.5842753890901804
+          },
+          "sphere_compute": {
+            "calls": 11342,
+            "failed_calls": 0,
+            "inclusive_s": 2.9818779206834733,
+            "exclusive_s": 1.6475369427353144,
+            "max_s": 0.0030715828761458397
+          },
+          "camera_render": {
+            "calls": 24,
+            "failed_calls": 0,
+            "inclusive_s": 1.5282559872139245,
+            "exclusive_s": 1.516035986598581,
+            "max_s": 0.08341521909460425
+          },
+          "physics_engine": {
+            "calls": 408,
+            "failed_calls": 0,
+            "inclusive_s": 1.2281212294474244,
+            "exclusive_s": 1.2281212294474244,
+            "max_s": 0.015045655891299248
+          },
+          "chain_fk_compute": {
+            "calls": 10091,
+            "failed_calls": 0,
+            "inclusive_s": 1.109212639508769,
+            "exclusive_s": 1.109212639508769,
+            "max_s": 0.002913606120273471
+          },
+          "depth_fixed_filter": {
+            "calls": 1,
+            "failed_calls": 0,
+            "inclusive_s": 0.8161756051704288,
+            "exclusive_s": 0.8161756051704288,
+            "max_s": 0.8161756051704288
+          },
+          "validation_observed_obstacles": {
+            "calls": 9578,
+            "failed_calls": 0,
+            "inclusive_s": 1.035945990588516,
+            "exclusive_s": 0.759911575820297,
+            "max_s": 0.007046025013551116
+          },
+          "validation_context_query": {
+            "calls": 715,
+            "failed_calls": 0,
+            "inclusive_s": 0.604476549429819,
+            "exclusive_s": 0.5740679099690169,
+            "max_s": 0.002829340985044837
+          },
+          "path_stage_approach": {
+            "calls": 36,
+            "failed_calls": 0,
+            "inclusive_s": 4.012830864172429,
+            "exclusive_s": 0.5276466398499906,
+            "max_s": 0.27716549509204924
+          },
+          "sphere_query": {
+            "calls": 11400,
+            "failed_calls": 0,
+            "inclusive_s": 3.453589499928057,
+            "exclusive_s": 0.47171157924458385,
+            "max_s": 0.003112443955615163
+          },
+          "pair_selection": {
+            "calls": 3,
+            "failed_calls": 0,
+            "inclusive_s": 15.601602918235585,
+            "exclusive_s": 0.40726679912768304,
+            "max_s": 15.074396741110831
+          },
+          "simulation_app_update": {
+            "calls": 3,
+            "failed_calls": 0,
+            "inclusive_s": 0.36381695815362036,
+            "exclusive_s": 0.36381695815362036,
+            "max_s": 0.16593150096014142
+          },
+          "path_stage_joint_path": {
+            "calls": 151,
+            "failed_calls": 9,
+            "inclusive_s": 2.6538330384064466,
+            "exclusive_s": 0.3334969594143331,
+            "max_s": 0.18474322999827564
+          },
+          "validation_target_body": {
+            "calls": 5829,
+            "failed_calls": 0,
+            "inclusive_s": 0.2863468637224287,
+            "exclusive_s": 0.2863468637224287,
+            "max_s": 0.0034598379861563444
+          },
+          "chain_geometry_query": {
+            "calls": 17957,
+            "failed_calls": 0,
+            "inclusive_s": 1.3796008431818336,
+            "exclusive_s": 0.2703882036730647,
+            "max_s": 0.002936391858384013
+          },
+          "free_space_mapping": {
+            "calls": 2757,
+            "failed_calls": 0,
+            "inclusive_s": 0.23784762271679938,
+            "exclusive_s": 0.23784762271679938,
+            "max_s": 0.015067052096128464
+          },
+          "path_stage_transfer": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 2.9255679368507117,
+            "exclusive_s": 0.22157426364719868,
+            "max_s": 1.0596608428750187
+          },
+          "path_stage_lift": {
+            "calls": 36,
+            "failed_calls": 30,
+            "inclusive_s": 2.2265941945370287,
+            "exclusive_s": 0.16817201091907918,
+            "max_s": 0.5893046450801194
+          },
+          "sensor_read": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 1.6572445216588676,
+            "exclusive_s": 0.1271394556388259,
+            "max_s": 0.8268334390595555
+          },
+          "fk_query": {
+            "calls": 6615,
+            "failed_calls": 0,
+            "inclusive_s": 0.14932903950102627,
+            "exclusive_s": 0.10406917426735163,
+            "max_s": 0.0002777131740003824
+          },
+          "path_stage_lower": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 1.1647319288458675,
+            "exclusive_s": 0.08840996772050858,
+            "max_s": 0.29262036411091685
+          },
+          "path_stage_retreat": {
+            "calls": 4,
+            "failed_calls": 0,
+            "inclusive_s": 0.6786427709739655,
+            "exclusive_s": 0.08227054495364428,
+            "max_s": 0.17191795096732676
+          },
+          "candidate_feasibility": {
+            "calls": 63,
+            "failed_calls": 0,
+            "inclusive_s": 26.62494826875627,
+            "exclusive_s": 0.05961397313512862,
+            "max_s": 1.8867628439329565
+          },
+          "joint_command": {
+            "calls": 96,
+            "failed_calls": 0,
+            "inclusive_s": 0.058010370237752795,
+            "exclusive_s": 0.058010370237752795,
+            "max_s": 0.0007926709949970245
+          },
+          "path_stage_close": {
+            "calls": 388,
+            "failed_calls": 0,
+            "inclusive_s": 0.42436803760938346,
+            "exclusive_s": 0.048662279499694705,
+            "max_s": 0.003080227179452777
+          },
+          "physics_step": {
+            "calls": 408,
+            "failed_calls": 0,
+            "inclusive_s": 1.634437007829547,
+            "exclusive_s": 0.042498820228502154,
+            "max_s": 0.16769408015534282
+          },
+          "candidate_assessment": {
+            "calls": 24,
+            "failed_calls": 0,
+            "inclusive_s": 26.64904299401678,
+            "exclusive_s": 0.02409472526051104,
+            "max_s": 6.163199769798666
+          },
+          "path_validation": {
+            "calls": 715,
+            "failed_calls": 39,
+            "inclusive_s": 14.245879959315062,
+            "exclusive_s": 0.018866236321628094,
+            "max_s": 1.0597224810626358
+          },
+          "depth_obstacle_mapping": {
+            "calls": 1,
+            "failed_calls": 0,
+            "inclusive_s": 0.8332612658850849,
+            "exclusive_s": 0.017085660714656115,
+            "max_s": 0.8332612658850849
+          },
+          "joint_planning": {
+            "calls": 46,
+            "failed_calls": 0,
+            "inclusive_s": 2.673449272522703,
+            "exclusive_s": 0.015980705386027694,
+            "max_s": 0.21013359702192247
+          },
+          "encoder_acquisition": {
+            "calls": 30,
+            "failed_calls": 0,
+            "inclusive_s": 0.015053574461489916,
+            "exclusive_s": 0.015053574461489916,
+            "max_s": 0.000691660912707448
+          },
+          "asset_calibration": {
+            "calls": 1,
+            "failed_calls": 0,
+            "inclusive_s": 0.01598762208595872,
+            "exclusive_s": 0.01438839128240943,
+            "max_s": 0.01598762208595872
+          },
+          "encoder_read": {
+            "calls": 887,
+            "failed_calls": 0,
+            "inclusive_s": 0.009831506060436368,
+            "exclusive_s": 0.009410920087248087,
+            "max_s": 0.0004486790858209133
+          },
+          "validation_context_prepare": {
+            "calls": 45,
+            "failed_calls": 0,
+            "inclusive_s": 0.022748751332983375,
+            "exclusive_s": 0.009193341247737408,
+            "max_s": 0.000743222190067172
+          },
+          "path_stage_open": {
+            "calls": 56,
+            "failed_calls": 0,
+            "inclusive_s": 0.0828023455105722,
+            "exclusive_s": 0.008489641128107905,
+            "max_s": 0.0039804300758987665
+          },
+          "path_stage_ik_endpoint": {
+            "calls": 36,
+            "failed_calls": 0,
+            "inclusive_s": 0.05764260608702898,
+            "exclusive_s": 0.004899349762126803,
+            "max_s": 0.004055815981701016
+          },
+          "json_encode": {
+            "calls": 3,
+            "failed_calls": 0,
+            "inclusive_s": 0.004186009289696813,
+            "exclusive_s": 0.004186009289696813,
+            "max_s": 0.0034020221792161465
+          },
+          "slot_query": {
+            "calls": 6,
+            "failed_calls": 0,
+            "inclusive_s": 0.8628375900443643,
+            "exclusive_s": 0.003063102951273322,
+            "max_s": 0.8500933619216084
+          },
+          "hold": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 0.3554380440618843,
+            "exclusive_s": 0.0025651019532233477,
+            "max_s": 0.182573497062549
+          },
+          "workspace_setup": {
+            "calls": 5,
+            "failed_calls": 0,
+            "inclusive_s": 0.005864835809916258,
+            "exclusive_s": 0.0024516351986676455,
+            "max_s": 0.0019035860896110535
+          },
+          "slot_query_compute": {
+            "calls": 3,
+            "failed_calls": 0,
+            "inclusive_s": 0.859774487093091,
+            "exclusive_s": 0.0012698431964963675,
+            "max_s": 0.8492245941888541
+          },
+          "source_pose_resolution": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 0.0010062078945338726,
+            "exclusive_s": 0.0010062078945338726,
+            "max_s": 0.0005283248610794544
+          },
+          "json_file_replace": {
+            "calls": 3,
+            "failed_calls": 0,
+            "inclusive_s": 0.000707773957401514,
+            "exclusive_s": 0.000707773957401514,
+            "max_s": 0.000353196170181036
+          },
+          "json_write": {
+            "calls": 3,
+            "failed_calls": 0,
+            "inclusive_s": 0.004968303954228759,
+            "exclusive_s": 7.452070713043213e-05,
+            "max_s": 0.0037946149241179228
+          }
+        }
+      }
+    }
+  ],
+  "boundaries": [
+    "Failed durations are not completed-task speed measurements.",
+    "The seed-6 first-feasible success and seed-7 first-feasible failure are separate initial trials, not a random success-rate estimate.",
+    "Both runs disable dedicated wrist observation motion; camera and collision requirements unchanged.",
+    "Whole-arm unknown-space safety remains unproven."
+  ]
+}

@@ -25,8 +25,9 @@ class VisualPickPlace:
     release_gap_m=UPRIGHT_RELEASE_GAP_M
 
     def __init__(self, robot, read_packet, priors, slots_xy, save_scene=None,trace_scene=None,segmenter=None,
-                 estimator=None,failure_history=None,eligible=None,grasp_source=None,observation_period_s=None):
+                 estimator=None,failure_history=None,eligible=None,grasp_source=None,observation_period_s=None,first_feasible=False):
         self.robot,self.read_packet,self.priors=robot,read_packet,priors
+        self.first_feasible=first_feasible
         self.observation_period_s=None
         if grasp_source is not None and self.accepted_postures==('UPRIGHT',):
             period=1. if observation_period_s is None else float(observation_period_s)
@@ -60,6 +61,7 @@ class VisualPickPlace:
         if grasp_source is not None and self.accepted_postures==('UPRIGHT',):
             self.release_gap_m=GRASPGEN_UPRIGHT_RELEASE_GAP_M
         self.release_tracker=None
+        self.released_reference=None
         self.observation_anchors=[]
         self.robot.monitor=self.monitor
 
@@ -75,10 +77,16 @@ class VisualPickPlace:
                 return self.packet,self.scene
             options={'oblique':True} if oblique else {}
             rows=self.grasp_source.generate(self.packet,self.scene,self.robot,refresh,**options)
-            provider=lambda obj,states:[c for c in rows if c.target_id==obj.track_id]
+            def provider(obj,states):
+                candidates=[c for c in rows if c.target_id==obj.track_id]
+                if self.first_feasible:
+                    from workstation.planning.selection import visual_pinch_balance,upright_contact_cost
+                    candidates.sort(key=lambda c:(bool(c.rejection_reasons),upright_contact_cost(c,obj),
+                        visual_pinch_balance(c,obj)['penalty'],-float(c.model_score or 0.)))
+                return candidates
         return assess(self.scene,self.robot.read_states(),feasibility,self.robot.home,
             failure_history=self.failure_history,eligible=self.eligible,candidate_provider=provider,
-            accepted_postures=self.accepted_postures)
+            accepted_postures=self.accepted_postures,first_feasible=self.first_feasible)
 
     def _refresh_candidate(self,candidate,obj):
         if candidate.source in ('graspgen','centered'):
@@ -111,6 +119,9 @@ class VisualPickPlace:
 
     def reconcile_observation(self,packet,scene,label):
         """Optional task-specific association before workspace construction."""
+        if (self.released_reference is not None and self.events and label!='failed' and
+                self.events[-1]['phase']=='RETREAT'):
+            return self._released_collision_scene(*self.released_reference)
         return scene
 
     def _record_visual_lift(self,measurement):
@@ -326,6 +337,7 @@ class VisualPickPlace:
 
     def run(self):
         result=dict(success=False,scope=self.run_scope,skill=self.skill_name,
+            search_mode='first-feasible' if self.first_feasible else 'best-ranked',
             online_source='RGB-D SceneEstimate + encoder FK',
             box_attachment=False,box_pose_teleport=False,
             acceptance=dict(visual_lift_m=.08,xy_m=.018,z_m=.008,axis_yaw_deg=8,
@@ -356,6 +368,7 @@ class VisualPickPlace:
                 result['candidate_attempts']=[result['assessments']]
                 # Bounded fresh-observation attempts, never a geometry fallback.
                 for attempt in range(3):
+                    if self.first_feasible and chosen is not None:break
                     oblique=(attempt==2)
                     if oblique and (chosen is not None or self.accepted_postures!=('UPRIGHT',)
                                     or getattr(self.grasp_source,'backend',None)!='graspgen'):
@@ -496,7 +509,9 @@ class VisualPickPlace:
             result['recovery']=dict(action='HOLD_AND_REOBSERVE' if self.held else 'STOP_AND_REOBSERVE',
                                     executed=True,active_camera_motion=False,hold_verified=False,
                                     reason='Measured-joint safe hold, retained finger command and fresh images')
-            self.observe('failed')
+            try:self.observe('failed')
+            except Exception as observation_error:
+                result['recovery']['observation_error']=str(observation_error)
             self.event('FAILED')
         finally:
             self.robot.monitor=None
@@ -678,12 +693,19 @@ class VisualPickPlace:
     def observe_released(self, result, drop_bound, released_centre,released_rotation=None):
         self.held=False;self.releasing=False
         self.observe('released')
+        self.released_reference=(result,drop_bound,released_centre,released_rotation)
+        self.scene=self._released_collision_scene(*self.released_reference)
+        self.robot.set_observation(self.packet,self.scene,self.priors)
+        return self.scene
+
+    def _released_collision_scene(self,result,drop_bound,released_centre,released_rotation):
+        """Reconcile every fresh retreat view using current measured release geometry."""
         tcp,rotation=self.robot.fk(self.arm,self.packet.robot_state[self.arm].joint_positions_rad)
         fitted=self.release_tracker.collision_estimate(self.packet,self.scene,tcp,rotation,
             max_drop_m=drop_bound,reference_position_m=released_centre,reference_rotation=released_rotation,
             allow_partial=getattr(self,'allow_partial_release',False))
         if fitted is None: raise RuntimeError('RELEASED_GEOMETRY_UNCERTAIN')
-        result['released_collision_estimate']=fitted
+        result.setdefault('released_collision_estimate',fitted)
         result.setdefault('released_geometry_checks',[]).append(fitted)
         self.scene=self.estimator.associate_supported_target(self.scene,self.candidate.target_id,fitted)
         measured=next(o for o in self.scene.objects if o.track_id == self.candidate.target_id)
@@ -704,5 +726,4 @@ class VisualPickPlace:
         # Current measured released geometry replaces this track's clipped
         # proxy for BOTH robot collision and depth-obstacle accounting.
         self.scene=collision_scene
-        self.robot.set_observation(self.packet,self.scene,self.priors)
         return collision_scene

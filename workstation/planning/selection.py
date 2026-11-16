@@ -145,7 +145,7 @@ def lift_slip_evidence(closed_tcp_z,current_tcp_z,measurement,fingers,closed_fin
 
 
 def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history=None,priorities=None,eligible=None,
-           candidate_provider=None,accepted_postures=('UPRIGHT',)):
+           candidate_provider=None,accepted_postures=('UPRIGHT',),first_feasible=False):
     """feasibility(candidate, object, scene) must check IK AND whole-path collisions."""
     results = []
     failure_history=failure_history or {}; priorities=priorities or {}
@@ -218,6 +218,8 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
                        -terms['joint_cost']*.2-obj.uncertainty_m*50-failures*.5-balance['penalty']-terms['upright_contact_cost']-palm_cost
                        +(.2*float(np.clip(candidate.model_score,0,1)) if candidate.model_score is not None else 0.))
             results.append(CandidateAssessment(candidate,not all_reasons,all_reasons,terms,utility))
+            if first_feasible and not all_reasons:
+                return results[-1:]+results[:-1]
     return sorted(results,key=lambda item:(not item.feasible,-item.score,item.candidate.target_id,item.candidate.arm))
 
 

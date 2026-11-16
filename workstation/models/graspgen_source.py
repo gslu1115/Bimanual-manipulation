@@ -11,17 +11,19 @@ from workstation.perception.scene_estimate import pose_is_observed
 class GraspGenSource:
     backend='graspgen'
 
-    def __init__(self,proxy,calibration,num_grasps=256,accepted_postures=('UPRIGHT',),assigned_arm=None):
+    def __init__(self,proxy,calibration,num_grasps=256,accepted_postures=('UPRIGHT',),assigned_arm=None,eligible=None):
         self.proxy,self.calibration,self.num_grasps=proxy,calibration,num_grasps
         self.accepted_postures=tuple(accepted_postures)
         if not self.accepted_postures or not set(self.accepted_postures)<={'UPRIGHT','SIDE'}:
             raise ValueError('Only implemented upright and side-adjustment initial postures are supported')
         self.requests=[]
         self.assigned_arm=assigned_arm
+        self.eligible=eligible
 
     def generate(self,packet,scene,robot,refresh,*,oblique=False):
         candidates=[]
-        targets=[obj for obj in scene.objects if not obj.failures and obj.posture in self.accepted_postures and pose_is_observed(obj,scene)]
+        targets=[obj for obj in scene.objects if not obj.failures and obj.posture in self.accepted_postures
+                 and pose_is_observed(obj,scene) and (self.eligible is None or self.eligible(obj,scene))]
         for obj in targets:
             clouds=visual_clouds(packet,scene,obj.track_id)
             started=time.monotonic();before=robot.read_states()

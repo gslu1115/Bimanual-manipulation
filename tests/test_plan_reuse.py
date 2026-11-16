@@ -1,10 +1,30 @@
 import unittest
 import numpy as np
 from types import SimpleNamespace
-from workstation.planning.plan_reuse import PreviewPlans,array_key,complete_ranked_pairs
+from workstation.planning.plan_reuse import PreviewPlans,array_key,complete_ranked_pairs,complete_first_feasible_pairs
 
 
 class PreviewReuseTests(unittest.TestCase):
+    def test_first_feasible_stops_without_optimizing_or_checking_failed_partner(self):
+        pairs=[(0,1),(2,3),(4,5)];calls=[]
+        def complete(value):
+            calls.append(value)
+            return SimpleNamespace(id=value,feasible=value!=0,score=-value)
+        choices=complete_first_feasible_pairs(pairs,complete)
+        self.assertEqual([r.id for r in next(choices)],[2,3])
+        self.assertEqual(calls,[0,2,3])
+        # A synchronized-motion rejection can request the next fully checked pair.
+        self.assertEqual([r.id for r in next(choices)],[4,5])
+        self.assertEqual(calls,[0,2,3,4,5])
+
+    def test_first_feasible_does_not_yield_partial_or_failed_pairs(self):
+        calls=[]
+        def complete(value):
+            calls.append(value)
+            return SimpleNamespace(feasible=value%2==0)
+        self.assertEqual(list(complete_first_feasible_pairs([(0,1),(3,4)],complete)),[])
+        self.assertEqual(calls,[0,1,3])
+
     def test_changed_start_goal_payload_or_observation_replans_without_using_old_path(self):
         plans=PreviewPlans()
         context=(3,4.,array_key(np.zeros(7)),array_key([.1,.2,.3]),array_key([.01,0,0]))

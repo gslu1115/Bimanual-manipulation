@@ -27,6 +27,19 @@ class PlanningTests(unittest.TestCase):
         self.assertFalse(decision['utility_is_probability'])
         self.assertIn('joint_cost',decision['terms'])
 
+    def test_first_feasible_stops_full_validation_only_after_a_safe_candidate(self):
+        calls=[]
+        def check(candidate,obj,scene):
+            calls.append(candidate)
+            return dict(reasons=('SELF_COLLISION',) if len(calls)==1 else (),joint_cost=1.,path_clearance_m=.03)
+        items=assess(self.scene,self.states,check,self.home,first_feasible=True)
+        self.assertEqual(len(calls),2)
+        self.assertTrue(items[0].feasible)
+        self.assertIn('SELF_COLLISION',items[1].reasons)
+        blocked=lambda *args:dict(reasons=('SELF_COLLISION',),joint_cost=1.,path_clearance_m=-.01)
+        items=assess(self.scene,self.states,blocked,self.home,first_feasible=True)
+        self.assertFalse(any(row.feasible for row in items))
+
     def test_upright_template_and_refresh_share_palm_clearance_height(self):
         items=assess(self.scene,self.states,self.feasible,self.home)
         obj=self.scene.objects[0]

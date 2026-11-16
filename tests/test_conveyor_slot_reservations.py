@@ -18,6 +18,12 @@ class ConveyorSlotTests(unittest.TestCase):
         self.assertEqual(self.reobserve([self.view(91.,True)],
             lambda c:self.fail('should not move'))['observation_time_s'],91.)
 
+    def test_fixed_view_can_refresh_but_cannot_resolve_occlusion_by_motion(self):
+        no_motion=lambda c:self.fail('dedicated observation motion disabled')
+        self.assertTrue(self.reobserve([self.view(91.,True)],no_motion,candidates=[])['free'])
+        with self.assertRaisesRegex(RuntimeError,'NO_VISIBLE_CHECKED_POSE'):
+            self.reobserve([self.view(91.)],no_motion,candidates=[])
+
     def test_reobserve_skips_blocked_plans_then_uses_new_depth(self):
         moved=[]
         def adjust(c):moved.append(c);return c==2

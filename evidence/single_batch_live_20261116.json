@@ -1,0 +1,2869 @@
+{
+  "date": "2026-11-16",
+  "scope": "one fixed upright singleton plus visual conveyor clearance",
+  "task": {
+    "success": true,
+    "scope": "initially_observed_upright_cartons_live_model_and_visual_conveyor",
+    "rounds": [
+      {
+        "round": 1,
+        "batch_size": 1,
+        "success": true,
+        "reserved_source_keys": [
+          "visual_0001"
+        ],
+        "wall_s": 488.5651339250617,
+        "action_wall_s": null,
+        "placements": {
+          "panda_left": {
+            "initial_track": "visual_0001",
+            "grasp_track": "visual_0001",
+            "observed_track": "visual_0001",
+            "goal_xy": [
+              -0.2,
+              -0.4
+            ],
+            "visual_error_xy_m": [
+              0.0003319203853607289,
+              0.0011474728584289773
+            ]
+          }
+        },
+        "single_skill_wall_s": 485.19467811495997,
+        "transfer_strategy": null,
+        "model_request_count": 3
+      }
+    ],
+    "indexing": [
+      {
+        "round": 1,
+        "success": true,
+        "wall_s": 12.495547217084095,
+        "elapsed_sim_s": 5.008333333333372,
+        "checks": [
+          {
+            "time_s": 51.608333333331046,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 51.608333333331046
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 51.608333333331046
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 51.608333333331046
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 51.808333333331035,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 51.808333333331035
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 51.808333333331035
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 51.808333333331035
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 52.008333333331024,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 52.008333333331024
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.008333333331024
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.008333333331024
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 52.20833333333101,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 52.20833333333101
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 52.20833333333101
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.20833333333101
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 52.408333333331,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.408333333331
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 52.408333333331
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.408333333331
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 52.60833333333099,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.60833333333099
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 52.60833333333099
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.60833333333099
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 52.80833333333098,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.80833333333098
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 52.80833333333098
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 52.80833333333098
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 53.00833333333097,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.00833333333097
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.00833333333097
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.00833333333097
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 53.208333333330955,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.208333333330955
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.208333333330955
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.208333333330955
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 53.408333333330944,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.408333333330944
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.408333333330944
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.408333333330944
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 53.60833333333093,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.60833333333093
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.60833333333093
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.60833333333093
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 53.80833333333092,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.80833333333092
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 53.80833333333092
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 53.80833333333092
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 54.00833333333091,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.00833333333091
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.00833333333091
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 54.00833333333091
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 54.2083333333309,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.2083333333309
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.2083333333309
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 54.2083333333309
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 54.40833333333089,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.40833333333089
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.40833333333089
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 54.40833333333089
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 54.608333333330876,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.608333333330876
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.608333333330876
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 54.608333333330876
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 54.808333333330864,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.808333333330864
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 54.808333333330864
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": false,
+                "reason": "OBSERVED_PATH_OBSTACLE",
+                "observed_objects": [],
+                "observation_time_s": 54.808333333330864
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 55.00833333333085,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.00833333333085
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.00833333333085
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.00833333333085
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 55.20833333333084,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.20833333333084
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.20833333333084
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.20833333333084
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 55.40833333333083,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.40833333333083
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.40833333333083
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.40833333333083
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 55.60833333333082,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.60833333333082
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.60833333333082
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.60833333333082
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 55.80833333333081,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.80833333333081
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.80833333333081
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 55.80833333333081
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 56.008333333330796,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.008333333330796
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.008333333330796
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.008333333330796
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 56.208333333330785,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.208333333330785
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.208333333330785
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.208333333330785
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 56.40833333333077,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.40833333333077
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.40833333333077
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.40833333333077
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          },
+          {
+            "time_s": 56.60833333333076,
+            "arms_clear": true,
+            "slot_views": [
+              {
+                "xy": [
+                  -0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.60833333333076
+              },
+              {
+                "xy": [
+                  0.0,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.60833333333076
+              },
+              {
+                "xy": [
+                  0.2,
+                  -0.4
+                ],
+                "free": true,
+                "reason": null,
+                "observed_objects": [],
+                "observation_time_s": 56.60833333333076
+              }
+            ],
+            "perception_scope": "current three-camera depth occupancy; no whole-table recognition"
+          }
+        ],
+        "stopped_slot_views": [
+          {
+            "xy": [
+              -0.2,
+              -0.4
+            ],
+            "free": true,
+            "reason": null,
+            "observed_objects": [],
+            "observation_time_s": 57.21666666666406
+          },
+          {
+            "xy": [
+              0.0,
+              -0.4
+            ],
+            "free": true,
+            "reason": null,
+            "observed_objects": [],
+            "observation_time_s": 57.21666666666406
+          },
+          {
+            "xy": [
+              0.2,
+              -0.4
+            ],
+            "free": true,
+            "reason": null,
+            "observed_objects": [],
+            "observation_time_s": 57.21666666666406
+          }
+        ]
+      }
+    ],
+    "attempts": [
+      {
+        "round": 1,
+        "attempt": 1,
+        "batch_size": 1,
+        "success": true,
+        "joint_choice": {
+          "source_keys": [
+            "visual_0001"
+          ]
+        },
+        "action_wall_s": null,
+        "model_request_count": 3
+      }
+    ],
+    "active_reobserve_allowed": true,
+    "initial_visual_sources": {
+      "visual_0001": {
+        "position_m": [
+          -0.2000935710966587,
+          -0.06003444502130151,
+          0.7824999677931369
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "axis_yaw_rad": 0.3490546095939755
+      }
+    },
+    "object_identities": [
+      {
+        "identity_id": "visual_0001",
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "confirmed_at_s": 2.999999999999992,
+        "last_observed_s": 51.59999999999771,
+        "state": "delivered"
+      }
+    ],
+    "verified_placements": 1,
+    "completed_pairs": 0,
+    "completed_singletons": 1,
+    "visually_cleared_batches": 1,
+    "total_wall_s": 505.5069765620865,
+    "conveyor_events": [
+      {
+        "event": "index_started",
+        "visual_placements": [
+          "round_1/visual_0001"
+        ]
+      },
+      {
+        "event": "visually_cleared",
+        "time_s": 56.60833333333076,
+        "elapsed_s": 5.008333333333372,
+        "commanded_distance_m": 0.8013333333333396,
+        "slot_views": [
+          {
+            "xy": [
+              -0.2,
+              -0.4
+            ],
+            "free": true,
+            "reason": null,
+            "observed_objects": [],
+            "observation_time_s": 56.60833333333076
+          },
+          {
+            "xy": [
+              0.0,
+              -0.4
+            ],
+            "free": true,
+            "reason": null,
+            "observed_objects": [],
+            "observation_time_s": 56.60833333333076
+          },
+          {
+            "xy": [
+              0.2,
+              -0.4
+            ],
+            "free": true,
+            "reason": null,
+            "observed_objects": [],
+            "observation_time_s": 56.60833333333076
+          }
+        ]
+      }
+    ]
+  },
+  "skill": {
+    "success": true,
+    "scope": "controlled_upright_single_carton",
+    "skill_wall_s": 485.19467811495997,
+    "held_on_exit": false,
+    "events": [
+      {
+        "phase": "PREGRASP",
+        "time_s": 4.300000000000003,
+        "action_wall_s": 1.6540288925170898e-06,
+        "measured_fingers_m": [
+          0.03999967873096466,
+          0.03999967873096466
+        ],
+        "commanded_fingers_m": [
+          0.03999999910593033,
+          0.03999999910593033
+        ],
+        "path_check": {
+          "samples": 126,
+          "unique_samples": 86,
+          "clearance_m": 0.032488136566256626,
+          "palm_clearance_m": null,
+          "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+          "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+          "whole_arm_unknown_space_verified": false,
+          "carton_carton_contact_allowed": true,
+          "finger_shell_visibility_required": false,
+          "approach_corridor_unknown_space_checked": false,
+          "approach_corridor_applicable": true,
+          "empty_motion_unknown_space_verified": false,
+          "local_unknown_space_check_deferred": false,
+          "max_joint_sample_rad": 0.025,
+          "continuous_collision_proof": false,
+          "joint_planner": "quintic straight joint path"
+        }
+      },
+      {
+        "phase": "APPROACH",
+        "time_s": 9.783333333333418,
+        "action_wall_s": 8.127949584973976,
+        "measured_fingers_m": [
+          0.03999943286180496,
+          0.03999989852309227
+        ],
+        "commanded_fingers_m": [
+          0.04,
+          0.04
+        ],
+        "path_check": {
+          "samples": 2,
+          "unique_samples": 1,
+          "clearance_m": 0.031895877932457,
+          "palm_clearance_m": null,
+          "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+          "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+          "whole_arm_unknown_space_verified": false,
+          "carton_carton_contact_allowed": true,
+          "finger_shell_visibility_required": false,
+          "approach_corridor_unknown_space_checked": true,
+          "approach_corridor_applicable": true,
+          "empty_motion_unknown_space_verified": false,
+          "local_unknown_space_check_deferred": false,
+          "max_joint_sample_rad": 0.025,
+          "continuous_collision_proof": false,
+          "full_tcp_orientation_requested": true,
+          "requested_orientation_wxyz": [
+            0.019446743459579124,
+            0.17395624852791888,
+            -0.9842911448556254,
+            -0.023064906800431165
+          ],
+          "endpoint_orientation_error_rad": 0.00427784616044786,
+          "runtime_pose_edges_checked": 202
+        }
+      },
+      {
+        "phase": "CLOSE",
+        "time_s": 16.783333333333022,
+        "action_wall_s": 69.05504735093564,
+        "measured_fingers_m": [
+          0.03999963775277138,
+          0.039999932050704956
+        ],
+        "commanded_fingers_m": [
+          0.04,
+          0.04
+        ]
+      },
+      {
+        "phase": "PRELOAD",
+        "time_s": 18.11666666666628,
+        "action_wall_s": 80.44773164507933,
+        "measured_fingers_m": [
+          0.02801373042166233,
+          0.028053106740117073
+        ],
+        "commanded_fingers_m": [
+          0.02663661696350097,
+          0.02663661696350097
+        ],
+        "last_visual_hold": {
+          "time_s": 19.416666666666206,
+          "track_id": "visual_0001",
+          "height_gain_m": 9.536187795433637e-05,
+          "box_tcp_distance_m": 0.015420333648678041,
+          "visibility": "COMPLETE_TOP",
+          "failures": []
+        }
+      },
+      {
+        "phase": "LIFT",
+        "time_s": 19.416666666666206,
+        "action_wall_s": 91.63810321502388,
+        "measured_fingers_m": [
+          0.027931444346904755,
+          0.02804366685450077
+        ],
+        "commanded_fingers_m": [
+          0.02401373042166233,
+          0.02401373042166233
+        ],
+        "last_visual_hold": {
+          "status": "GEOMETRY_OBSERVED",
+          "time_s": 25.31666666666587,
+          "position_m": [
+            -0.19961259417424537,
+            -0.06030060727439113,
+            0.9622052266133091
+          ],
+          "orientation_wxyz": [
+            0.9846582202432058,
+            0.02141737059855073,
+            0.005195367065355838,
+            0.17309677554819772
+          ],
+          "rotation": [
+            [
+              0.9400210289117462,
+              -0.34065978367858357,
+              0.01764587735882624
+            ],
+            [
+              0.3411048680859205,
+              0.9391576050629225,
+              -0.04037897745811156
+            ],
+            [
+              -0.0028167661935066136,
+              0.04397618260532099,
+              0.9990286087954011
+            ]
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mask_refs": [
+            "scene_camera/740/component_1",
+            "scene_camera/740/component_2",
+            "left_wrist_camera/740/component_1"
+          ],
+          "identity_refs_rechecked_after_fit": [],
+          "surface_inlier_ratio": 1.0,
+          "plane_residual_m": 8.003161450445697e-05,
+          "uncertainty_m": 0.005649260113838907,
+          "observed_face_axes": [
+            1,
+            2
+          ],
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "complete_observed_extent",
+              "span_m": 0.09852880041432768,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/740/component_1",
+                "scene_camera/740/component_1"
+              ]
+            },
+            {
+              "axis": 1,
+              "source": "visible_signed_plane",
+              "sign": -1.0,
+              "points": 153
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.05463893193776503,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/740/component_1",
+                "scene_camera/740/component_1"
+              ]
+            },
+            {
+              "axis": 2,
+              "source": "visible_signed_plane",
+              "sign": 1.0,
+              "points": 57865
+            },
+            {
+              "axis": 2,
+              "source": "complete_observed_extent",
+              "span_m": 0.04002160623034001,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/740/component_1",
+                "scene_camera/740/component_1"
+              ]
+            }
+          ],
+          "translation_difference_from_hint_m": 1.4404900027847186e-05,
+          "orientation_difference_from_hint_deg": 0.0011346423698153957,
+          "geometric_pose_measured": true,
+          "semantic_pose_unique": false,
+          "grasp_constrained": false,
+          "reference_constrained": false,
+          "predicted_translation_axes": [],
+          "tape_direction": null,
+          "top_rectangle": null,
+          "visual_height_lower_bound_m": 0.9567276867219351,
+          "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes",
+          "correspondence_reference_time_s": 25.216666666665876,
+          "correspondence_reference_source": "last_independent_current_geometry",
+          "pose_hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.9846582202432057,
+                0.02141737059855076,
+                0.005195367065355394,
+                0.1730967755481977
+              ],
+              "evidence": "top stripe in scene_camera; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.17309677554819775,
+                -0.005195367065355603,
+                0.021417370598550978,
+                -0.984658220243206
+              ],
+              "evidence": "top stripe in scene_camera; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+            }
+          ],
+          "top_bottom_semantics": "UNRESOLVED",
+          "height_gain_m": 0.1796100517088982,
+          "height_gain_lower_bound_m": 0.1741325118175242,
+          "full_6d_pose_measured": true
+        },
+        "path_check": {
+          "samples": 2,
+          "unique_samples": 1,
+          "clearance_m": 0.04449343731121458,
+          "palm_clearance_m": 0.013017504651966473,
+          "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+          "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+          "whole_arm_unknown_space_verified": false,
+          "carton_carton_contact_allowed": true,
+          "finger_shell_visibility_required": false,
+          "approach_corridor_unknown_space_checked": false,
+          "approach_corridor_applicable": false,
+          "empty_motion_unknown_space_verified": false,
+          "local_unknown_space_check_deferred": false,
+          "max_joint_sample_rad": 0.025,
+          "continuous_collision_proof": false,
+          "full_tcp_orientation_requested": true,
+          "requested_orientation_wxyz": [
+            0.018101327923865675,
+            0.1735817837390168,
+            -0.9843419491841076,
+            -0.024751431429430853
+          ],
+          "endpoint_orientation_error_rad": 0.004643799345361925,
+          "runtime_pose_edges_checked": 169
+        }
+      },
+      {
+        "phase": "TRANSFER",
+        "time_s": 25.349999999999202,
+        "action_wall_s": 195.13169044000097,
+        "measured_fingers_m": [
+          0.027479082345962524,
+          0.02758096344769001
+        ],
+        "commanded_fingers_m": [
+          0.02401373042166233,
+          0.02401373042166233
+        ],
+        "last_visual_hold": {
+          "status": "GEOMETRY_OBSERVED",
+          "time_s": 32.049999999998825,
+          "position_m": [
+            -0.20079386224157647,
+            -0.4000937844051923,
+            0.9748428988212672
+          ],
+          "orientation_wxyz": [
+            0.9999968795545056,
+            -0.0019111043184392065,
+            0.0016087499368762082,
+            2.2026721692183267e-05
+          ],
+          "rotation": [
+            [
+              0.9999948228769283,
+              -5.0202283821237866e-05,
+              0.0032174056429936228
+            ],
+            [
+              3.790432801462584e-05,
+              0.9999926943902153,
+              0.003822267580858959
+            ],
+            [
+              -0.003217574024445411,
+              -0.003822125838910432,
+              0.9999875192078493
+            ]
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mask_refs": [
+            "scene_camera/1012/component_1",
+            "left_wrist_camera/1012/component_2"
+          ],
+          "identity_refs_rechecked_after_fit": [],
+          "surface_inlier_ratio": 1.0,
+          "plane_residual_m": 7.997981141704255e-05,
+          "uncertainty_m": 0.004805888426106587,
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "visible_signed_plane",
+              "sign": -1.0,
+              "points": 1378
+            },
+            {
+              "axis": 0,
+              "source": "complete_observed_extent",
+              "span_m": 0.09910868594147243,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/1012/component_2",
+                "scene_camera/1012/component_1"
+              ]
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.05427537443041841,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/1012/component_2",
+                "scene_camera/1012/component_1"
+              ]
+            },
+            {
+              "axis": 2,
+              "source": "visible_signed_plane",
+              "sign": 1.0,
+              "points": 58597
+            },
+            {
+              "axis": 2,
+              "source": "complete_observed_extent",
+              "span_m": 0.041708142393454994,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/1012/component_2",
+                "scene_camera/1012/component_1"
+              ]
+            }
+          ],
+          "translation_difference_from_hint_m": 4.152675664591525e-05,
+          "orientation_difference_from_hint_deg": 0.00034372634347209894,
+          "geometric_pose_measured": true,
+          "semantic_pose_unique": false,
+          "grasp_constrained": false,
+          "reference_constrained": false,
+          "predicted_translation_axes": [],
+          "tape_direction": null,
+          "top_rectangle": null,
+          "visual_height_lower_bound_m": 0.9707271995707586,
+          "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes",
+          "correspondence_reference_time_s": 31.949999999998827,
+          "correspondence_reference_source": "last_independent_current_geometry",
+          "pose_hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.9999968795545054,
+                -0.0019111043184392089,
+                0.0016087499368759861,
+                2.2026721692150206e-05
+              ],
+              "evidence": "top stripe in scene_camera; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                2.2026721692139825e-05,
+                -0.0016087499368762513,
+                -0.0019111043184395493,
+                -0.9999968795545057
+              ],
+              "evidence": "top stripe in scene_camera; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+            }
+          ],
+          "top_bottom_semantics": "UNRESOLVED",
+          "height_gain_m": 0.1922477239168563,
+          "height_gain_lower_bound_m": 0.1881320246663477,
+          "full_6d_pose_measured": true
+        },
+        "path_check": {
+          "samples": 2,
+          "unique_samples": 1,
+          "clearance_m": 0.03279302642063171,
+          "palm_clearance_m": 0.014286600760509006,
+          "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+          "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+          "whole_arm_unknown_space_verified": false,
+          "carton_carton_contact_allowed": true,
+          "finger_shell_visibility_required": false,
+          "approach_corridor_unknown_space_checked": false,
+          "approach_corridor_applicable": false,
+          "empty_motion_unknown_space_verified": false,
+          "local_unknown_space_check_deferred": false,
+          "max_joint_sample_rad": 0.025,
+          "continuous_collision_proof": false,
+          "full_tcp_orientation_requested": true,
+          "requested_orientation_wxyz": [
+            0.013051450386854395,
+            0.0009078522426983806,
+            -0.9999083801191954,
+            -0.0034737320725185344
+          ],
+          "endpoint_orientation_error_rad": 0.004752387483143057,
+          "runtime_pose_edges_checked": 192
+        }
+      },
+      {
+        "phase": "LOWER",
+        "time_s": 32.049999999998825,
+        "action_wall_s": 311.0799501161091,
+        "measured_fingers_m": [
+          0.027479831129312515,
+          0.02758597955107689
+        ],
+        "commanded_fingers_m": [
+          0.02401373042166233,
+          0.02401373042166233
+        ],
+        "last_visual_hold": {
+          "status": "GEOMETRY_OBSERVED",
+          "time_s": 38.94999999999843,
+          "position_m": [
+            -0.200185185522587,
+            -0.39935340310761896,
+            0.7950489284032495
+          ],
+          "orientation_wxyz": [
+            0.9999998020903449,
+            -0.000352013638835153,
+            0.0004970776274746402,
+            0.0001575420633785804
+          ],
+          "rotation": [
+            [
+              0.9999994561886612,
+              -0.0003154340206078276,
+              0.000994044144286351
+            ],
+            [
+              0.000314734108190104,
+              0.9999997025337927,
+              0.0007041837596066935
+            ],
+            [
+              -0.000994265972106349,
+              -0.0007038705170663268,
+              0.9999992580004606
+            ]
+          ],
+          "size_m": [
+            0.1,
+            0.055,
+            0.045
+          ],
+          "mask_refs": [
+            "scene_camera/1292/component_1",
+            "left_wrist_camera/1292/component_2"
+          ],
+          "identity_refs_rechecked_after_fit": [],
+          "surface_inlier_ratio": 1.0,
+          "plane_residual_m": 8.000165569870171e-05,
+          "uncertainty_m": 0.0047023744307864235,
+          "observed_face_axes": [
+            0,
+            2
+          ],
+          "coordinate_constraints": [
+            {
+              "axis": 0,
+              "source": "visible_signed_plane",
+              "sign": -1.0,
+              "points": 3804
+            },
+            {
+              "axis": 0,
+              "source": "complete_observed_extent",
+              "span_m": 0.098806852732154,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/1292/component_2",
+                "scene_camera/1292/component_1"
+              ]
+            },
+            {
+              "axis": 1,
+              "source": "complete_observed_extent",
+              "span_m": 0.05427144009003354,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/1292/component_2",
+                "scene_camera/1292/component_1"
+              ]
+            },
+            {
+              "axis": 2,
+              "source": "visible_signed_plane",
+              "sign": 1.0,
+              "points": 58046
+            },
+            {
+              "axis": 2,
+              "source": "complete_observed_extent",
+              "span_m": 0.04191525776122196,
+              "aggregation": "union of per-view validated planar quantiles",
+              "mask_refs": [
+                "left_wrist_camera/1292/component_2",
+                "scene_camera/1292/component_1"
+              ]
+            }
+          ],
+          "translation_difference_from_hint_m": 1.9080508114752104e-05,
+          "orientation_difference_from_hint_deg": 0.002124009696691704,
+          "geometric_pose_measured": true,
+          "semantic_pose_unique": false,
+          "grasp_constrained": false,
+          "reference_constrained": false,
+          "predicted_translation_axes": [],
+          "tape_direction": null,
+          "top_rectangle": null,
+          "visual_height_lower_bound_m": 0.7911104817510322,
+          "evidence": "current RGB-D measured planes and extents; known dimensions; visual hypothesis only labels axes",
+          "correspondence_reference_time_s": 38.84999999999844,
+          "correspondence_reference_source": "last_independent_current_geometry",
+          "pose_hypotheses": [
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.9999998020903449,
+                -0.0003520136388351488,
+                0.0004970776274746402,
+                0.00015754206337857836
+              ],
+              "evidence": "top stripe in scene_camera; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+            },
+            {
+              "label": "UPRIGHT",
+              "orientation_wxyz": [
+                0.0001575420633785553,
+                -0.0004970776274746381,
+                -0.0003520136388350803,
+                -0.9999998020903449
+              ],
+              "evidence": "top stripe in scene_camera; top stripe in left_wrist_camera; 180-degree axis symmetry; propagated by current RGB-D measured geometric rotation"
+            }
+          ],
+          "top_bottom_semantics": "UNRESOLVED",
+          "height_gain_m": 0.012453753498838593,
+          "height_gain_lower_bound_m": 0.008515306846621273,
+          "full_6d_pose_measured": true
+        },
+        "path_check": {
+          "samples": 2,
+          "unique_samples": 1,
+          "clearance_m": 0.03248625074885775,
+          "palm_clearance_m": 0.014378379724688396,
+          "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+          "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+          "whole_arm_unknown_space_verified": false,
+          "carton_carton_contact_allowed": true,
+          "finger_shell_visibility_required": false,
+          "approach_corridor_unknown_space_checked": false,
+          "approach_corridor_applicable": false,
+          "empty_motion_unknown_space_verified": false,
+          "local_unknown_space_check_deferred": false,
+          "max_joint_sample_rad": 0.025,
+          "continuous_collision_proof": false,
+          "full_tcp_orientation_requested": true,
+          "requested_orientation_wxyz": [
+            0.013051450386854395,
+            0.0009078522426983806,
+            -0.9999083801191954,
+            -0.0034737320725185344
+          ],
+          "endpoint_orientation_error_rad": 0.0011876835299126918,
+          "runtime_pose_edges_checked": 200
+        }
+      },
+      {
+        "phase": "OPEN",
+        "time_s": 39.016666666665095,
+        "action_wall_s": 433.9481965629384,
+        "measured_fingers_m": [
+          0.027485957369208336,
+          0.0275859534740448
+        ],
+        "commanded_fingers_m": [
+          0.02401373042166233,
+          0.02401373042166233
+        ]
+      },
+      {
+        "phase": "RETREAT",
+        "time_s": 40.31666666666502,
+        "action_wall_s": 445.5262223549653,
+        "measured_fingers_m": [
+          0.03999945521354675,
+          0.03999992087483406
+        ],
+        "commanded_fingers_m": [
+          0.04,
+          0.04
+        ],
+        "path_check": {
+          "samples": 2,
+          "unique_samples": 1,
+          "clearance_m": 0.03276864440136085,
+          "palm_clearance_m": null,
+          "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+          "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+          "whole_arm_unknown_space_verified": false,
+          "carton_carton_contact_allowed": true,
+          "finger_shell_visibility_required": false,
+          "approach_corridor_unknown_space_checked": false,
+          "approach_corridor_applicable": false,
+          "empty_motion_unknown_space_verified": false,
+          "local_unknown_space_check_deferred": false,
+          "max_joint_sample_rad": 0.025,
+          "continuous_collision_proof": false,
+          "full_tcp_orientation_requested": true,
+          "requested_orientation_wxyz": [
+            0.013051450386854395,
+            0.0009078522426983806,
+            -0.9999083801191954,
+            -0.0034737320725185344
+          ],
+          "endpoint_orientation_error_rad": 0.003229239786081001,
+          "runtime_pose_edges_checked": 171
+        }
+      },
+      {
+        "phase": "HOME",
+        "time_s": 46.31666666666468,
+        "action_wall_s": 456.45159486611374,
+        "measured_fingers_m": [
+          0.039999742060899734,
+          0.039999984204769135
+        ],
+        "commanded_fingers_m": [
+          0.04,
+          0.04
+        ]
+      },
+      {
+        "phase": "VERIFY",
+        "time_s": 50.31666666666445,
+        "action_wall_s": 461.8687755649444,
+        "measured_fingers_m": [
+          0.03999994322657585,
+          0.03999994695186615
+        ],
+        "commanded_fingers_m": [
+          0.04,
+          0.04
+        ]
+      },
+      {
+        "phase": "DONE",
+        "time_s": 51.29999999999773,
+        "action_wall_s": 468.73907707305625,
+        "measured_fingers_m": [
+          0.03999994322657585,
+          0.03999994695186615
+        ],
+        "commanded_fingers_m": [
+          0.04,
+          0.04
+        ]
+      }
+    ],
+    "max_visual_lift_m": 0.19274015843427106,
+    "release_geometry": {
+      "expected_lowest_corner_m": 0.7724834525821773,
+      "observed_supported_body": true,
+      "drop_bound_m": 0.015483452582177312,
+      "source": "current supported visual body and image-time FK; known fixed support"
+    },
+    "released_geometry_checks": [
+      {
+        "position_m": [
+          -0.1997903036265131,
+          -0.3990150053613564,
+          0.7824999391734915
+        ],
+        "axis_yaw_rad": 0.002124673717842698,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_face",
+            "sign": -1.0,
+            "points": 3433
+          },
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.10015969871722369
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.054753838718509584
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1352/component_1",
+          "left_wrist_camera/1352/component_1"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 40.31666666666502,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 0.998777944828999,
+        "side_points": 3583,
+        "plane_residual_m": 0.00023332601317904662,
+        "surface_tilt_deg": 0.06657605172769507,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.012556298292249468,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      },
+      {
+        "position_m": [
+          -0.1997720491633768,
+          -0.39901653667654935,
+          0.782499920455875
+        ],
+        "axis_yaw_rad": 0.0019116510746318765,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_face",
+            "sign": -1.0,
+            "points": 3383
+          },
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.10009251008582182
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.054755565100886916
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1356/component_1",
+          "left_wrist_camera/1356/component_1"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 41.316666666664965,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 0.9991755184998931,
+        "side_points": 3499,
+        "plane_residual_m": 0.00022163697122292155,
+        "surface_tilt_deg": 0.059864136782025415,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.012556317009865925,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      },
+      {
+        "position_m": [
+          -0.19975150382976423,
+          -0.39901976599654027,
+          0.7824999080523543
+        ],
+        "axis_yaw_rad": 0.0014490934384246666,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_face",
+            "sign": -1.0,
+            "points": 1611
+          },
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.10005490073947806
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05474273540573649
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1360/component_1",
+          "left_wrist_camera/1360/component_3"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 42.31666666666491,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 1.000857029408278,
+        "side_points": 1762,
+        "plane_residual_m": 0.0002072849943815116,
+        "surface_tilt_deg": 0.0411793724923845,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.012556329413386691,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      },
+      {
+        "position_m": [
+          -0.19975941567906244,
+          -0.399008662266779,
+          0.7824997443390274
+        ],
+        "axis_yaw_rad": 0.0009457091271571369,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_face",
+            "sign": -1.0,
+            "points": 63
+          },
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.1000872733326921
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05474098715723469
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1364/component_1",
+          "left_wrist_camera/1364/component_1"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 43.31666666666485,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 1.0002003033854072,
+        "side_points": 780,
+        "plane_residual_m": 0.0001549080427232558,
+        "surface_tilt_deg": 0.020955061119735708,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.012556493126713586,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      },
+      {
+        "position_m": [
+          -0.1997107166622709,
+          -0.39901487026736643,
+          0.7824999473165628
+        ],
+        "axis_yaw_rad": 0.001068051616092786,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_face",
+            "sign": -1.0,
+            "points": 34
+          },
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.10008276794146342
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.054718544399152136
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1368/component_1",
+          "left_wrist_camera/1368/component_1"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 44.316666666664794,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 0.9985259357228404,
+        "side_points": 436,
+        "plane_residual_m": 0.00010057057925583784,
+        "surface_tilt_deg": 0.0031201534912248742,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.01255629014917814,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      },
+      {
+        "position_m": [
+          -0.19962760617786257,
+          -0.39898463876185686,
+          0.7824999102016815
+        ],
+        "axis_yaw_rad": 0.0013577978628856744,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "visible_signed_face",
+            "sign": -1.0,
+            "points": 35
+          },
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.10007666769050633
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.05473217085097193
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1372/component_1",
+          "left_wrist_camera/1372/component_1"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 45.31666666666474,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 0.9991686037028402,
+        "side_points": 338,
+        "plane_residual_m": 0.00013537248275326957,
+        "surface_tilt_deg": 0.0050424480882242315,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.01255632726405942,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      },
+      {
+        "position_m": [
+          -0.19973159294489995,
+          -0.3989802901604611,
+          0.782499817295737
+        ],
+        "axis_yaw_rad": 0.0014540192090760678,
+        "uncertainty_m": 0.003,
+        "coordinate_constraints": [
+          {
+            "axis": 0,
+            "source": "complete_observed_extent",
+            "span_m": 0.10006380195273665
+          },
+          {
+            "axis": 1,
+            "source": "complete_observed_extent",
+            "span_m": 0.054729984274210774
+          }
+        ],
+        "mask_refs": [
+          "scene_camera/1376/component_1",
+          "left_wrist_camera/1376/component_1"
+        ],
+        "top_bottom_semantics": "UNKNOWN",
+        "time_s": 46.31666666666468,
+        "surface_inlier_ratio": 1.0,
+        "top_coverage": 0.9988443940143891,
+        "side_points": 280,
+        "plane_residual_m": 0.00012232059493116041,
+        "surface_tilt_deg": 0.012667207971555785,
+        "post_release_drop_bound_m": 0.015483452582177312,
+        "observed_downward_shift_m": 0.012556420170003912,
+        "source": "current RGB-D planes/extents + known size + validated pre-release orientation hypothesis"
+      }
+    ],
+    "visual_verification": [
+      {
+        "time_s": 50.699999999997765,
+        "track_id": "visual_0001",
+        "position_m": [
+          -0.19966867566108704,
+          -0.39884087443351746,
+          0.782499963949891
+        ],
+        "target_xy_m": [
+          -0.2,
+          -0.4
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "x_error_m": 0.00033132433891297497,
+        "y_error_m": 0.0011591255664825661,
+        "axis_yaw_error_deg": 0.17038224289338733,
+        "z_error_m": 3.6050109009089226e-08,
+        "visual_speed_m_s": 0.00020645456497143534,
+        "arms_home_and_open": true
+      },
+      {
+        "time_s": 50.89999999999775,
+        "track_id": "visual_0001",
+        "position_m": [
+          -0.19966842234134674,
+          -0.3988651633262634,
+          0.7824999937567831
+        ],
+        "target_xy_m": [
+          -0.2,
+          -0.4
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "x_error_m": 0.0003315776586532704,
+        "y_error_m": 0.0011348366737365945,
+        "axis_yaw_error_deg": 0.1700750220649897,
+        "z_error_m": 6.243216832402254e-09,
+        "visual_speed_m_s": 0.0002151771533873503,
+        "arms_home_and_open": true
+      },
+      {
+        "time_s": 51.09999999999774,
+        "track_id": "visual_0001",
+        "position_m": [
+          -0.19966821372509003,
+          -0.39886897802352905,
+          0.782499963949891
+        ],
+        "target_xy_m": [
+          -0.2,
+          -0.4
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "x_error_m": 0.00033178627490998425,
+        "y_error_m": 0.0011310219764709695,
+        "axis_yaw_error_deg": 0.1700061895945825,
+        "z_error_m": 3.6050109009089226e-08,
+        "visual_speed_m_s": 0.00017017152179959523,
+        "arms_home_and_open": true
+      },
+      {
+        "time_s": 51.29999999999773,
+        "track_id": "visual_0001",
+        "position_m": [
+          -0.19966807961463928,
+          -0.39885252714157104,
+          0.782499963949891
+        ],
+        "target_xy_m": [
+          -0.2,
+          -0.4
+        ],
+        "size_m": [
+          0.1,
+          0.055,
+          0.045
+        ],
+        "x_error_m": 0.0003319203853607289,
+        "y_error_m": 0.0011474728584289773,
+        "axis_yaw_error_deg": 0.17014193324745092,
+        "z_error_m": 3.6050109009089226e-08,
+        "visual_speed_m_s": 5.7521570448912927e-05,
+        "arms_home_and_open": true
+      }
+    ],
+    "model_requests": [
+      {
+        "request_id": "0a8c5efeff0546e1b93cbf7b5eee72b0",
+        "observation_time_s": 3.59999999999999,
+        "response_wall_time_s": 2.2920584499370307,
+        "proxy_round_trip_s": 1.0284537458792329,
+        "fresh_observation_time_s": 3.824999999999989,
+        "simulation_advanced_s": 0.2249999999999992,
+        "inference_basis_yaw_rad": 0.0,
+        "inference_basis_pitch_rad": 0.0,
+        "raw_grasps": 256,
+        "arm_candidates": 512,
+        "revalidation_observations": [
+          {
+            "time_s": 3.824999999999989,
+            "target_posture": "UPRIGHT",
+            "supported_and_revalidated": 0
+          }
+        ],
+        "additional_passive_hold_s": 0.0,
+        "supported_and_revalidated": 0
+      },
+      {
+        "request_id": "d3aa1cea3bd94d00807ab11e147d8213",
+        "observation_time_s": 3.9249999999999887,
+        "response_wall_time_s": 1.6239857580512762,
+        "proxy_round_trip_s": 0.24619898782111704,
+        "fresh_observation_time_s": 4.049999999999991,
+        "simulation_advanced_s": 0.12500000000000222,
+        "inference_basis_yaw_rad": 0.7853981633974483,
+        "inference_basis_pitch_rad": 0.0,
+        "raw_grasps": 256,
+        "arm_candidates": 512,
+        "revalidation_observations": [
+          {
+            "time_s": 4.049999999999991,
+            "target_posture": "UPRIGHT",
+            "supported_and_revalidated": 0
+          }
+        ],
+        "additional_passive_hold_s": 0.0,
+        "supported_and_revalidated": 0
+      },
+      {
+        "request_id": "75621b4d29584049a8515f97ee17321d",
+        "observation_time_s": 4.149999999999996,
+        "response_wall_time_s": 1.6942441728897393,
+        "proxy_round_trip_s": 0.32461306592449546,
+        "fresh_observation_time_s": 4.275000000000002,
+        "simulation_advanced_s": 0.12500000000000622,
+        "inference_basis_yaw_rad": -0.7853981633974483,
+        "inference_basis_pitch_rad": 0.0,
+        "raw_grasps": 256,
+        "arm_candidates": 512,
+        "revalidation_observations": [
+          {
+            "time_s": 4.275000000000002,
+            "target_posture": "UPRIGHT",
+            "supported_and_revalidated": 2
+          }
+        ],
+        "additional_passive_hold_s": 0.0,
+        "supported_and_revalidated": 2
+      }
+    ]
+  },
+  "performance": {
+    "scope": "diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added",
+    "wall_s": 505.5133419940248,
+    "categories": {
+      "validation_payload": {
+        "calls": 2187,
+        "failed_calls": 0,
+        "inclusive_s": 140.28848672797903,
+        "exclusive_s": 134.45404195645824,
+        "max_s": 0.82794209709391
+      },
+      "scene_estimation": {
+        "calls": 361,
+        "failed_calls": 0,
+        "inclusive_s": 103.24147439585067,
+        "exclusive_s": 102.82389990682714,
+        "max_s": 0.3983403497841209
+      },
+      "camera_render": {
+        "calls": 1556,
+        "failed_calls": 0,
+        "inclusive_s": 99.05431542894803,
+        "exclusive_s": 98.26044514635578,
+        "max_s": 0.15030166902579367
+      },
+      "depth_fixed_filter": {
+        "calls": 297,
+        "failed_calls": 0,
+        "inclusive_s": 64.38387211435474,
+        "exclusive_s": 64.38387211435474,
+        "max_s": 0.2644677029456943
+      },
+      "physics_engine": {
+        "calls": 6866,
+        "failed_calls": 0,
+        "inclusive_s": 32.897955710301176,
+        "exclusive_s": 32.897955710301176,
+        "max_s": 0.01477382006123662
+      },
+      "held_pose_estimation": {
+        "calls": 200,
+        "failed_calls": 0,
+        "inclusive_s": 17.324575033737347,
+        "exclusive_s": 17.324575033737347,
+        "max_s": 0.11586600285954773
+      },
+      "sensor_read": {
+        "calls": 387,
+        "failed_calls": 0,
+        "inclusive_s": 109.60204425500706,
+        "exclusive_s": 10.140281207859516,
+        "max_s": 0.8008836819790304
+      },
+      "free_space_mapping": {
+        "calls": 2313,
+        "failed_calls": 0,
+        "inclusive_s": 7.016595798544586,
+        "exclusive_s": 7.016595798544586,
+        "max_s": 0.032602467108517885
+      },
+      "joint_command": {
+        "calls": 11808,
+        "failed_calls": 0,
+        "inclusive_s": 5.71382193104364,
+        "exclusive_s": 5.71382193104364,
+        "max_s": 0.013320402009412646
+      },
+      "depth_obstacle_mapping": {
+        "calls": 297,
+        "failed_calls": 0,
+        "inclusive_s": 68.38402145262808,
+        "exclusive_s": 4.0001493382733315,
+        "max_s": 0.27677231188863516
+      },
+      "simulation_app_update": {
+        "calls": 57,
+        "failed_calls": 0,
+        "inclusive_s": 3.9080309958662838,
+        "exclusive_s": 3.9080309958662838,
+        "max_s": 0.14658869709819555
+      },
+      "collision_math": {
+        "calls": 3883,
+        "failed_calls": 0,
+        "inclusive_s": 2.4087098329328,
+        "exclusive_s": 2.4087098329328,
+        "max_s": 0.004198475042358041
+      },
+      "encoder_acquisition": {
+        "calls": 2897,
+        "failed_calls": 0,
+        "inclusive_s": 1.4782565087080002,
+        "exclusive_s": 1.4782565087080002,
+        "max_s": 0.0014057019725441933
+      },
+      "json_encode": {
+        "calls": 5,
+        "failed_calls": 0,
+        "inclusive_s": 1.4494996089488268,
+        "exclusive_s": 1.4494996089488268,
+        "max_s": 0.7246925481595099
+      },
+      "validation_context_query": {
+        "calls": 1014,
+        "failed_calls": 0,
+        "inclusive_s": 2.0500209098681808,
+        "exclusive_s": 1.3693897284101695,
+        "max_s": 0.005064644850790501
+      },
+      "sphere_compute": {
+        "calls": 5392,
+        "failed_calls": 0,
+        "inclusive_s": 1.3941558811347932,
+        "exclusive_s": 1.0008432262111455,
+        "max_s": 0.0016818998847156763
+      },
+      "model_request": {
+        "calls": 3,
+        "failed_calls": 0,
+        "inclusive_s": 1.7924609151668847,
+        "exclusive_s": 0.9709873062092811,
+        "max_s": 1.061654331162572
+      },
+      "physics_step": {
+        "calls": 6866,
+        "failed_calls": 0,
+        "inclusive_s": 37.517797694541514,
+        "exclusive_s": 0.7118109883740544,
+        "max_s": 0.1477637500502169
+      },
+      "validation_observed_obstacles": {
+        "calls": 3883,
+        "failed_calls": 0,
+        "inclusive_s": 65.73141048685648,
+        "exclusive_s": 0.5134870535694063,
+        "max_s": 0.2777200110722333
+      },
+      "path_stage_unspecified": {
+        "calls": 974,
+        "failed_calls": 0,
+        "inclusive_s": 210.18612715927884,
+        "exclusive_s": 0.3960552019998431,
+        "max_s": 3.4788821968249977
+      },
+      "chain_fk_compute": {
+        "calls": 3098,
+        "failed_calls": 0,
+        "inclusive_s": 0.3880305145867169,
+        "exclusive_s": 0.3880305145867169,
+        "max_s": 0.00029530981555581093
+      },
+      "fk_query": {
+        "calls": 29546,
+        "failed_calls": 0,
+        "inclusive_s": 0.6231573226395994,
+        "exclusive_s": 0.38645542319864035,
+        "max_s": 0.0010993441101163626
+      },
+      "released_pose_estimation": {
+        "calls": 7,
+        "failed_calls": 0,
+        "inclusive_s": 0.3643122960347682,
+        "exclusive_s": 0.3643122960347682,
+        "max_s": 0.09304536390118301
+      },
+      "ik_solve": {
+        "calls": 2131,
+        "failed_calls": 0,
+        "inclusive_s": 0.34304805961437523,
+        "exclusive_s": 0.34304805961437523,
+        "max_s": 0.0005559108685702085
+      },
+      "chain_geometry_query": {
+        "calls": 34938,
+        "failed_calls": 0,
+        "inclusive_s": 0.628873138455674,
+        "exclusive_s": 0.24084262386895716,
+        "max_s": 0.0003507900983095169
+      },
+      "sphere_query": {
+        "calls": 5607,
+        "failed_calls": 0,
+        "inclusive_s": 1.6247074441052973,
+        "exclusive_s": 0.23055156297050416,
+        "max_s": 0.0017122600693255663
+      },
+      "workspace_setup": {
+        "calls": 362,
+        "failed_calls": 0,
+        "inclusive_s": 0.4850196468178183,
+        "exclusive_s": 0.19271354842931032,
+        "max_s": 0.004544825060293078
+      },
+      "validation_context_prepare": {
+        "calls": 946,
+        "failed_calls": 0,
+        "inclusive_s": 0.453504572622478,
+        "exclusive_s": 0.1507383887656033,
+        "max_s": 0.001081801950931549
+      },
+      "cartesian_ik": {
+        "calls": 10,
+        "failed_calls": 0,
+        "inclusive_s": 0.46185877872630954,
+        "exclusive_s": 0.11936662998050451,
+        "max_s": 0.09218921512365341
+      },
+      "validation_target_body": {
+        "calls": 1636,
+        "failed_calls": 0,
+        "inclusive_s": 0.10039248061366379,
+        "exclusive_s": 0.10039248061366379,
+        "max_s": 0.00434447405859828
+      },
+      "joint_execution": {
+        "calls": 2,
+        "failed_calls": 0,
+        "inclusive_s": 12.422452948056161,
+        "exclusive_s": 0.09420489822514355,
+        "max_s": 7.005655227927491
+      },
+      "encoder_read": {
+        "calls": 2577,
+        "failed_calls": 0,
+        "inclusive_s": 0.5219777191523463,
+        "exclusive_s": 0.05163261340931058,
+        "max_s": 0.001496748998761177
+      },
+      "path_validation": {
+        "calls": 1014,
+        "failed_calls": 0,
+        "inclusive_s": 212.31920284917578,
+        "exclusive_s": 0.04545305296778679,
+        "max_s": 3.4789534299634397
+      },
+      "path_stage_transfer": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.5106102740392089,
+        "exclusive_s": 0.038959198631346226,
+        "max_s": 0.5106102740392089
+      },
+      "slot_query": {
+        "calls": 93,
+        "failed_calls": 0,
+        "inclusive_s": 4.490904941456392,
+        "exclusive_s": 0.03459456958808005,
+        "max_s": 0.22698393114842474
+      },
+      "path_stage_joint_path": {
+        "calls": 4,
+        "failed_calls": 0,
+        "inclusive_s": 0.5880193400662392,
+        "exclusive_s": 0.030782465124502778,
+        "max_s": 0.3162082079797983
+      },
+      "slot_query_compute": {
+        "calls": 93,
+        "failed_calls": 0,
+        "inclusive_s": 4.456310371868312,
+        "exclusive_s": 0.03059067716822028,
+        "max_s": 0.2262870129197836
+      },
+      "path_stage_lift": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.2840455200057477,
+        "exclusive_s": 0.02147234953008592,
+        "max_s": 0.2840455200057477
+      },
+      "path_stage_lower": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.2693318130914122,
+        "exclusive_s": 0.020606579491868615,
+        "max_s": 0.2693318130914122
+      },
+      "path_stage_retreat": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.16417685896158218,
+        "exclusive_s": 0.02042783098295331,
+        "max_s": 0.16417685896158218
+      },
+      "path_stage_approach": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.22738835006020963,
+        "exclusive_s": 0.019935821881517768,
+        "max_s": 0.22738835006020963
+      },
+      "asset_calibration": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.013227792922407389,
+        "exclusive_s": 0.011745314113795757,
+        "max_s": 0.013227792922407389
+      },
+      "json_file_replace": {
+        "calls": 5,
+        "failed_calls": 0,
+        "inclusive_s": 0.011134822154417634,
+        "exclusive_s": 0.011134822154417634,
+        "max_s": 0.005064551951363683
+      },
+      "conveyor_depth_observation": {
+        "calls": 26,
+        "failed_calls": 0,
+        "inclusive_s": 10.975737912813202,
+        "exclusive_s": 0.0055028453934937716,
+        "max_s": 0.4719243219587952
+      },
+      "path_stage_open": {
+        "calls": 15,
+        "failed_calls": 0,
+        "inclusive_s": 0.021398193668574095,
+        "exclusive_s": 0.002253094222396612,
+        "max_s": 0.0031275299843400717
+      },
+      "path_stage_close": {
+        "calls": 15,
+        "failed_calls": 0,
+        "inclusive_s": 0.018558773212134838,
+        "exclusive_s": 0.002196867484599352,
+        "max_s": 0.0015410610940307379
+      },
+      "candidate_feasibility": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 1.919927560025826,
+        "exclusive_s": 0.00185556267388165,
+        "max_s": 1.919927560025826
+      },
+      "source_pose_resolution": {
+        "calls": 4,
+        "failed_calls": 0,
+        "inclusive_s": 0.0011774171143770218,
+        "exclusive_s": 0.0011774171143770218,
+        "max_s": 0.0006200179923325777
+      },
+      "joint_planning": {
+        "calls": 4,
+        "failed_calls": 0,
+        "inclusive_s": 0.5890059806406498,
+        "exclusive_s": 0.0008042126428335905,
+        "max_s": 0.31639986694790423
+      },
+      "path_stage_ik_endpoint": {
+        "calls": 1,
+        "failed_calls": 0,
+        "inclusive_s": 0.004093513824045658,
+        "exclusive_s": 0.00019608880393207073,
+        "max_s": 0.004093513824045658
+      },
+      "json_write": {
+        "calls": 5,
+        "failed_calls": 0,
+        "inclusive_s": 1.4608032370451838,
+        "exclusive_s": 0.00016880594193935394,
+        "max_s": 0.7298142130021006
+      },
+      "hold": {
+        "calls": 41,
+        "failed_calls": 0,
+        "inclusive_s": 27.26894596591592,
+        "exclusive_s": -0.7548885568976402,
+        "max_s": 2.4703220590017736
+      }
+    }
+  },
+  "source_manifest": {
+    "tests/test_holding_monitor.py": "d9659945885e81c2e3dfaef3a4de3953f85bfe6af28ebe31bdbfdb892d981320",
+    "workstation/skills/holding_monitor.py": "51da9a5709d3b04dcb2f426547bd713bc560a33ff7dafb6e98ee803e6d83b60d",
+    "AGENTS.md": "5eb02ea76e6f5224206b2376aa868b46f2b489fa3ddf0d51e74bc7c8e85aa18c",
+    "README.md": "5077a0d6c984c7aed51e6ad5a025fa4a6025ed99020b08139f395cf7dfec660c",
+    "config/scene.json": "6196d953bb3d538182c4d80b97815ebad36fda0fe9ed6651fc2238632ea11788",
+    "config/sorting.kit": "7912ae9caca0206182d066f25354e73cc62e464e0392997de398371d179d1050",
+    "tests/__init__.py": "adbf75e1dad63725d7f139d77a64c2abfca19464c30187170358650c282474c2",
+    "tests/requirements-cpu.txt": "cb6b2b7352f161641ebd71654ad8acfafc1a02d9aa69f15e1496f6e3579a4613",
+    "tests/test_active_reobserve.py": "4d84d09ca50cfb09390a013fd0270212e22f5d5e928cca2077d98d166fb5f36e",
+    "tests/test_adaptive_observer.py": "107ca67f030d2f26d59d100797f3b7add20aab5416cc274908d649bd1b7e9b64",
+    "tests/test_approach_reobserve.py": "42c5cf27a9477ad33104c2218a134c016f8a6b6e733c6b3b4c3a7b92ad309f34",
+    "tests/test_arm_observation_checks.py": "e34d0e7789506e74c8fde4d8cd19d8b4733d68057694352ad23a7db1cd744379",
+    "tests/test_camera_render_tick.py": "47b0838063f65169847520831368e6813a79d0dd61f3008266b130f9ca2b54c0",
+    "tests/test_camera_system.py": "14efe75fa29a297259568a2c3ccf239f7f7ab310755c882dec3f0159ab0da5bf",
+    "tests/test_camera_viewpoint.py": "33efef3d3d7c77194c700c1dbf740da583cd0613ba68d73042e756230df9545c",
+    "tests/test_carton_contact_policy.py": "6fc1a12531ca982001c28c0b2b1062024ef8b3125ac2c37dfcf5c1290cbd1520",
+    "tests/test_centered_grasp.py": "6e318129582d4c0f522a8ec28b4c1a95634e261509980e1fb3edf64ab9190781",
+    "tests/test_chain_validation.py": "8b6a7d55439ec6da2221ac58e203c8539dcc7fc928cd1e18804d29d051626b5e",
+    "tests/test_collision_vectorization.py": "f5b5158545e87326897fa7f9bcb4b8f9441d5caa3a1a87dd3cfca541fffcea0c",
+    "tests/test_conveyor_slot_reservations.py": "a767b63c55b0f942ad189b139c82b9823a91a2261da5a568013bf1609a9b1b3f",
+    "tests/test_cuboid_pose.py": "9c04d2d713bfd37881bb9bc0743dcc7296109c7e286b84cafb515c68a2ccebd9",
+    "tests/test_cumotion_adapter.py": "c2d7c0b0602cd3511ac8d947df35edb9f3af46ae1ff39110148cd75f18e39317",
+    "tests/test_current_fragments.py": "9f0f359ae9227dd5ba9cae889fa1ba84d41fd2033358bbf4a9e935d52a7ea5ad",
+    "tests/test_cycle_performance.py": "cbfd783beed7611d97f0fe7f1099fad34dd16a5096b45804b69512ce70fbf094",
+    "tests/test_depth_error_audit.py": "b74f9991aff921a54d0582ee4c0589550069d17cec4dc41a8691973c994ca031",
+    "tests/test_display_refresh.py": "3770ccb43854bf9b2df259c19930c3643f40d45543be74cb6245ddaa5dfda331",
+    "tests/test_execution_reuse.py": "446532a5f5e988f21dcd919cc1ff3c846a82cb4818350357ec888291a7db8242",
+    "tests/test_fixed_surface_broadphase.py": "e49c6ac12f95a2c5ca4cf01f46b3a9d35875585aadc6bba0522fcf364a96e328",
+    "tests/test_frame_point_reuse.py": "62b352e00018383af59bb93ef8ed1b37d85493b8517f75164beace5e91d80980",
+    "tests/test_gap_reobserve.py": "8e65458cde9ac9996f337ba3106007bef5dc8c1d30138806c57526b85d9aa1ff",
+    "tests/test_grasp_constrained_carry.py": "bffcaa3f53edaa73b8c75b585bd72aa3f784b165f15eacc9c5d611a3f6cd91c5",
+    "tests/test_graspgen_calibration.py": "89dee3de06e348fa4907e7672319affaaf1dbafe825fa7bdb843e75e483991a0",
+    "tests/test_graspgen_diagnostic.py": "3dcb9472f61c54381594c1b8d4b9eb1e5620446072680380459ae3d033c23220",
+    "tests/test_graspgen_execution.py": "8427d7b029e2be64438380cae1eb75d78a2681b8346c597075d61126a3433665",
+    "tests/test_graspgen_interface.py": "01f360e48fb71493c81d67e42ff30faa0ced03966ebb360a1a28df1fb6642597",
+    "tests/test_graspgen_pair.py": "ceb57e00b8135246a927569bb32c20bfa1ee4f59790e7cf0ac9845060ebd2b24",
+    "tests/test_graspgen_planning.py": "20bb67a70a54fcdf1144ea3b3fa12c5b78d4dcb6b0a788ca2b2afb5f054f0fea",
+    "tests/test_guided_reobserve.py": "40d40cb326d33a4c5da1e698135b86fd7ad0932babc253d15281b0f89dd3338a",
+    "tests/test_handover.py": "798253981d1687e17f1096761a4e40fe18921ed8b0587d24ea960aa47aa41b65",
+    "tests/test_held_surface.py": "6361ab01d9293107fe7bcc110a9573aae6a68c15932821f34b43877def5bbbe5",
+    "tests/test_holding_reference.py": "9c3a8994169dad96d4ca7e83e9ed820abbfb8e9590a5d12de1829ffefecdcdf6",
+    "tests/test_identity_capture.py": "db4276932cde3cd5cd9bfeb2afe46ed44fcef1db94861816ab9d3414981fbed7",
+    "tests/test_interactive_failure.py": "82029d10bdab1d4e264c07e76a205aef90bb7b074f7fb6f465f5a4d8bf69f3b8",
+    "tests/test_joint_pair_selection.py": "8011e6cb55a115953d5d682526f21c284055f84cb5957ec660fb8fb8584956cf",
+    "tests/test_joint_rrt.py": "690692c15fb88014677a9f72ded97b91f021ccb52090375bfd16ceb89b2d751e",
+    "tests/test_mask_refinement.py": "a909d5042b465619e7507d8d452596c8df4e7883ed8b2ca4303d4a2e2e252f39",
+    "tests/test_measured_fragment_identity.py": "1285fcf8b7342ce532bd78e9daefff1f61e9f84125c3c1499cb1d833f29764f9",
+    "tests/test_merged_view_deduplication.py": "d2727ebad26880debb66a91f4edf2af309c5ea9ddd82a6f26b86c1ca941515e8",
+    "tests/test_mixed_cartons.py": "a18dcb3bdea57f5603026c0256f19d4416e698a98193fc7aa74bcf901670ed4f",
+    "tests/test_model_segmentation.py": "f8b32278e6e607e91c147c6325667e4ae98c759959a22bf3e35d1313f3f56fa4",
+    "tests/test_model_training.py": "83b4528438706c6a1912710b14af5520e6f6a3dddc14bd047992ad5ae98d804e",
+    "tests/test_mp4_duration.py": "e42099ecc9e29beb526913924a71380fb410435ab9c3eb74a5d650c61d09193c",
+    "tests/test_observation_packet.py": "47b155cd900ac66c7a9785883a6c88f3646028e0ae363d130973a9dcf323f2d4",
+    "tests/test_observed_workspace.py": "caf2d57ed37445b07f0b721d113ca873a19420af4df82571a405494cc5c344f7",
+    "tests/test_observer_schedule.py": "4bfa826f694b57dcb015142f6c06d15da1fb632ae84c065577685a718d2486ac",
+    "tests/test_occlusion_memory.py": "182249187f2530261c0df18d7bcdbe7ac62f21cdd334c70608b807135e17b5d1",
+    "tests/test_output_archive.py": "68a1e72a1730c878ced6df16ccb35a3c46ca018d7ad221e683612393d76939d5",
+    "tests/test_packaging_evidence.py": "b13101acf37ea8a2a7ce4eb257bbffddf69905cd6c8a1945d7ee52d8785eee05",
+    "tests/test_pair_task.py": "a1a94a5f29cd42478007ca139214c8d6c02486ab5c55d95b962a73f19512cabf",
+    "tests/test_parallel_occupancy.py": "48013c440ff06927c49e8e3bafc5e8fada2c496f945832cc0845064cb88bcbef",
+    "tests/test_parallel_perception.py": "5b7bcc8f4016dd0e3503f29c66b9ec5784beb758ebccbf78a489844526807b0f",
+    "tests/test_partial_surface_identity.py": "9b21084734920b3c9e74f6a0630c01b227acd36746c7a11d3d81438d7a75c377",
+    "tests/test_path_preflight.py": "681492528776d56accb752d6867bfb4a6f2ea63ff3ffcd0e43dcd86f4f6522fc",
+    "tests/test_path_sample_reuse.py": "32ab36d5d7a426e65c4c7f359de9f8f6506105115ae042a2e1d212383e15e940",
+    "tests/test_perception_robot_filter.py": "0487b56cdc607ae2c70b8be072dbd2c360d9c786793c347fb0ccafbc5710fac4",
+    "tests/test_placement_symmetry.py": "eff3a2d7e68c74e33fd8e143465b8f9e21eb4f637f17f7a03b7d827934876a5e",
+    "tests/test_plan_reuse.py": "1c2b7502f476b4b49a9e586eb1405a100cd5e014b9dc0af6bef0a2232fbdf75b",
+    "tests/test_policy_observation.py": "dbd5af4f3ff21c4796a6cb89e7816bb289801d18eeb301334b6233aefc22033b",
+    "tests/test_postfit_identity.py": "fe3c194bcbb5cc2d167dba53d831451f411c3ff647817704c789ee3cff3fb2f5",
+    "tests/test_preclose_target.py": "bdc3a3227d37f899a525de49f78da7a0e7f551736eaee1c9eca841f49c642636",
+    "tests/test_released_bounds.py": "991c7ddda0aa312a064aeb9018efce8562c3638f0e7e43267d9b6608ad32e238",
+    "tests/test_robot_depth_broadphase.py": "f2dce6bdfb3bcb07edc14e973addb5493a6046ab3fc0318c55a7fd00e960c700",
+    "tests/test_robot_driver.py": "4c41b771f00b1417d5eab7e22d994c6549b794520968967cba79c0dd7e77e5f9",
+    "tests/test_robot_geometry.py": "4587b7ab2450dc76a7a9ee5dbe10176d3af3efdee259a51ebf96d95ebdc1c4e3",
+    "tests/test_runtime_paths.py": "7076131138be1fc67f5fea5f3619913cb51fc626e39ba5c68b49014bd1ee190c",
+    "tests/test_scene_estimate.py": "2d6ab9404b654d1b919e0a73c964f15e309f0042cf385210215b51ff29087966",
+    "tests/test_slow_visual_feedback.py": "43069747a49d5b9203d70f7f4951f9fc43c5034d04210853706cd6e6fa2ab89e",
+    "tests/test_small_carton_center.py": "da6a5899da41174d549450fe5effbda020e7ac9f12c91d64bbf52c609a6390f5",
+    "tests/test_station_priors.py": "7e7dea4f4671b5e74ba010152df1561a87734878bdf6b3ed3af1863d3dd4071e",
+    "tests/test_supported_target.py": "68317c55a3bbb568fd925c6dce1055aa84bcc1a12e15c06843b59338d2c54453",
+    "tests/test_tape_carry_pose.py": "4c311dbbd3a4e9a66beb28532054d0bed7f5173ed136e9887c7350e486bf0f63",
+    "tests/test_tape_evidence.py": "ce1b1c55e608c0ae235485697ed4668aecb23c536c6f958edc86568c2b3ea346",
+    "tests/test_tape_sampling.py": "132191e18e1a2684cfb6e60bec963b1d7851d0243fe5dc44b9d085b58dbedef9",
+    "tests/test_task_logic.py": "6eaf79457aefa63c41d56133edb09d7a564816f61ae67ac92a74ba9771ce5f0d",
+    "tests/test_track_retention.py": "338b4654f2c45aab64a668c443145875f46e3c503b59e44c0fe59e66419ad116",
+    "tests/test_visible_edges.py": "c61ec3998028f05c154b026b340ae34015df994df8cdf883c99fd2f6ceef7ef7",
+    "tests/test_visible_normals_sparse.py": "0392da31c6d69b10083c059ec55372d2efa775483890c68ee1e18898d4d16651",
+    "tests/test_vision_evaluation.py": "35967eb27912bf0906656e8514feb3a943f07cab8c6bdc664d05c4bc5d7c4384",
+    "tests/test_vision_overlay.py": "a1bf8423a3c43bb011e3654d731501aa31af711f984a080c01fec6fba4ba8610",
+    "tests/test_visual_cli.py": "655f342cb5501750ef7b40b0d7219c3a83208d09663c17d009faa4944818256d",
+    "tests/test_visual_monitor.py": "5f3be0efc5e470d7d851b2dc9b5142009bdea4899884d74329df3f5211328844",
+    "tests/test_visual_planning.py": "baf35c837a3c69b99ac9a85a6ceb05b6ebdee640d99ca444b46de8e0c45fbe02",
+    "tests/test_visual_sorting.py": "b64d9824efc8231aab6995ce1ac70a8bd9ef50935ad7546fe8fb7a1d0f5dd62a",
+    "tests/test_wall_timing.py": "33967fe89a47500fd1bf996ba29e2a704dbc7f2fadff8a04d08d04def0b032cd",
+    "tests/test_workspace_lazy_queries.py": "9be063aaec89bb01d025ad6334463fda575f9e04c911de9b7f56e9b1036844b0",
+    "tests/test_workspace_short_circuit.py": "33fe01c3bc659fa6a99e0cd0922438b3f80a7ffebdd76fd8a0d5d528e91a7935",
+    "workstation/__init__.py": "2efd7f2c4ef1440e2e1db481edd85918041886c27c4b7f8194846385987f593e",
+    "workstation/__main__.py": "4413f25dec808419ca4988634e0737ccf4b93ee91656cd07b74f30397ce9ebbe",
+    "workstation/app.py": "f0e591d76fc4de43134d8fb5ed6ef263b7d1de853871ede5a832acccdc8eee88",
+    "workstation/baselines/__init__.py": "d438a9a8871e92a29300e4eb4b3645360839b23993670d6fab295e8eac1d496e",
+    "workstation/baselines/dual_handover.py": "ec4678a3d87a252367818ed7a645bbae2a05d1258130e894030647478edd732a",
+    "workstation/baselines/handover_math.py": "a126676efd747b1973b9bc07b168dc386d6baa7e0d6af2d4c65a56780c91a8d1",
+    "workstation/baselines/single_pick_place.py": "9a0983f76016759ade50ba080f6e3c83417c91a558a61d792226aca6cf9a9a32",
+    "workstation/diagnostics/__init__.py": "f37016051c906c9ed5947e04c165ee7c62c1f4edcfd7a36ae8311d311389bd46",
+    "workstation/diagnostics/continuation_report.py": "15548eb3d10923c5a5529f0a7922c36d4524f710603d6e2cde45819b8feccb60",
+    "workstation/diagnostics/depth_error_audit.py": "6658fb0f2368f01a3439a71876b68bee692aa19586ece3cdbe1d1a30cfb9eba3",
+    "workstation/diagnostics/graspgen_calibration.py": "811c900a199c2ce34e7b8facaedc32fdbeda968814ad7879ae9fd504ac78aa56",
+    "workstation/diagnostics/graspgen_check.py": "a8505d412374760ecd8d4df3c7e4568f4e1998980732bb1fda0b950bba41cfc8",
+    "workstation/diagnostics/graspgen_pair.py": "e0fbf301b327d612c5b37119901bdc0fe3a624037a2d37c537cc877103e8e763",
+    "workstation/diagnostics/graspgen_pair_place.py": "18dd3775a3d0cc8f46b7847c6ace8684d519f8d4bf2a4e606bb0cb159158cb4f",
+    "workstation/diagnostics/graspgen_pair_sort.py": "bbeb0f402495365bab8a0261c5814284dfa2565016b490a8677893317daf9e94",
+    "workstation/diagnostics/identity_capture.py": "e6e7711d1277c41b63de4eaed9fca97c27452fcd862280863eefc4a13c3a55ad",
+    "workstation/diagnostics/model_capture.py": "82a2f74d4fd360d51241b8fab7cfc06e6372e004f542b14b64724e2b56feefbb",
+    "workstation/diagnostics/model_evaluation.py": "6ecc15737418560681c82a07f7ed37bc4d1b73ae40e04942b2d1c5f6f9287b44",
+    "workstation/diagnostics/model_training.py": "1ae63869a83420bcbc4c8417c3de58daf12afdf45dea46bfe607f65dd14448e4",
+    "workstation/diagnostics/mp4_duration.py": "a9e36ad3925acd5bd6924c53b2092cb8b5032443df2246df694ec1762e38b2d8",
+    "workstation/diagnostics/output_archive.py": "592b295d8d865d7624a4b5d5e2015876132d9e0ee29dfa4e96b254e683f93962",
+    "workstation/diagnostics/path_replay.py": "1a5e2cc554c5d7bbf80c52e8257da1784fba1c095c6993dda1460a663ec086fc",
+    "workstation/diagnostics/presentation_video.py": "6ea94f7930c30019a7fb3b2526c7bcb6420475a98118ccca154092ad2f779dd7",
+    "workstation/diagnostics/sensor_check.py": "a92dfd804e81162b4c27f746a1ad63df2ad9e500b53b34b18aa123ff1281c399",
+    "workstation/diagnostics/showcase.py": "112c924f6e6050c7fd36cef6ec6f56bf5f135a18a470f1d262d3a512b8c695f9",
+    "workstation/diagnostics/vision_check.py": "95a742031acd2f2fc5f1d91248f191668c7c85adf79d172788d64a13a61d8cdf",
+    "workstation/diagnostics/visual_run.py": "8a3c96a16e2808a8b6cda4fb8703ceb75437c8939393ad26815facf629fd2848",
+    "workstation/diagnostics/wall_timing.py": "1131812a27ff2b6d893604e2843438d8ee119844e07fb8d0804007bc1e39f28f",
+    "workstation/interactive_failure.py": "d63028096b8a084bf2084d18182502620adafc4cfc5b6bdbd581724d956bc89c",
+    "workstation/models/__init__.py": "28c116ea470b5e188e57f6e1bab648ca394f1599ab7c8ef32abed2dab279aefd",
+    "workstation/models/graspgen_client.py": "8e41212d0ae20d296bde1916cbece5b883b190253237f0149ea002dc2d452a0d",
+    "workstation/models/graspgen_inference.dockerfile": "347fd24b4979b8cfe657832f45313509a5d7d103e43e63a02afcdede784ad96a",
+    "workstation/models/graspgen_proxy.py": "b681de4f86f26819d1fdcbaaf97390f3a0a51abf1761d78433b0e6b52818a4d4",
+    "workstation/models/graspgen_source.py": "c68bb4d725f6782eacdbe032f894fceff5f3d6ce58d4d9f48c124aa2343d65da",
+    "workstation/models/requirements.txt": "b5f610f9967e0a62938e193f9a466b4bdff5d8fc30dd0c56c0b3be2b297e1c00",
+    "workstation/models/yoloe_client.py": "ab15b5a87e167e7dd79e611121cd2f48a34161582ca6858efcf62b841316365d",
+    "workstation/models/yoloe_worker.py": "cb1d36882f40dbb03424db887daff80e4098bad6c3657667b75c68044982de5f",
+    "workstation/observations/__init__.py": "b1fe27da57a421c1188ddf65174537fa0349ef0f9edcaed5cd933c75ead06068",
+    "workstation/observations/camera_config.py": "d84dbdd7292ac827937b9edf838c12d3947014610e2c97a6079d1e4acac2d8e2",
+    "workstation/observations/camera_geometry.py": "ac387f245a01343a538eb9444faab8b3f59a99a8ac3d17ce1b9dead3f584e624",
+    "workstation/observations/camera_system.py": "026638e19d08831a07237b5d4a6f2bf4ab2f55ce6f2f099fec3828791ab2e2e9",
+    "workstation/observations/observation_packet.py": "0b52a6c6a2b6c47b66070c8ce6794428f5d610b8f537bb4e50783f60eb2acdf4",
+    "workstation/observations/policy_observation.py": "dcf21210ea025ddbabff0eeea67cdd6f09656c1d177f0327039f8483f2adf137",
+    "workstation/observations/sim_sensor_adapter.py": "108e614bc7dba67778f2987b13026ee64f8fe4759e170002047dc518ff93457e",
+    "workstation/perception/__init__.py": "19fc90f521c920bae8853a9abe01b16a31a7e2a0afb53894430a736b40ce47ee",
+    "workstation/perception/cuboid_pose.py": "79f1b93bf2440306a9dfe347ee879a6b0b6a86f4a7cf9d64fbb85f587dcf7abc",
+    "workstation/perception/held_surface.py": "378f74268e6fae689e40c8005bf8ac7fe5257c5ce6abae82ae324fa17726c523",
+    "workstation/perception/mask_refinement.py": "96ac8316563a02912daf6b4acaee6ceda1744f5db67577d29f3301471e8de0b1",
+    "workstation/perception/packaging_evidence.py": "17aa4536425c2d0b92814745533bfed834b55d87f0b203378950004a37b3d198",
+    "workstation/perception/preclose_target.py": "f9efd39a210c31474e486aad177cd15428b71de1b3584b8c16b3c7461255ee22",
+    "workstation/perception/rgbd_cartons.py": "21da1ee55e9c6c2b768cc251112d77c599cff5f59f50f1f254c92830df051959",
+    "workstation/perception/scene_estimate.py": "8dec693b84cf1e5d6b676d92f611cd20dcc833b94032ad2f0a5d041eb655a8f0",
+    "workstation/perception/segmentation.py": "f83ab4333afa0b1a50a69726078f064753982713c272f5abd9e09ea6d9fd53e1",
+    "workstation/perception/visible_edges.py": "696481ee058dd36b6f4583fa024d1cac9f9d367e618c98fd982d6aae096be8aa",
+    "workstation/planning/__init__.py": "2b7e9d21909ef4b5c12d0657cce69d431c3486cfe62a5e70f889f3089fd6225c",
+    "workstation/planning/camera_viewpoint.py": "e3843a2388069b6f54c51cd2c513c90926f78bdf2a21267b913c398276b354d2",
+    "workstation/planning/centered_grasp.py": "b4b3c6b959dffd337b5c1c853fea314d34cca947dbba53f6ab7c611a889ecc8a",
+    "workstation/planning/collision.py": "c05bacbaabac5933c089663ee6ebc67eaa0968386f3cced9dea3433500d0d2cc",
+    "workstation/planning/graspgen_candidates.py": "0cc72d7e8994d230728050168b1b51922033f5397fb7d072ce1692bf34da2128",
+    "workstation/planning/joint_pair_selection.py": "05dab1d206d963e314bebe41e3aa5d678ca0f2eeaee1312b03a97797f7522072",
+    "workstation/planning/joint_rrt.py": "f8d7949af62ea1969bdc020c6b775035f467d4c0354ffd7fad731484cfe5c9bc",
+    "workstation/planning/kinematic_chain.py": "1fa4e6460bd62af969fabcb70d44a98a81268ff807279af1790309053352a5b9",
+    "workstation/planning/observed_workspace.py": "0578191175c4f005cf300e44d15a85ee7936890dcb7c5ee9e4530d2c92d64218",
+    "workstation/planning/occlusion_memory.py": "9e1f26b4f76a3e3f91fab54cb4f9e54528ac98059dd717a1f41fca6ad67de1ed",
+    "workstation/planning/pair_task.py": "1b88fc14b2700b748e3eeb78361dfea3325045c839a40d5b098bc5f99fa020d5",
+    "workstation/planning/plan_reuse.py": "27d60449a400a0e490a6457910f54f237a2e08796ac3175d786c6e0cfbd95b01",
+    "workstation/planning/robot_geometry.py": "d68a8cf4a332dd097f73417d6a6dc5f1f9162645ff083b122dea54c75c9efa93",
+    "workstation/planning/selection.py": "fdcc7790ef4175393a1c5ac273b36d5c3c28b4ee3bdf76bb95724980d72287ca",
+    "workstation/planning/task_targets.py": "5704ec4d5e23f6ccb2306d9989013d616e4cfc544ddb03bd69a763b533163a43",
+    "workstation/planning/validation_context.py": "7dee78e58b65e1c63626fd5570dc68a341805d2db1f448cdbd131febae07bf63",
+    "workstation/runtime_paths.py": "3118842ed8172455822de14c1dbfa8f239ee03a47f0fa2037b062118ed2822c9",
+    "workstation/simulation/__init__.py": "2c9860b4382ec63b0ad2d53c4c15c2ba3c56cd395b66fa7d9abcb38221f2b127",
+    "workstation/simulation/cartons.py": "c3ba91624d2ea642353d3854c17bd218ec058ca4524ca3221b5ecb8678e5b72a",
+    "workstation/simulation/cumotion_driver.py": "fbb1b0aa1cb816b8c723de69c7fdc3c6cadd31409a244324b1708f39fe844fe0",
+    "workstation/simulation/display_refresh.py": "a0db887e5e6dd171e26d1d1ad5144029d077c4d4689467f14779705fef37d738",
+    "workstation/simulation/environment.py": "ce07689652e2184e341ac8852ae7dd735337fb15640a017e97aa2c9e2e960b69",
+    "workstation/simulation/robot_driver.py": "200b17a7f60265354466d2af25610921b543ceef7f25abb46388be38a221a0f6",
+    "workstation/simulation/station_priors.py": "2161388257d702d90e8ac769d385ffdc27eb612ee0bc6667a4ded58d0d606958",
+    "workstation/simulation/visual_fixtures.py": "14d42cd23dbbfe948344b1137cc07c506477a9e43f9dc5e32189a75e15b07f2d",
+    "workstation/skills/__init__.py": "cd525964032273b7a5bb4f1f3671994ad56c48a58e2de519463e2662d1b7e267",
+    "workstation/skills/camera_reobserve.py": "30abbe685e1bf8aad0760a050c543dcba7b4e0bfdb25313fa444493be2c091f5",
+    "workstation/skills/cumotion_pick_place.py": "a810ccf322faf2b86c7c892cf3509cc1b0399372a5e1fb7023bb4b1d4b904637",
+    "workstation/skills/reobserve.py": "b83896d6f48ae206a9a7d7dfb6e25c0b484640bf06f36a6e992c1c05eef6bca6",
+    "workstation/skills/visual_pick_place.py": "b88d4fe8efe74d39b8f8153ef79d7ecc63e36b632abff842faee10e30c46a9f2",
+    "workstation/skills/visual_side_adjustment.py": "ed9a3ee80bf78718f4c04ab35a571b3e42822d9f3284017f563e5a246ab06eeb",
+    "workstation/skills/visual_sorting.py": "26d1e72559d32de1f583f89f0c01067ced50ca061b8cf75e604dcc516f76f82c",
+    "workstation/task_logic.py": "5048ab66aa629fc0e7fd2fd84156e86fb8dccbac394af520caac629fc857741e",
+    "项目路线与当前状态交接.md": "ea1ae575cf1077cf9bc426caa07efaab2a3c521325728f45dec8e532c9f777b6"
+  },
+  "boundaries": [
+    "Four renders per refresh in this frozen successful run.",
+    "Active checked wrist reobservation authorized; availability does not prove it was triggered.",
+    "Not odd-tail or general multi-carton acceptance.",
+    "Final workspace defaults to two renders after independent sensor-check; this combination has not completed a live task."
+  ]
+}

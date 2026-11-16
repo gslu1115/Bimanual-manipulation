@@ -39,6 +39,8 @@ def build_parser():
     parser.add_argument('--graspgen-proxy-port',type=int,default=5558)
     parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')
     parser.add_argument('--num-grasps',type=int,default=64)
+    parser.add_argument('--pair-search',choices=('first-feasible','best-ranked'),default='first-feasible',
+                        help='Pair sorting: bounded small proposal batches and first feasible plan; best-ranked retains historical search')
     parser.add_argument('--visual-observation-period-s',type=float,
                         help='Upright GraspGen stable-translation/empty-travel vision interval, 0.1..2 seconds; default 1; contact phases/reorientation stay at 0.1 seconds')
     parser.add_argument('--graspgen-assets',type=Path,default=os.environ.get('WORKSTATION_GRASPGEN_ASSETS'),
@@ -111,9 +113,10 @@ def load_config(args, parser):
             args.graspgen_assets=isaac_root().parent/'graspgen'/'source'
     if pair_mode:
         fixture='upright-four' if args.mode=='graspgen-pair-sort' else 'upright-pair'
-        if args.grasp_backend!='graspgen' or args.visual_fixture not in (None,fixture):
-            parser.error('graspgen-pair-pregrasp requires two upright cartons and GraspGen')
-        args.visual_fixture=fixture
+        allowed=(None,'upright','upright-pair','separated-upright','upright-four') if args.mode=='graspgen-pair-sort' else (None,fixture)
+        if args.grasp_backend!='graspgen' or args.visual_fixture not in allowed:
+            parser.error('Paired modes require GraspGen and a supported upright fixture')
+        args.visual_fixture=args.visual_fixture or fixture
     if getattr(args,'archive_output',None) is not None:
         if not args.headless or args.keep_open or args.livestream or args.output is None:
             parser.error('--archive-output requires --headless --output and no interactive session')
@@ -210,7 +213,7 @@ def load_config(args, parser):
         elif args.visual_fixture=='upright-pair':
             if not (pair_mode or args.mode=='vision-check' or (args.mode=='graspgen-check' and args.grasp_backend=='graspgen')):
                 parser.error('upright-pair requires vision-check or graspgen-check --grasp-backend graspgen')
-        elif args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'):
+        elif args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check','graspgen-pair-sort'):
             parser.error('--visual-fixture requires a visual mode')
         config['boxes']['count']={'upright-pair':2,'upright-four':4,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
         if args.visual_fixture=='upright-pair' and config.get('diagnostic_occupied_slot') is not None:

@@ -1,4 +1,4 @@
-"""Two visual pair cycles in one unchanged four-carton physics scene."""
+"""Bounded observed upright-carton batches, with two-arm picks preferred."""
 from copy import copy
 from time import perf_counter
 import numpy as np
@@ -7,7 +7,7 @@ from workstation.diagnostics.graspgen_pair import check_pair,source_cartons,Pair
 from workstation.diagnostics.vision_check import save_observation
 from workstation.perception.rgbd_cartons import CartonEstimator
 from workstation.perception.scene_estimate import ScenePriors
-from workstation.planning.pair_task import VisualConveyorIndex,match_task_sources
+from workstation.planning.pair_task import VisualConveyorIndex,match_task_sources,observed_batch_size
 from workstation.planning.joint_pair_selection import JointPairSelection,recoverable_empty_failure
 from workstation.planning.collision import AABB,sphere_box_clearance
 
@@ -84,13 +84,42 @@ def run(env,args):
         env._write_json('performance.json',timing.report())
 
 
+def single_batch(env,args,robot,estimator,priors,source_key,references,slots):
+    """Reuse the physical single-carton skill for a visible singleton/tail batch."""
+    from workstation.skills.visual_pick_place import VisualPickPlace
+    from workstation.models.graspgen_source import GraspGenSource
+    from workstation.models.graspgen_proxy import GraspGenProxy
+    from workstation.diagnostics.graspgen_calibration import verify
+    from workstation.runtime_paths import isaac_root
+    def eligible(obj,scene):
+        match=match_task_sources(scene,references).get(source_key)
+        return match is not None and obj.track_id==match.track_id
+    source=GraspGenSource(GraspGenProxy(args.graspgen_proxy),
+        verify(env,robot,isaac_root(),args.graspgen_assets),args.num_grasps,eligible=eligible)
+    skill=VisualPickPlace(robot,lambda:env.get_observation_packet(refresh=True),priors,slots,
+        lambda label,packet,scene:save_observation(env.output,label,packet,scene),
+        estimator=estimator,eligible=eligible,grasp_source=source,
+        first_feasible=args.pair_search=='first-feasible')
+    began=perf_counter();result=skill.run()
+    result['skill_wall_s']=perf_counter()-began
+    result['joint_choice']=dict(source_keys=[source_key])
+    if result['success']:
+        proof=result['visual_verification'][-1]
+        result['placements']={skill.arm:dict(initial_track=source_key,
+            grasp_track=skill.candidate.target_id,observed_track=proof['track_id'],
+            goal_xy=list(skill.slot_xy),visual_error_xy_m=[proof['x_error_m'],proof['y_error_m']])}
+    return result
+
+
 def _run(env,args,timing):
     from workstation.simulation.robot_driver import from_environment
     root=env.output;started=perf_counter()
-    report=dict(success=False,scope='two_pairs_four_initial_cartons_live_model_and_visual_conveyor',rounds=[],indexing=[],attempts=[])
+    report=dict(success=False,scope='initially_observed_upright_cartons_live_model_and_visual_conveyor',rounds=[],indexing=[],attempts=[])
     env.safe_to_index=False
     env.conveyor=VisualConveyorIndex(env.c)
     robot=from_environment(env,paired_armature_floor=.01)
+    robot.allow_active_reobserve=True
+    report['active_reobserve_allowed']=True
     robot.wall_timing=timing
     for method,label in (('command','joint_command'),('command_velocities','velocity_command'),
                          ('read_states','encoder_read')):
@@ -104,6 +133,8 @@ def _run(env,args,timing):
     def observe():
         packet=env.get_observation_packet(refresh=True)
         if any(packet.camera_status.get(n)!='OK' for n in ('scene_camera','left_wrist_camera','right_wrist_camera')):
+            report['camera_failure']=dict(status=dict(packet.camera_status),
+                errors=dict(getattr(getattr(env,'_policy_sensor_adapter',None),'last_errors',{})))
             raise RuntimeError('PAIR_TASK_CAMERA_UNAVAILABLE')
         scene=estimator.estimate(packet)
         if source_query:scene=estimator.resolve_action_sources(packet,scene,source_query)
@@ -117,7 +148,7 @@ def _run(env,args,timing):
             raise RuntimeError('PAIR_TASK_CAMERA_UNAVAILABLE')
         workspace=ObservedWorkspace.for_slot_observation(packet,priors,robot.static)
         return packet,[workspace.slot(xy) for xy in env.c['conveyor']['slots_xy']]
-    def index_pair(placements,round_index):
+    def index_batch(placements,round_index):
         robot.hold(.3);packet,scene=observe()
         ids=[f'round_{round_index}/{p["observed_track"]}' for p in placements.values()]
         env.conveyor.start(ids,empty_arms_clear(robot,packet,env.c))
@@ -161,7 +192,7 @@ def _run(env,args,timing):
             # First use the existing view. If blocked, try a short checked
             # observation lift, then HOME only if useful sources remain hidden.
             matches=match_task_sources(scene,remaining)
-            if len(matches)<2 or failed.get('next_action')=='OBSERVE':
+            if robot.allow_active_reobserve and (len(matches)<2 or failed.get('next_action')=='OBSERVE'):
                 for arm in order:
                     packet,scene=observe()
                     try:
@@ -202,13 +233,14 @@ def _run(env,args,timing):
         for _ in range(round(3/robot.dt)):env.step(monitor_conveyor=False,render=False)
         observe();robot.hold(.2);packet,scene=observe()
         originals=source_cartons(scene,env.c['table'])
-        if len(originals)!=4:raise RuntimeError('PAIR_TASK_REQUIRES_FOUR_OBSERVED_SOURCES')
+        if not originals:raise RuntimeError('PAIR_TASK_NO_OBSERVED_SOURCES')
         remaining={o.track_id:dict(position_m=o.position_m,size_m=o.size_m,axis_yaw_rad=o.axis_yaw_rad) for o in originals}
         estimator.set_task_identities(remaining)
         report['initial_visual_sources']=remaining.copy()
-        selection=JointPairSelection(remaining)
+        selection=JointPairSelection(remaining,search_mode=getattr(args,'pair_search','first-feasible'))
         pair_args=copy(args);pair_args.mode='graspgen-pair-place'
-        for round_index in (1,2):
+        for round_index in range(1,len(originals)+1):
+            if not remaining:break
             begin=perf_counter()
             round_output=root/f'round_{round_index}';round_output.mkdir()
             for attempt in range(1,5):
@@ -220,43 +252,64 @@ def _run(env,args,timing):
                 robot.occlusion_memory=OcclusionMemory()
                 observe();robot.hold(.2);packet,scene=observe()
                 matches=match_task_sources(scene,remaining)
-                if len(matches)<2:
+                free_slots=[xy for xy in env.c['conveyor']['slots_xy'] if robot.observed_workspace.slot(xy)['free']]
+                batch_size=observed_batch_size(matches,free_slots)
+                if not batch_size:
                     raise RuntimeError('PAIR_TASK_REMAINING_SOURCES_UNCONFIRMED')
                 def select(current):
                     matches=match_task_sources(current,remaining)
                     if len(matches)<2:raise RuntimeError('PAIR_TASK_RESERVED_SOURCE_LOST')
                     return list(matches.values())
                 save_observation(env.output,'graspgen_source',packet,scene)
-                entry=dict(round=round_index,attempt=attempt,success=False)
+                entry=dict(round=round_index,attempt=attempt,batch_size=batch_size,success=False)
                 report['attempts'].append(entry)
-                try:
-                    source_query=()
-                    result=check_pair(env,pair_args,packet,scene,estimator,robot=robot,
-                                      target_selector=select,selection_policy=selection)
-                except PairAttemptError as error:
-                    failed=error.report
-                    entry.update(failure_reason=str(error),action_wall_s=failed.get('action_wall_s'),
-                                 joint_choice=failed.get('joint_choice'))
-                    if not recoverable_empty_failure(failed) or attempt==4:raise
-                    source_query=tuple(remaining)
-                    entry['recovery']=recover_empty(failed,remaining)
-                    entry['failure_memory']=selection.record_failure(failed)
-                    continue
-                entry.update(success=True,joint_choice=result['joint_choice'],action_wall_s=result.get('action_wall_s'))
+                if batch_size==2:
+                    try:
+                        source_query=()
+                        result=check_pair(env,pair_args,packet,scene,estimator,robot=robot,
+                                          target_selector=select,selection_policy=selection)
+                    except PairAttemptError as error:
+                        failed=error.report
+                        entry.update(failure_reason=str(error),action_wall_s=failed.get('action_wall_s'),
+                                     joint_choice=failed.get('joint_choice'),model_request_count=len(failed['model_requests']))
+                        if failed.get('next_action')=='TRY_SINGLE':
+                            batch_size=1;entry['batch_size']=1;entry['pair_search_exhausted']=True
+                        else:
+                            if not recoverable_empty_failure(failed) or attempt==4:raise
+                            source_query=tuple(remaining)
+                            entry['recovery']=recover_empty(failed,remaining)
+                            entry['failure_memory']=selection.record_failure(failed)
+                            continue
+                if batch_size==1:
+                    result=single_batch(env,args,robot,estimator,priors,next(iter(matches)),remaining,free_slots)
+                    env._write_json('visual_task_report.json',result)
+                    if not result['success']:
+                        entry.update(failure_reason=result.get('failure_reason'),
+                            model_request_count=entry.get('model_request_count',0)+len(result.get('model_requests',[])))
+                        raise RuntimeError('SINGLE_BATCH_FAILED:'+str(result.get('failure_reason')))
+                entry.update(success=True,joint_choice=result['joint_choice'],action_wall_s=result.get('action_wall_s'),
+                             model_request_count=entry.get('model_request_count',0)+len(result['model_requests']))
                 selected_keys=result['joint_choice']['source_keys']
                 break
-            env.output=round_output;env._write_json('graspgen_pair_check.json',result)
-            report['rounds'].append(dict(round=round_index,success=result['success'],reserved_source_keys=selected_keys,
+            env.output=round_output
+            env._write_json('graspgen_pair_check.json' if batch_size==2 else 'visual_task_report.json',result)
+            report['rounds'].append(dict(round=round_index,batch_size=batch_size,success=result['success'],reserved_source_keys=selected_keys,
                 wall_s=perf_counter()-begin,action_wall_s=result.get('action_wall_s'),placements=result['placements'],
-                transfer_strategy=result.get('transfer_strategy'),model_request_count=len(result['model_requests'])))
+                single_skill_wall_s=result.get('skill_wall_s'),
+                transfer_strategy=result.get('transfer_strategy'),
+                model_request_count=sum(e.get('model_request_count',0) for e in report['attempts'] if e['round']==round_index)))
             if not result['success']:raise RuntimeError('PAIR_TASK_ROUND_FAILED')
             for key in selected_keys:del remaining[key]
-            packet,scene=index_pair(result['placements'],round_index)
+            packet,scene=index_batch(result['placements'],round_index)
             for key in selected_keys:estimator.mark_identity(key,'delivered')
             report['object_identities']=[vars(v) for v in estimator._identities.values()]
             env.output=root;env._write_json('graspgen_pair_sort.json',report)
         if source_cartons(scene,env.c['table']):raise RuntimeError('PAIR_TASK_SOURCES_REMAIN')
-        report.update(success=True,verified_placements=4,completed_pairs=2,visually_cleared_batches=env.conveyor.completed_batches)
+        if remaining:raise RuntimeError('PAIR_TASK_REMAINING_SOURCES_UNCONFIRMED')
+        report.update(success=True,verified_placements=len(originals),
+            completed_pairs=sum(r['batch_size']==2 for r in report['rounds']),
+            completed_singletons=sum(r['batch_size']==1 for r in report['rounds']),
+            visually_cleared_batches=env.conveyor.completed_batches)
     except Exception as error:
         report['failure_reason']=str(error)
         raise

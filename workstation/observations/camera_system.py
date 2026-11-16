@@ -174,7 +174,8 @@ class CameraSystem:
                 if not isinstance(params, dict):
                     raise RuntimeError(f'Camera {name} produced no rendered camera parameters')
                 if list(np.asarray(params['renderProductResolution']).astype(int)) != [w, h]:
-                    raise RuntimeError(f'Camera {name} render-product resolution mismatch')
+                    raise RuntimeError(f"Camera {name} render-product resolution mismatch: "
+                                       f"expected {[w,h]}, received {np.asarray(params['renderProductResolution']).tolist()}")
                 if include_privileged:
                     metadata = calibration_from_params(params, [w, h])
                     metadata.update(self.cameras[name]['descriptor'], simulation_time_s=self.rendered_time,

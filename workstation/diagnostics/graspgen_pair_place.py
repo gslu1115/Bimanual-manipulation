@@ -371,7 +371,7 @@ def parked_top_occluded(packet,reference,*,allow_wrist_out_of_view=False):
     return views>=2 or (allow_wrist_out_of_view and global_covered)
 
 
-def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
+def place_pair(env, robot, estimator, scene, pair, slots, report,resample=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
     selected = dict(zip(arms, pair['selection']))
@@ -486,7 +486,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     def measure_held(arm,packet):
         nonlocal scene
         t=trackers[arm]
-        pos,rot=robot.fk(arm)
+        pos,rot=robot.fk(arm,packet.robot_state[arm].joint_positions_rad)
         observed=t.observe(packet,scene,pos,rot,reacquire_tilt=held)
         if observed is None and report['last_phase'] in ('initial_lift','regrasp_initial_lift'):
             # An already slipping carton can leave the nominal FK search band.
@@ -760,41 +760,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 carries=arm in carrying
                 pos, rot = robot.fk(arm, q)
                 goal, goal_rot = destinations[arm]
-                try:
-                    path = robot.cartesian_knots(arm, pos, goal, 0., 0., .12, q,
-                        orientation0=quaternion_from_matrix(rot), orientation1=quaternion_from_matrix(goal_rot))
-                except RuntimeError as exc:
-                    if phase!='approach' or str(exc)!='IK_DISCONTINUITY':raise
-                    # Neither arm has started the descent. Check a nearby alternate
-                    # from the actual pregrasp FK against the current target.
-                    seq={n:f.sequence_id for n,f in packet.cameras.items() if f}
-                    for alt in (alternatives or {}).get(arm,()):
-                        if alt.candidate_id==selected[arm]['candidate_id']:continue
-                        try:
-                            alt=revalidate_candidate(replace(alt,target_id=o.track_id),o,scene,seq)
-                            # Pending backups enter the same current-frame
-                            # prefix/descent checks below. Later lift/transfer
-                            # paths are checked before their own execution;
-                            # a prefix score never authorizes a future motion.
-                            orientation=pose_matrix(alt.position_m,alt.orientation_wxyz)[:3,:3]
-                            # Stay on the model's approach line. Move to its own
-                            # pregrasp first, then descend only along that line.
-                            pre=np.asarray(alt.position_m)-np.asarray(alt.approach_direction)*alt.pregrasp_distance_m
-                            prefix=robot.cartesian_knots(arm,pos,pre,0.,0.,.12,q,
-                                orientation0=quaternion_from_matrix(rot),orientation1=alt.orientation_wxyz)
-                            robot.validate_path(arm,prefix,scene,o.track_id)
-                            descent=robot.cartesian_knots(arm,pre,alt.position_m,0.,0.,.12,prefix[-1],
-                                orientation0=alt.orientation_wxyz,orientation1=alt.orientation_wxyz)
-                            robot.validate_path(arm,descent,scene,o.track_id,target_contact=True)
-                        except RuntimeError:continue
-                        report.setdefault('preclose_substitutions',[]).append(dict(arm=arm,
-                            previous=selected[arm]['candidate_id'],replacement=alt.candidate_id,reason=str(exc)))
-                        selected[arm]=asdict(alt)
-                        pair['selection'][arms.index(arm)]=selected[arm]
-                        destinations[arm]=(np.asarray(alt.position_m),orientation)
-                        path=prefix+descent[1:]
-                        break
-                    else:raise
+                path = robot.cartesian_knots(arm, pos, goal, 0., 0., .12, q,
+                    orientation0=quaternion_from_matrix(rot), orientation1=quaternion_from_matrix(goal_rot))
                 if carries:
                     t = trackers[arm]
                     robot.held_visual_geometry = dict(arm=arm, target_id=o.track_id, offset=t.offset,
@@ -902,11 +869,26 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     for a in arms:
         proof = confirm_target(a,packet,closed=True)
         scene=reconcile_preclose_target(estimator,scene,proof)
-        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors,packet=packet)
-        release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
+        image_pose=robot.fk(a,packet.robot_state[a].joint_positions_rad)
+        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*image_pose,priors,packet=packet)
+        release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*image_pose,packet.observation_time_s)
         measure_held(a,packet)
     robot.set_observation(packet,scene,priors)
     held = True
+    from workstation.skills.holding_monitor import HoldingMonitor
+    holding_checks=report['holding_monitor']=dict(period_sim_s=min(.1,priors.max_age_s*2/3),checks=[],
+        scope='fresh RGB-D holding geometry during every loaded trajectory and hold')
+    def current_holding_times():
+        return {a:measurements[a]['time_s'] for a in carried_arms} if held else {}
+    def refresh_holding():
+        nonlocal packet
+        packet=observe()
+        for a in carried_arms:measure_held(a,packet)
+        robot.set_observation(packet,scene,priors)
+        holding_checks['checks'].append(dict(time_s=packet.observation_time_s,
+            evidence={a:dict(status=measurements[a]['status'],time_s=measurements[a]['time_s']) for a in carried_arms}))
+    robot.monitor=HoldingMonitor(lambda:max(s.sample_time_s for s in robot.read_states().values()),
+        current_holding_times,refresh_holding,period_s=holding_checks['period_sim_s'],max_age_s=priors.max_age_s)
     raised={a:(robot.fk(a)[0]+[0.,0.,.18],robot.fk(a)[1]) for a in arms}
     # Refit after initial finger loading; using the closure frame until the
     # end of an 18 cm lift loses track of cartons that rotate under load.
@@ -1129,8 +1111,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         origin,rotation=robot.fk(a)
         direction=np.asarray(robot.base_config[a]['base_xyz'][:2])-goals[a]
         direction=direction/max(float(np.linalg.norm(direction)),1e-9)
-        candidates=[origin+np.r_[direction*back,height] for back,height in
+        candidates=([origin+np.r_[direction*back,height] for back,height in
                     ((.08,.03),(.14,.03),(.20,.06),(.10,.12))]
+                    if robot.allow_active_reobserve else [])
+        entry['active_reobserve_allowed']=robot.allow_active_reobserve
         def fresh_view():
             robot.hold(.1);refresh_payloads()
             if any(packet.camera_status.get(n)!='OK' for n in

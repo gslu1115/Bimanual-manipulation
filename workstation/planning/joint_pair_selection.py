@@ -32,7 +32,9 @@ def visible_fraction(points,camera,K,shape,spheres):
 
 class JointPairSelection:
     """History uses observed source geometry, not ephemeral visual track IDs."""
-    def __init__(self,references):
+    def __init__(self,references,search_mode='first-feasible'):
+        if search_mode not in ('first-feasible','best-ranked'):raise ValueError('Unknown pair search mode')
+        self.search_mode=search_mode
         self.references=references
         self.failed_grasps={k:[] for k in references}
         self.failed_pairs=Counter();self.failed_sources=Counter()
@@ -127,7 +129,10 @@ class JointPairSelection:
 
 def recoverable_empty_failure(report):
     """Recovery is an action decision plus physical state, never an error prefix."""
-    return (report.get('next_action') in ('OBSERVE','REPLAN') and
+    checkpoint=report.get('phase_checkpoint',{})
+    empty_planning=(checkpoint.get('phase')=='approach' and checkpoint.get('event')=='planning'
+                    and checkpoint.get('dry_run') is False and report.get('next_action') in (None,'CONTINUE'))
+    return ((report.get('next_action') in ('OBSERVE','REPLAN') or empty_planning) and
             report.get('last_phase') in ('pregrasp_recheck','approach') and
             bool(report.get('motion')) and not report.get('empty_approach_started') and
             not report.get('closure_started'))

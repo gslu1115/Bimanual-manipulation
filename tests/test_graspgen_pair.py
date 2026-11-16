@@ -260,19 +260,6 @@ class PairTests(unittest.TestCase):
         self.assertAlmostEqual(samples[:,0,0].max(),.21)
         self.assertAlmostEqual(samples[:,1,0].max(),.16)
 
-    def test_deferred_destinations_keep_pending_approach_backups_but_not_known_rejections(self):
-        from workstation.diagnostics.graspgen_pair import approach_alternatives
-        from dataclasses import replace
-        slot=(-.2,-.4)
-        def row(name):
-            c=GraspCandidate('box','panda_left',(0,0,0),0,.07,0,source='graspgen',candidate_id=name)
-            return CandidateAssessment(c,True,(),dict(slot_xy=slot,whole_task_template_checked=False),1.)
-        chosen,pending,blocked=row('chosen'),row('pending'),row('blocked')
-        completed={('chosen',slot):replace(chosen,terms=dict(slot_xy=slot,whole_task_template_checked=True)),
-                   ('blocked',slot):replace(blocked,feasible=False,reasons=('SELF_COLLISION',))}
-        options=approach_alternatives([chosen,pending,blocked,pending],{'panda_left':slot},completed)
-        self.assertEqual([c.candidate_id for c in options['panda_left']],['chosen','pending'])
-
     def test_simultaneous_crossing_and_duplicate_object_are_rejected(self):
         def candidate(arm,obj):
             c=GraspCandidate(obj,arm,(0,0,0),0,.07,0,source='graspgen',candidate_id=arm+obj)

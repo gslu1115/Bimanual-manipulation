@@ -40,7 +40,9 @@ def check(env):
     def frame(label):
         packet = env.get_observation_packet(refresh=True)
         if set(packet.camera_status.values()) != {"OK"}:
-            raise RuntimeError(f"Unavailable policy frames: {dict(packet.camera_status)}")
+            errors=dict(getattr(getattr(env,'_policy_sensor_adapter',None),'last_errors',{}))
+            env._write_json('sensor_failure.json',dict(status=dict(packet.camera_status),errors=errors))
+            raise RuntimeError(f"Unavailable policy frames: {dict(packet.camera_status)}; {errors}")
         raw = env.observe_cameras(refresh=False)  # Independent diagnostic reference only.
         details, transforms = {}, {}
         for name in FORMAL_CAMERA_NAMES:

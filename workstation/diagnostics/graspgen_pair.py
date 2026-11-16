@@ -126,8 +126,10 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
                 (slot_cost(pair),-(pair[0].score+pair[1].score)))
     pairs.sort(key=rank)
     if complete_assessment is not None:
-        from workstation.planning.plan_reuse import complete_ranked_pairs
-        ordered=complete_ranked_pairs(pairs,rank,complete_assessment)
+        from workstation.planning.plan_reuse import complete_ranked_pairs,complete_first_feasible_pairs
+        ordered=(complete_first_feasible_pairs(pairs,complete_assessment)
+                 if getattr(selection_policy,'search_mode','best-ranked')=='first-feasible'
+                 else complete_ranked_pairs(pairs,rank,complete_assessment))
     else:ordered=pairs
     paths = {}
     rejected = []
@@ -270,18 +272,6 @@ class PairAttemptError(RuntimeError):
         super().__init__(reason);self.report=report
 
 
-def approach_alternatives(rows,assigned_slots,completed_rows=None):
-    """Retain pending backups for on-demand validation by the substitution loop."""
-    completed_rows=completed_rows or {}
-    rows=[completed_rows.get((r.candidate.candidate_id,tuple(r.terms['slot_xy'])),r) for r in rows]
-    alternatives={arm:[] for arm in assigned_slots};seen=set()
-    for row in sorted(rows,key=lambda item:-item.score):
-        c=row.candidate
-        if row.feasible and row.terms['slot_xy']==assigned_slots[c.arm] and c.candidate_id not in seen:
-            alternatives[c.arm].append(c);seen.add(c.candidate_id)
-    return alternatives
-
-
 def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None,selection_policy=None):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
@@ -306,13 +296,18 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
     if not execute:env.timeline.pause()
     armature_floor=.01 if execute else None
-    if robot is None:robot=from_environment(env,paired_armature_floor=armature_floor)
+    if robot is None:
+        robot=from_environment(env,paired_armature_floor=armature_floor)
+        robot.allow_active_reobserve=True
+    report['active_reobserve_allowed']=robot.allow_active_reobserve
     report['shoulder_drive_armature_floor_kg_m2']=armature_floor
     estimator.robot_point_filter=robot.observed_robot_points
     estimator.robot_filter_factory=robot.prepare_observed_robot_filter
     robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
     if selection_policy:selection_policy.prepare(robot,packet,scene)
     diversity_start=len(selection_policy.diversity) if selection_policy else 0
+    first_feasible=selection_policy is not None and selection_policy.search_mode=='first-feasible'
+    report['search_mode']='first-feasible' if first_feasible else 'best-ranked'
     slots = ConveyorSlots(env.c)
     destinations=[slots.positions[i] for i in env.c.get('pair_slot_indices',range(len(slots.positions)))]
     report['eligible_destinations']=destinations
@@ -353,12 +348,12 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
             pick_failures[c.candidate_id]=result
         return result
-    for attempt in range(1,3 if selection_policy else 8):
+    for attempt in range(1,(4 if first_feasible else 3) if selection_policy else 8):
         retained={}
         preferred=preferred_assignments(targets,robot.base_config)
         feasible={(r.candidate.target_id,r.candidate.arm) for r in rows if r.feasible}
         missing=[o for o in targets if (o.track_id,preferred[o.track_id]) not in feasible]
-        if execute and attempt==5 and len(missing)==1:
+        if execute and robot.allow_active_reobserve and attempt==5 and len(missing)==1:
             target=missing[0]
             centre=np.asarray(target.position_m)
             arm=preferred[target.track_id]
@@ -430,7 +425,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 observation['fused_observation_times_s']=[past.time_s,clouds.time_s]
             if attempt>=3:clouds=balance_visible_surfaces(clouds,obj)
             proposals=[]
-            for sample in range(3 if attempt<=2 else 9):
+            samples=(1 if attempt==1 else 3) if first_feasible else (3 if attempt<=2 else 9)
+            for sample in range(samples):
                 basis=yaw+sample*math.pi*2/3
                 pitch=(0.,math.pi/3,-math.pi/3)[sample//3]
                 result=infer_rotated_view(proxy,clouds,args.num_grasps,basis,pitch)
@@ -464,7 +460,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             for arm in states:
                 if selection_policy is None and attempt<=4 and arm!=preferred.get(obj.track_id):continue
                 ordered=sorted((c for c in allowed if c.arm==arm),key=pinch_cost)
-                chosen=(selection_policy.diverse(ordered,obj,4) if selection_policy else distinct_pinches(ordered,4))
+                limit=(1 if attempt==1 else 2) if first_feasible else 4
+                chosen=(selection_policy.diverse(ordered,obj,limit) if selection_policy else distinct_pinches(ordered,limit))
                 candidates.setdefault(obj.track_id,[]).extend(chosen)
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
@@ -486,7 +483,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy,
                                       complete_assessment if selection_policy else None)
         report['candidate_prefix_reuse']=pick_prefixes.report()
-        report['destination_evaluation']=dict(mode='score-upper-bound refinement' if selection_policy else 'exhaustive',
+        report['destination_evaluation']=dict(mode='first-feasible' if first_feasible else ('score-upper-bound refinement' if selection_policy else 'exhaustive'),
             prefix_rows=len(rows),completed_rows=len(completed_rows),
             feasible_completed_rows=sum(r.feasible for r in completed_rows.values()),
             skipped_destination_rows=sum(r.feasible and (r.candidate.candidate_id,tuple(r.terms['slot_xy'])) not in completed_rows for r in rows),
@@ -495,7 +492,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         report.update(pair=pair, rejected_pairs=rejections)
         if selection_policy:report['grasp_diversity']=selection_policy.diversity[diversity_start:]
         if pair is not None:break
-    if pair is None:fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
+    if pair is None:
+        report['next_action']='TRY_SINGLE'
+        fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
     assigned_slots={c['arm']:xy for c,xy in zip(pair['selection'],pair['slots'])}
     slots.reserve_pair(assigned_slots)
     report['slots_reserved']=slots.report()
@@ -580,7 +579,6 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
-                alternatives=approach_alternatives(rows,assigned_slots,completed_rows)
                 def resample(arm,obj,view,image,previous,goal):
                     seq={n:f.sequence_id for n,f in image.cameras.items() if f}
                     observed=visual_clouds(image,view,obj.track_id)
@@ -602,11 +600,16 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                     if best is None:raise RuntimeError('NO_FEASIBLE_REGRASP')
                     return best
                 old_keepout=getattr(robot,'stationary_payload_keepout',None)
+                old_monitor=robot.monitor
                 try:
-                    place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample)
+                    place_pair(env,robot,estimator,updated,current,slots,report,resample=resample)
                 finally:
                     robot.stationary_payload_keepout=old_keepout
+                    robot.monitor=old_monitor
         except RuntimeError as error:
+            from workstation.planning.joint_pair_selection import recoverable_empty_failure
+            if recoverable_empty_failure(report) and report.get('next_action')!='OBSERVE':
+                report['next_action']='REPLAN'
             fail(str(error))
         finally:
             if action_start is not None:

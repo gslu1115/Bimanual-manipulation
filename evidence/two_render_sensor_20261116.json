@@ -1,0 +1,1176 @@
+{
+  "date": "2026-11-16",
+  "scope": "sensor interface only; not manipulation acceptance",
+  "refresh_render_frames": 2,
+  "report": {
+    "success": true,
+    "scope": "camera_robot_policy_interface_only",
+    "frames": {
+      "home": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.482534153247273e-16,
+          "rotation_error_deg": 0.0,
+          "sample_time_s": 0.5000000000000007,
+          "sequence_id": 12
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 5.467281384990009e-06,
+          "rotation_error_deg": 0.0008122210353221314,
+          "sample_time_s": 0.5000000000000007,
+          "sequence_id": 12
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 7.309161634852193e-06,
+          "rotation_error_deg": 0.0008122210353221314,
+          "sample_time_s": 0.5000000000000007,
+          "sequence_id": 12
+        }
+      },
+      "left_moved": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.482534153247273e-16,
+          "rotation_error_deg": 0.0,
+          "sample_time_s": 1.3249999999999977,
+          "sequence_id": 26
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.633196919408413e-07,
+          "rotation_error_deg": 1.4688877218970437e-05,
+          "sample_time_s": 1.3249999999999977,
+          "sequence_id": 26
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 7.309161634852193e-06,
+          "rotation_error_deg": 0.0008122210353221314,
+          "sample_time_s": 1.3249999999999977,
+          "sequence_id": 26
+        }
+      },
+      "both_moved": {
+        "scene_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 2.482534153247273e-16,
+          "rotation_error_deg": 0.0,
+          "sample_time_s": 2.149999999999995,
+          "sequence_id": 40
+        },
+        "left_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 1.0,
+          "translation_error_m": 1.127159863758307e-06,
+          "rotation_error_deg": 0.00021816882112273234,
+          "sample_time_s": 2.149999999999995,
+          "sequence_id": 40
+        },
+        "right_wrist_camera": {
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_shape": [
+            480,
+            640
+          ],
+          "positive_depth_fraction": 0.99955078125,
+          "translation_error_m": 2.2440139479384634e-07,
+          "rotation_error_deg": 1.6108968939569464e-05,
+          "sample_time_s": 2.149999999999995,
+          "sequence_id": 40
+        }
+      }
+    },
+    "motion_checks": {
+      "panda_left": {
+        "wrist_transform_change": 0.14706889365354248,
+        "other_wrist_transform_change": 0.0,
+        "scene_transform_change": 0.0
+      },
+      "panda_right": {
+        "wrist_transform_change": 0.1470687959428902,
+        "other_wrist_transform_change": 0.0022824312517326084,
+        "scene_transform_change": 0.0
+      }
+    },
+    "policy_frames": {
+      "home": {
+        "timestamp": 0.5000000000000007,
+        "robots": {
+          "left": {
+            "arm_qpos_shape": [
+              7
+            ],
+            "arm_qvel_shape": [
+              7
+            ],
+            "finger_qpos_shape": [
+              2
+            ],
+            "finger_qvel_shape": [
+              2
+            ],
+            "qpos": [
+              1.6670641116434126e-06,
+              -0.5990877747535706,
+              2.852263207842043e-07,
+              -2.400967836380005,
+              4.1366499203832063e-07,
+              1.7999545335769653,
+              0.7853978872299194,
+              0.03999587893486023,
+              0.03999587893486023
+            ],
+            "qvel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "gripper_width_m": 0.07999175786972046,
+            "timestamp": 0.5000000000000007,
+            "tcp_pose_world": [
+              -0.359999205566844,
+              -0.12023286402413264,
+              1.2456790543717662,
+              0.0006806918888071904,
+              -0.7071057165710262,
+              -0.707107190373765,
+              -0.0006808618421432646
+            ]
+          },
+          "right": {
+            "arm_qpos_shape": [
+              7
+            ],
+            "arm_qvel_shape": [
+              7
+            ],
+            "finger_qpos_shape": [
+              2
+            ],
+            "finger_qvel_shape": [
+              2
+            ],
+            "qpos": [
+              1.6670641116434126e-06,
+              -0.5990877747535706,
+              2.852263207842043e-07,
+              -2.400967836380005,
+              4.1366499203832063e-07,
+              1.7999545335769653,
+              0.7853978872299194,
+              0.03999587893486023,
+              0.03999587893486023
+            ],
+            "qvel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "gripper_width_m": 0.07999175786972046,
+            "timestamp": 0.5000000000000007,
+            "tcp_pose_world": [
+              0.36000079443315597,
+              -0.12023286402413264,
+              1.2456790543717662,
+              0.0006806918888071904,
+              -0.7071057165710262,
+              -0.707107190373765,
+              -0.0006808618421432646
+            ]
+          }
+        },
+        "image_shapes": {
+          "cam_high": [
+            3,
+            480,
+            640
+          ],
+          "cam_left_wrist": [
+            3,
+            480,
+            640
+          ],
+          "cam_right_wrist": [
+            3,
+            480,
+            640
+          ]
+        },
+        "image_mask": {
+          "cam_high": true,
+          "cam_left_wrist": true,
+          "cam_right_wrist": true
+        },
+        "state_shape": [
+          16
+        ],
+        "state_dtype": "float32",
+        "state": [
+          1.6670641116434126e-06,
+          -0.5990877747535706,
+          2.852263207842043e-07,
+          -2.400967836380005,
+          4.1366499203832063e-07,
+          1.7999545335769653,
+          0.7853978872299194,
+          0.07999175786972046,
+          1.6670641116434126e-06,
+          -0.5990877747535706,
+          2.852263207842043e-07,
+          -2.400967836380005,
+          4.1366499203832063e-07,
+          1.7999545335769653,
+          0.7853978872299194,
+          0.07999175786972046
+        ],
+        "stack_rgb_shape": [
+          3,
+          3,
+          480,
+          640
+        ],
+        "sync_ok": true,
+        "metadata": {
+          "camera_timestamps": {
+            "cam_high": 0.5000000000000007,
+            "cam_left_wrist": 0.5000000000000007,
+            "cam_right_wrist": 0.5000000000000007
+          },
+          "robot_timestamps": {
+            "panda_left": 0.5000000000000007,
+            "panda_right": 0.5000000000000007
+          },
+          "assembled_time_s": 0.5000000000000007,
+          "camera_status": {
+            "cam_high": "OK",
+            "cam_left_wrist": "OK",
+            "cam_right_wrist": "OK"
+          },
+          "camera_errors": {},
+          "sync_ok": true,
+          "max_camera_robot_skew_s": 0.0,
+          "timestamp_span_s": 0.0,
+          "sync_tolerance_s": 0.02,
+          "robot_fresh": true,
+          "state_schema": [
+            "left.panda_joint1",
+            "left.panda_joint2",
+            "left.panda_joint3",
+            "left.panda_joint4",
+            "left.panda_joint5",
+            "left.panda_joint6",
+            "left.panda_joint7",
+            "left.gripper_width_m",
+            "right.panda_joint1",
+            "right.panda_joint2",
+            "right.panda_joint3",
+            "right.panda_joint4",
+            "right.panda_joint5",
+            "right.panda_joint6",
+            "right.panda_joint7",
+            "right.gripper_width_m"
+          ],
+          "state_schema_version": "panda_positions_and_width_v1"
+        },
+        "lerobot_keys": [
+          "observation.images.cam_high",
+          "observation.images.cam_left_wrist",
+          "observation.images.cam_right_wrist",
+          "observation.state"
+        ]
+      },
+      "left_moved": {
+        "timestamp": 1.3249999999999977,
+        "robots": {
+          "left": {
+            "arm_qpos_shape": [
+              7
+            ],
+            "arm_qvel_shape": [
+              7
+            ],
+            "finger_qpos_shape": [
+              2
+            ],
+            "finger_qvel_shape": [
+              2
+            ],
+            "qpos": [
+              0.1476016640663147,
+              -0.5980274677276611,
+              5.419197350420291e-06,
+              -2.402071237564087,
+              8.838632652441447e-07,
+              1.7999087572097778,
+              0.7853977084159851,
+              0.03999720513820648,
+              0.03999721258878708
+            ],
+            "qvel": [
+              0.012049132958054543,
+              -0.0053186845034360886,
+              -1.7538883184897713e-05,
+              0.005526019725948572,
+              -8.510641009706887e-07,
+              0.00022736146638635546,
+              5.475831699186529e-07,
+              -4.971029738953803e-06,
+              -4.971029738953803e-06
+            ],
+            "gripper_width_m": 0.07999441772699356,
+            "timestamp": 1.3249999999999977,
+            "tcp_pose_world": [
+              -0.3055711057211325,
+              -0.11605919430596734,
+              1.2447528835935757,
+              0.0015664802151454397,
+              -0.6530411093004043,
+              -0.7573196385848047,
+              -0.0013493395472655898
+            ]
+          },
+          "right": {
+            "arm_qpos_shape": [
+              7
+            ],
+            "arm_qvel_shape": [
+              7
+            ],
+            "finger_qpos_shape": [
+              2
+            ],
+            "finger_qvel_shape": [
+              2
+            ],
+            "qpos": [
+              1.6670641116434126e-06,
+              -0.5990877747535706,
+              2.852263207842043e-07,
+              -2.400967836380005,
+              4.1366499203832063e-07,
+              1.7999545335769653,
+              0.7853978872299194,
+              0.03999587893486023,
+              0.03999587893486023
+            ],
+            "qvel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "gripper_width_m": 0.07999175786972046,
+            "timestamp": 1.3249999999999977,
+            "tcp_pose_world": [
+              0.36000079443315597,
+              -0.12023286402413264,
+              1.2456790543717662,
+              0.0006806918888071904,
+              -0.7071057165710262,
+              -0.707107190373765,
+              -0.0006808618421432646
+            ]
+          }
+        },
+        "image_shapes": {
+          "cam_high": [
+            3,
+            480,
+            640
+          ],
+          "cam_left_wrist": [
+            3,
+            480,
+            640
+          ],
+          "cam_right_wrist": [
+            3,
+            480,
+            640
+          ]
+        },
+        "image_mask": {
+          "cam_high": true,
+          "cam_left_wrist": true,
+          "cam_right_wrist": true
+        },
+        "state_shape": [
+          16
+        ],
+        "state_dtype": "float32",
+        "state": [
+          0.1476016640663147,
+          -0.5980274677276611,
+          5.419197350420291e-06,
+          -2.402071237564087,
+          8.838632652441447e-07,
+          1.7999087572097778,
+          0.7853977084159851,
+          0.07999441772699356,
+          1.6670641116434126e-06,
+          -0.5990877747535706,
+          2.852263207842043e-07,
+          -2.400967836380005,
+          4.1366499203832063e-07,
+          1.7999545335769653,
+          0.7853978872299194,
+          0.07999175786972046
+        ],
+        "stack_rgb_shape": [
+          3,
+          3,
+          480,
+          640
+        ],
+        "sync_ok": true,
+        "metadata": {
+          "camera_timestamps": {
+            "cam_high": 1.3249999999999977,
+            "cam_left_wrist": 1.3249999999999977,
+            "cam_right_wrist": 1.3249999999999977
+          },
+          "robot_timestamps": {
+            "panda_left": 1.3249999999999977,
+            "panda_right": 1.3249999999999977
+          },
+          "assembled_time_s": 1.3249999999999977,
+          "camera_status": {
+            "cam_high": "OK",
+            "cam_left_wrist": "OK",
+            "cam_right_wrist": "OK"
+          },
+          "camera_errors": {},
+          "sync_ok": true,
+          "max_camera_robot_skew_s": 0.0,
+          "timestamp_span_s": 0.0,
+          "sync_tolerance_s": 0.02,
+          "robot_fresh": true,
+          "state_schema": [
+            "left.panda_joint1",
+            "left.panda_joint2",
+            "left.panda_joint3",
+            "left.panda_joint4",
+            "left.panda_joint5",
+            "left.panda_joint6",
+            "left.panda_joint7",
+            "left.gripper_width_m",
+            "right.panda_joint1",
+            "right.panda_joint2",
+            "right.panda_joint3",
+            "right.panda_joint4",
+            "right.panda_joint5",
+            "right.panda_joint6",
+            "right.panda_joint7",
+            "right.gripper_width_m"
+          ],
+          "state_schema_version": "panda_positions_and_width_v1"
+        },
+        "lerobot_keys": [
+          "observation.images.cam_high",
+          "observation.images.cam_left_wrist",
+          "observation.images.cam_right_wrist",
+          "observation.state"
+        ]
+      },
+      "both_moved": {
+        "timestamp": 2.149999999999995,
+        "robots": {
+          "left": {
+            "arm_qpos_shape": [
+              7
+            ],
+            "arm_qvel_shape": [
+              7
+            ],
+            "finger_qpos_shape": [
+              2
+            ],
+            "finger_qvel_shape": [
+              2
+            ],
+            "qpos": [
+              0.14991340041160583,
+              -0.5980173349380493,
+              6.772742722205294e-07,
+              -2.4021153450012207,
+              4.3364013890823117e-07,
+              1.7999080419540405,
+              0.7853977084159851,
+              0.0399971604347229,
+              0.0399971604347229
+            ],
+            "qvel": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "gripper_width_m": 0.0799943208694458,
+            "timestamp": 2.149999999999995,
+            "tcp_pose_world": [
+              -0.3047280820572116,
+              -0.11592401443570605,
+              1.2447279082393894,
+              0.0015881386395561867,
+              -0.6521667185315578,
+              -0.7580726761254565,
+              -0.0013662969772528706
+            ]
+          },
+          "right": {
+            "arm_qpos_shape": [
+              7
+            ],
+            "arm_qvel_shape": [
+              7
+            ],
+            "finger_qpos_shape": [
+              2
+            ],
+            "finger_qvel_shape": [
+              2
+            ],
+            "qpos": [
+              -0.14759834110736847,
+              -0.5980274677276611,
+              -4.847961463383399e-06,
+              -2.402071237564087,
+              2.977324697894801e-07,
+              1.7999087572097778,
+              0.7853978276252747,
+              0.039997268468141556,
+              0.03999725356698036
+            ],
+            "qvel": [
+              -0.012049147859215736,
+              -0.005318689625710249,
+              1.7523803762742318e-05,
+              0.00552602531388402,
+              3.416882236706442e-06,
+              0.00022739240375813097,
+              -4.1257084149037837e-07,
+              -3.473648575891275e-06,
+              -3.4736483485175995e-06
+            ],
+            "gripper_width_m": 0.07999452203512192,
+            "timestamp": 2.149999999999995,
+            "tcp_pose_world": [
+              0.3055727363632198,
+              -0.11605943676008085,
+              1.2447528835947423,
+              0.0013490281679043748,
+              -0.7573182298414418,
+              -0.6530427429895147,
+              -0.001566748721918505
+            ]
+          }
+        },
+        "image_shapes": {
+          "cam_high": [
+            3,
+            480,
+            640
+          ],
+          "cam_left_wrist": [
+            3,
+            480,
+            640
+          ],
+          "cam_right_wrist": [
+            3,
+            480,
+            640
+          ]
+        },
+        "image_mask": {
+          "cam_high": true,
+          "cam_left_wrist": true,
+          "cam_right_wrist": true
+        },
+        "state_shape": [
+          16
+        ],
+        "state_dtype": "float32",
+        "state": [
+          0.14991340041160583,
+          -0.5980173349380493,
+          6.772742722205294e-07,
+          -2.4021153450012207,
+          4.3364013890823117e-07,
+          1.7999080419540405,
+          0.7853977084159851,
+          0.0799943208694458,
+          -0.14759834110736847,
+          -0.5980274677276611,
+          -4.847961463383399e-06,
+          -2.402071237564087,
+          2.977324697894801e-07,
+          1.7999087572097778,
+          0.7853978276252747,
+          0.07999452203512192
+        ],
+        "stack_rgb_shape": [
+          3,
+          3,
+          480,
+          640
+        ],
+        "sync_ok": true,
+        "metadata": {
+          "camera_timestamps": {
+            "cam_high": 2.149999999999995,
+            "cam_left_wrist": 2.149999999999995,
+            "cam_right_wrist": 2.149999999999995
+          },
+          "robot_timestamps": {
+            "panda_left": 2.149999999999995,
+            "panda_right": 2.149999999999995
+          },
+          "assembled_time_s": 2.149999999999995,
+          "camera_status": {
+            "cam_high": "OK",
+            "cam_left_wrist": "OK",
+            "cam_right_wrist": "OK"
+          },
+          "camera_errors": {},
+          "sync_ok": true,
+          "max_camera_robot_skew_s": 0.0,
+          "timestamp_span_s": 0.0,
+          "sync_tolerance_s": 0.02,
+          "robot_fresh": true,
+          "state_schema": [
+            "left.panda_joint1",
+            "left.panda_joint2",
+            "left.panda_joint3",
+            "left.panda_joint4",
+            "left.panda_joint5",
+            "left.panda_joint6",
+            "left.panda_joint7",
+            "left.gripper_width_m",
+            "right.panda_joint1",
+            "right.panda_joint2",
+            "right.panda_joint3",
+            "right.panda_joint4",
+            "right.panda_joint5",
+            "right.panda_joint6",
+            "right.panda_joint7",
+            "right.gripper_width_m"
+          ],
+          "state_schema_version": "panda_positions_and_width_v1"
+        },
+        "lerobot_keys": [
+          "observation.images.cam_high",
+          "observation.images.cam_left_wrist",
+          "observation.images.cam_right_wrist",
+          "observation.state"
+        ]
+      }
+    },
+    "rest_checks": {
+      "home": {
+        "physics_steps": 60,
+        "elapsed_s": 0.5,
+        "max_arm_speed_rad_s": 0.0,
+        "speed_tolerance_rad_s": 0.02,
+        "stable_hold_s": 0.5000000000000007
+      },
+      "left_moved": {
+        "physics_steps": 99,
+        "elapsed_s": 0.825,
+        "max_arm_speed_rad_s": 0.012049132958054543,
+        "speed_tolerance_rad_s": 0.02,
+        "stable_hold_s": 0.10833333333333332
+      },
+      "both_moved": {
+        "physics_steps": 99,
+        "elapsed_s": 0.825,
+        "max_arm_speed_rad_s": 0.012049147859215736,
+        "speed_tolerance_rad_s": 0.02,
+        "stable_hold_s": 0.10833333333333332
+      }
+    },
+    "policy_state_schema": [
+      "left.panda_joint1",
+      "left.panda_joint2",
+      "left.panda_joint3",
+      "left.panda_joint4",
+      "left.panda_joint5",
+      "left.panda_joint6",
+      "left.panda_joint7",
+      "left.gripper_width_m",
+      "right.panda_joint1",
+      "right.panda_joint2",
+      "right.panda_joint3",
+      "right.panda_joint4",
+      "right.panda_joint5",
+      "right.panda_joint6",
+      "right.panda_joint7",
+      "right.gripper_width_m"
+    ],
+    "robot_dof_mapping": {
+      "panda_left": {
+        "dof_names": [
+          "panda_joint1",
+          "panda_joint2",
+          "panda_joint3",
+          "panda_joint4",
+          "panda_joint5",
+          "panda_joint6",
+          "panda_joint7",
+          "panda_finger_joint1",
+          "panda_finger_joint2"
+        ],
+        "arm_dof_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "finger_dof_indices": [
+          7,
+          8
+        ],
+        "arm_policy_slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "gripper_policy_slot": 7
+      },
+      "panda_right": {
+        "dof_names": [
+          "panda_joint1",
+          "panda_joint2",
+          "panda_joint3",
+          "panda_joint4",
+          "panda_joint5",
+          "panda_joint6",
+          "panda_joint7",
+          "panda_finger_joint1",
+          "panda_finger_joint2"
+        ],
+        "arm_dof_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "finger_dof_indices": [
+          7,
+          8
+        ],
+        "arm_policy_slots": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "gripper_policy_slot": 15
+      }
+    },
+    "timestamp_skew_fault_injection": {
+      "success": true,
+      "injected_offset_s": 0.03,
+      "sync_ok": false
+    },
+    "refresh_comparison": {
+      "home": {
+        "scene_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.42754557291666667,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        },
+        "left_wrist_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.4220247395833333,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        },
+        "right_wrist_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.42158854166666665,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        }
+      },
+      "left_moved": {
+        "scene_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.9157291666666667,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        },
+        "left_wrist_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 1.0654123263888888,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        },
+        "right_wrist_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.4901247829861111,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        }
+      },
+      "both_moved": {
+        "scene_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.4191623263888889,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        },
+        "left_wrist_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.4648513454861111,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        },
+        "right_wrist_camera": {
+          "depth_p99_m": 0.0,
+          "valid_mask_agreement": 1.0,
+          "rgb_mean_abs": 0.7433723958333334,
+          "same_sample_time": true,
+          "refreshed_sequence": true
+        }
+      }
+    },
+    "stale_test_physics_steps": 19,
+    "stale": {
+      "scene_camera": "STALE",
+      "left_wrist_camera": "STALE",
+      "right_wrist_camera": "STALE"
+    },
+    "missing": {
+      "scene_camera": "OK",
+      "left_wrist_camera": "OK",
+      "right_wrist_camera": "MISSING"
+    },
+    "single_error": {
+      "scene_camera": "OK",
+      "left_wrist_camera": "INVALID",
+      "right_wrist_camera": "OK"
+    },
+    "low_frequency_no_image_save": {
+      "success": true,
+      "physics_steps": 48,
+      "render_calls": 4,
+      "periodic_captures": 2,
+      "image_files": []
+    }
+  },
+  "base_source_manifest": {
+    "tests/test_holding_monitor.py": "d9659945885e81c2e3dfaef3a4de3953f85bfe6af28ebe31bdbfdb892d981320",
+    "workstation/skills/holding_monitor.py": "51da9a5709d3b04dcb2f426547bd713bc560a33ff7dafb6e98ee803e6d83b60d",
+    "AGENTS.md": "36757535ac1778c4d21c1b84933c75c7fa092c125d4af82d048025559469a88e",
+    "README.md": "5077a0d6c984c7aed51e6ad5a025fa4a6025ed99020b08139f395cf7dfec660c",
+    "config/scene.json": "6196d953bb3d538182c4d80b97815ebad36fda0fe9ed6651fc2238632ea11788",
+    "config/sorting.kit": "7912ae9caca0206182d066f25354e73cc62e464e0392997de398371d179d1050",
+    "tests/__init__.py": "adbf75e1dad63725d7f139d77a64c2abfca19464c30187170358650c282474c2",
+    "tests/requirements-cpu.txt": "cb6b2b7352f161641ebd71654ad8acfafc1a02d9aa69f15e1496f6e3579a4613",
+    "tests/test_active_reobserve.py": "4d84d09ca50cfb09390a013fd0270212e22f5d5e928cca2077d98d166fb5f36e",
+    "tests/test_adaptive_observer.py": "107ca67f030d2f26d59d100797f3b7add20aab5416cc274908d649bd1b7e9b64",
+    "tests/test_approach_reobserve.py": "42c5cf27a9477ad33104c2218a134c016f8a6b6e733c6b3b4c3a7b92ad309f34",
+    "tests/test_arm_observation_checks.py": "e34d0e7789506e74c8fde4d8cd19d8b4733d68057694352ad23a7db1cd744379",
+    "tests/test_camera_render_tick.py": "47b0838063f65169847520831368e6813a79d0dd61f3008266b130f9ca2b54c0",
+    "tests/test_camera_system.py": "14efe75fa29a297259568a2c3ccf239f7f7ab310755c882dec3f0159ab0da5bf",
+    "tests/test_camera_viewpoint.py": "33efef3d3d7c77194c700c1dbf740da583cd0613ba68d73042e756230df9545c",
+    "tests/test_carton_contact_policy.py": "6fc1a12531ca982001c28c0b2b1062024ef8b3125ac2c37dfcf5c1290cbd1520",
+    "tests/test_centered_grasp.py": "6e318129582d4c0f522a8ec28b4c1a95634e261509980e1fb3edf64ab9190781",
+    "tests/test_chain_validation.py": "8b6a7d55439ec6da2221ac58e203c8539dcc7fc928cd1e18804d29d051626b5e",
+    "tests/test_collision_vectorization.py": "f5b5158545e87326897fa7f9bcb4b8f9441d5caa3a1a87dd3cfca541fffcea0c",
+    "tests/test_conveyor_slot_reservations.py": "a767b63c55b0f942ad189b139c82b9823a91a2261da5a568013bf1609a9b1b3f",
+    "tests/test_cuboid_pose.py": "9c04d2d713bfd37881bb9bc0743dcc7296109c7e286b84cafb515c68a2ccebd9",
+    "tests/test_cumotion_adapter.py": "c2d7c0b0602cd3511ac8d947df35edb9f3af46ae1ff39110148cd75f18e39317",
+    "tests/test_current_fragments.py": "9f0f359ae9227dd5ba9cae889fa1ba84d41fd2033358bbf4a9e935d52a7ea5ad",
+    "tests/test_cycle_performance.py": "cbfd783beed7611d97f0fe7f1099fad34dd16a5096b45804b69512ce70fbf094",
+    "tests/test_depth_error_audit.py": "b74f9991aff921a54d0582ee4c0589550069d17cec4dc41a8691973c994ca031",
+    "tests/test_display_refresh.py": "3770ccb43854bf9b2df259c19930c3643f40d45543be74cb6245ddaa5dfda331",
+    "tests/test_execution_reuse.py": "446532a5f5e988f21dcd919cc1ff3c846a82cb4818350357ec888291a7db8242",
+    "tests/test_fixed_surface_broadphase.py": "e49c6ac12f95a2c5ca4cf01f46b3a9d35875585aadc6bba0522fcf364a96e328",
+    "tests/test_frame_point_reuse.py": "62b352e00018383af59bb93ef8ed1b37d85493b8517f75164beace5e91d80980",
+    "tests/test_gap_reobserve.py": "8e65458cde9ac9996f337ba3106007bef5dc8c1d30138806c57526b85d9aa1ff",
+    "tests/test_grasp_constrained_carry.py": "bffcaa3f53edaa73b8c75b585bd72aa3f784b165f15eacc9c5d611a3f6cd91c5",
+    "tests/test_graspgen_calibration.py": "89dee3de06e348fa4907e7672319affaaf1dbafe825fa7bdb843e75e483991a0",
+    "tests/test_graspgen_diagnostic.py": "3dcb9472f61c54381594c1b8d4b9eb1e5620446072680380459ae3d033c23220",
+    "tests/test_graspgen_execution.py": "8427d7b029e2be64438380cae1eb75d78a2681b8346c597075d61126a3433665",
+    "tests/test_graspgen_interface.py": "01f360e48fb71493c81d67e42ff30faa0ced03966ebb360a1a28df1fb6642597",
+    "tests/test_graspgen_pair.py": "ceb57e00b8135246a927569bb32c20bfa1ee4f59790e7cf0ac9845060ebd2b24",
+    "tests/test_graspgen_planning.py": "20bb67a70a54fcdf1144ea3b3fa12c5b78d4dcb6b0a788ca2b2afb5f054f0fea",
+    "tests/test_guided_reobserve.py": "40d40cb326d33a4c5da1e698135b86fd7ad0932babc253d15281b0f89dd3338a",
+    "tests/test_handover.py": "798253981d1687e17f1096761a4e40fe18921ed8b0587d24ea960aa47aa41b65",
+    "tests/test_held_surface.py": "6361ab01d9293107fe7bcc110a9573aae6a68c15932821f34b43877def5bbbe5",
+    "tests/test_holding_reference.py": "9c3a8994169dad96d4ca7e83e9ed820abbfb8e9590a5d12de1829ffefecdcdf6",
+    "tests/test_identity_capture.py": "db4276932cde3cd5cd9bfeb2afe46ed44fcef1db94861816ab9d3414981fbed7",
+    "tests/test_interactive_failure.py": "82029d10bdab1d4e264c07e76a205aef90bb7b074f7fb6f465f5a4d8bf69f3b8",
+    "tests/test_joint_pair_selection.py": "8011e6cb55a115953d5d682526f21c284055f84cb5957ec660fb8fb8584956cf",
+    "tests/test_joint_rrt.py": "690692c15fb88014677a9f72ded97b91f021ccb52090375bfd16ceb89b2d751e",
+    "tests/test_mask_refinement.py": "a909d5042b465619e7507d8d452596c8df4e7883ed8b2ca4303d4a2e2e252f39",
+    "tests/test_measured_fragment_identity.py": "1285fcf8b7342ce532bd78e9daefff1f61e9f84125c3c1499cb1d833f29764f9",
+    "tests/test_merged_view_deduplication.py": "d2727ebad26880debb66a91f4edf2af309c5ea9ddd82a6f26b86c1ca941515e8",
+    "tests/test_mixed_cartons.py": "a18dcb3bdea57f5603026c0256f19d4416e698a98193fc7aa74bcf901670ed4f",
+    "tests/test_model_segmentation.py": "f8b32278e6e607e91c147c6325667e4ae98c759959a22bf3e35d1313f3f56fa4",
+    "tests/test_model_training.py": "83b4528438706c6a1912710b14af5520e6f6a3dddc14bd047992ad5ae98d804e",
+    "tests/test_mp4_duration.py": "e42099ecc9e29beb526913924a71380fb410435ab9c3eb74a5d650c61d09193c",
+    "tests/test_observation_packet.py": "47b155cd900ac66c7a9785883a6c88f3646028e0ae363d130973a9dcf323f2d4",
+    "tests/test_observed_workspace.py": "caf2d57ed37445b07f0b721d113ca873a19420af4df82571a405494cc5c344f7",
+    "tests/test_observer_schedule.py": "4bfa826f694b57dcb015142f6c06d15da1fb632ae84c065577685a718d2486ac",
+    "tests/test_occlusion_memory.py": "182249187f2530261c0df18d7bcdbe7ac62f21cdd334c70608b807135e17b5d1",
+    "tests/test_output_archive.py": "68a1e72a1730c878ced6df16ccb35a3c46ca018d7ad221e683612393d76939d5",
+    "tests/test_packaging_evidence.py": "b13101acf37ea8a2a7ce4eb257bbffddf69905cd6c8a1945d7ee52d8785eee05",
+    "tests/test_pair_task.py": "a1a94a5f29cd42478007ca139214c8d6c02486ab5c55d95b962a73f19512cabf",
+    "tests/test_parallel_occupancy.py": "48013c440ff06927c49e8e3bafc5e8fada2c496f945832cc0845064cb88bcbef",
+    "tests/test_parallel_perception.py": "5b7bcc8f4016dd0e3503f29c66b9ec5784beb758ebccbf78a489844526807b0f",
+    "tests/test_partial_surface_identity.py": "9b21084734920b3c9e74f6a0630c01b227acd36746c7a11d3d81438d7a75c377",
+    "tests/test_path_preflight.py": "681492528776d56accb752d6867bfb4a6f2ea63ff3ffcd0e43dcd86f4f6522fc",
+    "tests/test_path_sample_reuse.py": "32ab36d5d7a426e65c4c7f359de9f8f6506105115ae042a2e1d212383e15e940",
+    "tests/test_perception_robot_filter.py": "0487b56cdc607ae2c70b8be072dbd2c360d9c786793c347fb0ccafbc5710fac4",
+    "tests/test_placement_symmetry.py": "eff3a2d7e68c74e33fd8e143465b8f9e21eb4f637f17f7a03b7d827934876a5e",
+    "tests/test_plan_reuse.py": "1c2b7502f476b4b49a9e586eb1405a100cd5e014b9dc0af6bef0a2232fbdf75b",
+    "tests/test_policy_observation.py": "dbd5af4f3ff21c4796a6cb89e7816bb289801d18eeb301334b6233aefc22033b",
+    "tests/test_postfit_identity.py": "fe3c194bcbb5cc2d167dba53d831451f411c3ff647817704c789ee3cff3fb2f5",
+    "tests/test_preclose_target.py": "bdc3a3227d37f899a525de49f78da7a0e7f551736eaee1c9eca841f49c642636",
+    "tests/test_released_bounds.py": "991c7ddda0aa312a064aeb9018efce8562c3638f0e7e43267d9b6608ad32e238",
+    "tests/test_robot_depth_broadphase.py": "f2dce6bdfb3bcb07edc14e973addb5493a6046ab3fc0318c55a7fd00e960c700",
+    "tests/test_robot_driver.py": "4c41b771f00b1417d5eab7e22d994c6549b794520968967cba79c0dd7e77e5f9",
+    "tests/test_robot_geometry.py": "4587b7ab2450dc76a7a9ee5dbe10176d3af3efdee259a51ebf96d95ebdc1c4e3",
+    "tests/test_runtime_paths.py": "7076131138be1fc67f5fea5f3619913cb51fc626e39ba5c68b49014bd1ee190c",
+    "tests/test_scene_estimate.py": "2d6ab9404b654d1b919e0a73c964f15e309f0042cf385210215b51ff29087966",
+    "tests/test_slow_visual_feedback.py": "43069747a49d5b9203d70f7f4951f9fc43c5034d04210853706cd6e6fa2ab89e",
+    "tests/test_small_carton_center.py": "da6a5899da41174d549450fe5effbda020e7ac9f12c91d64bbf52c609a6390f5",
+    "tests/test_station_priors.py": "7e7dea4f4671b5e74ba010152df1561a87734878bdf6b3ed3af1863d3dd4071e",
+    "tests/test_supported_target.py": "68317c55a3bbb568fd925c6dce1055aa84bcc1a12e15c06843b59338d2c54453",
+    "tests/test_tape_carry_pose.py": "4c311dbbd3a4e9a66beb28532054d0bed7f5173ed136e9887c7350e486bf0f63",
+    "tests/test_tape_evidence.py": "ce1b1c55e608c0ae235485697ed4668aecb23c536c6f958edc86568c2b3ea346",
+    "tests/test_tape_sampling.py": "132191e18e1a2684cfb6e60bec963b1d7851d0243fe5dc44b9d085b58dbedef9",
+    "tests/test_task_logic.py": "6eaf79457aefa63c41d56133edb09d7a564816f61ae67ac92a74ba9771ce5f0d",
+    "tests/test_track_retention.py": "338b4654f2c45aab64a668c443145875f46e3c503b59e44c0fe59e66419ad116",
+    "tests/test_visible_edges.py": "c61ec3998028f05c154b026b340ae34015df994df8cdf883c99fd2f6ceef7ef7",
+    "tests/test_visible_normals_sparse.py": "0392da31c6d69b10083c059ec55372d2efa775483890c68ee1e18898d4d16651",
+    "tests/test_vision_evaluation.py": "35967eb27912bf0906656e8514feb3a943f07cab8c6bdc664d05c4bc5d7c4384",
+    "tests/test_vision_overlay.py": "a1bf8423a3c43bb011e3654d731501aa31af711f984a080c01fec6fba4ba8610",
+    "tests/test_visual_cli.py": "655f342cb5501750ef7b40b0d7219c3a83208d09663c17d009faa4944818256d",
+    "tests/test_visual_monitor.py": "2600c7788cd3d826f2857c0286a950a220166bd2529ae1039acee375e4a5a935",
+    "tests/test_visual_planning.py": "baf35c837a3c69b99ac9a85a6ceb05b6ebdee640d99ca444b46de8e0c45fbe02",
+    "tests/test_visual_sorting.py": "b64d9824efc8231aab6995ce1ac70a8bd9ef50935ad7546fe8fb7a1d0f5dd62a",
+    "tests/test_wall_timing.py": "33967fe89a47500fd1bf996ba29e2a704dbc7f2fadff8a04d08d04def0b032cd",
+    "tests/test_workspace_lazy_queries.py": "9be063aaec89bb01d025ad6334463fda575f9e04c911de9b7f56e9b1036844b0",
+    "tests/test_workspace_short_circuit.py": "33fe01c3bc659fa6a99e0cd0922438b3f80a7ffebdd76fd8a0d5d528e91a7935",
+    "workstation/__init__.py": "2efd7f2c4ef1440e2e1db481edd85918041886c27c4b7f8194846385987f593e",
+    "workstation/__main__.py": "4413f25dec808419ca4988634e0737ccf4b93ee91656cd07b74f30397ce9ebbe",
+    "workstation/app.py": "f0e591d76fc4de43134d8fb5ed6ef263b7d1de853871ede5a832acccdc8eee88",
+    "workstation/baselines/__init__.py": "d438a9a8871e92a29300e4eb4b3645360839b23993670d6fab295e8eac1d496e",
+    "workstation/baselines/dual_handover.py": "ec4678a3d87a252367818ed7a645bbae2a05d1258130e894030647478edd732a",
+    "workstation/baselines/handover_math.py": "a126676efd747b1973b9bc07b168dc386d6baa7e0d6af2d4c65a56780c91a8d1",
+    "workstation/baselines/single_pick_place.py": "9a0983f76016759ade50ba080f6e3c83417c91a558a61d792226aca6cf9a9a32",
+    "workstation/diagnostics/__init__.py": "f37016051c906c9ed5947e04c165ee7c62c1f4edcfd7a36ae8311d311389bd46",
+    "workstation/diagnostics/continuation_report.py": "15548eb3d10923c5a5529f0a7922c36d4524f710603d6e2cde45819b8feccb60",
+    "workstation/diagnostics/depth_error_audit.py": "6658fb0f2368f01a3439a71876b68bee692aa19586ece3cdbe1d1a30cfb9eba3",
+    "workstation/diagnostics/graspgen_calibration.py": "811c900a199c2ce34e7b8facaedc32fdbeda968814ad7879ae9fd504ac78aa56",
+    "workstation/diagnostics/graspgen_check.py": "a8505d412374760ecd8d4df3c7e4568f4e1998980732bb1fda0b950bba41cfc8",
+    "workstation/diagnostics/graspgen_pair.py": "116babfdaa0b39598eb11714c682935a502cf98fa821357e1dd1777f8c9268b9",
+    "workstation/diagnostics/graspgen_pair_place.py": "d273842ca0bc0a31391e01bef3833e5b56a83f8019e7d2eefc3fb9fb49bdeca5",
+    "workstation/diagnostics/graspgen_pair_sort.py": "20efacc7f6e5f151eedad324f78bc5e661ddd6b85c894275618b5b67df1b3ce8",
+    "workstation/diagnostics/identity_capture.py": "e6e7711d1277c41b63de4eaed9fca97c27452fcd862280863eefc4a13c3a55ad",
+    "workstation/diagnostics/model_capture.py": "82a2f74d4fd360d51241b8fab7cfc06e6372e004f542b14b64724e2b56feefbb",
+    "workstation/diagnostics/model_evaluation.py": "6ecc15737418560681c82a07f7ed37bc4d1b73ae40e04942b2d1c5f6f9287b44",
+    "workstation/diagnostics/model_training.py": "1ae63869a83420bcbc4c8417c3de58daf12afdf45dea46bfe607f65dd14448e4",
+    "workstation/diagnostics/mp4_duration.py": "a9e36ad3925acd5bd6924c53b2092cb8b5032443df2246df694ec1762e38b2d8",
+    "workstation/diagnostics/output_archive.py": "592b295d8d865d7624a4b5d5e2015876132d9e0ee29dfa4e96b254e683f93962",
+    "workstation/diagnostics/path_replay.py": "1a5e2cc554c5d7bbf80c52e8257da1784fba1c095c6993dda1460a663ec086fc",
+    "workstation/diagnostics/presentation_video.py": "6ea94f7930c30019a7fb3b2526c7bcb6420475a98118ccca154092ad2f779dd7",
+    "workstation/diagnostics/sensor_check.py": "a92dfd804e81162b4c27f746a1ad63df2ad9e500b53b34b18aa123ff1281c399",
+    "workstation/diagnostics/showcase.py": "112c924f6e6050c7fd36cef6ec6f56bf5f135a18a470f1d262d3a512b8c695f9",
+    "workstation/diagnostics/vision_check.py": "95a742031acd2f2fc5f1d91248f191668c7c85adf79d172788d64a13a61d8cdf",
+    "workstation/diagnostics/visual_run.py": "8a3c96a16e2808a8b6cda4fb8703ceb75437c8939393ad26815facf629fd2848",
+    "workstation/diagnostics/wall_timing.py": "1131812a27ff2b6d893604e2843438d8ee119844e07fb8d0804007bc1e39f28f",
+    "workstation/interactive_failure.py": "d63028096b8a084bf2084d18182502620adafc4cfc5b6bdbd581724d956bc89c",
+    "workstation/models/__init__.py": "28c116ea470b5e188e57f6e1bab648ca394f1599ab7c8ef32abed2dab279aefd",
+    "workstation/models/graspgen_client.py": "8e41212d0ae20d296bde1916cbece5b883b190253237f0149ea002dc2d452a0d",
+    "workstation/models/graspgen_inference.dockerfile": "347fd24b4979b8cfe657832f45313509a5d7d103e43e63a02afcdede784ad96a",
+    "workstation/models/graspgen_proxy.py": "b681de4f86f26819d1fdcbaaf97390f3a0a51abf1761d78433b0e6b52818a4d4",
+    "workstation/models/graspgen_source.py": "c68bb4d725f6782eacdbe032f894fceff5f3d6ce58d4d9f48c124aa2343d65da",
+    "workstation/models/requirements.txt": "b5f610f9967e0a62938e193f9a466b4bdff5d8fc30dd0c56c0b3be2b297e1c00",
+    "workstation/models/yoloe_client.py": "ab15b5a87e167e7dd79e611121cd2f48a34161582ca6858efcf62b841316365d",
+    "workstation/models/yoloe_worker.py": "cb1d36882f40dbb03424db887daff80e4098bad6c3657667b75c68044982de5f",
+    "workstation/observations/__init__.py": "b1fe27da57a421c1188ddf65174537fa0349ef0f9edcaed5cd933c75ead06068",
+    "workstation/observations/camera_config.py": "d84dbdd7292ac827937b9edf838c12d3947014610e2c97a6079d1e4acac2d8e2",
+    "workstation/observations/camera_geometry.py": "ac387f245a01343a538eb9444faab8b3f59a99a8ac3d17ce1b9dead3f584e624",
+    "workstation/observations/camera_system.py": "026638e19d08831a07237b5d4a6f2bf4ab2f55ce6f2f099fec3828791ab2e2e9",
+    "workstation/observations/observation_packet.py": "0b52a6c6a2b6c47b66070c8ce6794428f5d610b8f537bb4e50783f60eb2acdf4",
+    "workstation/observations/policy_observation.py": "dcf21210ea025ddbabff0eeea67cdd6f09656c1d177f0327039f8483f2adf137",
+    "workstation/observations/sim_sensor_adapter.py": "108e614bc7dba67778f2987b13026ee64f8fe4759e170002047dc518ff93457e",
+    "workstation/perception/__init__.py": "19fc90f521c920bae8853a9abe01b16a31a7e2a0afb53894430a736b40ce47ee",
+    "workstation/perception/cuboid_pose.py": "79f1b93bf2440306a9dfe347ee879a6b0b6a86f4a7cf9d64fbb85f587dcf7abc",
+    "workstation/perception/held_surface.py": "378f74268e6fae689e40c8005bf8ac7fe5257c5ce6abae82ae324fa17726c523",
+    "workstation/perception/mask_refinement.py": "96ac8316563a02912daf6b4acaee6ceda1744f5db67577d29f3301471e8de0b1",
+    "workstation/perception/packaging_evidence.py": "17aa4536425c2d0b92814745533bfed834b55d87f0b203378950004a37b3d198",
+    "workstation/perception/preclose_target.py": "f9efd39a210c31474e486aad177cd15428b71de1b3584b8c16b3c7461255ee22",
+    "workstation/perception/rgbd_cartons.py": "21da1ee55e9c6c2b768cc251112d77c599cff5f59f50f1f254c92830df051959",
+    "workstation/perception/scene_estimate.py": "8dec693b84cf1e5d6b676d92f611cd20dcc833b94032ad2f0a5d041eb655a8f0",
+    "workstation/perception/segmentation.py": "f83ab4333afa0b1a50a69726078f064753982713c272f5abd9e09ea6d9fd53e1",
+    "workstation/perception/visible_edges.py": "696481ee058dd36b6f4583fa024d1cac9f9d367e618c98fd982d6aae096be8aa",
+    "workstation/planning/__init__.py": "2b7e9d21909ef4b5c12d0657cce69d431c3486cfe62a5e70f889f3089fd6225c",
+    "workstation/planning/camera_viewpoint.py": "e3843a2388069b6f54c51cd2c513c90926f78bdf2a21267b913c398276b354d2",
+    "workstation/planning/centered_grasp.py": "b4b3c6b959dffd337b5c1c853fea314d34cca947dbba53f6ab7c611a889ecc8a",
+    "workstation/planning/collision.py": "c05bacbaabac5933c089663ee6ebc67eaa0968386f3cced9dea3433500d0d2cc",
+    "workstation/planning/graspgen_candidates.py": "0cc72d7e8994d230728050168b1b51922033f5397fb7d072ce1692bf34da2128",
+    "workstation/planning/joint_pair_selection.py": "05dab1d206d963e314bebe41e3aa5d678ca0f2eeaee1312b03a97797f7522072",
+    "workstation/planning/joint_rrt.py": "f8d7949af62ea1969bdc020c6b775035f467d4c0354ffd7fad731484cfe5c9bc",
+    "workstation/planning/kinematic_chain.py": "1fa4e6460bd62af969fabcb70d44a98a81268ff807279af1790309053352a5b9",
+    "workstation/planning/observed_workspace.py": "0578191175c4f005cf300e44d15a85ee7936890dcb7c5ee9e4530d2c92d64218",
+    "workstation/planning/occlusion_memory.py": "9e1f26b4f76a3e3f91fab54cb4f9e54528ac98059dd717a1f41fca6ad67de1ed",
+    "workstation/planning/pair_task.py": "1b88fc14b2700b748e3eeb78361dfea3325045c839a40d5b098bc5f99fa020d5",
+    "workstation/planning/plan_reuse.py": "27d60449a400a0e490a6457910f54f237a2e08796ac3175d786c6e0cfbd95b01",
+    "workstation/planning/robot_geometry.py": "d68a8cf4a332dd097f73417d6a6dc5f1f9162645ff083b122dea54c75c9efa93",
+    "workstation/planning/selection.py": "fdcc7790ef4175393a1c5ac273b36d5c3c28b4ee3bdf76bb95724980d72287ca",
+    "workstation/planning/task_targets.py": "5704ec4d5e23f6ccb2306d9989013d616e4cfc544ddb03bd69a763b533163a43",
+    "workstation/planning/validation_context.py": "7dee78e58b65e1c63626fd5570dc68a341805d2db1f448cdbd131febae07bf63",
+    "workstation/runtime_paths.py": "3118842ed8172455822de14c1dbfa8f239ee03a47f0fa2037b062118ed2822c9",
+    "workstation/simulation/__init__.py": "2c9860b4382ec63b0ad2d53c4c15c2ba3c56cd395b66fa7d9abcb38221f2b127",
+    "workstation/simulation/cartons.py": "c3ba91624d2ea642353d3854c17bd218ec058ca4524ca3221b5ecb8678e5b72a",
+    "workstation/simulation/cumotion_driver.py": "fbb1b0aa1cb816b8c723de69c7fdc3c6cadd31409a244324b1708f39fe844fe0",
+    "workstation/simulation/display_refresh.py": "a0db887e5e6dd171e26d1d1ad5144029d077c4d4689467f14779705fef37d738",
+    "workstation/simulation/environment.py": "ce07689652e2184e341ac8852ae7dd735337fb15640a017e97aa2c9e2e960b69",
+    "workstation/simulation/robot_driver.py": "200b17a7f60265354466d2af25610921b543ceef7f25abb46388be38a221a0f6",
+    "workstation/simulation/station_priors.py": "2161388257d702d90e8ac769d385ffdc27eb612ee0bc6667a4ded58d0d606958",
+    "workstation/simulation/visual_fixtures.py": "14d42cd23dbbfe948344b1137cc07c506477a9e43f9dc5e32189a75e15b07f2d",
+    "workstation/skills/__init__.py": "cd525964032273b7a5bb4f1f3671994ad56c48a58e2de519463e2662d1b7e267",
+    "workstation/skills/camera_reobserve.py": "30abbe685e1bf8aad0760a050c543dcba7b4e0bfdb25313fa444493be2c091f5",
+    "workstation/skills/cumotion_pick_place.py": "a810ccf322faf2b86c7c892cf3509cc1b0399372a5e1fb7023bb4b1d4b904637",
+    "workstation/skills/reobserve.py": "b83896d6f48ae206a9a7d7dfb6e25c0b484640bf06f36a6e992c1c05eef6bca6",
+    "workstation/skills/visual_pick_place.py": "eed40169cf7347a039baa3deb85fa7bd0901eec10ccf04a82d4216005993e2d4",
+    "workstation/skills/visual_side_adjustment.py": "ed9a3ee80bf78718f4c04ab35a571b3e42822d9f3284017f563e5a246ab06eeb",
+    "workstation/skills/visual_sorting.py": "26d1e72559d32de1f583f89f0c01067ced50ca061b8cf75e604dcc516f76f82c",
+    "workstation/task_logic.py": "5048ab66aa629fc0e7fd2fd84156e86fb8dccbac394af520caac629fc857741e",
+    "项目路线与当前状态交接.md": "d4689f3e4e0ca48583cba9c1396a7b49cf913e6eada88c4675a5624065b3bde8"
+  },
+  "source_delta": {
+    "workstation/observations/camera_config.py": "refresh_render_frames=4 -> 2; all camera mount and intrinsic settings unchanged"
+  },
+  "boundaries": [
+    "home, left_moved and both_moved only",
+    "one render failed; two render default still needs live task validation"
+  ]
+}

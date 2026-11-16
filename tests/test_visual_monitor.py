@@ -27,6 +27,32 @@ class VisualMonitorTests(unittest.TestCase):
         self.assertEqual(self.skill.max_visual_lift,0.)
         self.assertEqual(self.skill._missing,1)
 
+    def test_retreat_refresh_reconciles_released_identity_but_verification_stays_independent(self):
+        skill=self.skill;skill.held=False;skill.events=[dict(phase='RETREAT')]
+        obj=replace(self.scene.objects[0],track_id='fresh_release')
+        fresh=replace(self.scene,objects=(obj,))
+        skill.estimator=SimpleNamespace(estimate=lambda p:fresh,
+            associate_supported_target=lambda scene,target,fit:replace(scene,objects=(replace(obj,track_id=target),)))
+        skill.candidate=SimpleNamespace(target_id='picked')
+        skill.hold_tracker=SimpleNamespace(size=obj.size_m)
+        fit=dict(position_m=obj.position_m,axis_yaw_rad=0.,uncertainty_m=.003,time_s=1.)
+        skill.release_tracker=SimpleNamespace(collision_estimate=lambda *a,**kw:dict(fit))
+        result={};skill.released_reference=(result,.016,obj.position_m,np.eye(3))
+        captured=[];skill.robot.set_observation=lambda p,s,priors:captured.append(s)
+        skill.observe()
+        self.assertEqual(captured[-1].objects[0].track_id,'picked')
+        self.assertEqual(captured[-1].objects[0].posture,'UNKNOWN')
+        self.assertEqual(len(result['released_geometry_checks']),1)
+        for phase in ('HOME','VERIFY'):
+            skill.events=[dict(phase=phase)];skill.observe()
+            self.assertEqual(captured[-1].objects[0].track_id,'fresh_release')
+            self.assertEqual(captured[-1].objects[0].posture,obj.posture)
+        skill.events=[dict(phase='RETREAT')]
+        skill.release_tracker.collision_estimate=lambda *a,**kw:None
+        with self.assertRaisesRegex(RuntimeError,'RELEASED_GEOMETRY_UNCERTAIN'):skill.observe()
+        skill.observe('failed')
+        self.assertEqual(captured[-1].objects[0].track_id,'fresh_release')
+
     def test_stationary_visible_carton_reports_grip_failure(self):
         self.skill.observe=lambda:self.scene
         with self.assertRaisesRegex(RuntimeError,'VISUAL_GRIP_FAILED'):

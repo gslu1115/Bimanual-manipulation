@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace as NS
 import numpy as np
-from workstation.planning.pair_task import VisualConveyorIndex,choose_source_pair,match_stationary_sources
+from workstation.planning.pair_task import VisualConveyorIndex,choose_source_pair,match_stationary_sources,observed_batch_size
 
 
 class PairTaskTests(unittest.TestCase):
@@ -40,6 +40,21 @@ class PairTaskTests(unittest.TestCase):
         c=VisualConveyorIndex(self.config);c.start(['a','b'],True)
         with self.assertRaisesRegex(RuntimeError,'TIMEOUT'):c.advance(c.timeout_s+.1)
 
+    def test_partial_and_full_slot_batches_require_the_same_visual_clearance(self):
+        for count in (1,len(self.config['conveyor']['slots_xy'])):
+            with self.subTest(count=count):
+                c=VisualConveyorIndex(self.config);batch=[str(i) for i in range(count)]
+                c.start(batch,True);c.advance(c.minimum_s+.01)
+                self.assertFalse(c.observe(1.,self.views(1.,False),True))
+                self.assertFalse(c.observe(2.,self.views(2.),True))
+                self.assertTrue(c.observe(2.6,self.views(2.6),True))
+                self.assertEqual(c.delivered,set(batch))
+                with self.assertRaisesRegex(RuntimeError,'START_UNSUPPORTED'):c.start(batch,True)
+        for invalid in ([],['same','same'],list(range(len(self.config['conveyor']['slots_xy'])+1))):
+            c=VisualConveyorIndex(self.config)
+            with self.assertRaisesRegex(RuntimeError,'START_UNSUPPORTED'):c.start(invalid,True)
+            self.assertEqual(c.state,'WAITING')
+
     def test_pair_selection_and_reserved_matching_use_current_observations(self):
         def obj(name,x,y):return NS(track_id=name,position_m=(x,y,.79),size_m=(.1,.055,.045),
             failures=(),posture='UPRIGHT',visibility='COMPLETE_TOP',time_s=1.)
@@ -72,6 +87,30 @@ class PairTaskTests(unittest.TestCase):
                 gap=np.linalg.norm(np.subtract(a.position[:2],b.position[:2]))
                 gap-=sum(np.linalg.norm(x.size_m[:2])/2 for x in (a,b))+.040+.010
                 self.assertGreater(gap,.008)
+
+    def test_batch_size_prefers_two_but_respects_visible_sources_and_free_slots(self):
+        self.assertEqual(observed_batch_size({'a':1,'b':2,'c':3},[(0,0),(1,0),(2,0)]),2)
+        self.assertEqual(observed_batch_size({'a':1},[(0,0),(1,0)]),1)
+        self.assertEqual(observed_batch_size({'a':1,'b':2},[(0,0)]),1)
+        self.assertEqual(observed_batch_size({},[(0,0)]),0)
+        self.assertEqual(observed_batch_size({'a':1},[]),0)
+
+    def test_single_source_filter_does_not_infer_on_unreserved_cartons(self):
+        from workstation.models.graspgen_source import GraspGenSource
+        source=GraspGenSource(None,None,eligible=lambda obj,scene:obj.track_id=='reserved')
+        scene=NS(objects=[NS(track_id='other',failures=(),posture='UPRIGHT',visibility='COMPLETE_TOP')])
+        self.assertEqual(source.generate(None,scene,None,None),[])
+        self.assertEqual(source.requests,[])
+
+    def test_sort_cli_accepts_upright_single_and_odd_batch_without_changing_cameras(self):
+        from workstation.app import build_parser,load_config
+        from workstation.simulation.visual_fixtures import initial_cartons
+        for fixture,count in (('upright',1),('upright-pair',2),('separated-upright',3),('upright-four',4)):
+            with self.subTest(fixture=fixture):
+                p=build_parser();args=p.parse_args(['--mode','graspgen-pair-sort','--visual-fixture',fixture])
+                config=load_config(args,p)
+                self.assertEqual(len(initial_cartons(config,fixture)),count)
+                self.assertEqual(config['cameras'],self.config['cameras'])
 
     def test_empty_arm_interlock_requires_measured_open_home_and_clear_geometry(self):
         from workstation.diagnostics.graspgen_pair_sort import empty_arms_clear

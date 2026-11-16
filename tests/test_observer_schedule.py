@@ -8,6 +8,7 @@ class ObserverScheduleTests(unittest.TestCase):
     def skill(self):
         skill=VisualPickPlace.__new__(VisualPickPlace)
         skill._monitor_ticks=0;skill.grasp_source=object();skill.held=False
+        skill.released_reference=None
         skill.priors=SimpleNamespace(max_age_s=.15);skill.robot=SimpleNamespace(dt=1/120)
         return skill
 

@@ -63,6 +63,18 @@ class JointPairTests(unittest.TestCase):
         self.assertTrue(recoverable_empty_failure(dict(r,failure_reason='PAIR_PREGRASP_REACQUISITION_LOST:panda_left')))
         self.assertTrue(recoverable_empty_failure(dict(r,failure_reason='NEW_DIAGNOSTIC_TEXT')))
 
+    def test_pre_descent_planning_failure_replans_without_error_string_branches(self):
+        r=dict(last_phase='approach',motion=dict(ticks=20),next_action='CONTINUE',
+            phase_checkpoint=dict(phase='approach',event='planning',dry_run=False))
+        self.assertTrue(recoverable_empty_failure(r))
+        for change in (dict(empty_approach_started=True),dict(closure_started=True),
+                       dict(next_action='STOP'),dict(motion=None),
+                       dict(phase_checkpoint=dict(phase='approach',event='executing')),
+                       dict(phase_checkpoint=dict(phase='approach',event='planning')),
+                       dict(phase_checkpoint=dict(phase='transfer',event='planning')),
+                       dict(phase_checkpoint=dict(phase='approach',event='planning',dry_run=True))):
+            with self.subTest(change=change):self.assertFalse(recoverable_empty_failure(dict(r,**change)))
+
     def test_perception_failure_blacklists_culprit_pose_without_banning_other_arm(self):
         p=self.policy();left=self.candidate();right=self.candidate(.2,arm='panda_right')
         r=dict(pair=dict(selection=[vars(left),vars(right)]),
