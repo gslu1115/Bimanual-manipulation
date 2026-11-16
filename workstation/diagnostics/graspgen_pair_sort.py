@@ -38,9 +38,12 @@ def run(env,args):
         (env,'step','physics_step'),(env.camera_system,'render','camera_render'),
         (env,'_physics_step','physics_engine'),(env,'_app_update','simulation_app_update'),
         (env,'get_observation_packet','sensor_read'),(env,'_write_json','json_write'),
+        (env,'_encode_json','json_encode'),(env,'_replace_json','json_file_replace'),
+        (env,'observe_robot_states','encoder_acquisition'),
         (CartonEstimator,'estimate','scene_estimation'),
         (CartonEstimator,'resolve_action_sources','source_pose_resolution'),
         (ObservedWorkspace,'_compute_occupied','depth_obstacle_mapping'),
+        (ObservedWorkspace,'_compute_fixed_points','depth_fixed_filter'),
         (ObservedWorkspace,'_evaluate_unknown','free_space_mapping'),
         (ObservedWorkspace,'slot','slot_query'),
         (ObservedWorkspace,'_query_slot','slot_query_compute'),
@@ -65,7 +68,8 @@ def run(env,args):
         (graspgen_pair,'paired_pregrasp','pair_selection'),
         (graspgen_pair,'drive_empty_pregrasps','pregrasp_execution'),
         (graspgen_pair_place,'drive_empty_pregrasps','phase_execution'),
-        (graspgen_pair_place,'transfer_schedule','transfer_schedule')):
+        (graspgen_pair_place,'transfer_schedule','transfer_schedule'),
+        (graspgen_pair_place,'execute_parallel_home','parallel_home')):
         timing.wrap(obj,name,label)
     try:
         return _run(env,args,timing)

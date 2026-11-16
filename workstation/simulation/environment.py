@@ -396,12 +396,19 @@ class SortingEnvironment:
                 'slot_errors': {b.name: [slot_errors(b, xy, self.c) for xy in self.c['conveyor']['slots_xy']] for b in boxes}}
 
     def _write_json(self, name, data):
+        self._replace_json(name,self._encode_json(data))
+
+    @staticmethod
+    def _encode_json(data):
         def default(value):
             if hasattr(value, 'tolist'): return value.tolist()
             return str(value)
+        return json.dumps(data, ensure_ascii=False, indent=2, default=default)
+
+    def _replace_json(self,name,encoded):
         target=self.output/name
         pending=target.with_name(target.name+'.tmp')
-        pending.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=default), encoding='utf-8')
+        pending.write_text(encoded, encoding='utf-8')
         pending.replace(target)
 
     def close(self):

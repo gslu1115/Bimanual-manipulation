@@ -1,5 +1,6 @@
 """Sampled sphere geometry. Approximate checks are not general collision planning."""
 from dataclasses import dataclass
+from functools import lru_cache
 import numpy as np
 
 
@@ -113,10 +114,37 @@ def scene_obstacles(scene,target_id,extra_margin=.004):
     return boxes
 
 
+@lru_cache(maxsize=16)
+def _self_pairs(links):
+    values=np.asarray(links)
+    result=np.triu(np.abs(values[:,None]-values[None,:]) > 2,k=1)
+    result.flags.writeable=False
+    return result
+
+
+class SphereGeometry(tuple):
+    """Immutable sequence-compatible geometry shared by all cycle consumers."""
+    def __new__(cls,links,centres,radii):
+        links=np.asarray(links,int).copy()
+        centres=np.asarray(centres,float).reshape(-1,3).copy()
+        radii=np.asarray(radii,float).copy()
+        for a in (links,centres,radii):a.flags.writeable=False
+        obj=super().__new__(cls,zip(links,centres,radii))
+        obj.links,obj.centres,obj.radii=links,centres,radii
+        obj.self_pairs=_self_pairs(tuple(links))
+        return obj
+
+
+def sphere_arrays(spheres):
+    if isinstance(spheres,SphereGeometry):return spheres.links,spheres.centres,spheres.radii
+    return (np.asarray([s[0] for s in spheres]),
+            np.asarray([s[1] for s in spheres],float).reshape(-1,3),
+            np.asarray([s[2] for s in spheres],float))
+
+
 def sphere_box_clearances(spheres,box):
     """Same sphere/AABB distances in one batch, preserving sphere order."""
-    centres=np.asarray([s[1] for s in spheres],float).reshape(-1,3)
-    radii=np.asarray([s[2] for s in spheres],float)
+    _,centres,radii=sphere_arrays(spheres)
     outside=np.maximum(np.abs(centres-box.centre)-np.asarray(box.size)/2,0.)
     return np.linalg.norm(outside,axis=1)-radii
 
@@ -124,8 +152,7 @@ def sphere_box_clearances(spheres,box):
 def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,rejection=None):
     """(link_index, centre, radius). Connected link groups excluded from self checks."""
     if not spheres: return None,float('inf')
-    links=np.asarray([s[0] for s in spheres]);centres=np.asarray([s[1] for s in spheres],float)
-    radii=np.asarray([s[2] for s in spheres],float);n=len(spheres)
+    links,centres,radii=sphere_arrays(spheres);n=len(spheres)
     static=np.full((n,len(obstacles)),np.inf)
     if obstacles:
         outside=np.maximum(np.abs(centres[:,None,:]-np.asarray([b.centre for b in obstacles]))-
@@ -135,7 +162,7 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,reject
         static[(links[:,None] == 0) & np.asarray([b.name == own_mount for b in obstacles])[None,:]]=np.inf
     mutual=np.full((n,len(other_spheres)),np.inf)
     if other_spheres:
-        other=np.asarray([s[1] for s in other_spheres],float);other_r=np.asarray([s[2] for s in other_spheres])
+        _,other,other_r=sphere_arrays(other_spheres)
         mutual=np.linalg.norm(centres[:,None,:]-other[None,:,:],axis=2)-radii[:,None]-other_r[None,:]
     minimum=min(float(static.min()) if static.size else float('inf'),
                 float(mutual.min()) if mutual.size else float('inf'))
@@ -153,7 +180,7 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,reject
                              clearance_m=float(mutual[row,col]),required_m=margin)
         return ('STATIC_PATH_BLOCKED:'+obstacles[int(bad[0])].name if len(bad) else 'OTHER_ARM_COLLISION'),minimum
     distance=np.linalg.norm(centres[:,None,:]-centres[None,:,:],axis=2)-radii[:,None]-radii[None,:]
-    eligible=np.triu(np.abs(links[:,None]-links[None,:]) > 2,k=1)
+    eligible=spheres.self_pairs if isinstance(spheres,SphereGeometry) else _self_pairs(tuple(links))
     if eligible.any():
         minimum=min(minimum,float(distance[eligible].min()))
         blocked=eligible & (distance<margin)

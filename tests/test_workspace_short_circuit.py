@@ -94,7 +94,7 @@ class WorkspaceShortCircuitTests(unittest.TestCase):
 
     def test_failed_corner_cannot_be_rescued_by_later_visible_corner(self):
         ws=test_observed_workspace.WorkspaceTests().workspace(valid=False)
-        ws._modelled=lambda points:np.zeros(len(points),bool)
+        ws._modelled=lambda points,**kwargs:np.zeros(len(points),bool)
         ws._ray_free=lambda points,frame:points[:,2]>.81
         expected,_=exhaustive_reference(ws)
         ws.build();np.testing.assert_array_equal(ws.unknown,expected)

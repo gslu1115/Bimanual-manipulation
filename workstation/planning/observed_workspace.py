@@ -137,16 +137,17 @@ class ObservedWorkspace:
             self._robot_radii=np.asarray([r for _,_,r in self.robots],float)
         return self._robot_centres,self._robot_radii
 
-    def _modelled(self, points):
+    def _modelled(self, points, part="all"):
         result = np.zeros(len(points),bool)
         if not len(points):return result
         point_lower=points.min(axis=0);point_upper=points.max(axis=0)
-        payload=self.payload_observation
+        payload=self.payload_observation if part!="fixed" else None
         if payload is not None and not (0<=self.packet.assembled_time_s-payload['time_s']<=self.priors.max_age_s
                 and abs(payload['time_s']-self.packet.observation_time_s)<=1e-6):payload=None
         # These volumes are NOT labelled empty: separate body/target collision
         # checks remain mandatory. Only their occlusion is accounted for here.
-        for box in self.static+self.objects:
+        boxes=(self.static if part=="fixed" else self.objects if part=="objects" else self.static+self.objects)
+        for box in boxes:
             # Current independently supported holding geometry supersedes
             # this track's clipped single-view proxy, not neighbouring objects.
             if payload is not None and box.name==payload['target_id']:continue
@@ -169,6 +170,7 @@ class ObservedWorkspace:
             result |= np.all(np.abs(local)<=payload['size']/2+payload['uncertainty_m']+.002+1e-12,axis=1)
         # When official convex bodies are supplied, oversized collision spheres
         # must not label the adjacent external volume as robot-occupied.
+        if part=="objects":return result
         if not self.robot_links:
             for _,centre,radius in self.robots:
                 result |= np.sum((points-centre)**2,axis=1) <= (radius+.002)**2
@@ -350,22 +352,41 @@ class ObservedWorkspace:
             self.unknown=np.ones(self.shape,bool)
             self._unknown_evaluated=np.zeros(self.shape,bool)
 
+    def _compute_fixed_points(self):
+        """Filter current raw depth by invariant robot/fixed geometry once."""
+        chunks=[]
+        for frame in self._frames():
+            xyz=deproject(frame).reshape(-1,3);valid=frame.valid_depth.ravel()
+            for start in range(0,len(xyz),32768):
+                chunks.append((xyz[start:start+32768],valid[start:start+32768]))
+        def filter_chunk(chunk):
+            xyz,valid=chunk;points=xyz[valid]
+            points=points[np.all((points>=self.lower)&(points<self.upper),axis=1)]
+            points=points[~self._modelled(points,part='fixed')]
+            points.flags.writeable=False
+            return points
+        workers=min(_occupancy_workers(),len(chunks))
+        if workers>1:
+            with ThreadPoolExecutor(max_workers=workers) as pool:return tuple(pool.map(filter_chunk,chunks))
+        return tuple(map(filter_chunk,chunks))
+
     def _compute_occupied(self):
-        frames=list(self._frames())
-        workers=_occupancy_workers()
-        if workers>1 and sum(frame.depth_m.size for frame in frames)>=100000:
-            # Split within cameras to balance uneven views. Eight workers won
-            # the 4/8/16 short replay; more workers increased memory/GIL overhead.
-            # Resolve cached deprojection on the caller before sharing a frame.
-            chunks=[]
-            for frame in frames:
-                xyz=deproject(frame).reshape(-1,3);valid=frame.valid_depth.ravel()
-                for start in range(0,len(xyz),32768):
-                    chunks.append((xyz[start:start+32768],valid[start:start+32768]))
-            # Publish no partial map when any worker fails.
-            with ThreadPoolExecutor(max_workers=min(workers,len(chunks))) as pool:
-                grids=list(pool.map(self._occupied_chunk,chunks))
-        else:grids=[self._occupied_indices(frame) for frame in frames]
+        key=self._mapping_key()
+        # Remove only object and payload dependencies. Bounds, exact images,
+        # freshness, calibrated fixed geometry and image-time robot poses stay.
+        fixed_key=key[:9]+key[10:12]
+        cache=self.frame_cache.setdefault('fixed_points',OrderedDict())
+        if fixed_key not in cache:
+            cache[fixed_key]=self._compute_fixed_points()
+            if len(cache)>4:cache.popitem(last=False)
+        else:cache.move_to_end(fixed_key)
+        def object_indices(points):
+            remaining=points[~self._modelled(points,part='objects')]
+            return np.floor((remaining-self.lower)/self.resolution).astype(int)
+        chunks=cache[fixed_key];workers=min(_occupancy_workers(),len(chunks))
+        if workers>1:
+            with ThreadPoolExecutor(max_workers=workers) as pool:grids=list(pool.map(object_indices,chunks))
+        else:grids=list(map(object_indices,chunks))
         occupied=np.zeros(self.shape,bool)
         for grid in grids:occupied[tuple(grid.T)]=True
         return occupied

@@ -58,6 +58,56 @@ def transfer_schedule(robot,paths,payload_guard,*,rejections=None):
     raise RuntimeError('NO_CLEAR_PAIRED_TRANSFER_SCHEDULE')
 
 
+def home_clock_paths(robot,paths,plans):
+    """Original quintic speed bounds; both arms share dt and hold at the end."""
+    from workstation.simulation.robot_driver import smooth
+    result=[]
+    for path,plan in zip(paths,plans):
+        segments=list(zip(path,path[1:])) if plan.get('joint_planner')=='bounded joint RRT-Connect' else [(path[0],path[-1])]
+        sampled=[np.asarray(path[0])]
+        for q0,q1 in segments:
+            q0,q1=np.asarray(q0),np.asarray(q1)
+            minimum=.25 if plan.get('joint_planner')=='bounded joint RRT-Connect' else 1.
+            duration=max(minimum,1.875*np.max(np.abs(q1-q0))/robot.joint_speed)
+            count=math.ceil(duration/robot.dt)
+            sampled.extend(q0+smooth(i/count)*(q1-q0) for i in range(1,count+1))
+        result.append(sampled)
+    durations=[(len(p)-1)*robot.dt for p in result]
+    length=max(map(len,result))
+    return [p+[p[-1]]*(length-len(p)) for p in result],durations
+
+
+def execute_parallel_home(robot,scene):
+    from workstation.planning.collision import scene_obstacles
+    started=perf_counter()
+    arms=('panda_left','panda_right')
+    states=robot.read_states();paths=[];plans=[]
+    for arm in arms:
+        path,_=robot.checked_joint_plan(arm,states[arm].joint_positions_rad,robot.home[:7],scene,None)
+        paths.append(path);plans.append(robot.last_plan_check.copy())
+    paths,durations=home_clock_paths(robot,paths,plans)
+    paths,schedule=transfer_schedule(robot,paths,lambda left,right:None)
+    obstacles=list(robot.static)+scene_obstacles(scene,None)
+    def guard(left,right):
+        geometry=[robot.spheres(a,q) for a,q in zip(arms,(left,right))]
+        # Both measured arms retain self/fixed/box protection. No payload or
+        # new recovery state is introduced after both cartons were released.
+        for i,a in enumerate(arms):
+            reason,_=check_spheres(geometry[i],[],obstacles,a+'_mount')
+            if reason:raise RuntimeError(reason)
+    execution_start=perf_counter()
+    result=drive_empty_pregrasps(robot,paths,guard,require_overlap=False,
+        trajectory_kind='joint_return',settle_seconds=.4)
+    final=robot.read_states()
+    if any(np.max(np.abs(final[a].joint_positions_rad-robot.home[:7]))>.04 for a in arms):
+        raise RuntimeError('JOINT_TRACKING_ERROR')
+    result.update(single_arm_nominal_sim_s=dict(zip(arms,durations)),schedule=schedule,
+                  planning=plans,planning_wall_s=execution_start-started,
+                  execution_wall_s=perf_counter()-execution_start,
+                  scope='both empty arms after release and retreat')
+    return result
+
+
 def path_rejection(reason):
     return reason.startswith(('IK_','JOINT_LIMIT','NO_CLEAR_','OTHER_ARM_COLLISION','SELF_COLLISION',
                               'STATIC_PATH_BLOCKED','OBSERVED_PATH_OBSTACLE','HELD_CARTON_',
@@ -369,7 +419,6 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         fresh_scene=scene
         if released_references:refresh_released(packet)
         robot.set_observation(packet, scene, priors)
-        slots.observe(robot.observed_workspace)
         return packet
 
     def confirm_target(arm,packet,closed=False):
@@ -805,7 +854,6 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                                               progress_check=(lambda elapsed:refresh_approach_references(elapsed,active)) if renew_reference else None)
         phases[label]['execution_wall_s']=perf_counter()-execution_start
         report['phase_checkpoint']=dict(phase=phase,event='completed',dry_run=False)
-        write_phase_checkpoint(env,report)
         for arm,(goal,goal_rot) in destinations.items():
             pos,rot=robot.fk(arm)
             error=float(np.linalg.norm(pos-goal))
@@ -1199,7 +1247,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         else:packet=observe()
         move('retreat',{a:(places[a][0]+[0.,0.,.18],places[a][1]) for a in active},True,
              active=active,carrying=carried_arms,label=prefix+'retreat')
-        for a in active:clear_empty_arm(a)
+        if len(active)==2 and not carried_arms:
+            report['last_phase']='clear_for_verification'
+            report['phase_checkpoint']=dict(phase='parallel_home',event='planning',dry_run=False)
+            write_phase_checkpoint(env,report)
+            phases['parallel_home']=execute_parallel_home(robot,scene)
+        else:
+            for a in active:clear_empty_arm(a)
 
     orient={}
     for a in arms:
@@ -1290,6 +1344,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     for _ in range(20):
         robot.hold(.1)
         observe()
+        slots.observe(robot.observed_workspace)
         placements={}
         for a in arms:
             xy=goals[a]

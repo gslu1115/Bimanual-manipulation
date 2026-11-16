@@ -169,10 +169,12 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
 
 
 def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.,
-                          require_overlap=True,loaded_transfer=False,progress_check=None):
+                          require_overlap=True,loaded_transfer=False,progress_check=None,
+                          trajectory_kind='trajectory',settle_seconds=.3):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
-    previous=[robot.read_states()[a].joint_positions_rad.copy() for a in arms]
+    states=robot.read_states()
+    previous=[states[a].joint_positions_rad.copy() for a in arms]
     if any(np.max(np.abs(q-np.asarray(path[0])))>.01 for q,path in zip(previous,paths)):
         raise RuntimeError('PAIR_START_STATE_CHANGED')
     start=np.array(previous)
@@ -181,12 +183,24 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
     ticks=0
     trace=[]
     tick_counts=dict(trajectory=0,tracking_wait=0,settling=0)
+    last_geometry=None
+    geometry_checks=dict(computed=0,reused=0)
+    def arm_clearance(left,right):
+        nonlocal last_geometry
+        pair=(robot.spheres(arms[0],left),robot.spheres(arms[1],right))
+        if last_geometry is not None and all(a is b for a,b in zip(pair,last_geometry)):
+            geometry_checks['reused']+=1
+            return None
+        reason,_=check_spheres(*pair,[],None)
+        geometry_checks['computed']+=1
+        last_geometry=pair if reason is None else None
+        return reason
     def advance(desired,kind='trajectory'):
         nonlocal previous,overlap,ticks,commanded
         # Also check tracking lag, not just the nominal synchronized paths.
         for left,right in synchronized_knots([previous[0],desired[0]],[previous[1],desired[1]]):
             if payload_guard:payload_guard(left,right)
-            reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None)
+            reason=arm_clearance(left,right)
             if reason:raise RuntimeError('PAIR_COMMAND_'+reason)
         for i,(a,q) in enumerate(zip(arms,desired)):
             robot.targets[a][:7]=q
@@ -201,7 +215,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                     -robot.joint_speed,robot.joint_speed),0.,0.])
         commanded=desired.copy()
         previous_kind=getattr(robot,'_tick_kind','trajectory')
-        robot._tick_kind=kind
+        robot._tick_kind=trajectory_kind if kind=='trajectory' else kind
         try:robot.tick()
         finally:robot._tick_kind=previous_kind
         tick_counts[kind]+=1
@@ -214,7 +228,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
             i,j=np.unravel_index(np.argmax(errors),errors.shape)
             raise RuntimeError(f'PAIR_JOINT_TRACKING_ERROR: {arms[i]} joint {j+1} '
                                f'error {errors[i,j]:.4f} rad at tick {ticks}')
-        reason,_=check_spheres(robot.spheres(arms[0],measured[0]),robot.spheres(arms[1],measured[1]),[],None)
+        reason=arm_clearance(*measured)
         if reason:raise RuntimeError('PAIR_MEASURED_'+reason)
         if payload_guard:payload_guard(*measured)
         speed=np.max(np.abs(measured-previous),axis=1)/robot.dt
@@ -235,11 +249,11 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         else:
             errors=np.max(np.abs(previous-desired),axis=1)
             raise RuntimeError('PAIR_JOINT_TRACKING_ERROR: '+str(dict(zip(arms,errors.tolist()))))
-    for _ in range(math.ceil(.3/robot.dt)):
+    for _ in range(math.ceil(settle_seconds/robot.dt)):
         advance(np.asarray([p[-1] for p in paths]),'settling')
     moved=np.max(np.abs(previous-start),axis=1)
     if require_overlap and (not overlap or np.min(moved)<.04):raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
-    return dict(ticks=ticks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
+    return dict(ticks=ticks,geometry_checks=geometry_checks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
                 arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace,
                 tick_counts=tick_counts,sim_seconds={k:v*robot.dt for k,v in tick_counts.items()})
 
@@ -540,6 +554,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 report['preparation_timing']=timing.delta(preparation_start)
                 action_timing_start=timing.snapshot()
             action_ticks_start=dict(getattr(robot,'tick_counts',{}))
+            reader=getattr(robot,'encoder_snapshot_reader',None)
+            encoder_start=(reader.reads,reader.reuses) if reader is not None else (0,0)
             report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
             for selected,path in zip(current['selection'],current['pregrasp_knots']):
                 arm=selected['arm']
@@ -589,6 +605,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 report['action_tick_counts']={k:v-action_ticks_start.get(k,0)
                     for k,v in getattr(robot,'tick_counts',{}).items()}
                 report['physics_dt_s']=robot.dt
+                if reader is not None:
+                    report['action_encoder_snapshots']=dict(acquisitions=reader.reads-encoder_start[0],
+                        reuses=reader.reuses-encoder_start[1])
                 report['observation_deduplication']=dict(getattr(estimator,'redundant_views',{}))
                 for arm in states:
                     robot.command_velocities(arm,np.zeros(9))

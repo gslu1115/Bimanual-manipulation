@@ -31,14 +31,14 @@ class ParallelOccupancyTests(unittest.TestCase):
         np.testing.assert_array_equal(ws.occupied,occupied)
 
     def test_worker_failure_never_publishes_a_partial_map(self):
-        ws=self.workspace();original=ws._occupied_chunk
-        def checked(chunk):
+        ws=self.workspace();original=ws._modelled
+        def checked(points,**kwargs):
             raise RuntimeError('injected camera error')
-        ws._occupied_chunk=checked
+        ws._modelled=checked
         with patch('workstation.planning.observed_workspace._occupancy_workers',return_value=8), \
              self.assertRaisesRegex(RuntimeError,'injected camera error'):ws._build_occupied()
         self.assertIsNone(ws.occupied)
-        ws._occupied_chunk=original
+        ws._modelled=original
         ws._build_occupied();self.assertIsNotNone(ws.occupied)
 
     def test_uneven_chunks_preserve_edges_invalid_points_and_input_arrays(self):

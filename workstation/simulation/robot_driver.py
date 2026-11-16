@@ -1,6 +1,7 @@
 """Robot-only joint drive port and Lula model; no carton or contact truth access."""
 from __future__ import annotations
 import math
+from workstation.planning.collision import SphereGeometry
 from collections import OrderedDict
 import numpy as np
 from workstation.observations.observation_packet import PandaJointMap, PANDA_ARM_JOINT_NAMES, PANDA_FINGER_JOINT_NAMES
@@ -13,6 +14,24 @@ def smooth(t): return t*t*t*(10.+t*(-15.+6.*t))
 
 
 def down(yaw): return np.array([0.,math.cos(yaw/2),math.sin(yaw/2),0.])
+
+
+class TickStateReader:
+    """Share encoders only within the adapter's exact physics/control sequence.
+
+    A real driver must supply a received-state sequence, not a wall-time bucket.
+    Image-time snapshots continue through the separate camera adapter.
+    """
+    def __init__(self,read,sequence):
+        self.read,self.sequence=read,sequence
+        self.key=None;self.states=None;self.reads=0;self.reuses=0
+
+    def __call__(self):
+        key=self.sequence()
+        if self.states is None or key!=self.key:
+            self.states=self.read();self.key=key;self.reads+=1
+        else:self.reuses+=1
+        return dict(self.states)
 
 
 class RobotMotion:
@@ -300,24 +319,30 @@ class RobotMotion:
         if cache is None:self._sphere_cache=cache=OrderedDict()
         if key not in cache:
             values=self._compute_spheres(arm,q,fingers)
-            for _,centre,_ in values:centre.flags.writeable=False
-            cache[key]=tuple(values)
+            cache[key]=values
             if len(cache)>32:cache.popitem(last=False)
         else:cache.move_to_end(key)
         return cache[key]
 
     def _compute_spheres(self,arm,q,fingers):
-        poses={}
-        spheres=[]
-        for link,index,centre,radius in self.sphere_description:
-            if link not in poses: poses[link]=self.fk(arm,q,link)
-            p,r=poses[link]
-            spheres.append((index,np.asarray(p)+np.asarray(r)@centre,radius))
+        # Topology/local coordinates are constant; transform each link in bulk.
+        if getattr(self,'_sphere_layout_ref',None) is not self.sphere_description:
+            self._sphere_layout_ref=self.sphere_description
+            self._sphere_layout=[]
+            for link in dict.fromkeys(item[0] for item in self.sphere_description):
+                indices=np.array([i for i,item in enumerate(self.sphere_description) if item[0]==link])
+                local=np.array([self.sphere_description[i][2] for i in indices])
+                self._sphere_layout.append((link,indices,local))
+            self._sphere_links=np.array([item[1] for item in self.sphere_description]+[9]*6)
+            self._sphere_radii=np.array([item[3] for item in self.sphere_description]+[.009]*6)
+        centres=np.empty((len(self._sphere_links),3))
+        for link,indices,local in self._sphere_layout:
+            p,r=self.fk(arm,q,link)
+            centres[indices]=local@r.T+p
         p,r=self.fk(arm,q,'panda_hand')
-        for sign in (-1,1):
-            for z in (.060,.080,.095):
-                spheres.append((9,np.asarray(p)+np.asarray(r)@np.array([0,sign*(fingers+.004),z]),.009))
-        return spheres
+        local=np.array([[0,sign*(fingers+.004),z] for sign in (-1,1) for z in (.060,.080,.095)])
+        centres[-6:]=local@r.T+p
+        return SphereGeometry(self._sphere_links,centres,self._sphere_radii)
 
     def validate_path(self,arm,knots,scene,target_id,held_size=None,held_yaw=0.,support_contact=False,target_contact=False,
                       target_boxes_override=None,finger_positions=None,check_local_unknown=True,check_approach_corridor=True,
@@ -930,13 +955,16 @@ def from_environment(env,*,paired_armature_floor=None):
         fingers=list(maps[name][7:])
         arm.set_dof_max_efforts([30.,30.],dof_indices=fingers)
         arm.set_dof_gains(stiffnesses=[2000.,2000.],dampings=[100.,100.],dof_indices=fingers)
+    native_indices={name:np.asarray(indices) for name,indices in maps.items()}
     def command(name,q):
-        native=np.empty(9); native[list(maps[name])]=q
+        native=np.empty(9); native[native_indices[name]]=q
         env.command_joints(name,native)
-    robot=RobotMotion(env.c,env.observe_robot_states,command,
+    read_states=TickStateReader(env.observe_robot_states,lambda:(env.time,tuple(id(a) for a in env.arms.values())))
+    robot=RobotMotion(env.c,read_states,command,
                       lambda:env.step(monitor_conveyor=False,render=False))
+    robot.encoder_snapshot_reader=read_states
     def command_velocities(name,values):
-        native=np.empty(9);native[list(maps[name])]=values
+        native=np.empty(9);native[native_indices[name]]=values
         env.arms[name].set_dof_velocity_targets(native)
     robot.command_velocities=command_velocities
     if env.c.get('motion_backend')=='cumotion':
