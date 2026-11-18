@@ -198,7 +198,7 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
                 pregrasp_joint_positions_rad=path.get('pregrasp_joint_positions_rad'),
                 candidate_source=candidate.source,model_score=candidate.model_score,
                 model_score_is_success_probability=False,
-                full_pose_checked=path.get('full_pose_checked',False))
+                full_pose_checked=path.get('full_pose_checked',False),ranking_bound=path.get('ranking_bound',False))
             if all_reasons:
                 terms['rejection_phase']=path.get('rejection_phase')
                 terms['rejection_details']=path.get('rejection_details',{})

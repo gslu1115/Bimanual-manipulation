@@ -108,10 +108,11 @@ def synchronized_knots(left, right, max_step=.025):
             yield tuple(p[i-1]+(p[i]-p[i-1])*n/steps for p in aligned)
 
 
-def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None):
+def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None,*,prefix_assessment=None,pick_cache=None):
     arms = ('panda_left', 'panda_right')
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
-                 and a.candidate.arm == arm and a.terms.get('full_pose_checked')] for arm in arms]
+                 and a.candidate.arm == arm and (a.terms.get('full_pose_checked') or
+                 (complete_assessment is not None and a.terms.get('ranking_bound')))] for arm in arms]
     pairs = [(left, right) for left, right in product(*feasible)
              if left.candidate.target_id != right.candidate.target_id
              and ('slot_xy' not in left.terms or left.terms['slot_xy'] != right.terms['slot_xy'])]
@@ -125,7 +126,10 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
         return ((selection_policy.priority(pair) if selection_policy else ())+
                 (slot_cost(pair),-(pair[0].score+pair[1].score)))
     pairs.sort(key=rank)
-    if complete_assessment is not None:
+    if prefix_assessment is not None:
+        from workstation.planning.plan_reuse import refine_pick_pairs
+        ordered=refine_pick_pairs(pairs,rank,prefix_assessment,complete_assessment)
+    elif complete_assessment is not None:
         from workstation.planning.plan_reuse import complete_ranked_pairs
         ordered=complete_ranked_pairs(pairs,rank,complete_assessment)
     else:ordered=pairs
@@ -136,8 +140,15 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
             c = a.candidate
             if c.candidate_id not in paths:
                 try:
-                    path, _ = robot.checked_joint_plan(arm, states[arm].joint_positions_rad,
-                        np.asarray(a.terms['pregrasp_joint_positions_rad']),scene,c.target_id)
+                    obj=next((o for o in scene.objects if o.track_id==c.target_id),None) if pick_cache else None
+                    prior=(pick_cache.pregrasps.get(pick_cache.key(robot,c,obj,scene,None,True))
+                           if obj is not None else None)
+                    if prior is not None and np.array_equal(prior[0],a.terms['pregrasp_joint_positions_rad']):
+                        path=prior[3]
+                        pick_cache.path_hits+=1
+                    else:
+                        path,_=robot.checked_joint_plan(arm,states[arm].joint_positions_rad,
+                            np.asarray(a.terms['pregrasp_joint_positions_rad']),scene,c.target_id)
                 except RuntimeError as error:
                     rejected.append(dict(ids=[c.candidate_id], reason=str(error)))
                     path = None
@@ -162,7 +173,7 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
             result['joint_choice']=dict(source_keys=[selection_policy.key(a.candidate) for a in pair],
                 history_penalty=selection_policy.priority(pair)[0],visibility=selection_policy.visibility(pair),
                 feasible_pair_count=len(pairs),
-                pair_count_scope='prefix-feasible combinations, suffixes refined in rank order' if complete_assessment else 'fully assessed combinations',
+                pair_count_scope='optimistic combinations, fully validated in rank order' if complete_assessment else 'fully assessed combinations',
                 eligible_source_count=len({r.candidate.target_id for r in rows if r.feasible}))
         return result, rejected
     return None, rejected
@@ -293,8 +304,16 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     report = dict(success=False, scope='snapshot_and_synchronized_empty_pregrasp_only',
                   physical_execution=False, simultaneous_grasp_verified=False, model_requests=[])
     timing=getattr(robot,'wall_timing',None)
+    wait_start=time.perf_counter()
+    stage_start=timing.stage_snapshot() if timing is not None else {}
     preparation_start=timing.snapshot() if timing is not None else None
     preparation_validation_start=dict(getattr(robot,'validation_reuse',{}))
+    def planning_counts():
+        return {key:getattr(robot,key,0) for key in
+                ('full_forecasts_started','full_forecasts_passed','cartesian_reuses')}
+    def count_delta(before):
+        return {key:value-before[key] for key,value in planning_counts().items()}
+    planning_start=planning_counts()
     def fail(reason):
         report['failure_reason'] = reason
         env._write_json('graspgen_pair_check.json', report)
@@ -336,6 +355,18 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     from workstation.planning.plan_reuse import CandidatePrefixCache
     pick_prefixes=CandidatePrefixCache()
     completed_rows={}
+    prefix_rows={}
+    def prefix_assessment(row):
+        c=row.candidate
+        slot=row.terms['slot_xy']
+        key=c.candidate_id,tuple(slot)
+        if key not in prefix_rows:
+            checked=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot,False),robot.home,
+                           candidate_provider=lambda o,_:[c] if o.track_id==c.target_id else [])
+            result=checked[0]
+            result.terms.update(slot_xy=slot,source_order=row.terms['source_order'])
+            prefix_rows[key]=result
+        return prefix_rows[key]
     def complete_assessment(row):
         c=row.candidate;slot=row.terms['slot_xy'];key=(c.candidate_id,tuple(slot))
         if key not in completed_rows:
@@ -345,11 +376,11 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             result=checked[0];result.terms['slot_xy']=slot
             completed_rows[key]=result
         return completed_rows[key]
-    def check_destination(c,o,s,slot):
+    def check_destination(c,o,s,slot,rank_only=True):
         # Pick IK, empty approach and finger closure do not depend on the
         # downstream slot. Reuse their failure only for this frozen snapshot.
         if c.candidate_id in pick_failures:return pick_failures[c.candidate_id]
-        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,prefix_only=selection_policy is not None)
+        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,prefix_only=selection_policy is not None,rank_only=selection_policy is not None and rank_only)
         if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
             pick_failures[c.candidate_id]=result
         return result
@@ -469,8 +500,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
+            order={c.candidate_id:i for group in candidates.values() for i,c in enumerate(group)}
             for row in scored:
-                row.terms['slot_xy']=slot
+                row.terms.update(slot_xy=slot,source_order=(available.index(slot),order[row.candidate.candidate_id]))
             rows.extend(scored)
             for arm in states:
                 assigned=[r for r in scored if r.candidate.arm==arm]
@@ -482,12 +514,13 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                     phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
         report['candidate_prefix_reuse']=pick_prefixes.report()
         report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}
-        report['feasible_per_arm_scope']='pick prefix only' if selection_policy else 'whole path'
+        report['feasible_per_arm_scope']='pregrasp passed; remaining stages pending ranked validation' if selection_policy else 'whole path'
         pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy,
-                                      complete_assessment if selection_policy else None)
+                                      complete_assessment if selection_policy else None,
+                                      prefix_assessment=prefix_assessment if selection_policy else None,pick_cache=pick_prefixes)
         report['candidate_prefix_reuse']=pick_prefixes.report()
-        report['destination_evaluation']=dict(mode='score-upper-bound refinement' if selection_policy else 'exhaustive',
-            prefix_rows=len(rows),completed_rows=len(completed_rows),
+        report['destination_evaluation']=dict(mode='pregrasp upper bound; ranked pick and destination refinement' if selection_policy else 'exhaustive',
+            ranked_rows=len(rows),prefix_rows=len(rows),completed_rows=len(completed_rows),
             feasible_completed_rows=sum(r.feasible for r in completed_rows.values()),
             skipped_destination_rows=sum(r.feasible and (r.candidate.candidate_id,tuple(r.terms['slot_xy'])) not in completed_rows for r in rows),
             failures=[dict(candidate_id=r.candidate.candidate_id,slot_xy=r.terms['slot_xy'],reasons=r.reasons)
@@ -495,6 +528,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         report.update(pair=pair, rejected_pairs=rejections)
         if selection_policy:report['grasp_diversity']=selection_policy.diversity[diversity_start:]
         if pair is not None:break
+        if selection_policy and attempt==1:
+            # Retry requests depend on actual prefix feasibility on each arm.
+            rows=[prefix_assessment(row) if row.terms.get('ranking_bound') else row for row in rows]
     if pair is None:fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
     assigned_slots={c['arm']:xy for c,xy in zip(pair['selection'],pair['slots'])}
     slots.reserve_pair(assigned_slots)
@@ -547,11 +583,12 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if any(slots.states[xy]!='reserved' for xy in assigned_slots.values()):
                 raise RuntimeError('RESERVED_SLOT_CHANGED')
             states=robot.read_states()
-            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm]),robot.home,
+            fresh_prefixes=CandidatePrefixCache()
+            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm],prefix_cache=fresh_prefixes),robot.home,
                            candidate_provider=lambda o,_:new.get(o.track_id,[]))
             for row in checked:
                 row.terms['slot_xy']=assigned_slots[row.candidate.arm]
-            current,_=paired_pregrasp(robot,checked,states,updated)
+            current,_=paired_pregrasp(robot,checked,states,updated,pick_cache=fresh_prefixes)
             if current is None:raise RuntimeError('PAIR_CHANGED_BEFORE_APPROACH')
             report.update(pair=current,scope='physical_empty_arm_pregrasp_only',physical_execution=True)
             if selection_policy:
@@ -560,8 +597,14 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             action_start=time.monotonic()
             if timing is not None:
                 report['preparation_timing']=timing.delta(preparation_start)
+                report['preparation_path_stage_detail']=timing.stage_delta(stage_start)
+                report['pair_entry_to_first_motion_wall_s']=time.perf_counter()-wait_start
+                report['ranked_pick_work']=dict(prefix_rows_checked=len(prefix_rows),full_slot_rows=len(completed_rows),
+                    selected_rows_revalidated=len(checked),pregrasp_paths_reused=pick_prefixes.path_hits+fresh_prefixes.path_hits)
+                report['preparation_planning_counts']=count_delta(planning_start)
                 action_timing_start=timing.snapshot()
             validation_start=dict(getattr(robot,'validation_reuse',{}))
+            action_planning_start=planning_counts()
             report['preparation_validation_reuse']={k:v-preparation_validation_start.get(k,0) for k,v in validation_start.items()}
             action_ticks_start=dict(getattr(robot,'tick_counts',{}))
             reader=getattr(robot,'encoder_snapshot_reader',None)
@@ -580,7 +623,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
-                alternatives=approach_alternatives(rows,assigned_slots,completed_rows)
+                alternatives=approach_alternatives(rows,assigned_slots,{**prefix_rows,**completed_rows})
                 def resample(arm,obj,view,image,previous,goal):
                     seq={n:f.sequence_id for n,f in image.cameras.items() if f}
                     observed=visual_clouds(image,view,obj.track_id)
@@ -611,6 +654,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         finally:
             if action_start is not None:
                 report['action_wall_s']=time.monotonic()-action_start
+                report['action_planning_counts']=count_delta(action_planning_start)
                 if timing is not None:report['action_timing']=timing.delta(action_timing_start)
                 report['action_tick_counts']={k:v-action_ticks_start.get(k,0)
                     for k,v in getattr(robot,'tick_counts',{}).items()}

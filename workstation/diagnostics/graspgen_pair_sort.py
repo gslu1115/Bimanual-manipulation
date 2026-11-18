@@ -218,7 +218,14 @@ def _run(env,args,timing):
                 robot.plan_cache.clear()
                 from workstation.planning.occlusion_memory import OcclusionMemory
                 robot.occlusion_memory=OcclusionMemory()
-                observe();robot.hold(.2);packet,scene=observe()
+                if attempt==1:
+                    # The settled registration/index-stop packet is the first velocity sample.
+                    # Reattach its map to this attempt's new occlusion memory.
+                    first_scene=estimator.resolve_action_sources(packet,scene,source_query)
+                    robot.set_observation(packet,first_scene,priors)
+                else:
+                    observe()
+                robot.hold(.2);packet,scene=observe()
                 matches=match_task_sources(scene,remaining)
                 if len(matches)<2:
                     raise RuntimeError('PAIR_TASK_REMAINING_SOURCES_UNCONFIRMED')

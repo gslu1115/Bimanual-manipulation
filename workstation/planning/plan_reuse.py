@@ -15,6 +15,8 @@ def encoder_key(states):
 class CandidatePrefixCache:
     """One live snapshot's slot-independent pick checks; never serialized."""
     def __init__(self):
+        self.pregrasps={}
+        self.path_hits=0
         self.context=None;self.rows={};self.hits=0;self.misses=0
 
     def key(self,robot,candidate,obj,scene,hint,include_lift):
@@ -25,7 +27,7 @@ class CandidatePrefixCache:
         # objects, preventing id reuse. A new frame/scene always invalidates.
         if (self.context is None or any(a is not b for a,b in zip(context,self.context[:3]))
                 or states!=self.context[3]):
-            self.rows.clear();self.context=(*context,states)
+            self.rows.clear();self.pregrasps.clear();self.context=(*context,states)
         return id(candidate),id(obj),None if hint is None else array_key(hint),include_lift
 
     def get(self,key):
@@ -79,3 +81,25 @@ def complete_ranked_pairs(pairs,rank,complete):
             heapq.heappush(pending,(actual,index,checked))
             continue
         yield checked
+
+def refine_pick_pairs(pairs,rank,prefix,complete):
+    """Refine upper bounds in order, including the original prefix tie order."""
+    import heapq
+    def row_order(row):
+        slot,proposal=row.terms['source_order']
+        return slot,-row.score,row.candidate.target_id,row.candidate.arm,proposal
+
+    def item(current,front,stage,index):
+        return (rank(current),rank(front),tuple(map(row_order,front)),index,stage,current,front)
+
+    queue=[item(pair,pair,0,i) for i,pair in enumerate(pairs)]
+    heapq.heapify(queue)
+    while queue:
+        _,_,_,index,stage,pair,front=heapq.heappop(queue)
+        if stage==2:
+            yield pair
+            continue
+        callback=prefix if stage==0 else complete
+        checked=tuple(callback(row) for row in pair)
+        if all(row.feasible for row in checked):
+            heapq.heappush(queue,item(checked,checked if stage==0 else front,stage+1,index))

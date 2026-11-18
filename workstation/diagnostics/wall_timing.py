@@ -10,11 +10,16 @@ class WallTiming:
         self.rows={}
         self.stack=[]
         self.originals=[]
+        self.path_stage=None
+        self.stage_rows={}
 
     def timed(self, label, function=None):
         if function is None:return lambda callback:self.timed(label,callback)
         @wraps(function)
         def call(*args, **kwargs):
+            stage=self.path_stage
+            if label.startswith('path_stage_'):
+                self.path_stage=label
             start=self.clock();entry=[0.]
             self.stack.append(entry)
             failed=True
@@ -30,6 +35,12 @@ class WallTiming:
                 row['inclusive_s']+=elapsed;row['exclusive_s']+=elapsed-entry[0]
                 row['max_s']=max(row['max_s'],elapsed)
                 if self.stack:self.stack[-1][0]+=elapsed
+                if stage is not None:
+                    key=(stage,label)
+                    values=self.stage_rows.setdefault(key,[0,0.])
+                    values[0]+=1
+                    values[1]+=elapsed-entry[0]
+                self.path_stage=stage
         return call
 
     def wrap(self, obj, attribute, label):
@@ -52,6 +63,17 @@ class WallTiming:
                       for key in ('calls','failed_calls','inclusive_s','exclusive_s')}
                 for name,row in self.rows.items()
                 if row['calls']!=before.get(name,{}).get('calls',0)}
+
+    def stage_snapshot(self):
+        return {key:tuple(values) for key,values in self.stage_rows.items()}
+
+    def stage_delta(self,before):
+        result={}
+        for (stage,label),(count,seconds) in self.stage_rows.items():
+            old_count,old_seconds=before.get((stage,label),(0,0.))
+            if count!=old_count:
+                result.setdefault(stage,{})[label]=dict(calls=count-old_count,exclusive_s=seconds-old_seconds)
+        return result
 
     def report(self):
         return dict(scope='diagnostic wall time from visual runner entry; excludes SimulationApp startup; nested inclusive times must not be added',

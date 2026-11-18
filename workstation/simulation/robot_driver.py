@@ -76,6 +76,7 @@ class RobotMotion:
             base['base_xyz'],rpy_rotation([0.,0.,math.radians(base['yaw_deg'])]),root=geometry['root_link'])
             for name,base in self.base_config.items()}
         self._chain_cache=OrderedDict()
+        self._cartesian_paths=OrderedDict()
         self.limits=next(iter(self.solvers.values())).get_cspace_position_limits()
         self.targets={name:state.qpos.copy() for name,state in self.read_states().items()}
         self.plan_cache={}
@@ -689,6 +690,17 @@ class RobotMotion:
         # Forecast phases pass their planned predecessor explicitly; drive
         # setpoints are not encoder observations and are not IK warm states.
         warm=np.asarray(self.read_states()[arm].joint_positions_rad if warm_start is None else warm_start).copy()
+        cache=getattr(self,'_cartesian_paths',None)
+        if cache is not None:
+            from workstation.planning.validation_context import value_key
+            key=(arm,id(self.solvers[arm]),value_key(self.limits),self.dt,count,value_key(warm),
+                 value_key(start),value_key(target),yaw0,yaw1,value_key(orientation0),value_key(orientation1))
+            if key in cache:
+                saved,details=cache[key]
+                cache.move_to_end(key)
+                self.last_cartesian_ik=dict(details)
+                self.cartesian_reuses=getattr(self,'cartesian_reuses',0)+1
+                return [q.copy() for q in saved]
         # Near a redundant-arm singularity a continuous Cartesian path may
         # need finer IK continuation. Do not accept a larger joint jump: retry
         # from the SAME measured start with denser knots, bounded to 8x. Each
@@ -707,12 +719,15 @@ class RobotMotion:
             else:
                 self.last_cartesian_ik=dict(refinement=refinement,knots=len(knots),
                     max_joint_step_rad=max(float(np.max(np.abs(b-a))) for a,b in zip(knots,knots[1:])))
+                if cache is not None:
+                    cache[key]=([q.copy() for q in knots],dict(self.last_cartesian_ik))
+                    if len(cache)>64:cache.popitem(last=False)
                 return knots
         raise RuntimeError('IK_DISCONTINUITY')
 
-    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False):
+    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False,rank_only=False):
         if getattr(candidate,'orientation_wxyz',None) is not None:
-            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache,prefix_only=prefix_only)
+            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache,prefix_only=prefix_only,rank_only=rank_only)
         start=self.read_states()[candidate.arm].joint_positions_rad
         raised=np.asarray(candidate.position_m)+[0,0,.18]
         phase='PREGRASP'; self.last_plan_check={}
@@ -774,7 +789,7 @@ class RobotMotion:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
                         rejection_phase=phase,rejection_details=self.last_plan_check.copy())
 
-    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False):
+    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False,rank_only=False):
         """Forecast complete model-pose paths; no commands or holding claims."""
         from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
         from workstation.planning.graspgen_candidates import upright_body_rotation
@@ -805,10 +820,21 @@ class RobotMotion:
         count=max(1,math.ceil((.08-candidate.closing_width_m)/.002))
         try:
             if cached is None:
-                q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
-                                     pregrasp_hint,orientation_wxyz=orientation)
-                _,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
-                joint_plans={'PREGRASP':self.last_plan_check.copy()};phases.append(phase)
+                pregrasp=prefix_cache.pregrasps.get(cache_key) if prefix_cache is not None else None
+                if pregrasp is None:
+                    q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
+                                          pregrasp_hint,orientation_wxyz=orientation)
+                    prepath,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
+                    pregrasp=(q,minimum,self.last_plan_check.copy(),prepath)
+                    if prefix_cache is not None:
+                        prefix_cache.pregrasps[cache_key]=pregrasp
+                q,minimum,precheck,prepath=pregrasp
+                joint_plans={'PREGRASP':precheck}
+                phases.append(phase)
+                if rank_only:
+                    return dict(reasons=(),joint_cost=float(np.linalg.norm(q-start)),path_clearance_m=minimum,
+                        pregrasp_joint_positions_rad=q.tolist(),checked_phases=phases,full_pose_checked=False,
+                        ranking_bound=True,candidate_execution_authorized=False)
                 phase='APPROACH'
                 descend=self.cartesian_knots(arm,raised,pick,0.,0.,.05,q,
                                              orientation0=orientation,orientation1=orientation)
@@ -840,6 +866,7 @@ class RobotMotion:
             lift_palm_clearance=cached['lift_palm_clearance']
             complete_slot=slot_xy is not None and not prefix_only
             if complete_slot:
+                self.full_forecasts_started=getattr(self,'full_forecasts_started',0)+1
                 self.held_visual_geometry=relation
                 desired_body=nearest_upright_slot_rotation(body_rotation)
                 place_rotation=desired_body@relation['relative_rotation'].T
@@ -874,6 +901,7 @@ class RobotMotion:
                     candidate.target_id,target_boxes_override=released)
                 minimum=min(minimum,clearance);phases.append(phase)
                 joint_plans['HOME']=self.last_plan_check.copy()
+                self.full_forecasts_passed=getattr(self,'full_forecasts_passed',0)+1
             return dict(reasons=(),joint_cost=float(np.linalg.norm(q-start)),path_clearance_m=minimum,
                 full_pose_checked=True,checked_phases=phases,whole_task_template_checked=complete_slot,
                 lift_palm_clearance_m=lift_palm_clearance,
