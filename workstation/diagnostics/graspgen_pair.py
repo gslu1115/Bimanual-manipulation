@@ -64,15 +64,13 @@ def source_cartons(scene, table):
 
 
 def preferred_assignments(targets, bases):
-    """Assign both cartons to distinct arms with the shortest total XY reach."""
-    left,right=sorted(bases)
-    def distance(arm,obj):
-        return np.linalg.norm(np.asarray(bases[arm]['base_xyz'])[:2]-np.asarray(obj.position_m)[:2])
-    if len(targets)>2:return {o.track_id:min(bases,key=lambda arm:distance(arm,o)) for o in targets}
-    a,b=targets
-    if distance(left,b)+distance(right,a)<distance(left,a)+distance(right,b):
-        a,b=b,a
-    return {a.track_id:left,b.track_id:right}
+    """Own the observed carton on each base's side of the workcell midline."""
+    left=np.asarray(bases['panda_left']['base_xyz'][:2])
+    right=np.asarray(bases['panda_right']['base_xyz'][:2])
+    middle=(left+right)/2
+    direction=right-left
+    return {o.track_id:('panda_right' if (o.position_m[:2]-middle) @ direction>0 else 'panda_left')
+            for o in targets}
 
 
 def balance_visible_surfaces(clouds,obj):
@@ -125,7 +123,10 @@ def pregrasp_clearance(robot, paths):
 
 def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None,*,prefix_assessment=None,pick_cache=None,model_first=False,check_common_lift=False):
     arms = ('panda_left', 'panda_right')
+    targets={r.candidate.target_id for r in rows if r.feasible}
+    owners=preferred_assignments((o for o in scene.objects if o.track_id in targets),robot.base_config) if scene is not None else None
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
+                 and (owners is None or owners.get(a.candidate.target_id)==arm)
                  and a.candidate.arm == arm and (a.terms.get('full_pose_checked') or
                  (complete_assessment is not None and a.terms.get('ranking_bound')))] for arm in arms]
     pairs = [(left, right) for left, right in product(*feasible)
@@ -184,8 +185,22 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
             specs=[pick_cache.destinations[key] for key in keys]
             options=common_lift_options(robot,scene,specs,selected_paths,variants,audit)
         reason='OTHER_ARM_COLLISION'
+        use_moveit=bool(getattr(robot,'moveit_socket',None)) and check_common_lift
+        times=None
+        planner_detail=None
         for chosen_specs,selected_paths,detail in options:
-            reason,minimum,sampled=pregrasp_clearance(robot,selected_paths)
+            if use_moveit and model_first:
+                reason,minimum,sampled=None,None,0
+            elif use_moveit:
+                from workstation.planning.moveit_pair import checked_approach
+                try:
+                    selected_paths,times,minimum,sampled,planner_detail=checked_approach(
+                        robot,scene,pair,states,[path[-1] for path in selected_paths])
+                    reason=None
+                except RuntimeError as error:
+                    reason=str(error)
+            else:
+                reason,minimum,sampled=pregrasp_clearance(robot,selected_paths)
             if not reason:break
         else:
             rejected.append(dict(ids=[a.candidate.candidate_id for a in pair],reason=reason,**audit))
@@ -196,6 +211,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
                     pregrasp_knots=[np.asarray(path).tolist() for path in selected_paths],
                     sample_count=sampled, min_clearance_m=minimum)
         if detail:result['common_lift']=detail
+        if use_moveit and model_first:
+            result.update(pregrasp_knots=None,pregrasp_status='joint plan pending execution observation')
+        if times is not None:result.update(moveit=planner_detail,pregrasp_times_s=times)
         if selection_policy:
             result['joint_choice']=dict(source_keys=[selection_policy.key(a.candidate) for a in pair],
                 history_penalty=selection_policy.priority(pair)[0],visibility=selection_policy.visibility(pair),
@@ -210,9 +228,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
     return None, rejected
 
 
-def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,speed_fraction=1.,
+def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                           require_overlap=True,loaded_transfer=False,progress_check=None,
-                          trajectory_kind='trajectory',settle_seconds=.3,collision_obstacles=None):
+                          trajectory_kind='trajectory',settle_seconds=.3,collision_obstacles=None,trajectory_times_s=None):
     """Commit both empty-arm targets before each shared physics step."""
     arms=('panda_left','panda_right')
     states=robot.read_states()
@@ -244,6 +262,8 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         geometry_checks['computed']+=1
         last_geometry=pair if reason is None else None
         return reason
+    model_velocity=(np.stack([robot.joint_velocity_limits[a] for a in arms])
+                    if hasattr(robot,'joint_velocity_limits') else None)
     def advance(desired,kind='trajectory'):
         nonlocal previous,overlap,ticks,commanded
         # Also check tracking lag, not just the nominal synchronized paths.
@@ -260,8 +280,8 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
                 lag=commanded[i]-previous[i]
                 correction=(np.clip(10.*lag,-.28,.28) if loaded_transfer
                             else np.clip(6.*lag,-.15,.15))
-                robot.command_velocities(a,np.r_[np.clip(feedforward+correction,
-                    -robot.joint_speed,robot.joint_speed),0.,0.])
+                limit=robot.joint_speed if model_velocity is None else model_velocity[i]
+                robot.command_velocities(a,np.r_[np.clip(feedforward+correction,-limit,limit),0.,0.])
         commanded=desired.copy()
         previous_kind=getattr(robot,'_tick_kind','trajectory')
         robot._tick_kind=trajectory_kind if kind=='trajectory' else kind
@@ -288,7 +308,25 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         previous=measured
         if progress_check is not None:
             progress_check(ticks*robot.dt)
-    for pair in synchronized_knots(*paths,max_step=min(.025,speed_fraction*robot.joint_speed*robot.dt)):
+    clock_detail={}
+    if model_velocity is not None:
+        from workstation.planning.pair_clock import model_clock
+        points=(list(synchronized_knots(*paths,max_step=float('inf'))) if trajectory_times_s is None
+                else np.stack(paths,axis=1))
+        commands=model_clock(points,robot.dt,model_velocity,robot.arm_acceleration_limits,
+                             robot.arm_jerk_limits,trajectory_times_s)
+        delta=np.abs(np.diff(commands,axis=0))
+        last_motion={a:np.flatnonzero(np.any(delta[:,i]>0,axis=1)) for i,a in enumerate(arms)}
+        clock_detail=dict(duration_s=(len(commands)-1)*robot.dt,
+                          last_motion_s={a:(int(idx[-1])+1)*robot.dt if len(idx) else 0.
+                                         for a,idx in last_motion.items()},
+                          peak_reference_rad_s=(delta.max(axis=0,initial=0.)/robot.dt).tolist())
+    elif trajectory_times_s is None:
+        commands=synchronized_knots(*paths,max_step=min(.025,robot.joint_speed*robot.dt))
+    else:
+        from workstation.planning.moveit_pair import timed_knots
+        commands=timed_knots(paths,trajectory_times_s,robot.dt,robot.joint_speed)
+    for pair in commands:
         desired=np.asarray(pair)
         advance(desired)
         # Let the physical drives catch up before advancing the common clock.
@@ -302,7 +340,7 @@ def drive_empty_pregrasps(robot, paths, payload_guard=None, following_band=.025,
         advance(np.asarray([p[-1] for p in paths]),'settling')
     moved=np.max(np.abs(previous-start),axis=1)
     if require_overlap and (not overlap or np.min(moved)<.04):raise RuntimeError('NO_MEASURED_PARALLEL_APPROACH')
-    return dict(ticks=ticks,geometry_checks=geometry_checks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
+    return dict(ticks=ticks,clock=clock_detail,geometry_checks=geometry_checks,overlap_ticks=overlap,overlap_sim_s=overlap*robot.dt,
                 arm_order=list(arms),joint_displacements_rad=moved.tolist(),trace=trace,
                 tick_counts=tick_counts,sim_seconds={k:v*robot.dt for k,v in tick_counts.items()})
 
@@ -431,6 +469,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     for attempt in range(1,3 if selection_policy else 8):
         retained={}
         preferred=preferred_assignments(targets,robot.base_config)
+        report['source_arm_assignments']=preferred
+        if len(set(preferred.values()))<2:fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
         attempted=completed_rows.values() if deferred else rows
         feasible={(r.candidate.target_id,r.candidate.arm) for r in attempted if r.feasible}
         missing=[o for o in targets if (o.track_id,preferred[o.track_id]) not in feasible]
@@ -463,6 +503,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 available=[xy for xy in destinations if slots.states[xy]=='free']
                 targets=select_targets(scene)
                 if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
+                preferred=preferred_assignments(targets,robot.base_config)
+                report['source_arm_assignments']=preferred
                 matches=[o for o in targets if np.linalg.norm(np.asarray(o.position_m)-centre)<=.002
                          and np.allclose(o.size_m,target.size_m,atol=1e-6,rtol=0)
                          and abs((o.axis_yaw_rad-target.axis_yaw_rad+math.pi/2)%math.pi-math.pi/2)<=math.radians(3)
@@ -477,6 +519,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 for candidate in old.values():
                     try:renewed=renew_view_candidate(candidate,scene,seq)
                     except RuntimeError:continue
+                    if preferred.get(renewed.target_id)!=renewed.arm:continue
                     retained.setdefault(renewed.target_id,[]).append(renewed)
                 observation['revalidated_prior_proposals']=sum(map(len,retained.values()))
                 missing=[o for o in targets if o.track_id not in retained]
@@ -510,7 +553,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 basis=yaw+sample*math.pi*2/3
                 pitch=(0.,math.pi/3,-math.pi/3)[sample//3]
                 result=infer_rotated_view(proxy,clouds,args.num_grasps,basis,pitch)
-                proposals.extend(candidates_from_result(result,obj,states,calibration,seq))
+                proposals.extend(candidates_from_result(result,obj,(preferred[obj.track_id],),calibration,seq))
                 report['model_requests'].append(dict(target_id=obj.track_id,request_id=result['request_id'],
                     attempt=attempt,mask_refs=list(refs),basis_yaw_rad=basis,basis_pitch_rad=pitch,
                     observed_input_points=len(clouds.target_m),raw_grasps=len(result['scores'])))
@@ -535,12 +578,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 offset=visual_pinch_balance(c,obj)['penalty']
                 depth=opening.get('estimated_tip_engagement_m',0.)/obj.size_m[2]
                 return offset+abs(depth-.45)+abs(opening['centre_offset_m'])/.02+upright_contact_cost(c,obj)
-            for arm in states:
-                if selection_policy is None and attempt<=4 and arm!=preferred.get(obj.track_id):continue
-                ordered=sorted((c for c in allowed if c.arm==arm),
-                               key=(lambda c:-c.model_score) if deferred else pinch_cost)
-                chosen=(selection_policy.diverse(ordered,obj,4) if selection_policy else distinct_pinches(ordered,4))
-                candidates.setdefault(obj.track_id,[]).extend(chosen)
+            ordered=sorted(allowed,key=(lambda c:-c.model_score) if deferred else pinch_cost)
+            chosen=(selection_policy.diverse(ordered,obj,4) if selection_policy else distinct_pinches(ordered,4))
+            candidates.setdefault(obj.track_id,[]).extend(chosen)
         order={c.candidate_id:i for group in candidates.values() for i,c in enumerate(group)}
         for slot in available:
             scored=assess(scene,states,visual_proposal if deferred else lambda c,o,s:check_destination(c,o,s,slot),robot.home,
@@ -636,7 +676,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                            candidate_provider=lambda o,_:new.get(o.track_id,[]))
             for row in checked:
                 row.terms['slot_xy']=assigned_slots[row.candidate.arm]
-            current,_=paired_pregrasp(robot,checked,states,updated,pick_cache=fresh_prefixes,check_common_lift=deferred)
+            current,current_rejections=paired_pregrasp(robot,checked,states,updated,pick_cache=fresh_prefixes,check_common_lift=deferred)
+            if getattr(robot,'moveit_socket',None):report['execution_pair_rejections']=current_rejections
             if current is None:raise RuntimeError('PAIR_CHANGED_BEFORE_APPROACH')
             report.update(pair=current,scope='physical_empty_arm_pregrasp_only',physical_execution=True)
             if selection_policy:
@@ -665,7 +706,8 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             reader=getattr(robot,'encoder_snapshot_reader',None)
             encoder_start=(reader.reads,reader.reuses) if reader is not None else (0,0)
             if forecast is not None:forecast.start()
-            report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
+            report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],
+                trajectory_times_s=current.get('pregrasp_times_s'))
             for selected,path in zip(current['selection'],current['pregrasp_knots']):
                 arm=selected['arm']
                 expected,orientation=robot.fk(arm,np.asarray(path[-1]))

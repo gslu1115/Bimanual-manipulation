@@ -104,7 +104,7 @@ def overhead_home_path(robot,arm,start,scene,table_top):
     # Keep every Cartesian knot on the traverse. Retiming happens on the
     # shared driver clock; never collapse the corridor to a start/end chord.
     from workstation.diagnostics.graspgen_pair import synchronized_knots
-    knots=[q for q,_ in synchronized_knots(route,route,max_step=robot.joint_speed*robot.dt)]
+    knots=[q for q,_ in synchronized_knots(route,route)]
     return knots,dict(joint_planner='fixed overhead corridor',entry_m=entry.tolist(),
                       exit_m=exit_point.tolist(),height_above_table_m=.50)
 
@@ -139,7 +139,7 @@ def execute_parallel_home(robot,scene,table_top=None):
     final=robot.read_states()
     if any(np.max(np.abs(final[a].joint_positions_rad-robot.home[:7]))>.04 for a in arms):
         raise RuntimeError('JOINT_TRACKING_ERROR')
-    result.update(single_arm_nominal_sim_s=dict(zip(arms,durations)),schedule=schedule,
+    result.update(single_arm_nominal_sim_s=result.get('clock',{}).get('last_motion_s',dict(zip(arms,durations))),schedule=schedule,
                   planning=plans,planning_wall_s=execution_start-started,
                   execution_wall_s=perf_counter()-execution_start,
                   scope='both empty arms after release and retreat')
@@ -455,10 +455,16 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     round_reservation='round_slot_views' in report
     phases = report['phases'] = {}
 
-    def observe(local=False,destinations=False):
+    def observe(local=False,destinations=False,*,slot_dwell=False,stable_since=None):
         nonlocal scene,fresh_scene
+        started=perf_counter()
         packet = env.get_observation_packet(refresh=True)
-        if local:
+        if slot_dwell and (stable_since is None or packet.observation_time_s-stable_since<.5):
+            regions=[(np.array([*xy,robot.place_support_z+.06]),np.array([.12,.12,.12]))
+                     for xy in goals.values()]
+            scene=estimator.estimate(packet,regions=regions)
+            scope='slot_stability'
+        elif local:
             regions=[]
             for arm in arms:
                 obj=objects[arm]
@@ -477,14 +483,17 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 for xy in slots.positions:
                     regions.append((np.array([*xy,robot.place_support_z+.06]),np.array([.12,.12,.12])))
             scene=estimator.estimate(packet,regions=regions)
+            scope='held_and_slots' if destinations else 'pick_neighborhoods'
         else:
             scene=estimator.estimate(packet)
+            scope='workspace'
         counts=report.setdefault('observation_scope',{})
-        scope='held_and_slots' if destinations else 'pick_neighborhoods' if local else 'workspace'
         counts[scope]=counts.get(scope,0)+1
         fresh_scene=scene
         if released_references:refresh_released(packet)
         robot.set_observation(packet, scene, priors)
+        report.setdefault('action_observations',[]).append(dict(phase=report['last_phase'],scope=scope,
+            time_s=packet.observation_time_s,wall_s=perf_counter()-started))
         return packet
 
     def confirm_target(arm,packet,closed=False):
@@ -789,7 +798,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         if elapsed < next_approach_check:
             return
         next_approach_check=elapsed+3.
-        packet=observe()
+        packet=observe(local=True)
         for arm in active:
             prior=references[arm]
             proof=confirm_target(arm,packet)
@@ -942,7 +951,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report['empty_approach_started']=True
         phases[label] = drive_empty_pregrasps(robot, paths, guard if both_loaded or sequential else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
-                                              speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
+                                              loaded_transfer=transfer,
                                               progress_check=(lambda elapsed:refresh_approach_references(elapsed,active)) if renew_reference else None)
         phases[label]['execution_wall_s']=perf_counter()-execution_start
         report['phase_checkpoint']=dict(phase=phase,event='completed',dry_run=False)
@@ -1290,7 +1299,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         # The waiting loaded hand intentionally contacts its own carton.
         # Its payload and arm protections remain under the existing guard.
         outcome=drive_empty_pregrasps(robot,paths,guard,require_overlap=False,
-            speed_fraction=.4 if carried_arms else 1.,loaded_transfer=bool(carried_arms),
+            loaded_transfer=bool(carried_arms),
             collision_obstacles=None if carried_arms else obstacles)
         if np.max(np.abs(robot.read_states()[a].joint_positions_rad-robot.home[:7]))>.04:
             raise RuntimeError('JOINT_TRACKING_ERROR')
@@ -1334,7 +1343,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         verify_slots(packet,active)
         move('lower',{a:places[a] for a in active},True,
              active=active,carrying=carried_arms,label=prefix+'lower')
-        packet=observe()
+        packet=observe(local=True,destinations=True)
         for a in arms:
             if a in carried_arms:measure_held(a,packet)
         for a in active:
@@ -1356,7 +1365,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         # otherwise its clipped detections become false stationary obstacles
         # for the withdrawing empty hand.
         if carried_arms:refresh_payloads()
-        else:packet=observe()
+        else:packet=observe(local=True,destinations=True)
         move('retreat',{a:(places[a][0]+[0.,0.,.18],places[a][1]) for a in active},True,
              active=active,carrying=carried_arms,label=prefix+'retreat')
         if len(active)==2 and not carried_arms:
@@ -1458,7 +1467,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     previous_ids=None
     for _ in range(20):
         robot.hold(.1)
-        observe()
+        observe(slot_dwell=True,stable_since=stable_since)
         if round_reservation:
             # Dwell verifies the identity and motion of each deposited carton.
             # An empty or unknown slot cannot satisfy placement acceptance.
@@ -1480,8 +1489,6 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 placements[a]=dict(initial_track=selected[a]['target_id'],grasp_track=objects[a].track_id,observed_track=o.track_id,
                     goal_xy=xy,visual_error_xy_m=(np.asarray(o.position_m[:2])-xy).tolist())
         ids=tuple(p['observed_track'] for p in placements.values())
-        current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
-        current_sources=match_stationary_sources(scene,source_references)
         ready=len(set(ids))==2
         if not ready:
             stable_since=None
@@ -1489,6 +1496,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             stable_since=scene.observation_time_s
         previous_ids=ids
         if ready and scene.observation_time_s-stable_since>=.5:
+            current=stationary_slot_tracks(robot.observed_workspace,scene,unused)
+            current_sources=match_stationary_sources(scene,source_references)
             for a,p in placements.items():
                 slots.confirm_placement(a,goals[a],p['observed_track'])
             for obj in objects.values():estimator.mark_identity(obj.identity_id,'placed')

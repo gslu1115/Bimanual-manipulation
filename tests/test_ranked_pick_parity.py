@@ -7,6 +7,37 @@ from workstation.diagnostics.graspgen_pair import paired_pregrasp
 
 
 class RankedPickParity(unittest.TestCase):
+    def test_carton_side_precedes_grasp_score_and_slot_choice(self):
+        left,right='panda_left','panda_right'
+        objects=[SimpleNamespace(track_id='visual_0004',position_m=(.170073,.035,.8)),
+                 SimpleNamespace(track_id='visual_0003',position_m=(-.169975,.035,.8))]
+        scene=SimpleNamespace(objects=objects)
+        robot=SimpleNamespace(base_config={left:{'base_xyz':(-.36,.25,.82)},right:{'base_xyz':(.36,.25,.82)}},
+            checked_joint_plan=lambda arm,start,end,*_:([start,end],1.),
+            spheres=lambda arm,q:[(0,np.array([float(arm==left),0.,0.]),.02)])
+        states={a:SimpleNamespace(joint_positions_rad=np.zeros(7)) for a in (left,right)}
+        policy=SimpleNamespace(history_penalty=lambda pair:0,priority=lambda pair:(0,0),
+            key=lambda c:c.target_id,visibility=lambda pair:{})
+        expected=[(left,'visual_0003'),(right,'visual_0004')]
+        rows=[]
+        for arm in (left,right):
+            for obj in objects:
+                score=.8 if (arm,obj.track_id) in expected else .99
+                c=GraspCandidate(obj.track_id,arm,(0,0,0),0,.07,0,source='graspgen',
+                    candidate_id=arm+obj.track_id,model_score=score)
+                rows.append(CandidateAssessment(c,True,(),dict(ranking_bound=True,slot_xy=(0 if arm==left else -.2,-.4)),score))
+        visited=[]
+        def complete(row):
+            visited.append((row.candidate.arm,row.candidate.target_id))
+            return replace(row,terms=dict(row.terms,full_pose_checked=True,pregrasp_joint_positions_rad=[.1]*7))
+        pair,_=paired_pregrasp(robot,rows,states,scene,policy,complete,model_first=True)
+        self.assertEqual([(c['arm'],c['target_id']) for c in pair['selection']],expected)
+        self.assertEqual(visited,expected)
+        objects[1].position_m=(.12,.035,.8)
+        visited.clear()
+        self.assertIsNone(paired_pregrasp(robot,rows,states,scene,policy,complete,model_first=True)[0])
+        self.assertEqual(visited,[])
+
     def test_model_first_only_plans_best_pair_or_next_after_rejection(self):
         arms=('panda_left','panda_right')
         states={arm:SimpleNamespace(joint_positions_rad=np.zeros(7)) for arm in arms}

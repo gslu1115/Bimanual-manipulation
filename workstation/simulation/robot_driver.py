@@ -56,6 +56,12 @@ class RobotMotion:
         description=load_supported_lula_kinematics_solver_config('Franka')
         from pathlib import Path
         geometry=yaml.safe_load(Path(description['robot_description_path']).read_text())
+        from xml.etree import ElementTree
+        joints={j.get('name'):j for j in ElementTree.parse(description['urdf_path']).getroot().findall('joint')}
+        self.arm_velocity_limits=np.array([float(joints[name].find('limit').get('velocity'))
+                                           for name in PANDA_ARM_JOINT_NAMES])
+        self.arm_acceleration_limits=np.asarray(geometry['acceleration_limits'],float)
+        self.arm_jerk_limits=np.asarray(geometry['jerk_limits'],float)
         self.sphere_description=[]
         for group in geometry['collision_spheres']:
             for link,items in group.items():
@@ -824,7 +830,13 @@ class RobotMotion:
                 if pregrasp is None:
                     q=self.solve_pregrasp(arm,raised,candidate.yaw_rad,start,scene,candidate.target_id,
                                           pregrasp_hint,orientation_wxyz=orientation)
-                    prepath,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
+                    if getattr(self,'moveit_socket',None) and slot_endpoints:
+                        # Endpoints for pair selection. The 14-joint path is requested
+                        # after the execution observation and before any commands.
+                        prepath=[start,q]
+                        minimum=self.validate_path(arm,[q,q],scene,candidate.target_id,validation_stage='ik_endpoint')
+                    else:
+                        prepath,minimum=self.checked_joint_plan(arm,start,q,scene,candidate.target_id)
                     pregrasp=(q,minimum,self.last_plan_check.copy(),prepath)
                     if prefix_cache is not None:
                         prefix_cache.pregrasps[cache_key]=pregrasp
@@ -1119,6 +1131,9 @@ def from_environment(env,*,paired_armature_floor=None):
     robot=RobotMotion(env.c,read_states,command,
                       lambda:env.step(monitor_conveyor=False,render=False))
     robot.encoder_snapshot_reader=read_states
+    robot.joint_velocity_limits={name:np.minimum(robot.arm_velocity_limits,
+        arm.get_dof_max_velocities(dof_indices=list(maps[name][:7])).numpy().reshape(7))
+        for name,arm in env.arms.items()}
     def command_velocities(name,values):
         native=np.empty(9);native[native_indices[name]]=values
         env.arms[name].set_dof_velocity_targets(native)

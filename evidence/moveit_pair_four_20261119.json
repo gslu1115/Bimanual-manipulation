@@ -1,0 +1,241 @@
+{
+  "date": "2026-11-19",
+  "scope": "Isaac Sim 6.1 seed 6; only the empty joint pregrasp uses MoveIt 2",
+  "code_base": "701c215 (frozen/pair-lift16c); local linux-based handoff efa64b3",
+  "software": "MoveIt 2.12.4 / ROS 2 Jazzy, OMPL RRTConnect, FCL and depth-derived OctoMap",
+  "guard_scope": "The experimental planner applies 8 mm to inter-arm and non-neighbour self sphere pairs. The previous empty-arm scalar check used 2 mm. Original project checks also validate the returned path and remain active during execution.",
+  "invocation": "python -m workstation --mode graspgen-pair-sort --headless --seed 6 --grasp-backend graspgen --num-grasps 256 --pair-collision-backend curobo --pair-transfer-policy auto --moveit-pregrasp-socket /work/incoming/moveit-fourbox-jazzy/ipc/plan.sock (same model assets, proxy and robot USD as pair-lift16e)",
+  "replay": {
+    "source": "pair-lift16e-live-6/round_1/attempt_1",
+    "grasp": "archived selected poses",
+    "ik": "fresh from image-time joints",
+    "depth_voxels": 866,
+    "joint_states": 167,
+    "search_and_simplification_s": 2.368727204,
+    "planned_duration_s": 3.3190588870750064,
+    "reference_check_passed": true,
+    "min_inter_arm_gap_m": 0.27411026147136464
+  },
+  "live": {
+    "archive": "/data3/anliang_hld/bimanual-isaac61/outputs/moveit-fourbox17-live-6",
+    "original_pose_or_ik_files_used": false,
+    "comparisons": [
+      {
+        "tag": "pair-local15i",
+        "success": true,
+        "placed": 4,
+        "model_requests": 30,
+        "total_wall_s": 246.4727808921598,
+        "actual_retries": 1,
+        "inputs": {
+          "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+          "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+          "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+        },
+        "gpu": {
+          "index": 2,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+          "pci": "0000:1d:00.0",
+          "free_mib": 19227,
+          "used_mib": 4855,
+          "utilization_pct": 70
+        },
+        "rounds": [
+          {
+            "round": "round_1",
+            "first_motion_s": 11.642588074319065,
+            "first_descent_s": 58.0956193879573
+          },
+          {
+            "round": "round_2",
+            "first_motion_s": 13.54657625919208,
+            "first_descent_s": 32.26861492311582
+          }
+        ]
+      },
+      {
+        "tag": "pair-lift16e",
+        "success": true,
+        "placed": 4,
+        "model_requests": 18,
+        "total_wall_s": 251.00301538221538,
+        "actual_retries": 0,
+        "inputs": {
+          "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+          "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+          "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+        },
+        "gpu": {
+          "index": 2,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+          "pci": "0000:1d:00.0",
+          "free_mib": 18884,
+          "used_mib": 5198,
+          "utilization_pct": 0
+        },
+        "rounds": [
+          {
+            "round": "round_1",
+            "first_motion_s": 9.331982785835862,
+            "first_descent_s": 23.38486516615376
+          },
+          {
+            "round": "round_2",
+            "first_motion_s": 35.887727986089885,
+            "first_descent_s": 52.93341719312593
+          }
+        ]
+      },
+      {
+        "tag": "moveit-fourbox17",
+        "success": false,
+        "placed": 2,
+        "model_requests": 30,
+        "total_wall_s": 156.09377121878788,
+        "actual_retries": 1,
+        "inputs": {
+          "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+          "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+          "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+        },
+        "gpu": {
+          "index": 2,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+          "pci": "0000:1d:00.0",
+          "free_mib": 19131,
+          "used_mib": 4951,
+          "utilization_pct": 0
+        },
+        "rounds": [
+          {
+            "round": "round_1",
+            "first_motion_s": 14.966450428124517,
+            "first_descent_s": 28.418930171988904
+          },
+          {
+            "round": "round_2",
+            "first_motion_s": 30.329577916767448,
+            "first_descent_s": null
+          }
+        ]
+      }
+    ],
+    "successful_conveyor_cycles": 1,
+    "attempts": [
+      {
+        "round": 1,
+        "attempt": 1,
+        "success": true,
+        "failure": null,
+        "last_phase": "verify",
+        "model_requests": 12,
+        "moveit": {
+          "search_s": 2.656374016,
+          "sampler_calls": 1,
+          "waypoints": 169,
+          "depth_voxels": 888,
+          "frame_ids": {
+            "scene_camera": 24,
+            "left_wrist_camera": 24,
+            "right_wrist_camera": 24
+          },
+          "request_and_map_wall_s": 3.5741458209231496,
+          "project_check_wall_s": 0.71011794032529
+        },
+        "motion_overlap_sim_s": 6.75,
+        "deferred_destination": {
+          "pregrasp_plan_wait_s": 3.559933975338936e-05,
+          "background_wall_s": 9.798010034952313,
+          "full_plans": {
+            "started": 2,
+            "passed": 2
+          },
+          "current_frame_replanned": false,
+          "endpoint_corrections": 0,
+          "strategy": "orient-first",
+          "checked_stages": [
+            "transfer_orient",
+            "transfer",
+            "lower",
+            "open",
+            "retreat"
+          ],
+          "current_frame_checks_s": 1.272210898809135
+        },
+        "eligible_sources_by_arm": null
+      },
+      {
+        "round": 2,
+        "attempt": 1,
+        "success": false,
+        "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+        "last_phase": "pregrasp_recheck",
+        "model_requests": 6,
+        "moveit": {
+          "search_s": 11.552038638,
+          "sampler_calls": 44,
+          "waypoints": 307,
+          "depth_voxels": 405,
+          "frame_ids": {
+            "scene_camera": 216,
+            "left_wrist_camera": 216,
+            "right_wrist_camera": 216
+          },
+          "request_and_map_wall_s": 12.914168027695268,
+          "project_check_wall_s": 1.318604308180511
+        },
+        "motion_overlap_sim_s": 11.125,
+        "deferred_destination": {
+          "pregrasp_plan_wait_s": 0.6110260263085365,
+          "background_wall_s": 18.42787393089384,
+          "full_plans": {
+            "started": 14,
+            "passed": 0
+          }
+        },
+        "eligible_sources_by_arm": null
+      },
+      {
+        "round": 2,
+        "attempt": 2,
+        "success": false,
+        "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "last_phase": null,
+        "model_requests": 12,
+        "moveit": null,
+        "motion_overlap_sim_s": null,
+        "deferred_destination": null,
+        "eligible_sources_by_arm": {
+          "panda_left": [
+            "visual_0003"
+          ],
+          "panda_right": [
+            "visual_0003"
+          ]
+        }
+      }
+    ],
+    "timing_log": [
+      {
+        "round": 1,
+        "ompl_search_s": 0.296868,
+        "simplification_s": 2.357553
+      },
+      {
+        "round": 2,
+        "ompl_search_s": 1.683016,
+        "simplification_s": 9.864791
+      }
+    ]
+  },
+  "checks": {
+    "command": "python -B -m unittest discover -s tests",
+    "linux_tests": 720,
+    "passed": true,
+    "configuration_command": "python -B -m workstation --mode graspgen-pair-sort --moveit-pregrasp-socket /tmp/plan.sock --validate-only"
+  },
+  "hardware_scope": "Simulation only. Stopped-run elapsed time cannot be compared to a four-carton completion time."
+}

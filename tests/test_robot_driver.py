@@ -37,8 +37,13 @@ class RobotDriveTests(unittest.TestCase):
         env = SimpleNamespace(arms=arms, c={}, observe_robot_states=Mock())
         for arm in arms.values():
             arm.get_dof_armatures.return_value.numpy.return_value = np.array([[0., .02]])
-        with patch('workstation.simulation.robot_driver.RobotMotion'):
-            from_environment(env)
+            arm.get_dof_max_velocities.return_value.numpy.return_value = np.arange(1.,8.)[None,:]
+        with patch('workstation.simulation.robot_driver.RobotMotion') as factory:
+            factory.return_value.arm_velocity_limits=np.full(7,3.)
+            driver=from_environment(env)
+            for name,arm in arms.items():
+                arm.get_dof_max_velocities.assert_called_once_with(dof_indices=[arm.dof_names.index(j) for j in PANDA_ARM_JOINT_NAMES])
+                np.testing.assert_equal(driver.joint_velocity_limits[name],np.minimum(np.arange(1.,8.),3.))
             for arm in arms.values():
                 arm.set_dof_armatures.assert_not_called()
             from_environment(env, paired_armature_floor=.01)

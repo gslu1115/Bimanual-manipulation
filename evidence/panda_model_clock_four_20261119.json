@@ -1,0 +1,2633 @@
+{
+  "scope": "Isaac Sim 6.1, seed 6, new GraspGen and IK per run",
+  "runs": [
+    {
+      "tag": "direct19b",
+      "gpu": 1,
+      "success": true,
+      "reason": null,
+      "total_wall_s": 222.94599090097472,
+      "placed": 4,
+      "cleared": 2,
+      "limits": null,
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 11.343825458083302,
+          "descent": 26.456383616197854,
+          "action_wall": 68.53642417211086,
+          "action_sim": 30.0,
+          "background_wait_s": 2.605002373456955e-05,
+          "model_requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0034",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0004641234874725453,
+                -8.175373077390358e-05
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0035",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0022778332233429066,
+                0.0014264225959778054
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 1.6,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.1611535511910915,
+              "clock": null,
+              "measured_peak_rad_s": 0.5964303016662598
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 0.5,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 1.105743508785963,
+              "clock": null,
+              "measured_peak_rad_s": 0.5568444728851318
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 1.1083333333333334,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.0202717897482216,
+              "clock": null,
+              "measured_peak_rad_s": 0.5920279026031494
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 2.575,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.891880073584616,
+              "clock": null,
+              "measured_peak_rad_s": 0.23972511291503906
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 5.075,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 8.215066837146878,
+              "clock": null,
+              "measured_peak_rad_s": 0.2398681640625
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.2,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.7494505080394447,
+              "clock": null,
+              "measured_peak_rad_s": 0.21157264709472656
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 1.4166666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.432680981233716,
+              "clock": null,
+              "measured_peak_rad_s": 0.5825042724609375
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 1.0416666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 1.5209703780710697,
+              "clock": null,
+              "measured_peak_rad_s": 0.578155517578125
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 3.8249999999999997,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 5.828424789011478,
+              "clock": null,
+              "measured_peak_rad_s": 0.5998983979225159
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 7.258333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": null,
+              "measured_peak_rad_s": 0.2879476547241211
+            }
+          }
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 9.799051000270993,
+          "descent": 29.127411553170532,
+          "action_wall": 99.2443038020283,
+          "action_sim": 47.425,
+          "background_wait_s": 0.4604313927702606,
+          "model_requests": 6,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0070",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00045789480209351696,
+                0.0002580523490905984
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0004",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0069",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00024236440658570446,
+                0.0007502973079681619
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 4.866666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 7.910640702582896,
+              "clock": null,
+              "measured_peak_rad_s": 0.5994987487792969
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.3333333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.5613918299786747,
+              "clock": null,
+              "measured_peak_rad_s": 0.6016445159912109
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 3.091666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.356746061705053,
+              "clock": null,
+              "measured_peak_rad_s": 0.5972957611083984
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 4.858333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 7.67153411405161,
+              "clock": null,
+              "measured_peak_rad_s": 0.23947477340698242
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 10.858333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 16.428341784048826,
+              "clock": null,
+              "measured_peak_rad_s": 0.24165630340576172
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.2,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.7297098622657359,
+              "clock": null,
+              "measured_peak_rad_s": 0.22873878479003906
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 0.9833333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.002603421919048,
+              "clock": null,
+              "measured_peak_rad_s": 0.5876970291137695
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 1.0,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 1.9499145681038499,
+              "clock": null,
+              "measured_peak_rad_s": 0.5948925018310547
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 6.625,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 9.806638478767127,
+              "clock": null,
+              "measured_peak_rad_s": 0.5996131896972656
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 8.308333333333334,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": null,
+              "measured_peak_rad_s": 0.26734113693237305
+            }
+          }
+        }
+      ],
+      "input_hashes": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c"
+      }
+    },
+    {
+      "tag": "pandaspeed20",
+      "gpu": 1,
+      "success": true,
+      "reason": null,
+      "total_wall_s": 417.4817565642297,
+      "placed": 4,
+      "cleared": 2,
+      "limits": {
+        "velocity_rad_s": [
+          [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ],
+          [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ]
+        ],
+        "acceleration_rad_s2": [
+          15.0,
+          7.5,
+          10.0,
+          12.5,
+          15.0,
+          20.0,
+          20.0
+        ],
+        "jerk_rad_s3": [
+          7500.0,
+          3750.0,
+          5000.0,
+          6250.0,
+          7500.0,
+          10000.0,
+          10000.0
+        ],
+        "source": "Panda URDF and active articulation velocity limits, Lula acceleration and jerk limits"
+      },
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 13.170965040102601,
+          "descent": 20.65889537706971,
+          "action_wall": 150.34761290904135,
+          "action_sim": 81.05833333333334,
+          "background_wait_s": 1.0528787020593882,
+          "model_requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0039",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -8.1154704093922e-05,
+                0.0012806296348572
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0038",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0008578568696975819,
+                0.0010360717773437722
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 8.866666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 15.864640517160296,
+              "clock": null,
+              "measured_peak_rad_s": 0.17322063446044922
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.95,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.7195642311125994,
+              "clock": null,
+              "measured_peak_rad_s": 0.211869478225708
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 2.7083333333333335,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.633793120738119,
+              "clock": null,
+              "measured_peak_rad_s": 0.3831017017364502
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 2.4583333333333335,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.28642470901832,
+              "clock": null,
+              "measured_peak_rad_s": 0.3565835952758789
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 5.991666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 9.33844698779285,
+              "clock": null,
+              "measured_peak_rad_s": 0.2964019775390625
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.125,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.5704276063479483,
+              "clock": null,
+              "measured_peak_rad_s": 0.1814746856689453
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 2.466666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.037044692784548,
+              "clock": null,
+              "measured_peak_rad_s": 0.32469749450683594
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 2.9916666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.024196557700634,
+              "clock": null,
+              "measured_peak_rad_s": 0.2792644500732422
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 46.6,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 70.65477034030482,
+              "clock": null,
+              "measured_peak_rad_s": 0.11401355266571045
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 1.6,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": null,
+              "measured_peak_rad_s": 1.134181022644043
+            }
+          }
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 8.653786449693143,
+          "descent": 18.647235531825572,
+          "action_wall": 208.76610511401668,
+          "action_sim": 117.45,
+          "background_wait_s": 1.4518129541538656,
+          "model_requests": 6,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0084",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0006932809948921315,
+                0.0005774140357971413
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0004",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0085",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0001998513936996571,
+                0.001422548294067405
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 13.283333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 22.97108886903152,
+              "clock": null,
+              "measured_peak_rad_s": 0.2647054195404053
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 5.216666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 8.395367570221424,
+              "clock": null,
+              "measured_peak_rad_s": 0.14329075813293457
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 9.041666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 14.040844060014933,
+              "clock": null,
+              "measured_peak_rad_s": 0.25373339653015137
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 16.441666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 25.83921912498772,
+              "clock": null,
+              "measured_peak_rad_s": 0.10663032531738281
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 8.066666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 12.763325650710613,
+              "clock": null,
+              "measured_peak_rad_s": 0.4769057035446167
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.09166666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.47971654823049903,
+              "clock": null,
+              "measured_peak_rad_s": 0.16376495361328125
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 2.925,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.778364136815071,
+              "clock": null,
+              "measured_peak_rad_s": 0.25963783264160156
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 2.85,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.0532350917346776,
+              "clock": null,
+              "measured_peak_rad_s": 0.2757740020751953
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 51.8,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 78.66116252308711,
+              "clock": null,
+              "measured_peak_rad_s": 0.09929180145263672
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 2.3333333333333335,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": null,
+              "measured_peak_rad_s": 1.1112141609191895
+            }
+          }
+        }
+      ],
+      "input_hashes": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c"
+      }
+    },
+    {
+      "tag": "pandaspeed20b",
+      "gpu": 2,
+      "success": false,
+      "reason": "HELD_CARTON_OWN_BODY_COLLISION",
+      "total_wall_s": 136.76481840806082,
+      "placed": 2,
+      "cleared": 1,
+      "limits": {
+        "velocity_rad_s": {
+          "panda_left": [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ],
+          "panda_right": [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ]
+        },
+        "acceleration_rad_s2": [
+          15.0,
+          7.5,
+          10.0,
+          12.5,
+          15.0,
+          20.0,
+          20.0
+        ],
+        "jerk_rad_s3": [
+          7500.0,
+          3750.0,
+          5000.0,
+          6250.0,
+          7500.0,
+          10000.0,
+          10000.0
+        ],
+        "source": "Panda URDF and active articulation velocity limits, Lula acceleration and jerk limits"
+      },
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 10.162084393203259,
+          "descent": 18.133536451030523,
+          "action_wall": 60.50968809193,
+          "action_sim": 24.5,
+          "background_wait_s": 1.0050867800600827,
+          "model_requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0047",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.000523817539215099,
+                -0.000388062000274636
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0048",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00010123401880263172,
+                0.0018328070640564187
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 3.216666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.829666816163808,
+              "clock": {
+                "duration_s": 3.2083333333333335,
+                "last_motion_s": {
+                  "panda_left": 3.2083333333333335,
+                  "panda_right": 3.2083333333333335
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.4096715586584984,
+                    0.5240819761495574,
+                    0.44940553875351563,
+                    0.1692139052720698,
+                    0.4933403716532822,
+                    0.45551239846330915,
+                    0.37061930983156355
+                  ],
+                  [
+                    0.45192386499871173,
+                    0.5008099339353111,
+                    0.5171680499573694,
+                    0.18625963999904016,
+                    0.5649136681777567,
+                    0.43733320564548706,
+                    0.399560960312364
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.5649179220199585
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.5416666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.4130175039172173,
+              "clock": {
+                "duration_s": 1.5333333333333332,
+                "last_motion_s": {
+                  "panda_left": 1.5333333333333332,
+                  "panda_right": 1.5333333333333332
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.24709352947297258,
+                    0.32301505017838794,
+                    0.2529334683244766,
+                    0.10619183574185342,
+                    0.1523355973220386,
+                    0.22652635430631562,
+                    0.1545452858318308
+                  ],
+                  [
+                    0.29294546383784276,
+                    0.31095648960872246,
+                    0.3350413072728353,
+                    0.11181054814716873,
+                    0.2422081824672051,
+                    0.23789488165659733,
+                    0.2135144987612314
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.33515453338623047
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 2.183333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.885274819098413,
+              "clock": {
+                "duration_s": 2.175,
+                "last_motion_s": {
+                  "panda_left": 2.175,
+                  "panda_right": 2.175
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.2169615077688236,
+                    0.43541323475567273,
+                    0.29314232335382995,
+                    0.06893076726248282,
+                    0.4253131920223413,
+                    0.3910318517197986,
+                    0.29868456252647224
+                  ],
+                  [
+                    0.2279289617445568,
+                    0.42792376144044075,
+                    0.34641981621045037,
+                    0.08337200900603747,
+                    0.5413780533507551,
+                    0.3610787775367008,
+                    0.3991194265234732
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.5418795347213745
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 0.825,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 1.4164664247073233,
+              "clock": {
+                "duration_s": 0.8166666666666667,
+                "last_motion_s": {
+                  "panda_left": 0.8166666666666667,
+                  "panda_right": 0.7916666666666666
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.004414624700917469,
+                    0.014168128574604255,
+                    0.009083909219778086,
+                    0.029288934859721394,
+                    0.0490042748658992,
+                    0.055916454887725564,
+                    1.3885402952919135
+                  ],
+                  [
+                    0.02687342612349375,
+                    0.01914224703005285,
+                    0.007758131241617505,
+                    0.03593725998790376,
+                    0.1439581725132491,
+                    0.06547131307920395,
+                    1.9731321660310286
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.97113037109375
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 2.3333333333333335,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.5714317988604307,
+              "clock": {
+                "duration_s": 2.325,
+                "last_motion_s": {
+                  "panda_left": 2.325,
+                  "panda_right": 2.325
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.1525742252116069,
+                    0.901313721831174,
+                    0.20731868023802225,
+                    1.4007813664490953,
+                    0.434467622591736,
+                    0.5481474271594067,
+                    0.2141608031979736
+                  ],
+                  [
+                    0.19029680260105208,
+                    0.9195991478915988,
+                    0.21833276446439287,
+                    1.443595218791689,
+                    0.42248261394179365,
+                    0.6003239421566064,
+                    0.20480817976194388
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.4440155029296875
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.08333333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.5934800687246025,
+              "clock": {
+                "duration_s": 0.075,
+                "last_motion_s": {
+                  "panda_left": 0.075,
+                  "panda_right": 0.058333333333333334
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.006462963784840403,
+                    0.02827276894747932,
+                    0.013510105288681018,
+                    0.04010300834579539,
+                    0.06019742385367843,
+                    0.1027359534339034,
+                    0.04900404097544886
+                  ],
+                  [
+                    0.011402364595519132,
+                    0.037434929353601376,
+                    0.009376909343747908,
+                    0.022633248907828474,
+                    0.11897391371067156,
+                    0.11614202590129352,
+                    0.1486460980358828
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.13748645782470703
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 1.8166666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.4972954052500427,
+              "clock": {
+                "duration_s": 1.8083333333333333,
+                "last_motion_s": {
+                  "panda_left": 1.8083333333333333,
+                  "panda_right": 1.8083333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.07587632848438512,
+                    0.48741037870397186,
+                    0.09905858155516922,
+                    0.1957953906526999,
+                    0.10741540304747166,
+                    0.3285941674251447,
+                    0.061316940110196505
+                  ],
+                  [
+                    0.0861195611328217,
+                    0.4834547020935176,
+                    0.11676759277865267,
+                    0.20565297621081946,
+                    0.1475344091386721,
+                    0.31727109224169325,
+                    0.1148005210509151
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.4875040054321289
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 1.8,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.7318795663304627,
+              "clock": {
+                "duration_s": 1.7916666666666667,
+                "last_motion_s": {
+                  "panda_left": 1.7916666666666667,
+                  "panda_right": 1.7916666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.07450799063585249,
+                    0.4677111765589048,
+                    0.09687173695345885,
+                    0.20249840082942505,
+                    0.1243510982234941,
+                    0.4082040015964772,
+                    0.06513038492061307
+                  ],
+                  [
+                    0.08060102054840257,
+                    0.46431579550733293,
+                    0.11006261818197416,
+                    0.20897577126051559,
+                    0.16078798551129703,
+                    0.3983386380050469,
+                    0.11258277013141971
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.4665398597717285
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 3.475,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 6.032860569190234,
+              "clock": {
+                "duration_s": 3.466666666666667,
+                "last_motion_s": {
+                  "panda_left": 3.466666666666667,
+                  "panda_right": 3.3
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.836888759474,
+                    1.3516193637410556,
+                    0.6568709619882144,
+                    0.7919775884137792,
+                    0.37670028599483657,
+                    0.9282654812993485,
+                    2.6067887414083493
+                  ],
+                  [
+                    1.0259780969938315,
+                    1.4982109042680114,
+                    0.8042520281652688,
+                    0.822824074387718,
+                    0.6226447304338006,
+                    0.8777570648932986,
+                    2.6067887414083657
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 2.6070356369018555
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 1.825,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": {
+                "duration_s": 1.8166666666666667,
+                "last_motion_s": {
+                  "panda_left": 1.8166666666666667,
+                  "panda_right": 1.8166666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.08608028973901949,
+                    0.3477063015604065,
+                    0.29386195237365076,
+                    0.1796368656155778,
+                    0.11097303843674244,
+                    0.5382261627577023,
+                    1.131997393152444
+                  ],
+                  [
+                    0.11131172111565446,
+                    0.369451780144221,
+                    0.33378642845759865,
+                    0.15951716834671004,
+                    0.03356516833855849,
+                    0.5244247141429703,
+                    1.1193360037033706
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.1320678889751434
+            }
+          }
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": false,
+          "reason": "HELD_CARTON_OWN_BODY_COLLISION",
+          "first_motion": 8.09984335815534,
+          "descent": 17.552654697094113,
+          "action_wall": 37.42739174515009,
+          "action_sim": 17.841666666666665,
+          "background_wait_s": 1.7098695929162204,
+          "model_requests": 6,
+          "placements": null,
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 14.608333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 23.570024034939706,
+              "clock": {
+                "duration_s": 14.6,
+                "last_motion_s": {
+                  "panda_left": 14.6,
+                  "panda_right": 14.575
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.9356588410132227,
+                    0.4758598715669704,
+                    0.8711868063981942,
+                    0.14271077393786413,
+                    0.7878939137311036,
+                    0.4851904159380638,
+                    0.6403178856237268
+                  ],
+                  [
+                    0.7827372222914875,
+                    0.4787107185978279,
+                    0.7356417088522882,
+                    0.11336113028105999,
+                    0.5155599666346511,
+                    0.5003049429421758,
+                    0.43472849702141936
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.9362196922302246
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 1.8833333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": {
+                "duration_s": 1.875,
+                "last_motion_s": {
+                  "panda_left": 1.875,
+                  "panda_right": 1.875
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.05146604885742867,
+                    0.03656133485230306,
+                    0.6210030115186393,
+                    0.44284703795035796,
+                    0.5499740095615113,
+                    0.4484548921497655,
+                    0.6827364704624461
+                  ],
+                  [
+                    0.9187173447356978,
+                    0.06972061252415784,
+                    0.7664586325597122,
+                    0.4415795872193229,
+                    0.6244528636708013,
+                    0.45854609045393957,
+                    0.7999126833206383
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.9186744689941406
+            }
+          }
+        }
+      ],
+      "input_hashes": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c"
+      }
+    },
+    {
+      "tag": "pandaspeed20c",
+      "gpu": 2,
+      "success": false,
+      "reason": "IK_DISCONTINUITY",
+      "total_wall_s": 135.53710037702695,
+      "placed": 2,
+      "cleared": 1,
+      "limits": {
+        "velocity_rad_s": {
+          "panda_left": [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ],
+          "panda_right": [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ]
+        },
+        "acceleration_rad_s2": [
+          15.0,
+          7.5,
+          10.0,
+          12.5,
+          15.0,
+          20.0,
+          20.0
+        ],
+        "jerk_rad_s3": [
+          7500.0,
+          3750.0,
+          5000.0,
+          6250.0,
+          7500.0,
+          10000.0,
+          10000.0
+        ],
+        "source": "Panda URDF and active articulation velocity limits, Lula acceleration and jerk limits"
+      },
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 10.17537366785109,
+          "descent": 17.58055982599035,
+          "action_wall": 61.81572182523087,
+          "action_sim": 25.3,
+          "background_wait_s": 1.1003161808475852,
+          "model_requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0051",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0003422677516937145,
+                0.000430339574813865
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0052",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00024117082357405506,
+                0.002059006690979026
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 3.216666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.594440756831318,
+              "clock": {
+                "duration_s": 3.2083333333333335,
+                "last_motion_s": {
+                  "panda_left": 3.2083333333333335,
+                  "panda_right": 3.2083333333333335
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.5896577069783364,
+                    0.5777238195261725,
+                    0.7028764165002055,
+                    0.20551803712965722,
+                    0.8217202078867347,
+                    0.4169445229948643,
+                    0.5926322043961285
+                  ],
+                  [
+                    0.4510614464360263,
+                    0.5406562621809918,
+                    0.5699151548136805,
+                    0.15409153928558794,
+                    0.6327924419311515,
+                    0.4251556171069204,
+                    0.45235333019777
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.8216589689254761
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.3583333333333334,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.4554670392535627,
+              "clock": {
+                "duration_s": 1.35,
+                "last_motion_s": {
+                  "panda_left": 1.35,
+                  "panda_right": 1.35
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.338077366909903,
+                    0.3718028869439949,
+                    0.3747612147736401,
+                    0.14799205448184694,
+                    0.19603208371450354,
+                    0.2669534653792205,
+                    0.17237093357575617
+                  ],
+                  [
+                    0.33245408009793503,
+                    0.35387424178800364,
+                    0.37688895595534233,
+                    0.1370057475744879,
+                    0.28238121801369864,
+                    0.30049375780556886,
+                    0.23232366942925964
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.37702739238739014
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 2.091666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.4155833777040243,
+              "clock": {
+                "duration_s": 2.0833333333333335,
+                "last_motion_s": {
+                  "panda_left": 2.0833333333333335,
+                  "panda_right": 2.0833333333333335
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.3711957963255677,
+                    0.45948704165697407,
+                    0.47941843684154994,
+                    0.12286737236022915,
+                    0.661541499852728,
+                    0.4009889277803147,
+                    0.4646933721992852
+                  ],
+                  [
+                    0.2854043946802409,
+                    0.44380433231520966,
+                    0.3890022916771052,
+                    0.1090229102153728,
+                    0.5671220291205958,
+                    0.34153320275269294,
+                    0.4184455835647327
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.662226676940918
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 0.875,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 1.7421341510489583,
+              "clock": {
+                "duration_s": 0.8666666666666667,
+                "last_motion_s": {
+                  "panda_left": 0.8333333333333334,
+                  "panda_right": 0.8666666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.0028885891479957237,
+                    0.011606322469740471,
+                    0.005573122066224734,
+                    0.04476529525918593,
+                    0.033296932057858,
+                    0.12560644832589674,
+                    1.6517306951172372
+                  ],
+                  [
+                    0.011679847454091341,
+                    0.013585645615690478,
+                    0.00902113115827552,
+                    0.024202197599461073,
+                    0.0888395442025472,
+                    0.041958614081316625,
+                    1.875192820578384
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.87225341796875
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 1.6583333333333332,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.740807090885937,
+              "clock": {
+                "duration_s": 1.65,
+                "last_motion_s": {
+                  "panda_left": 1.65,
+                  "panda_right": 1.65
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.20063735678530037,
+                    1.0490126593065907,
+                    0.28295982947241116,
+                    1.6098995673547556,
+                    0.5668234023736451,
+                    0.6508454260030128,
+                    0.27269828238905447
+                  ],
+                  [
+                    0.21035588993656762,
+                    1.0451658458098467,
+                    0.28399644382030464,
+                    1.5985115806930317,
+                    0.5599270941624812,
+                    0.6311834968026098,
+                    0.2512779275238408
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.6095829010009766
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.05,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.48241074103862047,
+              "clock": {
+                "duration_s": 0.041666666666666664,
+                "last_motion_s": {
+                  "panda_left": 0.041666666666666664,
+                  "panda_right": 0.041666666666666664
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.005326700710220067,
+                    0.04186130919648701,
+                    0.0010243183129965416,
+                    0.005873814965431379,
+                    0.08120665077958278,
+                    0.08754500973505941,
+                    0.12153807338314948
+                  ],
+                  [
+                    0.003379026467861257,
+                    0.055175248927397114,
+                    0.005094882859655314,
+                    0.028966691041398818,
+                    0.10356423196880238,
+                    0.15716854575238415,
+                    0.11903279529291488
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.13200759887695312
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 1.7916666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.4852314982563257,
+              "clock": {
+                "duration_s": 1.7833333333333332,
+                "last_motion_s": {
+                  "panda_left": 1.7833333333333332,
+                  "panda_right": 1.7833333333333332
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.059553039523559115,
+                    0.40909165187112073,
+                    0.08309389986091098,
+                    0.20199619297103233,
+                    0.1328036279674072,
+                    0.3284991592934894,
+                    0.09502045343506182
+                  ],
+                  [
+                    0.06921916858985411,
+                    0.40301712442174953,
+                    0.08884383190725265,
+                    0.19472547999585643,
+                    0.13101176984120055,
+                    0.3296980417420592,
+                    0.0952669747092294
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.40791749954223633
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 1.775,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.5107962358742952,
+              "clock": {
+                "duration_s": 1.7666666666666666,
+                "last_motion_s": {
+                  "panda_left": 1.7666666666666666,
+                  "panda_right": 1.7666666666666666
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.08348705813268714,
+                    0.486216846590497,
+                    0.1132929151665163,
+                    0.20353493179120719,
+                    0.16304694957333443,
+                    0.39987473743339663,
+                    0.1112942299610431
+                  ],
+                  [
+                    0.08442698595127279,
+                    0.4800815249518564,
+                    0.11315439838879504,
+                    0.19937901302837346,
+                    0.15105383889034596,
+                    0.3955413175980027,
+                    0.093848011227875
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.4867744445800781
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 5.291666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 7.775640229694545,
+              "clock": {
+                "duration_s": 5.283333333333333,
+                "last_motion_s": {
+                  "panda_left": 5.283333333333333,
+                  "panda_right": 4.825
+                },
+                "peak_reference_rad_s": [
+                  [
+                    1.3229960508541456,
+                    0.7856760824849895,
+                    1.0370201221375162,
+                    0.5900489218200633,
+                    0.5959944299435878,
+                    0.5137209746618154,
+                    1.991657636056825
+                  ],
+                  [
+                    0.9421837236706015,
+                    1.2122585923709694,
+                    0.7382304481214933,
+                    0.5124865427606373,
+                    0.46214256689423916,
+                    0.6972289794058995,
+                    2.1392770980161036
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 2.139444351196289
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 1.7916666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": {
+                "duration_s": 1.7833333333333332,
+                "last_motion_s": {
+                  "panda_left": 1.7833333333333332,
+                  "panda_right": 1.7833333333333332
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.10899660739322914,
+                    0.3421200126965396,
+                    0.3388626224263125,
+                    0.2077685250632122,
+                    0.06967502996662434,
+                    0.5848334700939972,
+                    0.9809702062951153
+                  ],
+                  [
+                    0.11532265919040496,
+                    0.37658169259168317,
+                    0.34407399165188757,
+                    0.1560185660332536,
+                    0.028301479692852127,
+                    0.5291353328442128,
+                    1.1463226639165391
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.1463689804077148
+            }
+          }
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": false,
+          "reason": "IK_DISCONTINUITY",
+          "first_motion": 9.01484465226531,
+          "descent": 20.196948939934373,
+          "action_wall": 35.212609691079706,
+          "action_sim": 16.958333333333332,
+          "background_wait_s": 2.2833446389995515,
+          "model_requests": 6,
+          "placements": null,
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 11.65,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 17.232731982134283,
+              "clock": {
+                "duration_s": 11.641666666666666,
+                "last_motion_s": {
+                  "panda_left": 11.641666666666666,
+                  "panda_right": 11.616666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    1.4290264915829498,
+                    0.7038737141063334,
+                    1.3506989062532693,
+                    0.17394620307785047,
+                    0.9416604210070378,
+                    0.7125508640072908,
+                    0.7288020648456861
+                  ],
+                  [
+                    0.3080240182426408,
+                    0.17137373855954152,
+                    0.4807239714261957,
+                    0.09700141514834115,
+                    0.4370735882712218,
+                    0.20705901762896772,
+                    0.2030521943651742
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.4296674728393555
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.5,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.511532214935869,
+              "clock": {
+                "duration_s": 1.4916666666666667,
+                "last_motion_s": {
+                  "panda_left": 1.4916666666666667,
+                  "panda_right": 1.4916666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.2034678600951434,
+                    0.47903219194836755,
+                    0.260966148166375,
+                    0.35447097515730164,
+                    1.0015217793512754,
+                    0.17599535688491486,
+                    0.9511801878198334
+                  ],
+                  [
+                    0.21516305209518194,
+                    0.16861349007149862,
+                    0.3813211558142804,
+                    0.15465001096520936,
+                    0.35497554000411213,
+                    0.022941829983746942,
+                    0.11881107341922714
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.0012149810791016
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 2.158333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": {
+                "duration_s": 2.15,
+                "last_motion_s": {
+                  "panda_left": 2.15,
+                  "panda_right": 2.15
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.04535709127773485,
+                    0.042131644705252214,
+                    0.5413672662379021,
+                    0.36360859439206195,
+                    0.485045440822125,
+                    0.3543659934438992,
+                    0.573252294346771
+                  ],
+                  [
+                    0.9187982236397385,
+                    0.3282613517672184,
+                    0.7452947117419484,
+                    0.3694330325174633,
+                    0.7448862115221377,
+                    0.11799976407418811,
+                    0.441734829605509
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.9189319610595703
+            }
+          }
+        }
+      ],
+      "input_hashes": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c"
+      }
+    },
+    {
+      "tag": "pandaspeed20d",
+      "gpu": 1,
+      "success": true,
+      "reason": null,
+      "total_wall_s": 192.17809184920043,
+      "placed": 4,
+      "cleared": 2,
+      "limits": {
+        "velocity_rad_s": {
+          "panda_left": [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ],
+          "panda_right": [
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.174999952316284,
+            2.61,
+            2.61,
+            2.61
+          ]
+        },
+        "acceleration_rad_s2": [
+          15.0,
+          7.5,
+          10.0,
+          12.5,
+          15.0,
+          20.0,
+          20.0
+        ],
+        "jerk_rad_s3": [
+          7500.0,
+          3750.0,
+          5000.0,
+          6250.0,
+          7500.0,
+          10000.0,
+          10000.0
+        ],
+        "source": "Panda URDF and active articulation velocity limits, Lula acceleration and jerk limits"
+      },
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 9.754096135962754,
+          "descent": 18.029212130233645,
+          "action_wall": 63.484867812134326,
+          "action_sim": 26.724999999999998,
+          "background_wait_s": 0.9648310830816627,
+          "model_requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0034",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0004187941551208607,
+                -0.0008080065250396506
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0035",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -9.995400905610241e-05,
+                0.0007600426673889382
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 4.075,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 6.420940468087792,
+              "clock": {
+                "duration_s": 4.066666666666666,
+                "last_motion_s": {
+                  "panda_left": 4.066666666666666,
+                  "panda_right": 4.066666666666666
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.2476735627763084,
+                    0.3271273103508954,
+                    0.25907937683101956,
+                    0.10194424261177559,
+                    0.27832278936227695,
+                    0.3344519656016942,
+                    0.24445976569149153
+                  ],
+                  [
+                    0.2670625653885339,
+                    0.3187004967525804,
+                    0.3170812839642245,
+                    0.11303857213446733,
+                    0.40329664662753784,
+                    0.3046972156004202,
+                    0.29830126081217045
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.40332555770874023
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.4916666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.6451370981521904,
+              "clock": {
+                "duration_s": 1.4833333333333334,
+                "last_motion_s": {
+                  "panda_left": 1.4833333333333334,
+                  "panda_right": 1.4833333333333334
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.19843503815129032,
+                    0.2975559778401271,
+                    0.19829704506581947,
+                    0.10811164230410952,
+                    0.08846403128647533,
+                    0.22099808459822512,
+                    0.0917520542646999
+                  ],
+                  [
+                    0.30152017882328075,
+                    0.2795021446873669,
+                    0.3151614350102516,
+                    0.11090112503973515,
+                    0.19860623661609234,
+                    0.2376884703987514,
+                    0.17613653178340627
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.3145390748977661
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 2.6666666666666665,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.311165455263108,
+              "clock": {
+                "duration_s": 2.658333333333333,
+                "last_motion_s": {
+                  "panda_left": 2.658333333333333,
+                  "panda_right": 2.658333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.18819161834735001,
+                    0.4032453053555832,
+                    0.21150548150922655,
+                    0.053016762714577226,
+                    0.2615643085522845,
+                    0.40753546952469577,
+                    0.2118281626028251
+                  ],
+                  [
+                    0.19152896124701363,
+                    0.42595828383388573,
+                    0.23531888737837736,
+                    0.07854217442565314,
+                    0.4878834223711026,
+                    0.35845961468098153,
+                    0.3581964812476457
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.4880024492740631
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 0.8333333333333334,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 1.5063705202192068,
+              "clock": {
+                "duration_s": 0.825,
+                "last_motion_s": {
+                  "panda_left": 0.825,
+                  "panda_right": 0.7916666666666666
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.013455946910577166,
+                    0.020797285236915375,
+                    0.006348932898361248,
+                    0.05068832569772752,
+                    0.048061365291203195,
+                    0.10894782772394862,
+                    1.6328123770505965
+                  ],
+                  [
+                    0.012970828539141666,
+                    0.0063283530667890275,
+                    0.009841249234199267,
+                    0.03560189351171417,
+                    0.08925837290350569,
+                    0.11878616832817102,
+                    1.819968947964643
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.8182373046875
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 2.9583333333333335,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.359175823628902,
+              "clock": {
+                "duration_s": 2.95,
+                "last_motion_s": {
+                  "panda_left": 2.95,
+                  "panda_right": 2.95
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.10681045493588559,
+                    0.7300527955357827,
+                    0.15587927736241625,
+                    1.1606158644573839,
+                    0.35640558312166504,
+                    0.4782804280909758,
+                    0.17250797708934673
+                  ],
+                  [
+                    0.1701303296889023,
+                    0.7648613822451877,
+                    0.1858322070402929,
+                    1.211124307860132,
+                    0.41479192742867954,
+                    0.5028753499630589,
+                    0.2027377060360891
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.2114429473876953
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.075,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.529581505805254,
+              "clock": {
+                "duration_s": 0.06666666666666667,
+                "last_motion_s": {
+                  "panda_left": 0.041666666666666664,
+                  "panda_right": 0.06666666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.0031084444240203624,
+                    0.03404306278222968,
+                    0.016280914630748544,
+                    0.03703630761222598,
+                    0.026990590854084617,
+                    0.11473772028709917,
+                    0.047788354529072485
+                  ],
+                  [
+                    0.005799079940904117,
+                    0.039380985875343555,
+                    0.009553232461814165,
+                    0.013262234283120122,
+                    0.06862465893692549,
+                    0.10349466188388945,
+                    0.1491371153685428
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.13857364654541016
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 1.75,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.4786826972849667,
+              "clock": {
+                "duration_s": 1.7416666666666667,
+                "last_motion_s": {
+                  "panda_left": 1.7416666666666667,
+                  "panda_right": 1.7416666666666667
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.07104942741112577,
+                    0.5131864655633933,
+                    0.089144104856268,
+                    0.19774534306173486,
+                    0.08887461962999388,
+                    0.3156726934256149,
+                    0.048395062864790006
+                  ],
+                  [
+                    0.09300179278120324,
+                    0.5034524230458715,
+                    0.12416224132834497,
+                    0.20217522349053496,
+                    0.14829831670849947,
+                    0.31155319879454524,
+                    0.09491579462672206
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.5119872093200684
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 1.8583333333333334,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.8710740599781275,
+              "clock": {
+                "duration_s": 1.8499999999999999,
+                "last_motion_s": {
+                  "panda_left": 1.8499999999999999,
+                  "panda_right": 1.8499999999999999
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.06455524742006793,
+                    0.44828058879343047,
+                    0.07976325017048036,
+                    0.20879086668177393,
+                    0.09391660631560994,
+                    0.35954790531624425,
+                    0.04650093674831712
+                  ],
+                  [
+                    0.07970140140076756,
+                    0.4411947151405027,
+                    0.10568545203795798,
+                    0.21397345856174255,
+                    0.14138272399079055,
+                    0.3528097677379449,
+                    0.09446832640760405
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.44677019119262695
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 3.658333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 5.835280621889979,
+              "clock": {
+                "duration_s": 3.65,
+                "last_motion_s": {
+                  "panda_left": 3.65,
+                  "panda_right": 3.5083333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.7665586352318117,
+                    1.2781479090123038,
+                    0.6030294603962315,
+                    0.7763273231526036,
+                    0.34483747897236855,
+                    0.9685804401438425,
+                    2.6058598265287527
+                  ],
+                  [
+                    1.1045047777197432,
+                    1.4914296102621272,
+                    0.8636504087073638,
+                    0.6764636981518812,
+                    0.5812912455114355,
+                    0.924567950263171,
+                    2.6058598265287625
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 2.606034278869629
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 1.9583333333333333,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": {
+                "duration_s": 1.95,
+                "last_motion_s": {
+                  "panda_left": 1.95,
+                  "panda_right": 1.95
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.06597738291044028,
+                    0.32889510529354293,
+                    0.24421015971594962,
+                    0.16766555763476632,
+                    0.14262980642929468,
+                    0.5086154535207044,
+                    1.1149954052392852
+                  ],
+                  [
+                    0.10996464824863328,
+                    0.33889389916151424,
+                    0.322521970384243,
+                    0.15429285117338765,
+                    0.03461972535717242,
+                    0.4935640885433479,
+                    1.0247436707836144
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.1150622367858887
+            }
+          }
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion": 6.901508458890021,
+          "descent": 16.399589514825493,
+          "action_wall": 77.25915077188984,
+          "action_sim": 34.208333333333336,
+          "background_wait_s": 1.3963152873329818,
+          "model_requests": 6,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0067",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00034047365188599743,
+                0.001151019334793113
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0004",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0068",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0006009310483932606,
+                0.000727200508117698
+              ]
+            }
+          },
+          "phases": {
+            "approach": {
+              "sim": {
+                "trajectory": 3.6999999999999997,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 5.782148562371731,
+              "clock": {
+                "duration_s": 3.6916666666666664,
+                "last_motion_s": {
+                  "panda_left": 3.6916666666666664,
+                  "panda_right": 3.6916666666666664
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.6868342794743887,
+                    0.902453383816777,
+                    0.748180297612624,
+                    0.11145211437357361,
+                    0.7051541828341357,
+                    0.9473571134127567,
+                    0.4680616272409921
+                  ],
+                  [
+                    0.3486381389470594,
+                    0.2219909811413423,
+                    0.8780533038840765,
+                    0.1544162251168757,
+                    0.8412939488913285,
+                    0.30144558137108035,
+                    0.2523513532504662
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.9471988677978516
+            },
+            "initial_lift": {
+              "sim": {
+                "trajectory": 1.5166666666666666,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.1836890978738666,
+              "clock": {
+                "duration_s": 1.5083333333333333,
+                "last_motion_s": {
+                  "panda_left": 1.5083333333333333,
+                  "panda_right": 1.5083333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.6578971374292897,
+                    0.43354577310234066,
+                    0.6994585126919706,
+                    0.13879064848827838,
+                    0.18502116847128214,
+                    0.3514574144262639,
+                    0.11974594465397281
+                  ],
+                  [
+                    0.16504687794007822,
+                    0.12149192900808181,
+                    0.351045137178696,
+                    0.14586494569572395,
+                    0.34949457875599776,
+                    0.037148263663562275,
+                    0.08720974369778034
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.6993377208709717
+            },
+            "lift": {
+              "sim": {
+                "trajectory": 2.5416666666666665,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 4.381276438944042,
+              "clock": {
+                "duration_s": 2.533333333333333,
+                "last_motion_s": {
+                  "panda_left": 2.533333333333333,
+                  "panda_right": 2.533333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.5624838875323488,
+                    0.9757020476490874,
+                    0.7224772439600979,
+                    0.04159111187920672,
+                    0.662322275493672,
+                    1.0024511642812506,
+                    0.44284798145992177
+                  ],
+                  [
+                    0.29762870335236613,
+                    0.16427370970040656,
+                    0.8147163589815509,
+                    0.09796997220700376,
+                    0.7708438452565325,
+                    0.2577375145127192,
+                    0.20512614454511358
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.0022163391113281
+            },
+            "transfer_orient": {
+              "sim": {
+                "trajectory": 3.8666666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 6.692576501052827,
+              "clock": {
+                "duration_s": 3.8583333333333334,
+                "last_motion_s": {
+                  "panda_left": 3.8583333333333334,
+                  "panda_right": 3.8333333333333335
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.2561226929501148,
+                    0.2139638234236685,
+                    0.3616999428357648,
+                    0.07214587061898925,
+                    0.34799554310219083,
+                    0.16684241564233204,
+                    0.6341489975288184
+                  ],
+                  [
+                    0.04409636581649501,
+                    0.005918132570483792,
+                    0.003633644835927541,
+                    0.027844422592693263,
+                    0.03392109192542847,
+                    0.046539652605037674,
+                    0.6502275439671035
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.6501245498657227
+            },
+            "transfer_after_orient": {
+              "sim": {
+                "trajectory": 4.391666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 7.165510101243854,
+              "clock": {
+                "duration_s": 4.383333333333333,
+                "last_motion_s": {
+                  "panda_left": 4.383333333333333,
+                  "panda_right": 4.383333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.5590497675062944,
+                    0.6778551318060311,
+                    0.4453838016225742,
+                    0.9346597842177573,
+                    0.9160577126248914,
+                    0.4210708469343061,
+                    0.5423476176782493
+                  ],
+                  [
+                    0.46586852762446895,
+                    0.11322383436389138,
+                    0.11589568154288798,
+                    0.890857064539361,
+                    0.09893720754067026,
+                    0.1387800154768204,
+                    0.4247649135060616
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.9344387054443359
+            },
+            "align": {
+              "sim": {
+                "trajectory": 0.10833333333333334,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 0.5443302919156849,
+              "clock": {
+                "duration_s": 0.1,
+                "last_motion_s": {
+                  "panda_left": 0.1,
+                  "panda_right": 0.1
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.12078694484618735,
+                    0.03703580949690366,
+                    0.08247609746927953,
+                    0.06776284064253346,
+                    0.2308656496429018,
+                    0.10195760652628394,
+                    0.19797170196944602
+                  ],
+                  [
+                    0.003356088477097785,
+                    0.012268791410967594,
+                    0.015008532289799703,
+                    0.011300275144927596,
+                    0.10629209211252544,
+                    0.027913465136881754,
+                    0.06740047847340946
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.2151954174041748
+            },
+            "lower": {
+              "sim": {
+                "trajectory": 2.0666666666666664,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 3.5131741082295775,
+              "clock": {
+                "duration_s": 2.058333333333333,
+                "last_motion_s": {
+                  "panda_left": 2.058333333333333,
+                  "panda_right": 2.058333333333333
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.16426059429188067,
+                    0.4066609370995522,
+                    0.22785996463721592,
+                    0.1302127678871745,
+                    0.21042417066191144,
+                    0.34256552978662924,
+                    0.11714601747133457
+                  ],
+                  [
+                    0.08236515088745122,
+                    0.26200315514602224,
+                    0.27323521826140507,
+                    0.13828955518971675,
+                    0.26508090800456685,
+                    0.2607544653797689,
+                    0.06311468923281716
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.40560007095336914
+            },
+            "retreat": {
+              "sim": {
+                "trajectory": 1.9166666666666667,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": 2.991366299800575,
+              "clock": {
+                "duration_s": 1.9083333333333332,
+                "last_motion_s": {
+                  "panda_left": 1.9083333333333332,
+                  "panda_right": 1.9083333333333332
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.1865609284527392,
+                    0.4623561388118169,
+                    0.2543899459505683,
+                    0.16803974359671514,
+                    0.2526754617209681,
+                    0.36193306881223464,
+                    0.11958345955554339
+                  ],
+                  [
+                    0.08814895722728977,
+                    0.2907509103114325,
+                    0.324255390893331,
+                    0.1665367656156036,
+                    0.32304547505733083,
+                    0.2970489281900335,
+                    0.05693911721348144
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 0.4619622230529785
+            },
+            "parallel_home": {
+              "sim": {
+                "trajectory": 6.375,
+                "tracking_wait": 0.0,
+                "settling": 0.4
+              },
+              "wall_s": 10.001090853940696,
+              "clock": {
+                "duration_s": 6.366666666666666,
+                "last_motion_s": {
+                  "panda_left": 5.408333333333333,
+                  "panda_right": 6.366666666666666
+                },
+                "peak_reference_rad_s": [
+                  [
+                    1.429552132035481,
+                    1.31887313497012,
+                    1.0858315267128178,
+                    0.5364395720415871,
+                    0.766550303525334,
+                    0.7105898398781818,
+                    1.7940327229819097
+                  ],
+                  [
+                    2.174754122750273,
+                    1.1838903972959702,
+                    0.9229880732680629,
+                    0.6570008482525758,
+                    1.2196229094240474,
+                    1.0210086263883245,
+                    1.6331026756454392
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 2.1767377853393555
+            },
+            "empty_pregrasp": {
+              "sim": {
+                "trajectory": 2.425,
+                "tracking_wait": 0.0,
+                "settling": 0.3
+              },
+              "wall_s": null,
+              "clock": {
+                "duration_s": 2.4166666666666665,
+                "last_motion_s": {
+                  "panda_left": 2.4166666666666665,
+                  "panda_right": 2.4166666666666665
+                },
+                "peak_reference_rad_s": [
+                  [
+                    0.007275963267918545,
+                    0.04171154962455681,
+                    0.36592325178030016,
+                    0.2759439266247732,
+                    0.33706983297020265,
+                    0.29145844768292406,
+                    1.1032560510317957
+                  ],
+                  [
+                    0.8155315691697851,
+                    0.3497915255568529,
+                    0.6680947614210364,
+                    0.31339958978595206,
+                    0.6869078330467282,
+                    0.023772323728561418,
+                    0.33446870207536783
+                  ]
+                ]
+              },
+              "measured_peak_rad_s": 1.103367805480957
+            }
+          }
+        }
+      ],
+      "input_hashes": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c"
+      }
+    }
+  ],
+  "linux_tests": 727,
+  "collision_parity": {
+    "success": true,
+    "paths": 114,
+    "samples": 1026,
+    "boundaries": true
+  }
+}

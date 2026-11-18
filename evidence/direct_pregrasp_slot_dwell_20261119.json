@@ -1,0 +1,927 @@
+{
+  "scope": "Isaac Sim 6.1 seed 6; fresh GraspGen, no saved grasp poses or IK seeds",
+  "live": [
+    {
+      "tag": "moveit-side18",
+      "gpu": {
+        "index": 1,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+        "pci": "0000:1c:00.0",
+        "free_mib": 24081,
+        "used_mib": 0,
+        "utilization_pct": 0
+      },
+      "success": true,
+      "total_s": 220.7051343228668,
+      "failure": null,
+      "cleared": 2,
+      "placed": 4,
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "failure": null,
+          "first_motion_s": 18.02964744810015,
+          "action_wall_s": 69.87973376084119,
+          "action_sim_s": 31.691666666666666,
+          "phase_execution_wall_s": {
+            "approach": 3.2772669452242553,
+            "initial_lift": 1.5985102178528905,
+            "lift": 2.449173122178763,
+            "transfer_orient": 4.570732600055635,
+            "transfer_after_orient": 7.89871391793713,
+            "align": 0.6961003430187702,
+            "lower": 1.947480320930481,
+            "retreat": 1.5563674350269139,
+            "parallel_home": 7.551179078873247
+          },
+          "action_cost_exclusive_s": {
+            "physics_engine": 20.661849620752037,
+            "camera_render": 4.018104512710124,
+            "collision_math": 7.3803208894096315,
+            "chain_fk_compute": 2.0718599362298846
+          },
+          "descent_s": 31.625186908058822,
+          "moveit": {
+            "search_s": 7.21410156,
+            "sampler_calls": 1,
+            "waypoints": 172,
+            "depth_voxels": 888,
+            "frame_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "request_and_map_wall_s": 8.146171966101974,
+            "project_check_wall_s": 0.7377475332468748
+          },
+          "observations": {
+            "pick_neighborhoods": 4,
+            "held_and_slots": 4,
+            "workspace": 10
+          },
+          "observation_events": null,
+          "estimation_s": 9.518412055447698,
+          "estimation_exclusive_s": 9.50142601877451,
+          "sensor_reads": 18,
+          "requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0035",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0006635457277298085,
+                0.0012827157974243386
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0034",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00048021674156190075,
+                0.00038805007934572533
+              ]
+            }
+          },
+          "pregrasp_plan_wait_s": 2.9703136533498764e-05
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "failure": null,
+          "first_motion_s": 11.266894398722798,
+          "action_wall_s": 88.41418064804748,
+          "action_sim_s": 43.68333333333333,
+          "phase_execution_wall_s": {
+            "approach": 7.027275394182652,
+            "initial_lift": 2.0514072319492698,
+            "lift": 4.429342173039913,
+            "transfer_orient": 7.186516505200416,
+            "transfer_after_orient": 13.596077076159418,
+            "align": 0.6307388502173126,
+            "lower": 1.7384007941000164,
+            "retreat": 1.6156473057344556,
+            "parallel_home": 7.8952547470107675
+          },
+          "action_cost_exclusive_s": {
+            "physics_engine": 28.60312272142619,
+            "camera_render": 4.552912900689989,
+            "collision_math": 10.107374548446387,
+            "chain_fk_compute": 3.023627169895917
+          },
+          "descent_s": 28.979176500812173,
+          "moveit": {
+            "search_s": 3.602101407,
+            "sampler_calls": 1,
+            "waypoints": 204,
+            "depth_voxels": 405,
+            "frame_ids": {
+              "scene_camera": 216,
+              "left_wrist_camera": 216,
+              "right_wrist_camera": 216
+            },
+            "request_and_map_wall_s": 4.587226876989007,
+            "project_check_wall_s": 0.864526426885277
+          },
+          "observations": {
+            "pick_neighborhoods": 4,
+            "workspace": 10,
+            "held_and_slots": 4
+          },
+          "observation_events": null,
+          "estimation_s": 8.664296163246036,
+          "estimation_exclusive_s": 8.644173651468009,
+          "sensor_reads": 18,
+          "requests": 6,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0074",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0017849996685981862,
+                4.4876337051413806e-05
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0004",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0075",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00035361647605897106,
+                -4.569292068479225e-05
+              ]
+            }
+          },
+          "pregrasp_plan_wait_s": 0.27585335820913315
+        }
+      ],
+      "round_wall_s": [
+        89.73439273191616,
+        101.35708411410451
+      ],
+      "indexing_wall_s": [
+        11.38504824321717,
+        11.135962774977088
+      ],
+      "inputs_sha256": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921"
+      }
+    },
+    {
+      "tag": "direct19",
+      "gpu": {
+        "index": 7,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+        "pci": "0000:41:00.0",
+        "free_mib": 19223,
+        "used_mib": 4859,
+        "utilization_pct": 0
+      },
+      "success": false,
+      "total_s": 130.06448853202164,
+      "failure": "HTTP Error 400: Bad Request",
+      "cleared": 1,
+      "placed": 2,
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "failure": null,
+          "first_motion_s": 10.580419668927789,
+          "action_wall_s": 68.75484042800963,
+          "action_sim_s": 29.9,
+          "phase_execution_wall_s": {
+            "approach": 2.570611383765936,
+            "initial_lift": 1.3598449151031673,
+            "lift": 2.1294542723335326,
+            "transfer_orient": 4.087528928183019,
+            "transfer_after_orient": 7.944979663006961,
+            "align": 0.6557949199341238,
+            "lower": 2.647765848785639,
+            "retreat": 1.7335881236940622,
+            "parallel_home": 5.651737913955003
+          },
+          "action_cost_exclusive_s": {
+            "physics_engine": 20.43959491001442,
+            "camera_render": 4.4333236697129905,
+            "collision_math": 7.006134826224297,
+            "chain_fk_compute": 1.9128857306204736
+          },
+          "descent_s": 25.973828594200313,
+          "moveit": {
+            "search_s": 0,
+            "sampler_calls": 0,
+            "waypoints": 180,
+            "depth_voxels": 888,
+            "frame_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "route": "direct",
+            "direct_check_s": 0.243086004,
+            "direct_project_rejection": null,
+            "request_and_map_wall_s": 0.8155594221316278,
+            "project_check_wall_s": 0.784149088896811
+          },
+          "observations": {
+            "pick_neighborhoods": 4,
+            "held_and_slots": 6,
+            "slot_stability": 7,
+            "workspace": 1
+          },
+          "observation_events": [
+            {
+              "phase": "pregrasp_recheck",
+              "scope": "pick_neighborhoods",
+              "time_s": 11.008333333333349,
+              "wall_s": 0.741145075764507
+            },
+            {
+              "phase": "approach",
+              "scope": "pick_neighborhoods",
+              "time_s": 12.87499999999991,
+              "wall_s": 0.8659485043026507
+            },
+            {
+              "phase": "close",
+              "scope": "pick_neighborhoods",
+              "time_s": 13.624999999999867,
+              "wall_s": 1.0198203572072089
+            },
+            {
+              "phase": "initial_lift",
+              "scope": "pick_neighborhoods",
+              "time_s": 14.433333333333154,
+              "wall_s": 0.889377900864929
+            },
+            {
+              "phase": "lift",
+              "scope": "held_and_slots",
+              "time_s": 15.79166666666641,
+              "wall_s": 1.014808283187449
+            },
+            {
+              "phase": "transfer_orient",
+              "scope": "held_and_slots",
+              "time_s": 18.541666666666256,
+              "wall_s": 1.0142818000167608
+            },
+            {
+              "phase": "transfer_after_orient",
+              "scope": "held_and_slots",
+              "time_s": 24.00833333333261,
+              "wall_s": 0.8435186175629497
+            },
+            {
+              "phase": "align",
+              "scope": "held_and_slots",
+              "time_s": 24.49999999999925,
+              "wall_s": 0.8815967380069196
+            },
+            {
+              "phase": "lower",
+              "scope": "held_and_slots",
+              "time_s": 26.208333333332487,
+              "wall_s": 0.8928942009806633
+            },
+            {
+              "phase": "release",
+              "scope": "held_and_slots",
+              "time_s": 26.958333333332444,
+              "wall_s": 1.2231016820296645
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.62499999999879,
+              "wall_s": 0.5021477108821273
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.724999999998786,
+              "wall_s": 0.5370947797782719
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.82499999999878,
+              "wall_s": 0.5703647821210325
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.924999999998775,
+              "wall_s": 0.5748108341358602
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.02499999999877,
+              "wall_s": 0.5538958320394158
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.124999999998764,
+              "wall_s": 0.5444777719676495
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.22499999999876,
+              "wall_s": 0.5788014465942979
+            },
+            {
+              "phase": "verify",
+              "scope": "workspace",
+              "time_s": 33.32499999999875,
+              "wall_s": 0.8406744110397995
+            }
+          ],
+          "estimation_s": 8.844991718418896,
+          "estimation_exclusive_s": 8.82372680073604,
+          "sensor_reads": 18,
+          "requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0034",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.002456623315811146,
+                0.00016044974327089623
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0033",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.001826326549053181,
+                0.001014673709869407
+              ]
+            }
+          },
+          "pregrasp_plan_wait_s": 3.276532515883446e-05
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": false,
+          "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+          "first_motion_s": 8.28088438604027,
+          "action_wall_s": 15.664608260150999,
+          "action_sim_s": 10.133333333333333,
+          "phase_execution_wall_s": {},
+          "action_cost_exclusive_s": {
+            "physics_engine": 6.862307156436145,
+            "collision_math": 2.6764515140093863,
+            "chain_fk_compute": 0.7060077227652073
+          },
+          "descent_s": null,
+          "moveit": {
+            "search_s": 0,
+            "sampler_calls": 0,
+            "waypoints": 244,
+            "depth_voxels": 406,
+            "frame_ids": {
+              "scene_camera": 216,
+              "left_wrist_camera": 216,
+              "right_wrist_camera": 216
+            },
+            "route": "direct",
+            "direct_check_s": 0.38175002,
+            "direct_project_rejection": null,
+            "request_and_map_wall_s": 0.9839935558848083,
+            "project_check_wall_s": 0.9715155488811433
+          },
+          "observations": null,
+          "observation_events": null,
+          "estimation_s": null,
+          "estimation_exclusive_s": null,
+          "sensor_reads": null,
+          "requests": 6,
+          "placements": null,
+          "pregrasp_plan_wait_s": 3.6008190363645554e-05
+        }
+      ],
+      "round_wall_s": [
+        81.81325793638825
+      ],
+      "indexing_wall_s": [
+        11.51701243687421
+      ],
+      "inputs_sha256": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921"
+      }
+    },
+    {
+      "tag": "direct19b",
+      "gpu": {
+        "index": 1,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+        "pci": "0000:1c:00.0",
+        "free_mib": 24081,
+        "used_mib": 0,
+        "utilization_pct": 0
+      },
+      "success": true,
+      "total_s": 222.94599090097472,
+      "failure": null,
+      "cleared": 2,
+      "placed": 4,
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "failure": null,
+          "first_motion_s": 11.343825458083302,
+          "action_wall_s": 68.53642417211086,
+          "action_sim_s": 30.0,
+          "phase_execution_wall_s": {
+            "approach": 2.1611535511910915,
+            "initial_lift": 1.105743508785963,
+            "lift": 2.0202717897482216,
+            "transfer_orient": 4.891880073584616,
+            "transfer_after_orient": 8.215066837146878,
+            "align": 0.7494505080394447,
+            "lower": 2.432680981233716,
+            "retreat": 1.5209703780710697,
+            "parallel_home": 5.828424789011478
+          },
+          "action_cost_exclusive_s": {
+            "physics_engine": 20.134600854478776,
+            "camera_render": 4.674949477892369,
+            "collision_math": 7.164440150372684,
+            "chain_fk_compute": 2.0656964876689017
+          },
+          "descent_s": 26.456383616197854,
+          "moveit": {
+            "search_s": 0,
+            "sampler_calls": 0,
+            "waypoints": 180,
+            "depth_voxels": 888,
+            "frame_ids": {
+              "scene_camera": 24,
+              "left_wrist_camera": 24,
+              "right_wrist_camera": 24
+            },
+            "route": "direct",
+            "direct_check_s": 0.30672639,
+            "direct_project_rejection": null,
+            "request_and_map_wall_s": 0.8871040837839246,
+            "project_check_wall_s": 0.7770838951691985
+          },
+          "observations": {
+            "pick_neighborhoods": 4,
+            "held_and_slots": 6,
+            "slot_stability": 7,
+            "workspace": 1
+          },
+          "observation_events": [
+            {
+              "phase": "pregrasp_recheck",
+              "scope": "pick_neighborhoods",
+              "time_s": 10.98333333333335,
+              "wall_s": 0.7425442198291421
+            },
+            {
+              "phase": "approach",
+              "scope": "pick_neighborhoods",
+              "time_s": 12.883333333333242,
+              "wall_s": 0.7912844819948077
+            },
+            {
+              "phase": "close",
+              "scope": "pick_neighborhoods",
+              "time_s": 13.6333333333332,
+              "wall_s": 0.9889049376361072
+            },
+            {
+              "phase": "initial_lift",
+              "scope": "pick_neighborhoods",
+              "time_s": 14.433333333333154,
+              "wall_s": 0.9673745660111308
+            },
+            {
+              "phase": "lift",
+              "scope": "held_and_slots",
+              "time_s": 15.841666666666407,
+              "wall_s": 1.2724373750388622
+            },
+            {
+              "phase": "transfer_orient",
+              "scope": "held_and_slots",
+              "time_s": 18.716666666666246,
+              "wall_s": 1.1738846199586987
+            },
+            {
+              "phase": "transfer_after_orient",
+              "scope": "held_and_slots",
+              "time_s": 24.09166666666594,
+              "wall_s": 0.9490056647919118
+            },
+            {
+              "phase": "align",
+              "scope": "held_and_slots",
+              "time_s": 24.591666666665912,
+              "wall_s": 0.9560997970402241
+            },
+            {
+              "phase": "lower",
+              "scope": "held_and_slots",
+              "time_s": 26.30833333333248,
+              "wall_s": 0.9576175729744136
+            },
+            {
+              "phase": "release",
+              "scope": "held_and_slots",
+              "time_s": 27.05833333333244,
+              "wall_s": 1.2007880206219852
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.724999999998786,
+              "wall_s": 0.490971646271646
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.82499999999878,
+              "wall_s": 0.5035415100865066
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 32.924999999998775,
+              "wall_s": 0.5080580399371684
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.02499999999877,
+              "wall_s": 0.5020837751217186
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.124999999998764,
+              "wall_s": 0.5069445497356355
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.22499999999876,
+              "wall_s": 0.49910087510943413
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 33.32499999999875,
+              "wall_s": 0.4994699847884476
+            },
+            {
+              "phase": "verify",
+              "scope": "workspace",
+              "time_s": 33.42499999999875,
+              "wall_s": 0.7571797198615968
+            }
+          ],
+          "estimation_s": 8.822203764691949,
+          "estimation_exclusive_s": 8.799089007545263,
+          "sensor_reads": 18,
+          "requests": 12,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0001",
+              "grasp_track": "visual_0001",
+              "observed_track": "visual_0034",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.0004641234874725453,
+                -8.175373077390358e-05
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0002",
+              "grasp_track": "visual_0002",
+              "observed_track": "visual_0035",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.0022778332233429066,
+                0.0014264225959778054
+              ]
+            }
+          },
+          "pregrasp_plan_wait_s": 2.605002373456955e-05
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "failure": null,
+          "first_motion_s": 9.799051000270993,
+          "action_wall_s": 99.2443038020283,
+          "action_sim_s": 47.425,
+          "phase_execution_wall_s": {
+            "approach": 7.910640702582896,
+            "initial_lift": 2.5613918299786747,
+            "lift": 5.356746061705053,
+            "transfer_orient": 7.67153411405161,
+            "transfer_after_orient": 16.428341784048826,
+            "align": 0.7297098622657359,
+            "lower": 2.002603421919048,
+            "retreat": 1.9499145681038499,
+            "parallel_home": 9.806638478767127
+          },
+          "action_cost_exclusive_s": {
+            "physics_engine": 32.86146930139512,
+            "camera_render": 4.488237347453833,
+            "collision_math": 11.879872081801295,
+            "chain_fk_compute": 3.590135992038995
+          },
+          "descent_s": 29.127411553170532,
+          "moveit": {
+            "search_s": 0,
+            "sampler_calls": 0,
+            "waypoints": 205,
+            "depth_voxels": 406,
+            "frame_ids": {
+              "scene_camera": 216,
+              "left_wrist_camera": 216,
+              "right_wrist_camera": 216
+            },
+            "route": "direct",
+            "direct_check_s": 0.364658609,
+            "direct_project_rejection": null,
+            "request_and_map_wall_s": 0.9488548822700977,
+            "project_check_wall_s": 1.0863721980713308
+          },
+          "observations": {
+            "pick_neighborhoods": 5,
+            "held_and_slots": 6,
+            "slot_stability": 6,
+            "workspace": 1
+          },
+          "observation_events": [
+            {
+              "phase": "pregrasp_recheck",
+              "scope": "pick_neighborhoods",
+              "time_s": 48.17499999999791,
+              "wall_s": 0.5893833683803678
+            },
+            {
+              "phase": "approach",
+              "scope": "pick_neighborhoods",
+              "time_s": 51.17499999999774,
+              "wall_s": 0.789166206959635
+            },
+            {
+              "phase": "approach",
+              "scope": "pick_neighborhoods",
+              "time_s": 53.34166666666428,
+              "wall_s": 1.0238236160948873
+            },
+            {
+              "phase": "close",
+              "scope": "pick_neighborhoods",
+              "time_s": 54.09166666666424,
+              "wall_s": 0.9373649647459388
+            },
+            {
+              "phase": "initial_lift",
+              "scope": "pick_neighborhoods",
+              "time_s": 55.72499999999748,
+              "wall_s": 1.0604802379384637
+            },
+            {
+              "phase": "lift",
+              "scope": "held_and_slots",
+              "time_s": 59.11666666666395,
+              "wall_s": 0.9997296258807182
+            },
+            {
+              "phase": "transfer_orient",
+              "scope": "held_and_slots",
+              "time_s": 64.27499999999722,
+              "wall_s": 1.0155131141655147
+            },
+            {
+              "phase": "transfer_after_orient",
+              "scope": "held_and_slots",
+              "time_s": 75.43333333333943,
+              "wall_s": 1.140192445833236
+            },
+            {
+              "phase": "align",
+              "scope": "held_and_slots",
+              "time_s": 75.93333333333983,
+              "wall_s": 0.8525647320784628
+            },
+            {
+              "phase": "lower",
+              "scope": "held_and_slots",
+              "time_s": 77.21666666667419,
+              "wall_s": 1.025128121022135
+            },
+            {
+              "phase": "release",
+              "scope": "held_and_slots",
+              "time_s": 77.96666666667478,
+              "wall_s": 1.0194355216808617
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 86.39166666668149,
+              "wall_s": 0.4367608791217208
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 86.49166666668157,
+              "wall_s": 0.5313140456564724
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 86.59166666668165,
+              "wall_s": 0.5325425546616316
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 86.69166666668173,
+              "wall_s": 0.49870869889855385
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 86.7916666666818,
+              "wall_s": 0.5137112410739064
+            },
+            {
+              "phase": "verify",
+              "scope": "slot_stability",
+              "time_s": 86.89166666668189,
+              "wall_s": 0.49978696880862117
+            },
+            {
+              "phase": "verify",
+              "scope": "workspace",
+              "time_s": 86.99166666668197,
+              "wall_s": 0.49462650204077363
+            }
+          ],
+          "estimation_s": 8.765551214572042,
+          "estimation_exclusive_s": 8.745719097554684,
+          "sensor_reads": 18,
+          "requests": 6,
+          "placements": {
+            "panda_left": {
+              "initial_track": "visual_0003",
+              "grasp_track": "visual_0003",
+              "observed_track": "visual_0070",
+              "goal_xy": [
+                -0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                0.00045789480209351696,
+                0.0002580523490905984
+              ]
+            },
+            "panda_right": {
+              "initial_track": "visual_0004",
+              "grasp_track": "visual_0004",
+              "observed_track": "visual_0069",
+              "goal_xy": [
+                0.2,
+                -0.4
+              ],
+              "visual_error_xy_m": [
+                -0.00024236440658570446,
+                0.0007502973079681619
+              ]
+            }
+          },
+          "pregrasp_plan_wait_s": 0.4604313927702606
+        }
+      ],
+      "round_wall_s": [
+        81.79393910616636,
+        111.03076582914218
+      ],
+      "indexing_wall_s": [
+        11.663548723328859,
+        11.235149030108005
+      ],
+      "inputs_sha256": {
+        "config_used.json": "99864627a1bbf1cd16c1fbea4896ba84fc1a23f204a120a0c46167ceedb14e72",
+        "camera_rig.json": "4e3911de6b6988f8f4e50aed1013cddb604014dbb5c33268bab54259f0f7ef5c",
+        "release_states.json": "157499355ade242704b4dbc2336c96800abfce9e8dee301f5dab5552bde5b921"
+      }
+    }
+  ],
+  "native_replay": {
+    "direct": {
+      "ok": true,
+      "route": "direct",
+      "search_s": 0,
+      "sampler_calls": 0,
+      "direct_check_s": 0.21494712,
+      "error": null,
+      "waypoints": 167
+    },
+    "rrt": {
+      "ok": true,
+      "route": "rrt_connect",
+      "search_s": 0.346484849,
+      "sampler_calls": 1,
+      "direct_check_s": 9.221e-06,
+      "error": null,
+      "waypoints": 167
+    },
+    "blocked-False": {
+      "ok": false,
+      "route": null,
+      "search_s": null,
+      "sampler_calls": null,
+      "direct_check_s": null,
+      "error": "start in collision"
+    },
+    "blocked-True": {
+      "ok": false,
+      "route": null,
+      "search_s": null,
+      "sampler_calls": null,
+      "direct_check_s": null,
+      "error": "start in collision"
+    },
+    "detour": {
+      "ok": true,
+      "route": "rrt_connect",
+      "search_s": 2.210834695,
+      "sampler_calls": 35,
+      "direct_check_s": 0.125402863,
+      "error": null,
+      "waypoints": 310
+    },
+    "same_request_waypoints": {
+      "max_abs_joint_delta_rad": 8.60771839507335e-06,
+      "max_abs_time_delta_s": 1.353279377536154e-05
+    }
+  },
+  "collision_parity": {
+    "success": true,
+    "paths": 114,
+    "samples": 1026,
+    "boundaries": true
+  },
+  "linux_tests": {
+    "command": "python -B -m unittest discover -s tests",
+    "passed": 724
+  },
+  "interrupted_run": "direct19 GPU 7: round two first candidate failed destination forecast before descent, next attempt interrupted by GraspGen torch.cdist CUDA OOM"
+}

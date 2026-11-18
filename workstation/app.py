@@ -37,6 +37,7 @@ def build_parser():
     parser.add_argument("--keep-open", action="store_true")
     parser.add_argument('--graspgen-endpoint',default='tcp://127.0.0.1:5557')
     parser.add_argument('--graspgen-proxy-port',type=int,default=5558)
+    parser.add_argument('--moveit-pregrasp-socket',help='MoveIt 2 joint pregrasp planner Unix socket for the four-carton experiment')
     parser.add_argument('--pair-collision-backend',choices=('scalar','curobo'),default='curobo',
                         help='Synchronized candidate-path screening for paired sorting and its loopback proxy')
     parser.add_argument('--graspgen-proxy',default='http://127.0.0.1:5558/infer')

@@ -1,0 +1,161 @@
+{
+  "tag": "moveit-side18",
+  "inputs": {
+    "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+    "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+    "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+  },
+  "rounds": [
+    {
+      "round": "round_1",
+      "first_motion_s": 18.02964744810015,
+      "first_descent_s": 31.625186908058822,
+      "attempts": [
+        {
+          "attempt": "attempt_1",
+          "success": true,
+          "failure": null,
+          "phase": "verify",
+          "first_motion_s": 18.02964744810015,
+          "down_s": 31.625186908058822,
+          "offset_estimate_s": 0.0,
+          "scores": [
+            0.8683348894119263,
+            0.9139069318771362
+          ],
+          "common_lift": {
+            "default_gap_m": 0.26072610947374275,
+            "required_m": 0.008,
+            "alternatives_checked": 0,
+            "default_elbow_offsets_m": [
+              -0.0009183436056178218,
+              0.0019121534885577773
+            ],
+            "selected_gap_m": 0.26072610947374275,
+            "outward_arms": [],
+            "selected_elbow_offsets_m": [
+              -0.0009183436056178218,
+              0.0019121534885577773
+            ]
+          },
+          "rejected_close_combinations": 0,
+          "strategy": "orient-first"
+        }
+      ]
+    },
+    {
+      "round": "round_2",
+      "first_motion_s": 11.266894398722798,
+      "first_descent_s": 28.979176500812173,
+      "attempts": [
+        {
+          "attempt": "attempt_1",
+          "success": true,
+          "failure": null,
+          "phase": "verify",
+          "first_motion_s": 11.266894398722798,
+          "down_s": 28.979176500812173,
+          "offset_estimate_s": 0.0,
+          "scores": [
+            0.7810493111610413,
+            0.7619163990020752
+          ],
+          "common_lift": {
+            "default_gap_m": 0.16396876480332126,
+            "required_m": 0.008,
+            "alternatives_checked": 0,
+            "default_elbow_offsets_m": [
+              -0.059640483075971584,
+              -0.04980333036464091
+            ],
+            "selected_gap_m": 0.16396876480332126,
+            "outward_arms": [],
+            "selected_elbow_offsets_m": [
+              -0.059640483075971584,
+              -0.04980333036464091
+            ]
+          },
+          "rejected_close_combinations": 0,
+          "strategy": "orient-first"
+        }
+      ]
+    }
+  ],
+  "actual_retries": 0,
+  "success": true,
+  "placed": 4,
+  "total_wall_s": 220.7051343228668,
+  "failure": null,
+  "model_requests": 18,
+  "gpu": {
+    "index": 1,
+    "name": "NVIDIA GeForce RTX 4090",
+    "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+    "pci": "0000:1c:00.0",
+    "free_mib": 24081,
+    "used_mib": 0,
+    "utilization_pct": 0
+  },
+  "curobo": {
+    "batches": 0,
+    "samples": 0,
+    "round_trip_s": 0.0
+  },
+  "date": "2026-11-19",
+  "seed": 6,
+  "physical_environment": "Isaac Sim 6.1",
+  "generated_live": true,
+  "saved_grasps": false,
+  "saved_ik_seeds": false,
+  "index_verified": [
+    true,
+    true
+  ],
+  "actual_source_assignments": [
+    {
+      "assigned": {
+        "visual_0001": "panda_left",
+        "visual_0003": "panda_right",
+        "visual_0002": "panda_left",
+        "visual_0004": "panda_right"
+      },
+      "picked": [
+        {
+          "arm": "panda_left",
+          "track_id": "visual_0001",
+          "centre_x_m": -0.22001974284648895
+        },
+        {
+          "arm": "panda_right",
+          "track_id": "visual_0003",
+          "centre_x_m": 0.21999479830265045
+        }
+      ],
+      "verified": true
+    },
+    {
+      "assigned": {
+        "visual_0002": "panda_left",
+        "visual_0004": "panda_right"
+      },
+      "picked": [
+        {
+          "arm": "panda_left",
+          "track_id": "visual_0002",
+          "centre_x_m": -0.16997535526752472
+        },
+        {
+          "arm": "panda_right",
+          "track_id": "visual_0004",
+          "centre_x_m": 0.17007248289883137
+        }
+      ],
+      "verified": true
+    }
+  ],
+  "archive": "/data3/anliang_hld/bimanual-isaac61/outputs/moveit-side18-live-6",
+  "checks": {
+    "command": "python -B -m unittest discover -s tests",
+    "passed": 721
+  }
+}

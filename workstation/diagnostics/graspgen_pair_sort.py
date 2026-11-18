@@ -91,6 +91,17 @@ def _run(env,args,timing):
     env.safe_to_index=False
     env.conveyor=VisualConveyorIndex(env.c)
     robot=from_environment(env,paired_armature_floor=.01)
+    report['pair_motion_limits']=dict(velocity_rad_s={a:v.tolist() for a,v in robot.joint_velocity_limits.items()},
+        acceleration_rad_s2=robot.arm_acceleration_limits.tolist(),jerk_rad_s3=robot.arm_jerk_limits.tolist(),
+        source='Panda URDF and active articulation velocity limits, Lula acceleration and jerk limits')
+    if getattr(args,'moveit_pregrasp_socket',None):
+        from isaacsim.robot_motion.motion_generation import load_supported_lula_kinematics_solver_config
+        from pathlib import Path
+        import yaml
+        model=load_supported_lula_kinematics_solver_config('Franka')
+        robot.moveit_urdf=model['urdf_path']
+        robot.moveit_acceleration=yaml.safe_load(Path(model['robot_description_path']).read_text())['acceleration_limits']
+        robot.moveit_socket=args.moveit_pregrasp_socket
     robot.wall_timing=timing
     if getattr(args,'pair_collision_backend','scalar')=='curobo':
         from workstation.planning.curobo_pair import PairPathClient
