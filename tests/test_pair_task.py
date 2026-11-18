@@ -29,6 +29,28 @@ class PairTaskTests(unittest.TestCase):
         self.assertFalse(c.observe(3.,self.views(3.),True))
         self.assertEqual(c.completed_batches,1)
 
+    def test_one_shared_carton_or_two_separate_cartons_each_trigger_one_index(self):
+        c=VisualConveyorIndex(self.config)
+        for batch,ids in enumerate((['large'],['small-a','small-b']),1):
+            c.start_after_placement({'panda_left':ids[0],'panda_right':ids[-1]},True)
+            with self.assertRaisesRegex(RuntimeError,'START_UNSUPPORTED'):c.start(ids,True)
+            c.advance(c.minimum_s+.01)
+            self.assertFalse(c.observe(2.*batch,self.views(2.*batch),True))
+            self.assertTrue(c.observe(2.*batch+.6,self.views(2.*batch+.6),True))
+            self.assertEqual(c.completed_batches,batch)
+            with self.assertRaisesRegex(RuntimeError,'START_UNSUPPORTED'):c.start(ids,True)
+        self.assertEqual(c.delivered,{'large','small-a','small-b'})
+
+    def test_upright_nine_has_six_small_three_large_and_three_cameras(self):
+        from workstation.app import build_parser,load_config
+        from workstation.simulation.visual_fixtures import initial_cartons
+        from collections import Counter
+        p=build_parser();args=p.parse_args(['--mode','graspgen-pair-sort','--visual-fixture','upright-nine'])
+        c=load_config(args,p);boxes=initial_cartons(c,args.visual_fixture)
+        self.assertEqual(len(c['cameras']),3)
+        self.assertEqual(Counter(b.variant for b in boxes),{v['name']:v['count'] for v in c['boxes']['variants']})
+        self.assertEqual(len(c['perception']['carton_size_catalog_m']),6)
+
     def test_index_refuses_closed_interlock_and_never_clears_by_elapsed_time_alone(self):
         c=VisualConveyorIndex(self.config)
         with self.assertRaisesRegex(RuntimeError,'START_UNSUPPORTED'):c.start(['a','b'],False)

@@ -67,11 +67,49 @@ class PlanningTests(unittest.TestCase):
         items=assess(replace(self.scene,objects=(o,other)),self.states,self.feasible,self.home)
         self.assertIn('NEIGHBOUR_SPACE_INSUFFICIENT',select_skill(items)['reasons'])
 
+    def test_directional_pair_grasp_uses_actual_path_with_close_neighbour(self):
+        from workstation.planning.selection import geometry_candidates
+        obj=self.scene.objects[0]
+        neighbour=replace(obj,track_id='neighbour',position_m=(.08,-.1,.7825))
+        scene=replace(self.scene,objects=(obj,neighbour))
+        def full_pose(obj,states):
+            return [replace(geometry_candidates(obj,states)[0],source='graspgen',orientation_wxyz=(1.,0.,0.,0.))]
+        def evaluate(check):
+            return assess(scene,self.states,check,self.home,eligible=lambda o,s:o==obj,
+                          candidate_provider=full_pose,directional_paths=True)[0]
+        self.assertTrue(evaluate(self.feasible).feasible)
+        blocked=evaluate(lambda *_:dict(reasons=('STATIC_PATH_BLOCKED:neighbour',),joint_cost=0,path_clearance_m=0))
+        self.assertFalse(blocked.feasible)
+        self.assertIn('STATIC_PATH_BLOCKED:neighbour',blocked.reasons)
+
     def test_sphere_box_and_station_collision(self):
         box=AABB('table',(0,0,0),(1,1,1))
         self.assertAlmostEqual(sphere_box_clearance((0,0,1),.1,box),.4)
         reason,_=check_spheres([(7,np.array([0,0,.55]),.1)],[],[box],'mount')
         self.assertEqual(reason,'STATIC_PATH_BLOCKED:table')
+
+    def test_rotated_carton_distances_agree_in_cached_and_direct_path_checks(self):
+        from workstation.planning.collision import OrientedCarton
+        from workstation.planning.validation_context import CollisionMatrices
+        a=np.pi/4;c,s=np.cos(a),np.sin(a)
+        rotation=((c,-s,0.),(s,c,0.),(0.,0.,1.));size=(.12,.06,.05)
+        carton=OrientedCarton('box',(0.,0.,0.),tuple(np.abs(rotation)@size),'carton',rotation,size)
+        prepared=CollisionMatrices([carton])
+        for clearance in (.00199,.00201):
+            centre=np.array(rotation)@np.array([0.,.03+.01+clearance,0.])
+            spheres=[(9,centre,.01)]
+            direct=check_spheres(spheres,[],[carton],'mount')
+            cached=check_spheres(spheres,[],[carton],'mount',prepared=prepared)
+            self.assertEqual(direct,cached)
+            self.assertAlmostEqual(direct[1],clearance)
+            self.assertEqual(direct[0] is None,clearance>.002)
+        neighbour=replace(carton,unselected=True);cache=CollisionMatrices([neighbour])
+        for gap in (.00099,.00101):
+            spheres=[(9,np.array(rotation)@np.array([0.,.04+gap,0.]),.01)]
+            direct=check_spheres(spheres,[],[neighbour],'mount')
+            self.assertEqual(direct,check_spheres(spheres,[],[neighbour],'mount',prepared=cache))
+            self.assertEqual(direct[0] is None,gap>.001)
+            self.assertIsNotNone(check_spheres(spheres,[],[neighbour],'mount',margin=.008)[0])
 
     def test_self_and_other_arm(self):
         a=(0,np.array([0,0,1]),.1); b=(4,np.array([.1,0,1]),.1)

@@ -68,7 +68,7 @@ def build_parser():
     parser.add_argument('--capture-seeds',help='model-capture only: comma-separated independent initial scenes')
     parser.add_argument('--epochs',type=int,default=80)
     parser.add_argument('--teacher-capture',action='store_true',help='Offline truth-baseline supervision, model-capture upright only')
-    parser.add_argument('--visual-fixture',choices=('upright','upright-pair','upright-four','side','inverted','separated-upright','separated','clutter'),
+    parser.add_argument('--visual-fixture',choices=('upright','upright-pair','upright-four','upright-nine','side','inverted','separated-upright','separated','clutter'),
                         help='Explicit diagnostic INITIAL condition for visual-pnp; seed then changes XY/yaw')
     parser.add_argument('--visual-yaw-deg',type=float,
                         help='Initial upright single-carton yaw only; preserves seed-generated position, never an online pose input')
@@ -114,6 +114,7 @@ def load_config(args, parser):
             args.graspgen_assets=isaac_root().parent/'graspgen'/'source'
     if pair_mode:
         fixture='upright-four' if args.mode=='graspgen-pair-sort' else 'upright-pair'
+        if args.mode=='graspgen-pair-sort' and args.visual_fixture=='upright-nine':fixture=args.visual_fixture
         if args.grasp_backend!='graspgen' or args.visual_fixture not in (None,fixture):
             parser.error('graspgen-pair-pregrasp requires two upright cartons and GraspGen')
         args.visual_fixture=fixture
@@ -144,9 +145,14 @@ def load_config(args, parser):
     if getattr(args,'save_showcase',False) and args.mode!='scene':
         parser.error('--save-showcase requires --mode scene')
     mixed_capture=args.mode=='model-capture' and args.fixture=='clutter'
-    if requested_boxes=='mixed' and args.mode!='scene' and not mixed_capture:
+    nine=args.visual_fixture=='upright-nine'
+    if nine and requested_boxes=='uniform':parser.error('upright-nine requires the mixed carton catalogue')
+    if requested_boxes=='mixed' and args.mode!='scene' and not (mixed_capture or nine):
         parser.error('--box-set mixed requires scene or model-capture --fixture clutter; manipulation fixtures use the reference size')
-    if args.mode=='scene':
+    if nine:
+        config['boxes']['size_set']='mixed'
+        config['perception']['carton_size_catalog_m']=[v['size_m'] for v in config['boxes']['variants']]
+    elif args.mode=='scene':
         config['boxes']['size_set']=requested_boxes or config['boxes'].get('size_set','uniform')
     else:
         config['boxes']['size_set']=(requested_boxes or 'uniform') if mixed_capture else 'uniform'
@@ -207,15 +213,15 @@ def load_config(args, parser):
             parser.error('Below3mm requires --depth-backboard and separate saved calibration audit')
         config['diagnostic_optical_depth_error_margin_m']=args.optical_depth_margin_mm/1000.
     if args.visual_fixture:
-        if args.visual_fixture=='upright-four':
-            if args.mode!='graspgen-pair-sort':parser.error('upright-four requires graspgen-pair-sort')
-            if config.get('diagnostic_occupied_slot') is not None:parser.error('upright-four requires initially empty slots')
+        if args.visual_fixture in ('upright-four','upright-nine'):
+            if args.mode!='graspgen-pair-sort':parser.error('multi-pair fixture requires graspgen-pair-sort')
+            if config.get('diagnostic_occupied_slot') is not None:parser.error('multi-pair fixture requires empty slots')
         elif args.visual_fixture=='upright-pair':
             if not (pair_mode or args.mode=='vision-check' or (args.mode=='graspgen-check' and args.grasp_backend=='graspgen')):
                 parser.error('upright-pair requires vision-check or graspgen-check --grasp-backend graspgen')
         elif args.mode not in ('visual-pnp','visual-adjust','visual-sort','vision-check'):
             parser.error('--visual-fixture requires a visual mode')
-        config['boxes']['count']={'upright-pair':2,'upright-four':4,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
+        config['boxes']['count']={'upright-pair':2,'upright-four':4,'upright-nine':9,'clutter':9,'separated':3,'separated-upright':3}.get(args.visual_fixture,1)
         if args.visual_fixture=='upright-pair' and config.get('diagnostic_occupied_slot') is not None:
             config['boxes']['count']+=1
         config['diagnostic_visual_fixture']=args.visual_fixture

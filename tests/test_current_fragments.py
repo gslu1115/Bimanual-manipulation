@@ -9,6 +9,27 @@ from workstation.perception.scene_estimate import ScenePriors
 
 
 class CurrentFragmentTests(unittest.TestCase):
+    def test_image_connected_tops_at_two_depths_preserve_every_return(self):
+        from workstation.perception.rgbd_cartons import split_separate_tops
+        yy,xx=np.indices((20,30));mask=np.ones(xx.shape,bool)
+        xyz=np.stack((xx*.002,yy*.002,np.where(xx<15,.815,.855)),axis=-1)
+        parts=split_separate_tops(mask,mask,xyz,.008)
+        self.assertEqual(sorted(int(p.sum()) for p in parts),[300,300])
+        np.testing.assert_array_equal(parts[0]^parts[1],mask)
+        xyz[:,:,2]=.815
+        self.assertEqual(len(split_separate_tops(mask,mask,xyz,.008)),1)
+
+    def test_neighbouring_coplanar_surfaces_require_a_measured_lateral_gap(self):
+        from workstation.perception.rgbd_cartons import split_separated_depths
+        mask=np.ones((12,12),bool)
+        xyz=np.zeros((12,12,3))
+        xyz[:,:,1]=np.arange(12)[:,None]*.004
+        xyz[6:,:,1]+=.22
+        parts=split_separated_depths(mask,mask,xyz,.23,lateral_gap=.006)
+        self.assertEqual([part.sum() for part in parts],[72,72])
+        np.testing.assert_array_equal(parts[0]^parts[1],mask)
+        self.assertEqual(len(split_separated_depths(mask,mask,xyz,.28,lateral_gap=.006)),1)
+
     def test_one_image_component_can_contain_two_physically_separated_depth_groups(self):
         from workstation.perception.rgbd_cartons import split_separated_depths
         xyz=np.zeros((12,12,3));mask=np.ones((12,12),bool)
@@ -30,6 +51,51 @@ class CurrentFragmentTests(unittest.TestCase):
         self.assertEqual([part.sum() for part in parts],[72,72])
         np.testing.assert_array_equal(parts[0]|parts[1],mask)
         self.assertEqual(len(split_separated_depths(mask,mask,xyz,.24)),1)
+
+    def test_two_stationary_face_bounds_retain_shared_depth_and_reject_unexplained_points(self):
+        from types import SimpleNamespace
+        from workstation.perception.stationary_surface import bound_neighbour_faces
+        mask=np.ones((18,41),bool);xyz=np.zeros((*mask.shape,3))
+        xyz[:,:,0]=np.linspace(-.099,.099,41);xyz[:,:,1]=-.03
+        xyz[:,:,2]=np.linspace(.761,.808,18)[:,None]
+        packet=SimpleNamespace(cameras={'wrist':SimpleNamespace(sample_time_s=1.,valid_depth=mask)},
+            camera_status={'wrist':'OK'},observation_time_s=1.)
+        original=replace(self.anchor,failures=('PARTIAL_OR_MERGED_GEOMETRY',),mask_refs=('wrist/1/a',))
+        scene=replace(self.est.estimate(self.packet),objects=(original,),masks={'wrist/1/a':mask})
+        refs={key:dict(position_m=[x,0.,.785],size_m=[.1,.06,.05],axis_yaw_rad=0.)
+              for key,x in [('left',-.052),('right',.052)]}
+        with patch('workstation.perception.stationary_surface.deproject',return_value=xyz):
+            result=bound_neighbour_faces(packet,scene,refs)
+            self.assertEqual(len(result.objects),2)
+            first,second=[result.masks[o.mask_refs[0]] for o in result.objects]
+            np.testing.assert_array_equal(first|second,mask)
+            self.assertTrue(np.any(first&second))
+            xyz[0,0,0]=.3
+            self.assertIs(bound_neighbour_faces(packet,scene,refs).objects[0],original)
+
+    def test_clipped_neighbour_side_bounds_collision_only_from_unique_current_points(self):
+        from types import SimpleNamespace
+        from workstation.perception.stationary_surface import bound_neighbour_faces
+        mask=np.ones((12,12),bool)
+        xyz=np.zeros((12,12,3))
+        xyz[:,:,0]=np.linspace(-.04,.04,12)
+        xyz[:,:,1]=-.03
+        xyz[:,:,2]=np.linspace(.76,.80,12)[:,None]
+        frame=SimpleNamespace(sample_time_s=1.,valid_depth=mask)
+        packet=SimpleNamespace(cameras={'wrist':frame},camera_status={'wrist':'OK'},observation_time_s=1.)
+        ref=dict(position_m=[0.,0.,.785],size_m=[.1,.06,.05],axis_yaw_rad=0.)
+        original=replace(self.anchor,failures=('PARTIAL_OR_MERGED_GEOMETRY',),mask_refs=('wrist/1/a',))
+        scene=replace(self.est.estimate(self.packet),objects=(original,),masks={'wrist/1/a':mask})
+        with patch('workstation.perception.stationary_surface.deproject',return_value=xyz):
+            result=bound_neighbour_faces(packet,scene,{'a':ref}).objects[0]
+            self.assertEqual(result.visibility,'STATIONARY_COLLISION_ENVELOPE')
+            self.assertEqual(result.posture,'UNKNOWN')
+            self.assertEqual(result.failures,original.failures)
+            self.assertTrue(np.all(np.abs(np.asarray(ref['position_m'])-result.position_m)+
+                np.asarray(ref['size_m'])/2<=np.asarray(result.size_m)/2))
+            self.assertIs(bound_neighbour_faces(packet,scene,{'a':ref,'b':ref}).objects[0],original)
+            frame.sample_time_s=.9
+            self.assertIs(bound_neighbour_faces(packet,scene,{'a':ref}).objects[0],original)
 
     def setUp(self):
         self.est=CartonEstimator(ScenePriors((.1,.055,.045),.76,(-.38,.38,-.51,.16)))

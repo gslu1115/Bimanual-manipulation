@@ -145,7 +145,7 @@ def lift_slip_evidence(closed_tcp_z,current_tcp_z,measurement,fingers,closed_fin
 
 
 def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history=None,priorities=None,eligible=None,
-           candidate_provider=None,accepted_postures=('UPRIGHT',)):
+           candidate_provider=None,accepted_postures=('UPRIGHT',),directional_paths=False):
     """feasibility(candidate, object, scene) must check IK AND whole-path collisions."""
     results = []
     failure_history=failure_history or {}; priorities=priorities or {}
@@ -169,9 +169,12 @@ def assess(scene, robot_states, feasibility, home, max_age_s=.15,failure_history
         clearance = min((np.linalg.norm(np.array(obj.position_m[:2])-other.position_m[:2])
             -radius-np.linalg.norm(np.array(other.size_m[:2]))/2-other.uncertainty_m
             for other in scene.objects if other.track_id != obj.track_id),default=.2)
-        if clearance < .008: reasons.append('NEIGHBOUR_SPACE_INSUFFICIENT')
         for candidate in (candidate_provider or geometry_candidates)(obj,robot_states):
             candidate_reasons=reasons+list(candidate.rejection_reasons)
+            # Full-pose pair picks check the actual fingers, links and swept path
+            # against the observed neighbours. The enclosing disk only ranks them.
+            if clearance<.008 and not (directional_paths and candidate.source=='graspgen' and candidate.orientation_wxyz is not None):
+                candidate_reasons.append('NEIGHBOUR_SPACE_INSUFFICIENT')
             if obj.posture=='SIDE' and obj.posture in accepted_postures and candidate.orientation_wxyz is None:
                 candidate_reasons.append('SIDE_REQUIRES_FULL_POSE_CANDIDATE')
             if candidate.target_id!=obj.track_id or candidate.arm not in robot_states:

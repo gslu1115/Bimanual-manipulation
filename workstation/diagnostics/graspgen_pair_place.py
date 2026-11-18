@@ -8,8 +8,8 @@ from workstation.observations.camera_geometry import pose_matrix, quaternion_fro
 from workstation.perception.held_surface import CuboidHoldingTracker, HeldSurfaceTracker
 from workstation.perception.preclose_target import PreCloseTarget, preclose_supported, reconcile_preclose_target
 from workstation.perception.scene_estimate import ScenePriors, pose_is_observed
-from workstation.planning.collision import AABB, sphere_box_clearance, sphere_box_clearances, check_spheres, carton_contact_allowed
-from workstation.planning.graspgen_candidates import revalidate_candidate
+from workstation.planning.collision import AABB, sphere_arrays, sphere_box_clearance, sphere_box_clearances, check_spheres, carton_contact_allowed
+from workstation.planning.graspgen_candidates import revalidate_candidate, upright_body_rotation
 from workstation.skills.cumotion_pick_place import placement_goal
 from workstation.diagnostics.graspgen_pair import drive_empty_pregrasps, synchronized_knots
 
@@ -417,7 +417,7 @@ def _image_tcp_pose(robot,arm,packet):
     return robot.fk(arm,packet.robot_state[arm].joint_positions_rad)
 
 
-def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None,*,forecast=None,selection_started=None):
+def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None,*,forecast=None,selection_started=None,source_view=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
     selected = dict(zip(arms, pair['selection']))
@@ -430,15 +430,26 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     objects = {a: next(o for o in scene.objects if o.track_id == selected[a]['target_id']) for a in arms}
     from workstation.diagnostics.graspgen_pair import source_cartons
     from workstation.planning.pair_task import match_stationary_sources
+    neighbours=[o for o in source_cartons(scene,env.c['table']) if o.track_id not in {v.track_id for v in objects.values()}]
     source_references={o.track_id:dict(position_m=o.position_m,size_m=o.size_m,axis_yaw_rad=o.axis_yaw_rad)
-        for o in source_cartons(scene,env.c['table']) if o.track_id not in {v.track_id for v in objects.values()}}
+        for o in neighbours}
     source_keepouts=[]
-    for key,ref in source_references.items():
-        c,s=abs(math.cos(ref['axis_yaw_rad'])),abs(math.sin(ref['axis_yaw_rad']))
-        sx,sy,sz=ref['size_m']
-        source_keepouts.append((AABB('unselected_'+key,np.asarray(ref['position_m']),
-            np.array([c*sx+s*sy,s*sx+c*sy,sz])+.024,'carton'),scene.observation_time_s))
+    source_frames={}
+    for o in neighbours:
+        name='unselected_'+o.track_id
+        rotation=upright_body_rotation(o)
+        half_extent=np.asarray(o.size_m)/2+o.uncertainty_m+.004
+        source_frames[name]=(rotation,half_extent)
+        source_keepouts.append((AABB(name,np.asarray(o.position_m),2*(np.abs(rotation)@half_extent),
+            'carton'),scene.observation_time_s))
     report['unselected_source_references']=source_references
+    surface_references=dict(source_references)
+    if getattr(robot,'oriented_table_cartons',False):
+        from workstation.perception.stationary_surface import add_large_geometry_hints
+        large_sizes={tuple(v['size_m']) for v in env.c['boxes']['variants'] if v['group']=='large'}
+        for view in (scene,source_view):
+            if view is not None:add_large_geometry_hints(surface_references,view,large_sizes,priors.support_z_m)
+        report['stationary_geometry_references']=surface_references
     report['contact_policy']=dict(carton_carton='allowed; geometric gaps recorded, not contact forces',
         robot_self='protected',robot_robot='protected',robot_carton='protected',fixed_station='protected')
     for obj in objects.values():estimator.mark_identity(obj.identity_id,'selected')
@@ -489,6 +500,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             scope='workspace'
         counts=report.setdefault('observation_scope',{})
         counts[scope]=counts.get(scope,0)+1
+        from workstation.perception.stationary_surface import bound_neighbour_faces
+        scene=bound_neighbour_faces(packet,scene,surface_references)
         fresh_scene=scene
         if released_references:refresh_released(packet)
         robot.set_observation(packet, scene, priors)
@@ -507,7 +520,14 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report['perception_failure']=dict(arm=arm,reason=proof['reason'],phase=report['last_phase'])
             save_observation(env.output,'pair_'+arm+'_'+report['last_phase'],packet,scene)
             raise RuntimeError('PAIR_TARGET_UNSUPPORTED:'+arm+':'+proof['reason'])
-        scene=reconcile_preclose_target(estimator,scene,proof)
+        try:
+            scene=reconcile_preclose_target(estimator,scene,proof)
+        except RuntimeError as error:
+            report['perception_failure']=dict(arm=arm,phase=report['last_phase'],reason=str(error),
+                current_target=proof['target_id'],measured_masks=proof['surface'].get('mask_refs',[]),
+                tracked_masks=[ref for o in scene.objects if o.track_id==proof['target_id'] for ref in o.mask_refs])
+            save_observation(env.output,'pair_'+arm+'_identity_conflict',packet,scene)
+            raise
         references[arm]=renewed
         if renewed is not prior:
             # Complete current geometry plus retained identity/orientation.
@@ -532,7 +552,12 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             keepouts=list(partial_keepout.values())+list(released_keepout.values())+source_keepouts
             for keepout,_ in keepouts:
                 payload_gap=float(np.max(np.abs(centre-keepout.centre)-(extent+keepout.size)/2))
-                distances=sphere_box_clearances(geometry[arm],keepout)
+                if keepout.name in source_frames:
+                    rotation,half_extent=source_frames[keepout.name]
+                    _,centres,radii=sphere_arrays(geometry[arm])
+                    local=(centres-keepout.centre)@rotation
+                    distances=np.linalg.norm(np.maximum(np.abs(local)-half_extent,0.),axis=1)-radii
+                else:distances=sphere_box_clearances(geometry[arm],keepout)
                 sphere=int(np.argmin(distances));robot_gap=float(distances[sphere]);link=geometry[arm][sphere][0]
                 key=('unselected_clearances' if keepout.name.startswith('unselected_') else
                      'released_clearances' if keepout.name.startswith('released_') else 'parked_clearances')

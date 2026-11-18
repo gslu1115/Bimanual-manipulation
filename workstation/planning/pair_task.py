@@ -57,12 +57,17 @@ class VisualConveyorIndex:
         self.elapsed=0.;self.distance=0.;self.stable=None;self.batch=[];self.last_observation=None
 
     def start(self,verified_ids,arms_clear):
-        if (self.state!='WAITING' or not arms_clear or len(verified_ids)!=2 or len(set(verified_ids))!=2
+        if (self.state!='WAITING' or not arms_clear or len(verified_ids) not in (1,2)
+                or len(set(verified_ids))!=len(verified_ids) or not all(verified_ids)
                 or self.delivered.intersection(verified_ids)):
             raise RuntimeError('VISUAL_INDEX_START_UNSUPPORTED')
         self.batch=list(verified_ids);self.state='INDEXING';self.elapsed=0.;self.distance=0.
         self.stable=None;self.last_observation=None
         self.events.append(dict(event='index_started',visual_placements=self.batch))
+
+    def start_after_placement(self,verified_by_arm,arms_clear):
+        """Both arms may report the same persistent identity for one shared carton."""
+        self.start(list(dict.fromkeys(verified_by_arm.values())),arms_clear)
 
     def advance(self,dt):
         if self.state!='INDEXING':return 0.

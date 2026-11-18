@@ -15,11 +15,16 @@ def initial_cartons(config, fixture):
     elif fixture=='upright-four':
         entries=[('upright',(-.22,-.15),20),('upright',(.22,-.15),-25),
                  ('upright',(-.17,.035),45),('upright',(.17,.035),-40)]
+    elif fixture=='upright-nine':
+        entries=[('upright',(-.247,-.155),20),('upright',(.247,-.155),-25),
+                 ('upright',(-.080,-.148),20),('upright',(.080,-.148),-25),
+                 ('upright',(-.158,-.010),38),('upright',(.158,-.010),-38),
+                 ('upright',(-.252,.083),0),('upright',(.246,.083),0),('upright',(0.,.078),0)]
     elif fixture == 'separated':
         entries=[('upright',(-.2,-.06),20),('side',(0.,-.06),-25),('inverted',(.2,-.06),45)]
     elif fixture == 'separated-upright':
         entries=[('upright',(-.2,-.06),20),('upright',(0.,-.06),-25),('upright',(.2,-.06),45)]
-    if config['seed'] != 6:
+    if config['seed'] != 6 and fixture!='upright-nine':
         import numpy as np
         rng=np.random.default_rng(config['seed'])
         entries=[(posture,tuple(np.asarray(xy)+rng.uniform([-.025,-.04],[.025,.05])),
@@ -34,6 +39,11 @@ def initial_cartons(config, fixture):
     spec=next((v for v in config['boxes'].get('variants',[]) if v['name']==variant),None) if variant else None
     if variant and (spec is None or spec['group']!='small' or fixture!='upright'):
         raise ValueError('Single upright fixture requires a configured small-carton variant')
+    if fixture=='upright-nine':
+        pair=[v for group in ('small','large') for v in config['boxes']['variants']
+              if v['group']==group for _ in range(v['count'])]
+        if len(pair)!=9 or sum(v['group']=='small' for v in pair)!=6:
+            raise ValueError('Nine-carton fixture requires six small and three large cartons')
     if fixture in ('upright-pair','upright-four'):
         catalogue=[v for v in config['boxes']['variants'] if v['group']=='small']
         if len(catalogue)<2:raise ValueError('The upright pair needs two small variants')
@@ -56,7 +66,7 @@ def initial_cartons(config, fixture):
             entries.append(('upright',slots[occupied],0.))
             pair.append(pair[0])
     for index,(posture,xy,yaw_deg) in enumerate(entries):
-        if fixture in ('upright-pair','upright-four'):spec=pair[index]
+        if fixture in ('upright-pair','upright-four','upright-nine'):spec=pair[index]
         size=spec['size_m'] if spec else config['boxes']['size']
         roll={'upright':0.,'side':math.pi/2,'inverted':math.pi}[posture]
         yaw=math.radians(yaw_deg)

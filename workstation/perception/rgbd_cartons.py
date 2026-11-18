@@ -30,26 +30,70 @@ def deproject(frame):
     return frame.points_workcell_m if isinstance(frame, CameraFrame) else deproject_depth(frame)
 
 
-def split_separated_depths(mask,valid,xyz,max_carton_diagonal):
+def split_separated_depths(mask,valid,xyz,max_carton_diagonal,*,lateral_gap=None):
     """Split an image component only when the two measured groups cannot share a carton."""
     rows,cols=np.nonzero(mask & valid)
     if len(rows)<120:return [mask]
     points=xyz[rows,cols]
     if np.max(np.ptp(points,axis=0))<=max_carton_diagonal:return [mask]
-    heights=np.sort(points[:,2]);cut=int(np.argmax(np.diff(heights)))
-    if heights[cut+1]-heights[cut]<.03:return [mask]
-    lower=points[:,2]<=heights[cut]
-    if min(lower.sum(),(~lower).sum())<60:return [mask]
-    a,b=points[lower],points[~lower]
-    gap=np.maximum(0.,np.maximum(a.min(axis=0)-b.max(axis=0),b.min(axis=0)-a.max(axis=0)))
-    # The TOTAL span already disproves a single catalogue cuboid. The empty
-    # gap need not itself exceed that cuboid's diagonal: that old condition
-    # merged a held carton with a lower surface despite a clear depth break.
-    # Keep both measured groups; this does not assign their identities.
-    if np.linalg.norm(gap)<.03:return [mask]
+    axes=[(2,.03)]
+    if lateral_gap is not None:
+        # A wrist can see the sides of upright neighbours at the same height.
+        # Only split across a measured empty interval on an axis too long
+        # to belong to one carton. Keep every contributing depth pixel.
+        axes.extend((i,lateral_gap) for i in (0,1) if np.ptp(points[:,i])>max_carton_diagonal)
+    for axis,minimum in axes:
+        ordered=np.sort(points[:,axis])
+        gaps=np.diff(ordered)[59:len(ordered)-60]
+        cut=59+int(np.argmax(gaps))
+        if ordered[cut+1]-ordered[cut]<minimum:continue
+        lower=points[:,axis]<=ordered[cut]
+        parts=[]
+        for group in (lower,~lower):
+            part=np.zeros_like(mask);part[rows[group],cols[group]]=True
+            parts.extend(split_separated_depths(part,valid,xyz,max_carton_diagonal,lateral_gap=lateral_gap))
+        return parts
+    return [mask]
+
+
+def split_separate_tops(mask,valid,xyz,gap,maximum_span=np.inf):
+    """A single colour component may bridge two separate top surfaces in the image."""
+    y,x=np.nonzero(mask & valid)
+    if len(y)<240:return [mask]
+    points=xyz[y,x]
+    oversized=np.max(np.ptp(points,axis=0))>maximum_span
+    levels,counts=np.unique(np.rint(points[:,2]/.002),return_counts=True)
+    prominent=levels[counts>=max(60,len(y)*.07)]
+    if not oversized and (len(prominent)<2 or np.ptp(prominent)*.002<.012):return [mask]
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    from scipy.spatial import cKDTree
+    yy=y-y.min()+1;xx=x-x.min()+1
+    ids=np.full((yy.max()+2,xx.max()+2),-1,dtype=int)
+    ids[yy,xx]=np.arange(len(y));starts=[];ends=[]
+    for dy,dx in ((0,1),(1,-1),(1,0),(1,1)):
+        other=ids[yy+dy,xx+dx];indices=np.flatnonzero(other>=0)
+        close=np.linalg.norm(points[indices]-points[other[indices]],axis=1)<=gap
+        starts.append(indices[close]);ends.append(other[indices[close]])
+    a,b=np.concatenate(starts),np.concatenate(ends)
+    graph=coo_matrix((np.ones(len(a),bool),(a,b)),shape=(len(y),len(y)))
+    _,labels=connected_components(graph,directed=False)
+    tops=[]
+    for label in np.flatnonzero(np.bincount(labels)>=120):
+        pts=points[labels==label]
+        z=np.quantile(pts[:,2],.98);top=pts[abs(pts[:,2]-z)<.0015]
+        if (oversized and len(pts)>=max(120,.05*len(points)) or
+                len(top)>=60 and np.linalg.eigvalsh(np.cov(top[:,:2].T))[0]>.004**2):
+            tops.append((label,z))
+    if len(tops)<2 or not oversized and np.ptp([z for _,z in tops])<.012:return [mask]
+    supported=np.isin(labels,[label for label,_ in tops])
+    if not supported.all():
+        _,nearest=cKDTree(points[supported]).query(points[~supported])
+        labels[~supported]=labels[supported][nearest]
     parts=[]
-    for group in (lower,~lower):
-        part=np.zeros_like(mask);part[rows[group],cols[group]]=True;parts.append(part)
+    for label,_ in tops:
+        part=np.zeros_like(mask);hit=labels==label;part[y[hit],x[hit]]=True
+        parts.append(part)
     return parts
 
 
@@ -116,6 +160,10 @@ class CartonEstimator:
             except ValueError:continue
             fresh,proof=reference.evaluate(packet,scene)
             if not proof['supported'] or not proof['full_pose_measured']:continue
+            # An empty-hand candidate query can leave this identity unresolved.
+            # Preserve contradictory masks as obstacles and evaluate the others.
+            original=next((o for o in scene.objects if o.track_id==key),None)
+            if original is not None and not set(original.mask_refs)<=set(proof['surface']['mask_refs']):continue
             scene=reconcile_preclose_target(self,scene,proof)
             obj=fresh.obj
             dt=obj.time_s-hint.time_s
@@ -896,6 +944,16 @@ class CartonEstimator:
                (xyz[...,2] > p.support_z_m+.0005) & (xyz[...,2] < p.support_z_m+.60))
         if segmentation is None:
             proposal = colour & roi & frame.valid_depth
+            # The calibrated tray rim can have the same colour as cardboard.
+            # Remove its measured returns before image connectivity can attach
+            # an entire rail to a carton face. The rim stays a fixed obstacle.
+            rims=[box for box in self.known_static if box.name.startswith('tray_rim_')]
+            if rims:
+                rows,cols=np.nonzero(proposal);samples=xyz[rows,cols]
+                fixed=np.zeros(len(rows),bool)
+                for box in rims:
+                    fixed|=np.all(abs(samples-box.centre)<=np.asarray(box.size)/2+p.optical_depth_error_margin_m,axis=1)
+                proposal[rows[fixed],cols[fixed]]=False
             binary = cv2.morphologyEx(proposal.astype(np.uint8), cv2.MORPH_CLOSE,
                                      np.ones((3,3), np.uint8))
             count, labels, stats, _ = cv2.connectedComponentsWithStats(binary, 8)
@@ -903,7 +961,11 @@ class CartonEstimator:
                        if stats[index,cv2.CC_STAT_AREA] >= 80]
             diagonal=max(np.linalg.norm(size) for size in (p.carton_size_catalog_m or (p.carton_size_m,)))
             proposals=[(part,None) for mask,_ in proposals for part in
-                       split_separated_depths(mask,proposal,xyz,diagonal+2*p.optical_depth_error_margin_m)]
+                       split_separated_depths(mask,proposal,xyz,diagonal+2*p.optical_depth_error_margin_m,
+                                              lateral_gap=2*p.optical_depth_error_margin_m)]
+            proposals=[(part,None) for mask,_ in proposals for part in
+                       split_separate_tops(mask,proposal,xyz,2*p.optical_depth_error_margin_m+.002,
+                                           diagonal+2*p.optical_depth_error_margin_m)]
         else:
             segmentation.validate_for(frame)
             # Same prediction supplies instance masks and boxes. No colour gate,

@@ -282,8 +282,8 @@ class IndexingConveyor:
                 and abs(b.position[2]-self.c['conveyor']['top_z']) < extent[2]+.15
                 for xy in self.c['conveyor']['slots_xy']):
                 foreign = True
-        if len(occupants) == 3 and safe_to_index and not foreign:
-            self.batch = list(self.occupied)
+        if occupants and safe_to_index and not foreign:
+            self.batch = list(dict.fromkeys(name for name in self.occupied if name is not None))
             self.state, self.elapsed, self.distance = 'INDEXING', 0., 0.
             self.events.append({'event': 'index_started', 'boxes': list(self.batch)})
             return self.c['conveyor']['speed']

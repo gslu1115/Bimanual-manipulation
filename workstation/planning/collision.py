@@ -12,6 +12,18 @@ class AABB:
     kind: str = 'fixed'
 
 
+@dataclass(frozen=True)
+class OrientedCarton(AABB):
+    rotation: tuple = ()
+    local_size: tuple = ()
+    unselected: bool = False
+
+    def clearances(self,centres,radii):
+        local=(centres-np.asarray(self.centre))@np.asarray(self.rotation)
+        outside=np.maximum(np.abs(local)-np.asarray(self.local_size)/2,0.)
+        return np.linalg.norm(outside,axis=-1)-radii
+
+
 def partial_carton_extent(obj,scene):
     """Collision bound only: a clipped area need not erase measured axis spans.
 
@@ -86,11 +98,29 @@ def station_obstacles(config):
     return tuple(boxes)
 
 
-def scene_obstacles(scene,target_id,extra_margin=.004):
+def scene_obstacles(scene,target_id,extra_margin=.004,*,oriented=False):
     # Circumscribing yaw-rotated boxes avoids relying on unseen exact surfaces.
     boxes=[]
     for obj in scene.objects:
         if obj.track_id == target_id: continue
+        if (oriented and not obj.failures and obj.posture=='UPRIGHT' and obj.visibility=='COMPLETE_TOP'
+                and abs(obj.time_s-scene.observation_time_s)<=1e-6):
+            c,s=np.cos(obj.axis_yaw_rad),np.sin(obj.axis_yaw_rad)
+            rotation=np.array([[c,-s,0.],[s,c,0.],[0.,0.,1.]])
+            size=np.asarray(obj.size_m)
+            pad=obj.uncertainty_m+extra_margin+np.linalg.norm(size)*np.sin(np.deg2rad(1.5))
+            local=size+2*pad
+            boxes.append(OrientedCarton(obj.track_id,obj.position_m,tuple(np.abs(rotation)@local),'carton',
+                tuple(map(tuple,rotation)),tuple(local)))
+            continue
+        if getattr(obj,'visibility','')=='STATIONARY_COLLISION_ENVELOPE' and obj.quality.get('stationary_face_points',0)>=60:
+            if oriented and 'collision_rotation' in obj.quality:
+                rotation=np.asarray(obj.quality['collision_rotation'])
+                local=np.asarray(obj.quality['collision_local_size_m'])+2*extra_margin
+                boxes.append(OrientedCarton(obj.track_id,obj.position_m,tuple(np.abs(rotation)@local),'carton',
+                    tuple(map(tuple,rotation)),tuple(local),True))
+            else:boxes.append(AABB(obj.track_id,obj.position_m,tuple(np.asarray(obj.size_m)+2*extra_margin),'carton'))
+            continue
         from workstation.perception.scene_estimate import current_cuboid_measurement
         measured=current_cuboid_measurement(obj,scene)
         if measured is not None:
@@ -161,6 +191,8 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,reject
         outside=np.maximum(np.abs(centres[:,None,:]-np.asarray([b.centre for b in obstacles]))-
                            np.asarray([b.size for b in obstacles])/2,0.)
         static=np.linalg.norm(outside,axis=2)-radii[:,None]
+        for i,box in enumerate(obstacles):
+            if isinstance(box,OrientedCarton):static[:,i]=box.clearances(centres,radii)
         # Intended mounting contact only; no hand/forearm body exemption.
         static[(links[:,None] == 0) & np.asarray([b.name == own_mount for b in obstacles])[None,:]]=np.inf
     if prepared is None:mutual=np.full((n,len(other_spheres)),np.inf)
@@ -170,13 +202,16 @@ def check_spheres(spheres,other_spheres,obstacles,own_mount,margin=.002,*,reject
     minimum=min(float(static.min()) if static.size else float('inf'),
                 float(mutual.min()) if mutual.size else float('inf'))
     # Keep the original rejection order by sphere, then static before other arm.
-    rejected=np.flatnonzero((static < margin).any(axis=1) | (mutual < margin).any(axis=1))
+    # The confirmed stationary neighbour uses the task's 1 mm arm/carton
+    # boundary. Preserve stronger requested checks and all other part pairs.
+    thresholds=np.asarray([.001 if margin==.002 and getattr(b,'unselected',False) else margin for b in obstacles])
+    rejected=np.flatnonzero((static < thresholds).any(axis=1) | (mutual < margin).any(axis=1))
     if len(rejected):
-        row=int(rejected[0]);bad=np.flatnonzero(static[row] < margin)
+        row=int(rejected[0]);bad=np.flatnonzero(static[row] < thresholds)
         if rejection is not None and len(bad):
             col=int(bad[0])
             rejection.update(sphere_index=row,link_index=int(links[row]),obstacle=obstacles[col].name,
-                             obstacle_kind=obstacles[col].kind,clearance_m=float(static[row,col]),required_m=margin)
+                             obstacle_kind=obstacles[col].kind,clearance_m=float(static[row,col]),required_m=float(thresholds[col]))
         if rejection is not None and not len(bad):
             col=int(np.flatnonzero(mutual[row]<margin)[0])
             rejection.update(sphere_indices=[row,col],link_indices=[int(links[row]),int(other_spheres[col][0])],

@@ -32,8 +32,10 @@ def visible_fraction(points,camera,K,shape,spheres):
 
 class JointPairSelection:
     """History uses observed source geometry, not ephemeral visual track IDs."""
-    def __init__(self,references):
+    def __init__(self,references,*,clear_reach_first=False):
         self.references=references
+        self.clear_reach_first=clear_reach_first
+        self.reach_obstacles={}
         self.failed_grasps={k:[] for k in references}
         self.failed_pairs=Counter();self.failed_sources=Counter()
         self.diversity=[]
@@ -55,6 +57,19 @@ class JointPairSelection:
         matched=(match_task_sources(scene,self.references) if getattr(scene,'identities',())
                  else match_stationary_sources(scene,self.references))
         for key,obj in matched.items():
+            if self.clear_reach_first:
+                goal=np.asarray(obj.position_m[:2])
+                for arm,base in robot.base_config.items():
+                    start=np.asarray(base['base_xyz'][:2]);direction=goal-start
+                    length2=float(direction@direction)
+                    count=0
+                    for other in scene.objects:
+                        if other.track_id==obj.track_id or not length2:continue
+                        delta=np.asarray(other.position_m[:2])-start
+                        fraction=float(delta@direction)/length2
+                        if 0<fraction<1 and np.linalg.norm(delta-fraction*direction)<(
+                                np.linalg.norm(other.size_m[:2])/2+obj.size_m[1]/2):count+=1
+                    self.reach_obstacles[arm,obj.track_id]=count
             parts=[]
             for ref in obj.mask_refs:
                 name=ref.split('/')[0];frame=packet.cameras[name]

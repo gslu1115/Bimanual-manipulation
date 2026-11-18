@@ -34,11 +34,10 @@ class TaskLogicTests(unittest.TestCase):
         for _ in range(40): conv.update(boxes, .01)
         self.assertEqual(conv.state, 'INDEXING')
 
-    def test_conveyor_needs_three_and_clearance(self):
+    def test_conveyor_indexes_one_placement_and_needs_clearance(self):
         conv = IndexingConveyor(self.c)
         boxes = self.batch()
-        for _ in range(100): conv.update(boxes[:2], .01)
-        self.assertEqual(conv.state, 'WAITING')
+        boxes=boxes[:2]
         for _ in range(100): conv.update(boxes, .01)
         self.assertEqual(conv.state, 'INDEXING')
         for _ in range(500): conv.update(boxes, .01)

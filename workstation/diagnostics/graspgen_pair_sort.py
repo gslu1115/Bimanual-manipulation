@@ -1,4 +1,4 @@
-"""Two visual pair cycles in one unchanged four-carton physics scene."""
+"""Visually sort the requested small cartons, indexing after each verified placement."""
 from copy import copy
 from time import perf_counter
 import numpy as np
@@ -87,10 +87,17 @@ def run(env,args):
 def _run(env,args,timing):
     from workstation.simulation.robot_driver import from_environment
     root=env.output;started=perf_counter()
-    report=dict(success=False,scope='two_pairs_four_initial_cartons_live_model_and_visual_conveyor',rounds=[],indexing=[],attempts=[])
+    nine=args.visual_fixture=='upright-nine'
+    required=6 if nine else 4
+    small_sizes={tuple(v['size_m']) for v in env.c['boxes']['variants'] if v['group']=='small'}
+    def small_sources(scene):
+        return [o for o in source_cartons(scene,env.c['table']) if tuple(o.size_m) in small_sizes]
+    report=dict(success=False,scope='six_small_in_nine' if nine else 'two_pairs_four_initial_cartons_live_model_and_visual_conveyor',
+                requested_small=required,rounds=[],indexing=[],attempts=[])
     env.safe_to_index=False
     env.conveyor=VisualConveyorIndex(env.c)
     robot=from_environment(env,paired_armature_floor=.01)
+    robot.oriented_table_cartons=nine
     report['pair_motion_limits']=dict(velocity_rad_s={a:v.tolist() for a,v in robot.joint_velocity_limits.items()},
         acceleration_rad_s2=robot.arm_acceleration_limits.tolist(),jerk_rad_s3=robot.arm_jerk_limits.tolist(),
         source='Panda URDF and active articulation velocity limits, Lula acceleration and jerk limits')
@@ -131,10 +138,9 @@ def _run(env,args,timing):
             raise RuntimeError('PAIR_TASK_CAMERA_UNAVAILABLE')
         workspace=ObservedWorkspace.for_slot_observation(packet,priors,robot.static)
         return packet,[workspace.slot(xy) for xy in env.c['conveyor']['slots_xy']]
-    def index_pair(placements,round_index):
+    def index_placement(verified_by_arm,round_index):
         robot.hold(.3);packet,scene=observe()
-        ids=[f'round_{round_index}/{p["observed_track"]}' for p in placements.values()]
-        env.conveyor.start(ids,empty_arms_clear(robot,packet,env.c))
+        env.conveyor.start_after_placement(verified_by_arm,empty_arms_clear(robot,packet,env.c))
         env.release_conveyor_interlock();checks=[];next_check=0.
         began=perf_counter()
         try:
@@ -215,14 +221,17 @@ def _run(env,args,timing):
     try:
         for _ in range(round(3/robot.dt)):env.step(monitor_conveyor=False,render=False)
         observe();robot.hold(.2);packet,scene=observe()
-        originals=source_cartons(scene,env.c['table'])
-        if len(originals)!=4:raise RuntimeError('PAIR_TASK_REQUIRES_FOUR_OBSERVED_SOURCES')
+        originals=small_sources(scene)
+        report['registered_small_count']=len(originals)
+        if len(originals)!=required:
+            save_observation(root,'registration',packet,scene)
+            raise RuntimeError(f'PAIR_TASK_SMALL_SOURCE_COUNT: observed {len(originals)}, expected {required}')
         remaining={o.track_id:dict(position_m=o.position_m,size_m=o.size_m,axis_yaw_rad=o.axis_yaw_rad) for o in originals}
         estimator.set_task_identities(remaining)
         report['initial_visual_sources']=remaining.copy()
-        selection=JointPairSelection(remaining)
+        selection=JointPairSelection(remaining,clear_reach_first=nine)
         pair_args=copy(args);pair_args.mode='graspgen-pair-place'
-        for round_index in (1,2):
+        for round_index in range(1,required//2+1):
             begin=perf_counter()
             round_output=root/f'round_{round_index}';round_output.mkdir()
             # The belt is interlocked throughout this round, including empty
@@ -275,12 +284,15 @@ def _run(env,args,timing):
                 transfer_strategy=result.get('transfer_strategy'),model_request_count=len(result['model_requests'])))
             if not result['success']:raise RuntimeError('PAIR_TASK_ROUND_FAILED')
             for key in selected_keys:del remaining[key]
-            packet,scene=index_pair(result['placements'],round_index)
+            assigned={c['arm']:key for c,key in zip(result['pair']['selection'],selected_keys)}
+            packet,scene=index_placement({arm:assigned[arm] for arm in result['placements']},round_index)
             for key in selected_keys:estimator.mark_identity(key,'delivered')
             report['object_identities']=[vars(v) for v in estimator._identities.values()]
             env.output=root;env._write_json('graspgen_pair_sort.json',report)
-        if source_cartons(scene,env.c['table']):raise RuntimeError('PAIR_TASK_SOURCES_REMAIN')
-        report.update(success=True,verified_placements=4,completed_pairs=2,visually_cleared_batches=env.conveyor.completed_batches)
+        if remaining or small_sources(scene):raise RuntimeError('PAIR_TASK_SMALL_SOURCES_REMAIN')
+        if env.conveyor.delivered!=set(report['initial_visual_sources']):raise RuntimeError('PAIR_TASK_DELIVERY_MISMATCH')
+        report.update(success=True,verified_placements=len(env.conveyor.delivered),completed_pairs=len(report['rounds']),
+                      visually_cleared_batches=env.conveyor.completed_batches)
     except Exception as error:
         report['failure_reason']=str(error)
         raise

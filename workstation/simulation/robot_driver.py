@@ -457,7 +457,7 @@ class RobotMotion:
                  else np.asarray(other_joint_positions_rad,float))
         if other_q.shape!=(7,) or not np.isfinite(other_q).all():raise ValueError('Invalid forecast other-arm joints')
         other_spheres=self.spheres(other,other_q)
-        obstacles=list(self.static)+scene_obstacles(scene,target_id)
+        obstacles=list(self.static)+scene_obstacles(scene,target_id,oriented=getattr(self,'oriented_table_cartons',False))
         keepout=getattr(self,'stationary_payload_keepout',None)
         if keepout is not None:obstacles.append(keepout)
         # Selected contact object retains measured position uncertainty. The

@@ -1,9 +1,11 @@
 """Short-lived exact-context geometry for path and finger-sweep validation."""
 import numpy as np
-from workstation.planning.collision import sphere_arrays
+from workstation.planning.collision import OrientedCarton,sphere_arrays
 
 
 def value_key(value):
+    if isinstance(value,OrientedCarton):
+        return value.name,value_key(value.centre),value_key(value.size),value.rotation,value.local_size,value.unselected
     if isinstance(value,np.ndarray):return value.shape,value.dtype.str,value.tobytes()
     if isinstance(value,dict):return tuple((k,value_key(v)) for k,v in sorted(value.items()))
     if isinstance(value,(tuple,list)):return tuple(map(value_key,value))
@@ -16,6 +18,7 @@ class CollisionMatrices:
         self.centres=np.asarray([b.centre for b in obstacles],float).reshape(-1,3)
         self.halves=np.asarray([b.size for b in obstacles],float).reshape(-1,3)/2
         self.names=tuple(b.name for b in obstacles)
+        self.oriented=[(i,b) for i,b in enumerate(obstacles) if isinstance(b,OrientedCarton)]
         self.last=None
         self.other=None
         self.body_reuses=0
@@ -36,6 +39,7 @@ class CollisionMatrices:
         if len(self.names):
             outside=np.maximum(np.abs(centres[rows,None,:]-self.centres)-self.halves,0.)
             static[rows]=np.linalg.norm(outside,axis=2)-radii[rows,None]
+            for col,box in self.oriented:static[rows,col]=box.clearances(centres[rows],radii[rows])
             static[(links[:,None]==0)&np.asarray([name==own_mount for name in self.names])[None,:]]=np.inf
         if len(other):
             mutual[rows]=np.linalg.norm(centres[rows,None,:]-other,axis=2)-radii[rows,None]-other_r

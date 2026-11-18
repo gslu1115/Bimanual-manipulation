@@ -141,7 +141,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
     def rank(pair):
         if model_first:
             scores=[row.candidate.model_score for row in pair]
-            return selection_policy.history_penalty(pair),-sum(scores),-min(scores),slot_cost(pair)
+            reach=getattr(selection_policy,'reach_obstacles',{})
+            blockers=sum(reach.get((r.candidate.arm,r.candidate.target_id),0) for r in pair)
+            return selection_policy.history_penalty(pair),blockers,-sum(scores),-min(scores),slot_cost(pair)
         return ((selection_policy.priority(pair) if selection_policy else ())+
                 (slot_cost(pair),-(pair[0].score+pair[1].score)))
     pairs.sort(key=rank)
@@ -224,6 +226,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
             if model_first:
                 result['joint_choice'].update(order='failure history, GraspGen score sum, weaker score, lane distance',
                     model_scores=[a.candidate.model_score for a in pair])
+                if getattr(selection_policy,'clear_reach_first',False):
+                    result['joint_choice'].update(order='failure history, boxes along reach, GraspGen scores, lane distance',
+                        boxes_along_reach=[selection_policy.reach_obstacles.get((r.candidate.arm,r.candidate.target_id),0) for r in pair])
         return result, rejected
     return None, rejected
 
@@ -363,6 +368,8 @@ def approach_alternatives(rows,assigned_slots,completed_rows=None,*,model_first=
 
 
 def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None,selection_policy=None,round_slot_views=None):
+    from functools import partial
+    assess_pair=partial(assess,directional_paths=True)
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
     from workstation.planning.selection import visual_pinch_balance, upright_contact_cost, distinct_pinches
@@ -437,7 +444,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         slot=row.terms['slot_xy']
         key=c.candidate_id,tuple(slot)
         if key not in prefix_rows:
-            checked=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot,False),robot.home,
+            checked=assess_pair(scene,states,lambda c,o,s:check_destination(c,o,s,slot,False),robot.home,
                            candidate_provider=lambda o,_:[c] if o.track_id==c.target_id else [])
             result=checked[0]
             result.terms.update(slot_xy=slot,source_order=row.terms['source_order'])
@@ -446,7 +453,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     def complete_assessment(row):
         c=row.candidate;slot=row.terms['slot_xy'];key=(c.candidate_id,tuple(slot))
         if key not in completed_rows:
-            checked=assess(scene,states,
+            checked=assess_pair(scene,states,
                 lambda c,o,s:check_destination(c,o,s,slot,complete=True),robot.home,
                 candidate_provider=lambda o,_:[c] if o.track_id==c.target_id else [])
             result=checked[0];result.terms['slot_xy']=slot
@@ -583,7 +590,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             candidates.setdefault(obj.track_id,[]).extend(chosen)
         order={c.candidate_id:i for group in candidates.values() for i,c in enumerate(group)}
         for slot in available:
-            scored=assess(scene,states,visual_proposal if deferred else lambda c,o,s:check_destination(c,o,s,slot),robot.home,
+            scored=assess_pair(scene,states,visual_proposal if deferred else lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
             for row in scored:
                 # Preserve the eager sort's append order across resampling rounds.
@@ -672,7 +679,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 raise RuntimeError('RESERVED_SLOT_CHANGED')
             states=robot.read_states()
             fresh_prefixes=CandidatePrefixCache()
-            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm],prefix_cache=fresh_prefixes,slot_endpoints=deferred),robot.home,
+            checked=assess_pair(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm],prefix_cache=fresh_prefixes,slot_endpoints=deferred),robot.home,
                            candidate_provider=lambda o,_:new.get(o.track_id,[]))
             for row in checked:
                 row.terms['slot_xy']=assigned_slots[row.candidate.arm]
@@ -743,12 +750,12 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                         options.sort(key=lambda c:-c.model_score)
                         states=robot.read_states()
                         for candidate in distinct_pinches(options,6):
-                            checked=assess(view,states,lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=False),
+                            checked=assess_pair(view,states,lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=False),
                                 robot.home,candidate_provider=lambda o,_:[candidate] if o.track_id==obj.track_id else [])
                             if checked and checked[0].feasible:return candidate
                         raise RuntimeError('NO_FEASIBLE_REGRASP')
                     options.sort(key=lambda c:visual_pinch_balance(c,obj)['penalty']+upright_contact_cost(c,obj))
-                    verified=assess(view,robot.read_states(),lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=not deferred),robot.home,
+                    verified=assess_pair(view,robot.read_states(),lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=not deferred),robot.home,
                         candidate_provider=lambda o,_:distinct_pinches(options,6) if o.track_id==obj.track_id else [])
                     best=next((r.candidate for r in verified if r.feasible),None)
                     if best is None:raise RuntimeError('NO_FEASIBLE_REGRASP')
@@ -756,10 +763,11 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 old_keepout=getattr(robot,'stationary_payload_keepout',None)
                 try:
                     place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample,
-                               forecast=forecast,selection_started=wait_start)
+                               forecast=forecast,selection_started=wait_start,source_view=scene)
                 finally:
                     robot.stationary_payload_keepout=old_keepout
         except RuntimeError as error:
+            if getattr(error,'details',None):report['clearance_failure']=error.details
             fail(str(error))
         finally:
             if forecast is not None:forecast.close()
