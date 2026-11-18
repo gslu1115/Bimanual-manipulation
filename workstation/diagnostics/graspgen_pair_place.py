@@ -1253,21 +1253,37 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
 
     def clear_empty_arm(a):
         report['last_phase']='clear_for_verification'
-        if not carried_arms:
+        if not carried_arms and forecast is None:
             robot.execute_joint(a,robot.home,scene,None)
             return
         # Keep the waiting loaded arm on the SAME clock and enforce both
         # its payload clearance and measured arm separation during withdrawal.
         robot.held_visual_geometry=None
-        path,_=robot.checked_joint_plan(a,robot.read_states()[a].joint_positions_rad,robot.home[:7],scene,None)
-        paths=[path if arm==a else [robot.read_states()[arm].joint_positions_rad]*2 for arm in arms]
+        start=perf_counter()
+        states=robot.read_states()
+        if forecast is None:
+            path,_=robot.checked_joint_plan(a,states[a].joint_positions_rad,robot.home[:7],scene,None)
+            plan=robot.last_plan_check.copy()
+        else:
+            path,plan=overhead_home_path(robot,a,states[a].joint_positions_rad,scene,env.c['table']['top_z'])
+        paths=[path if arm==a else [states[arm].joint_positions_rad]*2 for arm in arms]
         paths,_=transfer_schedule(robot,paths,carried_clearance)
         def guard(left,right):
             reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None,margin=.008)
             if reason:raise RuntimeError('PAIR_SEQUENTIAL_'+reason)
             carried_clearance(left,right)
-        phases['sequential_'+a+'_clear']=drive_empty_pregrasps(robot,paths,guard,
-            require_overlap=False,speed_fraction=.4,loaded_transfer=True)
+        from workstation.planning.collision import scene_obstacles
+        obstacles=tuple(robot.static)+tuple(scene_obstacles(scene,None))
+        execution=perf_counter()
+        # The waiting loaded hand intentionally contacts its own carton.
+        # Its payload and arm protections remain under the existing guard.
+        outcome=drive_empty_pregrasps(robot,paths,guard,require_overlap=False,
+            speed_fraction=.4 if carried_arms else 1.,loaded_transfer=bool(carried_arms),
+            collision_obstacles=None if carried_arms else obstacles)
+        if np.max(np.abs(robot.read_states()[a].joint_positions_rad-robot.home[:7]))>.04:
+            raise RuntimeError('JOINT_TRACKING_ERROR')
+        outcome.update(planning=plan,planning_wall_s=execution-start,execution_wall_s=perf_counter()-execution)
+        phases['sequential_'+a+'_clear']=outcome
 
     def confirm_first_placement(a):
         nonlocal packet
