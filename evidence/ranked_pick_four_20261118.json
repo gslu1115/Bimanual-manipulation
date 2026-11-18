@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-18",
+  "scope": "Offline regression and v9 baseline. Live seed-6 retest waiting for an unoccupied RTX 4090 at publication.",
+  "source_archive": {
+    "success": true,
+    "source_commit": "961bcd03c0fb37027549f2f1dac6242bbb567cd2",
+    "files": 346,
+    "archive_sha256": "8ce653095307acf6009a765e1462587bf69cdec30232b45eca200d7a065bc801"
+  },
+  "tests": {
+    "windows": 707,
+    "linux": 707,
+    "command": "python -B -m unittest discover -s tests",
+    "linux_entry": "python -m workstation --mode graspgen-pair-sort --headless --seed 6 --num-grasps 256 --validate-only",
+    "ranked_choice": {
+      "seed": 7731,
+      "cases": 70,
+      "input": "controlled scores, ties, rejected prefixes/destinations, crossed synchronized trajectories",
+      "matched": [
+        "candidate and slot selection",
+        "paired waypoints",
+        "collision rejection records",
+        "sample count and minimum clearance"
+      ]
+    }
+  },
+  "old_new_collision": {
+    "success": true,
+    "cases": 3240,
+    "max_clearance_difference_m": 0.0,
+    "outcomes": {
+      "PASS": 2636,
+      "STATIC_PATH_BLOCKED:fixture": 404,
+      "TARGET_BODY_COLLISION": 104,
+      "HELD_CARTON_OWN_BODY_COLLISION": 64,
+      "SELF_COLLISION": 16,
+      "HELD_CARTON_PATH_BLOCKED:fixture": 16
+    },
+    "wall": {
+      "old_s": 1.8041197075508535,
+      "new_s": 1.7540024179033935
+    },
+    "scope": "Same synthetic robot/obstacle/target inputs; old frozen v9 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+  },
+  "recorded_pregrasp_offline": [
+    {
+      "round": 1,
+      "samples": 115,
+      "clearance_m": 0.04419730880508177,
+      "recorded_clearance_m": 0.04419730880508177,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ]
+    },
+    {
+      "round": 2,
+      "samples": 54,
+      "clearance_m": 0.03385237524101303,
+      "recorded_clearance_m": 0.03385237524101303,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ]
+    }
+  ],
+  "previous_run": {
+    "run": "pair-perf-v9-live-6",
+    "success": true,
+    "failure": null,
+    "placements": 4,
+    "total_wall_s": 357.4920117149595,
+    "attempts": 2,
+    "rounds": 2,
+    "action_wall_s": 255.63485974585637,
+    "completed_round_nonaction_wall_s": 67.93559115729295,
+    "candidate_feasibility_s": 44.90591405611485,
+    "candidate_path_validation_s": 37.709223094861954,
+    "approach_validation_s": 10.351600458612666,
+    "approach_validation_calls": 44,
+    "lift_validation_s": 12.295237261801958,
+    "lift_validation_calls": 42,
+    "destination_forecasts_reaching_transfer": 8,
+    "destination_forecasts_reaching_retreat": 8,
+    "saved_successful_motion_planning_labels_s": 11.475330690853298,
+    "first_motion_wait_s": null,
+    "stationary_move_planning_s": null,
+    "all_packets": 115,
+    "all_full_scene_estimates": 63,
+    "action_packets": 51,
+    "action_full_scene_estimates": 51,
+    "model_requests": 18
+  },
+  "retest": {
+    "run": "pair-perf-v10-live-6",
+    "seed": 6,
+    "num_grasps": 256,
+    "policy": "auto",
+    "grasp_backend": "live GraspGen",
+    "source": "project CLI; fresh process and empty in-memory IK cache",
+    "launch_condition": "no compute/graphics process, zero sampled GPU utilization, <=16 MiB driver memory; device rechecked under lock",
+    "metrics_source": "performance.json and round_*/attempt_*/graspgen_pair_check.json"
+  }
+}
