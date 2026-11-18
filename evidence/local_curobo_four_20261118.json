@@ -1,0 +1,2282 @@
+{
+  "pair-gap14": {
+    "tag": "pair-gap14",
+    "hash": "59a01b5f30b4acd29c1453e8ec2fb37ebc7942d63c695dc10ab6b87c756bcead",
+    "task_wall_s": 243.84092853870243,
+    "success": true,
+    "reason": null,
+    "placed": 4,
+    "attempts": [
+      {
+        "first": 12.776655803900212,
+        "down": 27.792502007912844,
+        "scene_s": 25.010380026418716,
+        "slot_calls": 37,
+        "slot_s": 6.277138103730977,
+        "path_prepare_s": 4.811588478274643,
+        "path_action_s": 4.733194262254983,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": null,
+        "home": {
+          "planning": [
+            {
+              "samples": 146,
+              "unique_samples": 100,
+              "clearance_m": 0.03449155658415645,
+              "palm_clearance_m": null,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "carton_carton_contact_allowed": true,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            {
+              "samples": 164,
+              "unique_samples": 111,
+              "clearance_m": 0.03248623451431708,
+              "palm_clearance_m": null,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "carton_carton_contact_allowed": true,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          ],
+          "planning_wall_s": 0.9072531810961664,
+          "execution_wall_s": 8.981415857095271
+        },
+        "returns": {
+          "parallel_home": {
+            "sim_seconds": {
+              "trajectory": 6.6499999999999995,
+              "tracking_wait": 0.0,
+              "settling": 0.4
+            },
+            "planning": [
+              {
+                "samples": 146,
+                "unique_samples": 100,
+                "clearance_m": 0.03449155658415645,
+                "palm_clearance_m": null,
+                "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+                "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+                "whole_arm_unknown_space_verified": false,
+                "carton_carton_contact_allowed": true,
+                "finger_shell_visibility_required": false,
+                "approach_corridor_unknown_space_checked": false,
+                "approach_corridor_applicable": true,
+                "empty_motion_unknown_space_verified": false,
+                "local_unknown_space_check_deferred": false,
+                "max_joint_sample_rad": 0.025,
+                "continuous_collision_proof": false,
+                "joint_planner": "quintic straight joint path"
+              },
+              {
+                "samples": 164,
+                "unique_samples": 111,
+                "clearance_m": 0.03248623451431708,
+                "palm_clearance_m": null,
+                "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+                "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+                "whole_arm_unknown_space_verified": false,
+                "carton_carton_contact_allowed": true,
+                "finger_shell_visibility_required": false,
+                "approach_corridor_unknown_space_checked": false,
+                "approach_corridor_applicable": true,
+                "empty_motion_unknown_space_verified": false,
+                "local_unknown_space_check_deferred": false,
+                "max_joint_sample_rad": 0.025,
+                "continuous_collision_proof": false,
+                "joint_planner": "quintic straight joint path"
+              }
+            ],
+            "planning_wall_s": 0.9072531810961664,
+            "execution_wall_s": 8.981415857095271
+          }
+        },
+        "strategy": "orient-first"
+      },
+      {
+        "first": 14.994541293941438,
+        "down": 30.191831205040216,
+        "scene_s": 18.09566977666691,
+        "slot_calls": 34,
+        "slot_s": 5.291339504998177,
+        "path_prepare_s": 7.071877011563629,
+        "path_action_s": 6.10669661546126,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": null,
+        "home": {
+          "planning": [
+            {
+              "samples": 178,
+              "unique_samples": 121,
+              "clearance_m": 0.03993877262188947,
+              "palm_clearance_m": null,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "carton_carton_contact_allowed": true,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            },
+            {
+              "samples": 200,
+              "unique_samples": 136,
+              "clearance_m": 0.058400136612105163,
+              "palm_clearance_m": null,
+              "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+              "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+              "whole_arm_unknown_space_verified": false,
+              "carton_carton_contact_allowed": true,
+              "finger_shell_visibility_required": false,
+              "approach_corridor_unknown_space_checked": false,
+              "approach_corridor_applicable": true,
+              "empty_motion_unknown_space_verified": false,
+              "local_unknown_space_check_deferred": false,
+              "max_joint_sample_rad": 0.025,
+              "continuous_collision_proof": false,
+              "joint_planner": "quintic straight joint path"
+            }
+          ],
+          "planning_wall_s": 1.1044593271799386,
+          "execution_wall_s": 10.621665921062231
+        },
+        "returns": {
+          "parallel_home": {
+            "sim_seconds": {
+              "trajectory": 8.041666666666666,
+              "tracking_wait": 0.0,
+              "settling": 0.4
+            },
+            "planning": [
+              {
+                "samples": 178,
+                "unique_samples": 121,
+                "clearance_m": 0.03993877262188947,
+                "palm_clearance_m": null,
+                "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+                "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+                "whole_arm_unknown_space_verified": false,
+                "carton_carton_contact_allowed": true,
+                "finger_shell_visibility_required": false,
+                "approach_corridor_unknown_space_checked": false,
+                "approach_corridor_applicable": true,
+                "empty_motion_unknown_space_verified": false,
+                "local_unknown_space_check_deferred": false,
+                "max_joint_sample_rad": 0.025,
+                "continuous_collision_proof": false,
+                "joint_planner": "quintic straight joint path"
+              },
+              {
+                "samples": 200,
+                "unique_samples": 136,
+                "clearance_m": 0.058400136612105163,
+                "palm_clearance_m": null,
+                "model": "official Lula spheres + finger proxies + fixed AABBs + observed neighbour AABBs",
+                "observed_space_body_model": "Lula sphere observed-obstacle checks;3mm TCP approach corridor and held-box unknown-space checks",
+                "whole_arm_unknown_space_verified": false,
+                "carton_carton_contact_allowed": true,
+                "finger_shell_visibility_required": false,
+                "approach_corridor_unknown_space_checked": false,
+                "approach_corridor_applicable": true,
+                "empty_motion_unknown_space_verified": false,
+                "local_unknown_space_check_deferred": false,
+                "max_joint_sample_rad": 0.025,
+                "continuous_collision_proof": false,
+                "joint_planner": "quintic straight joint path"
+              }
+            ],
+            "planning_wall_s": 1.1044593271799386,
+            "execution_wall_s": 10.621665921062231
+          }
+        },
+        "strategy": "orient-first"
+      }
+    ],
+    "gpu": 1,
+    "request_count": 21,
+    "scene_calls": 36,
+    "slots": 71,
+    "observation_scopes": {},
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 36,
+        "exclusive_s": 17.63152410183102
+      },
+      "slot_query": {
+        "calls": 90,
+        "exclusive_s": 0.05206028372049332
+      },
+      "slot_query_compute": {
+        "calls": 71,
+        "exclusive_s": 11.568477608729154
+      },
+      "depth_fixed_filter": {
+        "calls": 31,
+        "exclusive_s": 8.099707427900285
+      },
+      "depth_obstacle_mapping": {
+        "calls": 51,
+        "exclusive_s": 0.9039603318087757
+      },
+      "free_space_mapping": {
+        "calls": 419,
+        "exclusive_s": 0.6529641561210155
+      },
+      "workspace_setup": {
+        "calls": 59,
+        "exclusive_s": 0.036191864870488644
+      },
+      "sensor_read": {
+        "calls": 36,
+        "exclusive_s": 0.9670784785412252
+      },
+      "held_pose_estimation": {
+        "calls": 28,
+        "exclusive_s": 2.831885197199881
+      },
+      "released_pose_estimation": {
+        "calls": 5,
+        "exclusive_s": 0.3622003523632884
+      }
+    },
+    "commit": "350d3a2",
+    "planning_views": [],
+    "prep_slot_queries": 12,
+    "prep_slot_s": 0.004881040658801794,
+    "conveyor": [
+      {
+        "checks": 26,
+        "wall_s": 13.460682081058621,
+        "success": true
+      },
+      {
+        "checks": 26,
+        "wall_s": 13.15386372897774,
+        "success": true
+      }
+    ],
+    "action_perception_s": 43.106049803085625,
+    "slot_query_exclusive_s": 11.568477608729154,
+    "slot_query_inclusive_s": 18.176347178872675,
+    "action_geometry_s": 44.11326957726851,
+    "prep_path_validation_s": 11.883465489838272,
+    "action_path_validation_s": 10.839890877716243,
+    "curobo": null,
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15": {
+    "tag": "pair-local15",
+    "hash": "adef0f313a774eb99ff62afd1c17d5b00373d1767e4b665c92b5b5507ead5231",
+    "task_wall_s": 40.60299920104444,
+    "success": false,
+    "reason": "STATIC_PATH_BLOCKED:visual_0006",
+    "placed": 0,
+    "attempts": [
+      {
+        "first": 14.32653915276751,
+        "down": 29.388830427080393,
+        "scene_s": 2.3351681753993034,
+        "slot_calls": 3,
+        "slot_s": 0.00041933776810765266,
+        "path_prepare_s": 4.4960851008072495,
+        "path_action_s": 2.582030933815986,
+        "success": false,
+        "failure": "STATIC_PATH_BLOCKED:visual_0006",
+        "phase": "initial_lift",
+        "observation": {
+          "selected_cartons": 3
+        },
+        "home": {},
+        "returns": {},
+        "strategy": null
+      }
+    ],
+    "gpu": 1,
+    "request_count": 12,
+    "scene_calls": 3,
+    "slots": 3,
+    "observation_scopes": {
+      "selected_cartons": 3
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 3,
+        "exclusive_s": 1.3256505210883915
+      },
+      "slot_query": {
+        "calls": 3,
+        "exclusive_s": 0.001352324616163969
+      },
+      "slot_query_compute": {
+        "calls": 3,
+        "exclusive_s": 0.00041933776810765266
+      },
+      "depth_fixed_filter": {
+        "calls": 1,
+        "exclusive_s": 0.8266469091176987
+      },
+      "depth_obstacle_mapping": {
+        "calls": 1,
+        "exclusive_s": 0.017823832109570503
+      },
+      "free_space_mapping": {
+        "calls": 159,
+        "exclusive_s": 0.08880709437653422
+      },
+      "workspace_setup": {
+        "calls": 5,
+        "exclusive_s": 0.002492009662091732
+      },
+      "sensor_read": {
+        "calls": 3,
+        "exclusive_s": 0.07169455429539084
+      },
+      "held_pose_estimation": {
+        "calls": 2,
+        "exclusive_s": 0.00028159236535429955
+      },
+      "released_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      }
+    },
+    "commit": "a63d0e0",
+    "planning_views": [],
+    "prep_slot_queries": 6,
+    "prep_slot_s": 0.1515489718876779,
+    "conveyor": [],
+    "action_perception_s": 2.3351681753993034,
+    "slot_query_exclusive_s": 0.00041933776810765266,
+    "slot_query_inclusive_s": 0.01443478325381875,
+    "action_geometry_s": 6.635550253558904,
+    "prep_path_validation_s": 4.4960851008072495,
+    "action_path_validation_s": 2.582030933815986,
+    "curobo": {
+      "batches": 2,
+      "samples": 262,
+      "round_trip_s": 2.196982594206929
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15b": {
+    "tag": "pair-local15b",
+    "hash": "923637599e97ecc265966201755119d822c51e1e94b4194690b2c17f7848013a",
+    "task_wall_s": 334.02935887733474,
+    "success": true,
+    "reason": null,
+    "placed": 4,
+    "attempts": [
+      {
+        "first": 15.406428774353117,
+        "down": 30.14887340925634,
+        "scene_s": 81.81281147617847,
+        "slot_calls": 68,
+        "slot_s": 50.482240229379386,
+        "path_prepare_s": 5.8588968073017895,
+        "path_action_s": 13.354062793776393,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": {
+          "pick_neighborhoods": 4,
+          "workspace": 12,
+          "held_and_slots": 17
+        },
+        "home": {},
+        "returns": {
+          "sequential_panda_left_clear": {
+            "sim_seconds": {
+              "trajectory": 8.508333333333333,
+              "tracking_wait": 0.0,
+              "settling": 0.3
+            }
+          }
+        },
+        "strategy": "sequential-end"
+      },
+      {
+        "first": 7.591258223168552,
+        "down": 22.575522015802562,
+        "scene_s": 22.294000005349517,
+        "slot_calls": 34,
+        "slot_s": 7.3920056615024805,
+        "path_prepare_s": 3.9843946141190827,
+        "path_action_s": 9.59333625761792,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": {
+          "pick_neighborhoods": 4,
+          "workspace": 10,
+          "held_and_slots": 4
+        },
+        "home": {
+          "planning": [
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                -0.28537144810895787,
+                -0.2600578363164989,
+                1.26
+              ],
+              "exit_m": [
+                -0.36000000000585836,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            },
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                0.2758337546996677,
+                -0.25991786140842144,
+                1.26
+              ],
+              "exit_m": [
+                0.3599999999941416,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            }
+          ],
+          "planning_wall_s": 1.0140278590843081,
+          "execution_wall_s": 8.128032531123608
+        },
+        "returns": {
+          "parallel_home": {
+            "sim_seconds": {
+              "trajectory": 5.941666666666666,
+              "tracking_wait": 0.0,
+              "settling": 0.4
+            },
+            "planning": [
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  -0.28537144810895787,
+                  -0.2600578363164989,
+                  1.26
+                ],
+                "exit_m": [
+                  -0.36000000000585836,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              },
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  0.2758337546996677,
+                  -0.25991786140842144,
+                  1.26
+                ],
+                "exit_m": [
+                  0.3599999999941416,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              }
+            ],
+            "planning_wall_s": 1.0140278590843081,
+            "execution_wall_s": 8.128032531123608
+          }
+        },
+        "strategy": "orient-first"
+      }
+    ],
+    "gpu": 2,
+    "request_count": 18,
+    "scene_calls": 51,
+    "slots": 102,
+    "observation_scopes": {
+      "pick_neighborhoods": 8,
+      "workspace": 22,
+      "held_and_slots": 21
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 51,
+        "exclusive_s": 24.987178391311318
+      },
+      "slot_query": {
+        "calls": 122,
+        "exclusive_s": 0.06614608131349087
+      },
+      "slot_query_compute": {
+        "calls": 102,
+        "exclusive_s": 57.874245890881866
+      },
+      "depth_fixed_filter": {
+        "calls": 21,
+        "exclusive_s": 13.691527254879475
+      },
+      "depth_obstacle_mapping": {
+        "calls": 30,
+        "exclusive_s": 0.5968476235866547
+      },
+      "free_space_mapping": {
+        "calls": 684,
+        "exclusive_s": 0.8390119718387723
+      },
+      "workspace_setup": {
+        "calls": 89,
+        "exclusive_s": 0.05073144659399986
+      },
+      "sensor_read": {
+        "calls": 51,
+        "exclusive_s": 1.2665671235881746
+      },
+      "held_pose_estimation": {
+        "calls": 42,
+        "exclusive_s": 3.8958107978105545
+      },
+      "released_pose_estimation": {
+        "calls": 18,
+        "exclusive_s": 0.8387448997236788
+      }
+    },
+    "commit": "05b1ab5",
+    "planning_views": [],
+    "prep_slot_queries": 12,
+    "prep_slot_s": 0.2406757245771587,
+    "conveyor": [
+      {
+        "checks": 26,
+        "wall_s": 12.720016344916075,
+        "success": true
+      },
+      {
+        "checks": 26,
+        "wall_s": 10.796881803777069,
+        "success": true
+      }
+    ],
+    "action_perception_s": 104.10681148152798,
+    "slot_query_exclusive_s": 57.874245890881866,
+    "slot_query_inclusive_s": 58.60646168561652,
+    "action_geometry_s": 55.3671925063245,
+    "prep_path_validation_s": 9.843291421420872,
+    "action_path_validation_s": 22.947399051394314,
+    "curobo": {
+      "batches": 13,
+      "samples": 1945,
+      "round_trip_s": 1.6595953470095992
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15c": {
+    "tag": "pair-local15c",
+    "hash": "ea2b8475bb53fc319087dc6286ad100198906c12b146f5bb8d0eda34e4249530",
+    "task_wall_s": 81.80466271517798,
+    "success": false,
+    "reason": "PAIR_CHANGED_BEFORE_APPROACH",
+    "placed": 0,
+    "attempts": [
+      {
+        "first": 11.502892105374485,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 2.9661360681056976,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+        "phase": "pregrasp_recheck",
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      },
+      {
+        "first": 15.838859289884567,
+        "down": null,
+        "scene_s": 1.1626728787086904,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 8.76415894832462,
+        "path_action_s": 0.6909059737809002,
+        "success": false,
+        "failure": "STATIC_PATH_BLOCKED:visual_0005",
+        "phase": "approach",
+        "observation": {
+          "pick_neighborhoods": 1
+        },
+        "home": {},
+        "returns": {},
+        "strategy": null
+      },
+      {
+        "first": null,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 0,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "PAIR_CHANGED_BEFORE_APPROACH",
+        "phase": null,
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      }
+    ],
+    "gpu": 1,
+    "request_count": 36,
+    "scene_calls": 1,
+    "slots": 0,
+    "observation_scopes": {
+      "pick_neighborhoods": 1
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 1,
+        "exclusive_s": 0.5259259422309697
+      },
+      "slot_query": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "slot_query_compute": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "depth_fixed_filter": {
+        "calls": 1,
+        "exclusive_s": 0.5606001648120582
+      },
+      "depth_obstacle_mapping": {
+        "calls": 1,
+        "exclusive_s": 0.01965651148930192
+      },
+      "free_space_mapping": {
+        "calls": 60,
+        "exclusive_s": 0.025433242321014404
+      },
+      "workspace_setup": {
+        "calls": 2,
+        "exclusive_s": 0.0021953992545604706
+      },
+      "sensor_read": {
+        "calls": 1,
+        "exclusive_s": 0.028861618600785732
+      },
+      "held_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "released_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      }
+    },
+    "commit": "e0225ad",
+    "planning_views": [],
+    "prep_slot_queries": 12,
+    "prep_slot_s": 0.25817517284303904,
+    "conveyor": [],
+    "action_perception_s": 1.1626728787086904,
+    "slot_query_exclusive_s": 0,
+    "slot_query_inclusive_s": 0,
+    "action_geometry_s": 7.182631309144199,
+    "prep_path_validation_s": 11.730295016430318,
+    "action_path_validation_s": 0.6909059737809002,
+    "curobo": {
+      "batches": 5,
+      "samples": 786,
+      "round_trip_s": 1.7015132931992412
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15d": {
+    "tag": "pair-local15d",
+    "hash": "f374c62e478d56b97615b514450ef1493f842be119fa8e226f3e5bd16ca8d7ae",
+    "task_wall_s": 109.95056084590033,
+    "success": false,
+    "reason": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+    "placed": 0,
+    "attempts": [
+      {
+        "first": 14.370749646332115,
+        "down": 33.9012815519236,
+        "scene_s": 14.253871635068208,
+        "slot_calls": 9,
+        "slot_s": 2.555595343001187,
+        "path_prepare_s": 4.977119636256248,
+        "path_action_s": 6.023479301016778,
+        "success": false,
+        "failure": "PAIR_DESTINATION_UNCONFIRMED:panda_left:UNOBSERVED_PATH_SPACE",
+        "phase": "transfer_after_orient",
+        "observation": {
+          "pick_neighborhoods": 4,
+          "workspace": 3,
+          "held_and_slots": 3
+        },
+        "home": {},
+        "returns": {},
+        "strategy": "orient-first"
+      }
+    ],
+    "gpu": 4,
+    "request_count": 12,
+    "scene_calls": 10,
+    "slots": 9,
+    "observation_scopes": {
+      "pick_neighborhoods": 4,
+      "workspace": 3,
+      "held_and_slots": 3
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 10,
+        "exclusive_s": 8.041227943263948
+      },
+      "slot_query": {
+        "calls": 10,
+        "exclusive_s": 0.007445517927408218
+      },
+      "slot_query_compute": {
+        "calls": 9,
+        "exclusive_s": 2.555595343001187
+      },
+      "depth_fixed_filter": {
+        "calls": 5,
+        "exclusive_s": 1.7604452623054385
+      },
+      "depth_obstacle_mapping": {
+        "calls": 9,
+        "exclusive_s": 0.20672328863292933
+      },
+      "free_space_mapping": {
+        "calls": 583,
+        "exclusive_s": 0.1487321280874312
+      },
+      "workspace_setup": {
+        "calls": 20,
+        "exclusive_s": 0.013245637994259596
+      },
+      "sensor_read": {
+        "calls": 10,
+        "exclusive_s": 0.29682432068511844
+      },
+      "held_pose_estimation": {
+        "calls": 10,
+        "exclusive_s": 1.2236321931704879
+      },
+      "released_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      }
+    },
+    "commit": "e0225ad",
+    "planning_views": [],
+    "prep_slot_queries": 6,
+    "prep_slot_s": 0.12130669876933098,
+    "conveyor": [],
+    "action_perception_s": 14.253871635068208,
+    "slot_query_exclusive_s": 2.555595343001187,
+    "slot_query_inclusive_s": 2.624060673173517,
+    "action_geometry_s": 26.10051776561886,
+    "prep_path_validation_s": 4.977119636256248,
+    "action_path_validation_s": 6.023479301016778,
+    "curobo": {
+      "batches": 2,
+      "samples": 286,
+      "round_trip_s": 2.0235709552653134
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15e": {
+    "tag": "pair-local15e",
+    "hash": "4a7c8eaff872ff0c278f39f7fd806dca748eac3a977840b02bbfb6c2d3f1efd8",
+    "task_wall_s": 54.113207190297544,
+    "success": false,
+    "reason": "NO_MEASURED_PARALLEL_APPROACH",
+    "placed": 0,
+    "attempts": [
+      {
+        "first": 11.953767557162791,
+        "down": null,
+        "scene_s": 0.954754653852433,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 3.069130773190409,
+        "path_action_s": 0.7587697738781571,
+        "success": false,
+        "failure": "TARGET_BODY_COLLISION",
+        "phase": "approach",
+        "observation": {
+          "pick_neighborhoods": 1
+        },
+        "home": {},
+        "returns": {},
+        "strategy": null
+      },
+      {
+        "first": 9.702193366363645,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 2.8726692837662995,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "NO_MEASURED_PARALLEL_APPROACH",
+        "phase": null,
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      }
+    ],
+    "gpu": 7,
+    "request_count": 24,
+    "scene_calls": 1,
+    "slots": 0,
+    "observation_scopes": {
+      "pick_neighborhoods": 1
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 1,
+        "exclusive_s": 0.44637871999293566
+      },
+      "slot_query": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "slot_query_compute": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "depth_fixed_filter": {
+        "calls": 1,
+        "exclusive_s": 0.3218765170313418
+      },
+      "depth_obstacle_mapping": {
+        "calls": 1,
+        "exclusive_s": 0.018537973053753376
+      },
+      "free_space_mapping": {
+        "calls": 159,
+        "exclusive_s": 0.1246840339154005
+      },
+      "workspace_setup": {
+        "calls": 2,
+        "exclusive_s": 0.002230314537882805
+      },
+      "sensor_read": {
+        "calls": 1,
+        "exclusive_s": 0.04104709532111883
+      },
+      "held_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "released_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      }
+    },
+    "commit": "73a5f4a",
+    "planning_views": [
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ],
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ]
+    ],
+    "prep_slot_queries": 3,
+    "prep_slot_s": 0.056997803039848804,
+    "conveyor": [],
+    "action_perception_s": 0.954754653852433,
+    "slot_query_exclusive_s": 0,
+    "slot_query_inclusive_s": 0,
+    "action_geometry_s": 7.304364409297705,
+    "prep_path_validation_s": 5.941800056956708,
+    "action_path_validation_s": 0.7587697738781571,
+    "curobo": {
+      "batches": 4,
+      "samples": 440,
+      "round_trip_s": 1.6608634553849697
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15f": {
+    "tag": "pair-local15f",
+    "hash": "a9ca84e8864ff94bc2e903d60dd3dee69bde1c6ba9a3cbded09a98cfdb9004cd",
+    "task_wall_s": 38.672037658281624,
+    "success": false,
+    "reason": "STATIC_PATH_BLOCKED:visual_0007",
+    "placed": 0,
+    "attempts": [
+      {
+        "first": 14.393223527353257,
+        "down": 28.292564861942083,
+        "scene_s": 2.6455864012241364,
+        "slot_calls": 3,
+        "slot_s": 0.0005066678859293461,
+        "path_prepare_s": 5.21280776290223,
+        "path_action_s": 2.055875972378999,
+        "success": false,
+        "failure": "STATIC_PATH_BLOCKED:visual_0007",
+        "phase": "initial_lift",
+        "observation": {
+          "pick_neighborhoods": 3
+        },
+        "home": {},
+        "returns": {},
+        "strategy": null
+      }
+    ],
+    "gpu": 4,
+    "request_count": 12,
+    "scene_calls": 3,
+    "slots": 3,
+    "observation_scopes": {
+      "pick_neighborhoods": 3
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 3,
+        "exclusive_s": 1.8055143589153886
+      },
+      "slot_query": {
+        "calls": 3,
+        "exclusive_s": 0.00138905830681324
+      },
+      "slot_query_compute": {
+        "calls": 3,
+        "exclusive_s": 0.0005066678859293461
+      },
+      "depth_fixed_filter": {
+        "calls": 1,
+        "exclusive_s": 0.6240825718268752
+      },
+      "depth_obstacle_mapping": {
+        "calls": 1,
+        "exclusive_s": 0.019068161491304636
+      },
+      "free_space_mapping": {
+        "calls": 160,
+        "exclusive_s": 0.11678504291921854
+      },
+      "workspace_setup": {
+        "calls": 5,
+        "exclusive_s": 0.003448660485446453
+      },
+      "sensor_read": {
+        "calls": 3,
+        "exclusive_s": 0.0745416097342968
+      },
+      "held_pose_estimation": {
+        "calls": 2,
+        "exclusive_s": 0.00025026965886354446
+      },
+      "released_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      }
+    },
+    "commit": "73a5f4a",
+    "planning_views": [
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ]
+    ],
+    "prep_slot_queries": 3,
+    "prep_slot_s": 0.0648694196715951,
+    "conveyor": [],
+    "action_perception_s": 2.6455864012241364,
+    "slot_query_exclusive_s": 0.0005066678859293461,
+    "slot_query_inclusive_s": 0.018014247063547373,
+    "action_geometry_s": 5.870543714147061,
+    "prep_path_validation_s": 5.21280776290223,
+    "action_path_validation_s": 2.055875972378999,
+    "curobo": {
+      "batches": 8,
+      "samples": 1542,
+      "round_trip_s": 1.5336811356246471
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15g": {
+    "tag": "pair-local15g",
+    "hash": "6580de81bfc79cbfc7aaa9b94bf95fd86b7757314bf6747f7564a833edf9b88e",
+    "task_wall_s": 38.12664064299315,
+    "success": false,
+    "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+    "placed": 0,
+    "attempts": [
+      {
+        "first": 11.043823353946209,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 2.838989414740354,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+        "phase": "pregrasp_recheck",
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      },
+      {
+        "first": null,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 0,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "phase": null,
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      }
+    ],
+    "gpu": 1,
+    "request_count": 36,
+    "scene_calls": 0,
+    "slots": 0,
+    "observation_scopes": {},
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "slot_query": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "slot_query_compute": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "depth_fixed_filter": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "depth_obstacle_mapping": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "free_space_mapping": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "workspace_setup": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "sensor_read": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "held_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "released_pose_estimation": {
+        "calls": 0,
+        "exclusive_s": 0
+      }
+    },
+    "commit": "73a5f4a",
+    "planning_views": [
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ],
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ]
+    ],
+    "prep_slot_queries": 3,
+    "prep_slot_s": 0.059275414794683456,
+    "conveyor": [],
+    "action_perception_s": 0,
+    "slot_query_exclusive_s": 0,
+    "slot_query_inclusive_s": 0,
+    "action_geometry_s": 2.286179380957037,
+    "prep_path_validation_s": 2.838989414740354,
+    "action_path_validation_s": 0,
+    "curobo": {
+      "batches": 2,
+      "samples": 234,
+      "round_trip_s": 1.4830661667510867
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15h": {
+    "tag": "pair-local15h",
+    "hash": "fd60e0db65bc88a6361e1c0afb9e57cf4aad0c0df90fdb5cb3018c6f86ff0b04",
+    "task_wall_s": 137.53327358094975,
+    "success": false,
+    "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+    "placed": 2,
+    "attempts": [
+      {
+        "first": 13.823899046052247,
+        "down": 27.39402722613886,
+        "scene_s": 15.19133489439264,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 4.9387932741083205,
+        "path_action_s": 6.0306625459343195,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": {
+          "pick_neighborhoods": 4,
+          "held_and_slots": 4,
+          "workspace": 10
+        },
+        "home": {
+          "planning": [
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                -0.28006128013826287,
+                -0.259937764701291,
+                1.26
+              ],
+              "exit_m": [
+                -0.36000000000585836,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            },
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                0.2752129294282194,
+                -0.26007633883557224,
+                1.26
+              ],
+              "exit_m": [
+                0.3599999999941416,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            }
+          ],
+          "planning_wall_s": 0.9003143170848489,
+          "execution_wall_s": 5.998556253965944
+        },
+        "returns": {
+          "parallel_home": {
+            "sim_seconds": {
+              "trajectory": 4.933333333333334,
+              "tracking_wait": 0.0,
+              "settling": 0.4
+            },
+            "planning": [
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  -0.28006128013826287,
+                  -0.259937764701291,
+                  1.26
+                ],
+                "exit_m": [
+                  -0.36000000000585836,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              },
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  0.2752129294282194,
+                  -0.26007633883557224,
+                  1.26
+                ],
+                "exit_m": [
+                  0.3599999999941416,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              }
+            ],
+            "planning_wall_s": 0.9003143170848489,
+            "execution_wall_s": 5.998556253965944
+          }
+        },
+        "strategy": "orient-first"
+      },
+      {
+        "first": 15.7508863680996,
+        "down": null,
+        "scene_s": 0.488339158706367,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 8.610261795111,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "IK_DISCONTINUITY",
+        "phase": "approach",
+        "observation": {
+          "pick_neighborhoods": 1
+        },
+        "home": {},
+        "returns": {},
+        "strategy": null
+      },
+      {
+        "first": null,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 0,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+        "phase": null,
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      }
+    ],
+    "gpu": 1,
+    "request_count": 30,
+    "scene_calls": 19,
+    "slots": 0,
+    "observation_scopes": {
+      "pick_neighborhoods": 5,
+      "held_and_slots": 4,
+      "workspace": 10
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 19,
+        "exclusive_s": 10.796895899344236
+      },
+      "slot_query": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "slot_query_compute": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "depth_fixed_filter": {
+        "calls": 8,
+        "exclusive_s": 2.3843416711315513
+      },
+      "depth_obstacle_mapping": {
+        "calls": 14,
+        "exclusive_s": 0.29863709351047873
+      },
+      "free_space_mapping": {
+        "calls": 157,
+        "exclusive_s": 0.07515784725546837
+      },
+      "workspace_setup": {
+        "calls": 31,
+        "exclusive_s": 0.01783323986455798
+      },
+      "sensor_read": {
+        "calls": 19,
+        "exclusive_s": 0.48792622005566955
+      },
+      "held_pose_estimation": {
+        "calls": 14,
+        "exclusive_s": 1.4302284978330135
+      },
+      "released_pose_estimation": {
+        "calls": 2,
+        "exclusive_s": 0.18865358410403132
+      }
+    },
+    "commit": "4fb5e92",
+    "planning_views": [
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ],
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 39.08333333333176
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 39.08333333333176
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 39.08333333333176
+        }
+      ],
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 39.08333333333176
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 39.08333333333176
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 39.08333333333176
+        }
+      ]
+    ],
+    "prep_slot_queries": 3,
+    "prep_slot_s": 0.06437604827806354,
+    "conveyor": [
+      {
+        "checks": 26,
+        "wall_s": 11.528651125263423,
+        "success": true
+      }
+    ],
+    "action_perception_s": 15.679674053099006,
+    "slot_query_exclusive_s": 0,
+    "slot_query_inclusive_s": 0,
+    "action_geometry_s": 20.349934394471347,
+    "prep_path_validation_s": 13.549055069219321,
+    "action_path_validation_s": 6.0306625459343195,
+    "curobo": {
+      "batches": 28,
+      "samples": 3867,
+      "round_trip_s": 1.889973370358348
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  },
+  "pair-local15i": {
+    "tag": "pair-local15i",
+    "hash": "97460215504100cc20ce7d8552d41601e1ed3838ee4162607b235bdb403041da",
+    "task_wall_s": 246.4727808921598,
+    "success": true,
+    "reason": null,
+    "placed": 4,
+    "attempts": [
+      {
+        "first": 11.642588074319065,
+        "down": null,
+        "scene_s": 0,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 3.412005345802754,
+        "path_action_s": 0,
+        "success": false,
+        "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+        "phase": "pregrasp_recheck",
+        "observation": null,
+        "home": {},
+        "returns": {},
+        "strategy": null
+      },
+      {
+        "first": 11.970469951163977,
+        "down": 32.607588110957295,
+        "scene_s": 15.286648073699325,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 5.093601859174669,
+        "path_action_s": 6.735369806177914,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": {
+          "pick_neighborhoods": 4,
+          "held_and_slots": 4,
+          "workspace": 10
+        },
+        "home": {
+          "planning": [
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                -0.2792130144963699,
+                -0.2599940920449867,
+                1.26
+              ],
+              "exit_m": [
+                -0.36000000000585836,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            },
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                0.274002457231181,
+                -0.25996473681469406,
+                1.26
+              ],
+              "exit_m": [
+                0.3599999999941416,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            }
+          ],
+          "planning_wall_s": 1.0578800970688462,
+          "execution_wall_s": 8.897382610943168
+        },
+        "returns": {
+          "parallel_home": {
+            "sim_seconds": {
+              "trajectory": 5.733333333333333,
+              "tracking_wait": 0.0,
+              "settling": 0.4
+            },
+            "planning": [
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  -0.2792130144963699,
+                  -0.2599940920449867,
+                  1.26
+                ],
+                "exit_m": [
+                  -0.36000000000585836,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              },
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  0.274002457231181,
+                  -0.25996473681469406,
+                  1.26
+                ],
+                "exit_m": [
+                  0.3599999999941416,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              }
+            ],
+            "planning_wall_s": 1.0578800970688462,
+            "execution_wall_s": 8.897382610943168
+          }
+        },
+        "strategy": "orient-first"
+      },
+      {
+        "first": 13.54657625919208,
+        "down": 32.26861492311582,
+        "scene_s": 12.928785028401762,
+        "slot_calls": 0,
+        "slot_s": 0,
+        "path_prepare_s": 7.755366806406528,
+        "path_action_s": 7.9427561750635505,
+        "success": true,
+        "failure": null,
+        "phase": "verify",
+        "observation": {
+          "pick_neighborhoods": 4,
+          "held_and_slots": 4,
+          "workspace": 9
+        },
+        "home": {
+          "planning": [
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                -0.2823560475041912,
+                -0.2600330712038579,
+                1.26
+              ],
+              "exit_m": [
+                -0.36000000000585836,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            },
+            {
+              "joint_planner": "fixed overhead corridor",
+              "entry_m": [
+                0.2763087800200258,
+                -0.2599826817815583,
+                1.26
+              ],
+              "exit_m": [
+                0.3599999999941416,
+                -0.12036482970662392,
+                1.26
+              ],
+              "height_above_table_m": 0.5
+            }
+          ],
+          "planning_wall_s": 0.8943392429500818,
+          "execution_wall_s": 6.77527796337381
+        },
+        "returns": {
+          "parallel_home": {
+            "sim_seconds": {
+              "trajectory": 4.316666666666666,
+              "tracking_wait": 0.0,
+              "settling": 0.4
+            },
+            "planning": [
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  -0.2823560475041912,
+                  -0.2600330712038579,
+                  1.26
+                ],
+                "exit_m": [
+                  -0.36000000000585836,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              },
+              {
+                "joint_planner": "fixed overhead corridor",
+                "entry_m": [
+                  0.2763087800200258,
+                  -0.2599826817815583,
+                  1.26
+                ],
+                "exit_m": [
+                  0.3599999999941416,
+                  -0.12036482970662392,
+                  1.26
+                ],
+                "height_above_table_m": 0.5
+              }
+            ],
+            "planning_wall_s": 0.8943392429500818,
+            "execution_wall_s": 6.77527796337381
+          }
+        },
+        "strategy": "orient-first"
+      }
+    ],
+    "gpu": 2,
+    "request_count": 30,
+    "scene_calls": 35,
+    "slots": 0,
+    "observation_scopes": {
+      "pick_neighborhoods": 8,
+      "held_and_slots": 8,
+      "workspace": 19
+    },
+    "perception_detail": {
+      "scene_estimation": {
+        "calls": 35,
+        "exclusive_s": 17.59751166496426
+      },
+      "slot_query": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "slot_query_compute": {
+        "calls": 0,
+        "exclusive_s": 0
+      },
+      "depth_fixed_filter": {
+        "calls": 16,
+        "exclusive_s": 6.353775145020336
+      },
+      "depth_obstacle_mapping": {
+        "calls": 28,
+        "exclusive_s": 0.5606550900265574
+      },
+      "free_space_mapping": {
+        "calls": 339,
+        "exclusive_s": 0.15440363017842174
+      },
+      "workspace_setup": {
+        "calls": 57,
+        "exclusive_s": 0.03526567341759801
+      },
+      "sensor_read": {
+        "calls": 35,
+        "exclusive_s": 0.9618728999048471
+      },
+      "held_pose_estimation": {
+        "calls": 28,
+        "exclusive_s": 2.2382152103818953
+      },
+      "released_pose_estimation": {
+        "calls": 4,
+        "exclusive_s": 0.31373378820717335
+      }
+    },
+    "commit": "4fb5e92",
+    "planning_views": [
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ],
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 3.3999999999999906
+        }
+      ],
+      [
+        {
+          "xy": [
+            -0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 52.69999999999765
+        },
+        {
+          "xy": [
+            0.0,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 52.69999999999765
+        },
+        {
+          "xy": [
+            0.2,
+            -0.4
+          ],
+          "free": true,
+          "reason": null,
+          "observed_objects": [],
+          "observation_time_s": 52.69999999999765
+        }
+      ]
+    ],
+    "prep_slot_queries": 3,
+    "prep_slot_s": 0.05799351539462805,
+    "conveyor": [
+      {
+        "checks": 26,
+        "wall_s": 10.349431378766894,
+        "success": true
+      },
+      {
+        "checks": 26,
+        "wall_s": 11.505555507726967,
+        "success": true
+      }
+    ],
+    "action_perception_s": 28.215433102101088,
+    "slot_query_exclusive_s": 0,
+    "slot_query_inclusive_s": 0,
+    "action_geometry_s": 46.196041621267796,
+    "prep_path_validation_s": 16.26097401138395,
+    "action_path_validation_s": 14.678125981241465,
+    "curobo": {
+      "batches": 18,
+      "samples": 3183,
+      "round_trip_s": 1.905398412141949
+    },
+    "parity": {
+      "success": true,
+      "paths": 114,
+      "samples": 1026,
+      "boundaries": true,
+      "panda_paths": [
+        {
+          "label": "archived Panda pregrasp 1",
+          "samples": 117,
+          "visited": 117,
+          "reason": null,
+          "minimum_m": 0.04972552712081499
+        },
+        {
+          "label": "archived Panda pregrasp 2",
+          "samples": 97,
+          "visited": 97,
+          "reason": null,
+          "minimum_m": 0.042070447466674404
+        }
+      ],
+      "outcomes": {
+        "clear": 42,
+        "OTHER_ARM_COLLISION": 39,
+        "SELF_COLLISION": 33
+      }
+    },
+    "retry_timing": {
+      "round": 1,
+      "attempts": 2,
+      "first_right_wrist_npz_mtime": "2026-11-18T23:10:23.633637203+08:00",
+      "second_right_wrist_npz_mtime": "2026-11-18T23:10:49.121668480+08:00",
+      "entry_offset_estimate_s": 25.488031277,
+      "first_selection_to_descent_estimate_s": 58.0956193879573,
+      "method": "Difference between equivalent last RGB-D archive writes before check_pair, plus the measured retry selection-to-descent interval"
+    },
+    "inputs_sha256": {
+      "config_used": "1ac05f93c48bb8dbdf492b32297b0812acec00803ed905d7069f68450bf9475b",
+      "release_states": "eea069c116e0537ce77dbd124ed3439998b894f19f7a7aaa3d4254ca52a9a60f",
+      "camera_rig": "57a5f2e3a1385236f86be09e4b0b5da8dcd925068065755004cdf654bbc56aad"
+    }
+  }
+}
