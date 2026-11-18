@@ -1,6 +1,6 @@
 {
   "date": "2026-11-18",
-  "scope": "Offline regression and v9 baseline. Live seed-6 retest waiting for an unoccupied RTX 4090 at publication.",
+  "scope": "Matched offline regression, historical v9 baseline and one fresh seed-6 four-carton run of 961bcd0.",
   "source_archive": {
     "success": true,
     "source_commit": "961bcd03c0fb37027549f2f1dac6242bbb567cd2",
@@ -111,6 +111,1245 @@
     "grasp_backend": "live GraspGen",
     "source": "project CLI; fresh process and empty in-memory IK cache",
     "launch_condition": "no compute/graphics process, zero sampled GPU utilization, <=16 MiB driver memory; device rechecked under lock",
-    "metrics_source": "performance.json and round_*/attempt_*/graspgen_pair_check.json"
-  }
+    "metrics_source": "performance.json and round_*/attempt_*/graspgen_pair_check.json",
+    "device": {
+      "index": 0,
+      "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+      "pci": "0000:1b:00.0",
+      "memory_used_mib": 0,
+      "gpu_utilization_percent": 0,
+      "processes": [],
+      "time_utc": "2026-11-18T11:20:58.575412+00:00"
+    },
+    "archive": {
+      "archive": "pair-perf-v10-20261118-full.tgz",
+      "bytes": 7023901,
+      "sha256": "14751aac641dd9243d2b5b3405a52f4d156bb351fdb7b043facb5d209198c8f2"
+    },
+    "identical_json": {
+      "config_used.json": true,
+      "release_states.json": true,
+      "camera_rig.json": true
+    },
+    "model_successful_http_responses": 18,
+    "no_replay_file": true,
+    "status": {
+      "status": "passed",
+      "mode": "graspgen-pair-sort"
+    },
+    "rounds": [
+      {
+        "round": 1,
+        "success": true,
+        "reserved_source_keys": [
+          "visual_0001",
+          "visual_0002"
+        ],
+        "wall_s": 108.16393435373902,
+        "action_wall_s": 71.78277810197324,
+        "placements": {
+          "panda_left": {
+            "initial_track": "visual_0001",
+            "grasp_track": "visual_0001",
+            "observed_track": "visual_0034",
+            "goal_xy": [
+              -0.2,
+              -0.4
+            ],
+            "visual_error_xy_m": [
+              0.0005365133285522572,
+              -0.0007162749767303245
+            ]
+          },
+          "panda_right": {
+            "initial_track": "visual_0002",
+            "grasp_track": "visual_0002",
+            "observed_track": "visual_0035",
+            "goal_xy": [
+              0.2,
+              -0.4
+            ],
+            "visual_error_xy_m": [
+              1.390576362608753e-05,
+              0.0020120084285736306
+            ]
+          }
+        },
+        "transfer_strategy": {
+          "requested": "auto",
+          "selected": "orient-first",
+          "selection": "first feasible deterministic plan; no learned score or duration optimization",
+          "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+        },
+        "model_request_count": 12
+      },
+      {
+        "round": 2,
+        "success": true,
+        "reserved_source_keys": [
+          "visual_0003",
+          "visual_0004"
+        ],
+        "wall_s": 118.81367110507563,
+        "action_wall_s": 94.18591172993183,
+        "placements": {
+          "panda_left": {
+            "initial_track": "visual_0003",
+            "grasp_track": "visual_0003",
+            "observed_track": "visual_0070",
+            "goal_xy": [
+              -0.2,
+              -0.4
+            ],
+            "visual_error_xy_m": [
+              0.004889529943466198,
+              0.0002395451068878396
+            ]
+          },
+          "panda_right": {
+            "initial_track": "visual_0004",
+            "grasp_track": "visual_0004",
+            "observed_track": "visual_0071",
+            "goal_xy": [
+              0.2,
+              -0.4
+            ],
+            "visual_error_xy_m": [
+              0.0009585052728652843,
+              5.6320428848288806e-05
+            ]
+          }
+        },
+        "transfer_strategy": {
+          "requested": "auto",
+          "selected": "orient-first",
+          "selection": "first feasible deterministic plan; no learned score or duration optimization",
+          "execution_failure_policy": "stop; never switch strategy after a drive/perception failure"
+        },
+        "model_request_count": 6
+      }
+    ],
+    "visually_cleared_batches": 2,
+    "wall": {
+      "run": "pair-perf-v10-live-6",
+      "success": true,
+      "failure": null,
+      "placements": 4,
+      "total_wall_s": 268.1346888486296,
+      "attempts": 2,
+      "rounds": 2,
+      "action_wall_s": 165.96868983190507,
+      "completed_round_nonaction_wall_s": 61.008915626909584,
+      "candidate_feasibility_s": 29.954579059034586,
+      "candidate_path_validation_s": 24.05672259721905,
+      "approach_validation_s": 5.000417753588408,
+      "approach_validation_calls": 19,
+      "lift_validation_s": 5.389939600136131,
+      "lift_validation_calls": 18,
+      "destination_forecasts_reaching_transfer": 8,
+      "destination_forecasts_reaching_retreat": 8,
+      "saved_successful_motion_planning_labels_s": 10.684791025705636,
+      "first_motion_wait_s": 57.438875135965645,
+      "stationary_move_planning_s": 10.684856958221644,
+      "all_packets": 99,
+      "all_full_scene_estimates": 47,
+      "action_packets": 37,
+      "action_full_scene_estimates": 37,
+      "model_requests": 18,
+      "attempt_detail": [
+        {
+          "path": "round_1/attempt_1/graspgen_pair_check.json",
+          "success": true,
+          "reason": null,
+          "stages": {
+            "ik_endpoint": {
+              "calls": 34,
+              "wall_s": 0.0651325243525207
+            },
+            "joint_path": {
+              "calls": 38,
+              "wall_s": 3.403752696234733
+            },
+            "approach": {
+              "calls": 7,
+              "wall_s": 1.5156167666427791
+            },
+            "close": {
+              "calls": 99,
+              "wall_s": 0.11980847083032131
+            },
+            "lift": {
+              "calls": 7,
+              "wall_s": 1.8791860342025757
+            },
+            "transfer": {
+              "calls": 4,
+              "wall_s": 1.4642650661990047
+            },
+            "lower": {
+              "calls": 4,
+              "wall_s": 1.0580081581138074
+            },
+            "open": {
+              "calls": 58,
+              "wall_s": 0.0781622021459043
+            },
+            "retreat": {
+              "calls": 4,
+              "wall_s": 0.6271158363670111
+            }
+          },
+          "planning_counts": {
+            "full_forecasts_started": 4,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_planning_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "ranked_work": {
+            "prefix_rows_checked": 5,
+            "full_slot_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "first_motion_wait_s": 34.65060935681686,
+          "choice": [
+            "visual_0001",
+            "visual_0002"
+          ],
+          "strategy": "orient-first",
+          "phase_planning": {
+            "approach": 0.7486282340250909,
+            "initial_lift": 0.46585919009521604,
+            "lift": 0.5814525908790529,
+            "preview_orient": 0.48136743623763323,
+            "preview_after_orient": 0.677693126257509,
+            "transfer_orient": 0.00021383492276072502,
+            "transfer_after_orient": 0.7589973988942802,
+            "align": 0.04822547407820821,
+            "lower": 0.28740071365609765,
+            "retreat": 0.5679784310050309
+          },
+          "phase_planning_intervals": [
+            {
+              "phase": "approach",
+              "preview": false,
+              "wall_s": 0.7486321809701622
+            },
+            {
+              "phase": "initial_lift",
+              "preview": false,
+              "wall_s": 0.46586207021027803
+            },
+            {
+              "phase": "lift",
+              "preview": false,
+              "wall_s": 0.5814551450312138
+            },
+            {
+              "phase": "preview_orient",
+              "preview": true,
+              "wall_s": 0.48137435130774975
+            },
+            {
+              "phase": "preview_after_orient",
+              "preview": true,
+              "wall_s": 0.6776987612247467
+            },
+            {
+              "phase": "transfer_orient",
+              "preview": false,
+              "wall_s": 0.00021579861640930176
+            },
+            {
+              "phase": "transfer_after_orient",
+              "preview": false,
+              "wall_s": 0.7589998482726514
+            },
+            {
+              "phase": "align",
+              "preview": false,
+              "wall_s": 0.04822775721549988
+            },
+            {
+              "phase": "lower",
+              "preview": false,
+              "wall_s": 0.2874034778214991
+            },
+            {
+              "phase": "retreat",
+              "preview": false,
+              "wall_s": 0.5679805371910334
+            }
+          ],
+          "slot_reobservations": 0,
+          "stages_children": {
+            "path_stage_ik_endpoint": {
+              "encoder_read": {
+                "calls": 44,
+                "exclusive_s": 0.00038457056507468224
+              },
+              "chain_geometry_query": {
+                "calls": 44,
+                "exclusive_s": 0.0007310467772185802
+              },
+              "sphere_compute": {
+                "calls": 44,
+                "exclusive_s": 0.006872625555843115
+              },
+              "sphere_query": {
+                "calls": 44,
+                "exclusive_s": 0.0011848583817481995
+              },
+              "validation_context_prepare": {
+                "calls": 10,
+                "exclusive_s": 0.0017943931743502617
+              },
+              "validation_context_query": {
+                "calls": 34,
+                "exclusive_s": 0.0257365251891315
+              },
+              "chain_fk_compute": {
+                "calls": 42,
+                "exclusive_s": 0.004195224028080702
+              },
+              "collision_math": {
+                "calls": 34,
+                "exclusive_s": 0.017267324961721897
+              },
+              "validation_observed_obstacles": {
+                "calls": 34,
+                "exclusive_s": 0.00024683866649866104
+              },
+              "validation_target_body": {
+                "calls": 34,
+                "exclusive_s": 0.0015603364445269108
+              }
+            },
+            "path_stage_joint_path": {
+              "encoder_read": {
+                "calls": 42,
+                "exclusive_s": 0.0004108874127268791
+              },
+              "validation_context_query": {
+                "calls": 38,
+                "exclusive_s": 0.02703857608139515
+              },
+              "sphere_query": {
+                "calls": 3704,
+                "exclusive_s": 0.10063006822019815
+              },
+              "collision_math": {
+                "calls": 3700,
+                "exclusive_s": 1.8766924450173974
+              },
+              "validation_observed_obstacles": {
+                "calls": 3700,
+                "exclusive_s": 0.02702185558155179
+              },
+              "validation_target_body": {
+                "calls": 3700,
+                "exclusive_s": 0.15613706456497312
+              },
+              "chain_fk_compute": {
+                "calls": 3693,
+                "exclusive_s": 0.3559915544465184
+              },
+              "chain_geometry_query": {
+                "calls": 3702,
+                "exclusive_s": 0.06218908214941621
+              },
+              "sphere_compute": {
+                "calls": 3702,
+                "exclusive_s": 0.45331879844889045
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.000650075264275074
+              }
+            },
+            "path_stage_approach": {
+              "encoder_read": {
+                "calls": 11,
+                "exclusive_s": 0.00010369857773184776
+              },
+              "chain_fk_compute": {
+                "calls": 1190,
+                "exclusive_s": 0.1123726493678987
+              },
+              "chain_geometry_query": {
+                "calls": 2385,
+                "exclusive_s": 0.02823174325749278
+              },
+              "sphere_compute": {
+                "calls": 1194,
+                "exclusive_s": 0.14436046360060573
+              },
+              "sphere_query": {
+                "calls": 1195,
+                "exclusive_s": 0.03374085947871208
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0007729828357696533
+              },
+              "validation_context_query": {
+                "calls": 7,
+                "exclusive_s": 0.005640122108161449
+              },
+              "collision_math": {
+                "calls": 1191,
+                "exclusive_s": 0.5831134356558323
+              },
+              "fk_query": {
+                "calls": 1191,
+                "exclusive_s": 0.019146177917718887
+              },
+              "free_space_mapping": {
+                "calls": 1191,
+                "exclusive_s": 0.12884697457775474
+              },
+              "validation_observed_obstacles": {
+                "calls": 1191,
+                "exclusive_s": 0.2634245422668755
+              },
+              "validation_target_body": {
+                "calls": 1191,
+                "exclusive_s": 0.05278945015743375
+              }
+            },
+            "path_stage_close": {
+              "encoder_read": {
+                "calls": 99,
+                "exclusive_s": 0.0008414881303906441
+              },
+              "validation_context_query": {
+                "calls": 99,
+                "exclusive_s": 0.069249268155545
+              },
+              "chain_geometry_query": {
+                "calls": 92,
+                "exclusive_s": 0.00040731485933065414
+              },
+              "sphere_compute": {
+                "calls": 92,
+                "exclusive_s": 0.011496989987790585
+              },
+              "sphere_query": {
+                "calls": 92,
+                "exclusive_s": 0.0024505872279405594
+              },
+              "collision_math": {
+                "calls": 92,
+                "exclusive_s": 0.02036079904064536
+              },
+              "validation_observed_obstacles": {
+                "calls": 92,
+                "exclusive_s": 0.0006111273542046547
+              }
+            },
+            "path_stage_lift": {
+              "encoder_read": {
+                "calls": 14,
+                "exclusive_s": 0.00010584155097603798
+              },
+              "chain_geometry_query": {
+                "calls": 2376,
+                "exclusive_s": 0.030601420905441046
+              },
+              "sphere_compute": {
+                "calls": 1188,
+                "exclusive_s": 0.15058152144774795
+              },
+              "sphere_query": {
+                "calls": 1195,
+                "exclusive_s": 0.03475814126431942
+              },
+              "validation_context_prepare": {
+                "calls": 7,
+                "exclusive_s": 0.0011227275244891644
+              },
+              "validation_context_query": {
+                "calls": 7,
+                "exclusive_s": 0.005051422398537397
+              },
+              "collision_math": {
+                "calls": 1188,
+                "exclusive_s": 0.6285502947866917
+              },
+              "validation_observed_obstacles": {
+                "calls": 1188,
+                "exclusive_s": 0.008444133680313826
+              },
+              "fk_query": {
+                "calls": 1188,
+                "exclusive_s": 0.01818243833258748
+              },
+              "validation_payload": {
+                "calls": 1188,
+                "exclusive_s": 0.7314180508255959
+              },
+              "chain_fk_compute": {
+                "calls": 1184,
+                "exclusive_s": 0.11364089464768767
+              }
+            },
+            "path_stage_transfer": {
+              "encoder_read": {
+                "calls": 8,
+                "exclusive_s": 7.070507854223251e-05
+              },
+              "chain_fk_compute": {
+                "calls": 938,
+                "exclusive_s": 0.08934454945847392
+              },
+              "chain_geometry_query": {
+                "calls": 1878,
+                "exclusive_s": 0.022968695033341646
+              },
+              "sphere_compute": {
+                "calls": 940,
+                "exclusive_s": 0.11799133475869894
+              },
+              "sphere_query": {
+                "calls": 942,
+                "exclusive_s": 0.027077542152255774
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.000664255116134882
+              },
+              "validation_context_query": {
+                "calls": 4,
+                "exclusive_s": 0.003348072525113821
+              },
+              "collision_math": {
+                "calls": 938,
+                "exclusive_s": 0.49136233050376177
+              },
+              "validation_observed_obstacles": {
+                "calls": 938,
+                "exclusive_s": 0.006737596355378628
+              },
+              "fk_query": {
+                "calls": 938,
+                "exclusive_s": 0.01427983632311225
+              },
+              "validation_payload": {
+                "calls": 938,
+                "exclusive_s": 0.5710508725605905
+              }
+            },
+            "path_stage_lower": {
+              "encoder_read": {
+                "calls": 4,
+                "exclusive_s": 4.400918260216713e-05
+              },
+              "validation_context_query": {
+                "calls": 4,
+                "exclusive_s": 0.0037338011898100376
+              },
+              "sphere_query": {
+                "calls": 671,
+                "exclusive_s": 0.019495493732392788
+              },
+              "collision_math": {
+                "calls": 671,
+                "exclusive_s": 0.3548938166350126
+              },
+              "validation_observed_obstacles": {
+                "calls": 671,
+                "exclusive_s": 0.005057194270193577
+              },
+              "chain_geometry_query": {
+                "calls": 1338,
+                "exclusive_s": 0.01649387087672949
+              },
+              "fk_query": {
+                "calls": 671,
+                "exclusive_s": 0.010197296738624573
+              },
+              "validation_payload": {
+                "calls": 671,
+                "exclusive_s": 0.4130283282138407
+              },
+              "chain_fk_compute": {
+                "calls": 667,
+                "exclusive_s": 0.0640317602083087
+              },
+              "sphere_compute": {
+                "calls": 667,
+                "exclusive_s": 0.08482783520594239
+              }
+            },
+            "path_stage_open": {
+              "encoder_read": {
+                "calls": 62,
+                "exclusive_s": 0.0005421927198767662
+              },
+              "chain_fk_compute": {
+                "calls": 4,
+                "exclusive_s": 0.0004359278827905655
+              },
+              "chain_geometry_query": {
+                "calls": 62,
+                "exclusive_s": 0.00033454224467277527
+              },
+              "sphere_compute": {
+                "calls": 58,
+                "exclusive_s": 0.007347059901803732
+              },
+              "sphere_query": {
+                "calls": 62,
+                "exclusive_s": 0.001585016492754221
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0006490275263786316
+              },
+              "validation_context_query": {
+                "calls": 58,
+                "exclusive_s": 0.0417104228399694
+              },
+              "collision_math": {
+                "calls": 58,
+                "exclusive_s": 0.014045219402760267
+              },
+              "validation_observed_obstacles": {
+                "calls": 58,
+                "exclusive_s": 0.0003582257777452469
+              },
+              "fk_query": {
+                "calls": 4,
+                "exclusive_s": 5.8745965361595154e-05
+              },
+              "validation_payload": {
+                "calls": 4,
+                "exclusive_s": 0.0023817862384021282
+              }
+            },
+            "path_stage_retreat": {
+              "encoder_read": {
+                "calls": 8,
+                "exclusive_s": 6.012618541717529e-05
+              },
+              "sphere_query": {
+                "calls": 672,
+                "exclusive_s": 0.018246877938508987
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0006102630868554115
+              },
+              "validation_context_query": {
+                "calls": 4,
+                "exclusive_s": 0.0029856152832508087
+              },
+              "collision_math": {
+                "calls": 668,
+                "exclusive_s": 0.33348991395905614
+              },
+              "validation_observed_obstacles": {
+                "calls": 668,
+                "exclusive_s": 0.005289609543979168
+              },
+              "validation_target_body": {
+                "calls": 668,
+                "exclusive_s": 0.028757585678249598
+              },
+              "chain_fk_compute": {
+                "calls": 664,
+                "exclusive_s": 0.0631903326138854
+              },
+              "chain_geometry_query": {
+                "calls": 664,
+                "exclusive_s": 0.01189172687008977
+              },
+              "sphere_compute": {
+                "calls": 664,
+                "exclusive_s": 0.08008376369252801
+              }
+            }
+          }
+        },
+        {
+          "path": "round_2/attempt_1/graspgen_pair_check.json",
+          "success": true,
+          "reason": null,
+          "stages": {
+            "ik_endpoint": {
+              "calls": 18,
+              "wall_s": 0.03586446959525347
+            },
+            "joint_path": {
+              "calls": 22,
+              "wall_s": 2.1254006172530353
+            },
+            "approach": {
+              "calls": 12,
+              "wall_s": 3.484800986945629
+            },
+            "close": {
+              "calls": 147,
+              "wall_s": 0.1824406459927559
+            },
+            "lift": {
+              "calls": 11,
+              "wall_s": 3.5107535659335554
+            },
+            "transfer": {
+              "calls": 4,
+              "wall_s": 2.6838168944232166
+            },
+            "lower": {
+              "calls": 4,
+              "wall_s": 1.0914009464904666
+            },
+            "open": {
+              "calls": 54,
+              "wall_s": 0.07967273471876979
+            },
+            "retreat": {
+              "calls": 4,
+              "wall_s": 0.6386371739208698
+            }
+          },
+          "planning_counts": {
+            "full_forecasts_started": 6,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_planning_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "ranked_work": {
+            "prefix_rows_checked": 12,
+            "full_slot_rows": 4,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "first_motion_wait_s": 22.788265779148787,
+          "choice": [
+            "visual_0003",
+            "visual_0004"
+          ],
+          "strategy": "orient-first",
+          "phase_planning": {
+            "approach": 1.1751640159636736,
+            "initial_lift": 0.49413028405979276,
+            "lift": 0.644421876873821,
+            "preview_orient": 0.6164648178964853,
+            "preview_after_orient": 1.1871990519575775,
+            "transfer_orient": 0.00025686388835310936,
+            "transfer_after_orient": 1.0712717911228538,
+            "align": 0.04565352015197277,
+            "lower": 0.3256541690789163,
+            "retreat": 0.5067582046613097
+          },
+          "phase_planning_intervals": [
+            {
+              "phase": "approach",
+              "preview": false,
+              "wall_s": 1.1751662311144173
+            },
+            {
+              "phase": "initial_lift",
+              "preview": false,
+              "wall_s": 0.49413254065439105
+            },
+            {
+              "phase": "lift",
+              "preview": false,
+              "wall_s": 0.6444251239299774
+            },
+            {
+              "phase": "preview_orient",
+              "preview": true,
+              "wall_s": 0.6164699527435005
+            },
+            {
+              "phase": "preview_after_orient",
+              "preview": true,
+              "wall_s": 1.18720393627882
+            },
+            {
+              "phase": "transfer_orient",
+              "preview": false,
+              "wall_s": 0.00025909487158060074
+            },
+            {
+              "phase": "transfer_after_orient",
+              "preview": false,
+              "wall_s": 1.0712738349102437
+            },
+            {
+              "phase": "align",
+              "preview": false,
+              "wall_s": 0.04565639700740576
+            },
+            {
+              "phase": "lower",
+              "preview": false,
+              "wall_s": 0.32565773325040936
+            },
+            {
+              "phase": "retreat",
+              "preview": false,
+              "wall_s": 0.5067621855996549
+            }
+          ],
+          "slot_reobservations": 0,
+          "stages_children": {
+            "path_stage_ik_endpoint": {
+              "encoder_read": {
+                "calls": 24,
+                "exclusive_s": 0.00021551037207245827
+              },
+              "chain_geometry_query": {
+                "calls": 24,
+                "exclusive_s": 0.0004508751444518566
+              },
+              "sphere_compute": {
+                "calls": 24,
+                "exclusive_s": 0.003366404213011265
+              },
+              "sphere_query": {
+                "calls": 24,
+                "exclusive_s": 0.0007491717115044594
+              },
+              "validation_context_prepare": {
+                "calls": 6,
+                "exclusive_s": 0.0008669816888868809
+              },
+              "validation_context_query": {
+                "calls": 18,
+                "exclusive_s": 0.014488923829048872
+              },
+              "chain_fk_compute": {
+                "calls": 22,
+                "exclusive_s": 0.002274575177580118
+              },
+              "collision_math": {
+                "calls": 18,
+                "exclusive_s": 0.009600953198969364
+              },
+              "validation_observed_obstacles": {
+                "calls": 18,
+                "exclusive_s": 0.00014355219900608063
+              },
+              "validation_target_body": {
+                "calls": 18,
+                "exclusive_s": 0.0008424841798841953
+              }
+            },
+            "path_stage_joint_path": {
+              "encoder_read": {
+                "calls": 26,
+                "exclusive_s": 0.0002722619101405144
+              },
+              "validation_context_query": {
+                "calls": 22,
+                "exclusive_s": 0.01845109974965453
+              },
+              "sphere_query": {
+                "calls": 2216,
+                "exclusive_s": 0.06605102587491274
+              },
+              "collision_math": {
+                "calls": 2212,
+                "exclusive_s": 1.15596120711416
+              },
+              "validation_observed_obstacles": {
+                "calls": 2212,
+                "exclusive_s": 0.015623555518686771
+              },
+              "validation_target_body": {
+                "calls": 2212,
+                "exclusive_s": 0.09891785215586424
+              },
+              "chain_fk_compute": {
+                "calls": 2205,
+                "exclusive_s": 0.21920699207112193
+              },
+              "chain_geometry_query": {
+                "calls": 2214,
+                "exclusive_s": 0.04481630679219961
+              },
+              "sphere_compute": {
+                "calls": 2214,
+                "exclusive_s": 0.2860778379254043
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0005317921750247478
+              }
+            },
+            "path_stage_approach": {
+              "encoder_read": {
+                "calls": 18,
+                "exclusive_s": 0.00018730945885181427
+              },
+              "chain_fk_compute": {
+                "calls": 2683,
+                "exclusive_s": 0.2657127035781741
+              },
+              "chain_geometry_query": {
+                "calls": 5372,
+                "exclusive_s": 0.07314319303259254
+              },
+              "sphere_compute": {
+                "calls": 2689,
+                "exclusive_s": 0.3501162906177342
+              },
+              "sphere_query": {
+                "calls": 2690,
+                "exclusive_s": 0.08425917709246278
+              },
+              "validation_context_prepare": {
+                "calls": 6,
+                "exclusive_s": 0.0009149545803666115
+              },
+              "validation_context_query": {
+                "calls": 12,
+                "exclusive_s": 0.01200661901384592
+              },
+              "collision_math": {
+                "calls": 2684,
+                "exclusive_s": 1.3563012992963195
+              },
+              "fk_query": {
+                "calls": 2683,
+                "exclusive_s": 0.045981931034475565
+              },
+              "free_space_mapping": {
+                "calls": 2683,
+                "exclusive_s": 0.21057692961767316
+              },
+              "validation_observed_obstacles": {
+                "calls": 2683,
+                "exclusive_s": 0.6163553302176297
+              },
+              "validation_target_body": {
+                "calls": 2683,
+                "exclusive_s": 0.125818254891783
+              }
+            },
+            "path_stage_close": {
+              "encoder_read": {
+                "calls": 147,
+                "exclusive_s": 0.0013216156512498856
+              },
+              "validation_context_query": {
+                "calls": 147,
+                "exclusive_s": 0.10478357691317797
+              },
+              "chain_geometry_query": {
+                "calls": 136,
+                "exclusive_s": 0.0006172847934067249
+              },
+              "sphere_compute": {
+                "calls": 136,
+                "exclusive_s": 0.017537036444991827
+              },
+              "sphere_query": {
+                "calls": 136,
+                "exclusive_s": 0.004037589766085148
+              },
+              "collision_math": {
+                "calls": 136,
+                "exclusive_s": 0.031239955686032772
+              },
+              "validation_observed_obstacles": {
+                "calls": 136,
+                "exclusive_s": 0.0008600419387221336
+              }
+            },
+            "path_stage_lift": {
+              "encoder_read": {
+                "calls": 22,
+                "exclusive_s": 0.00017948821187019348
+              },
+              "chain_geometry_query": {
+                "calls": 4308,
+                "exclusive_s": 0.06008367659524083
+              },
+              "sphere_compute": {
+                "calls": 2154,
+                "exclusive_s": 0.29009474255144596
+              },
+              "sphere_query": {
+                "calls": 2165,
+                "exclusive_s": 0.07122910860925913
+              },
+              "validation_context_prepare": {
+                "calls": 11,
+                "exclusive_s": 0.001512154471129179
+              },
+              "validation_context_query": {
+                "calls": 11,
+                "exclusive_s": 0.011633825954049826
+              },
+              "collision_math": {
+                "calls": 2154,
+                "exclusive_s": 1.1617428921163082
+              },
+              "validation_observed_obstacles": {
+                "calls": 2154,
+                "exclusive_s": 0.014930594712495804
+              },
+              "fk_query": {
+                "calls": 2154,
+                "exclusive_s": 0.03466798784211278
+              },
+              "validation_payload": {
+                "calls": 2154,
+                "exclusive_s": 1.367830067873001
+              },
+              "chain_fk_compute": {
+                "calls": 2150,
+                "exclusive_s": 0.21549119194969535
+              }
+            },
+            "path_stage_transfer": {
+              "encoder_read": {
+                "calls": 8,
+                "exclusive_s": 8.207140490412712e-05
+              },
+              "chain_fk_compute": {
+                "calls": 1626,
+                "exclusive_s": 0.16465127188712358
+              },
+              "chain_geometry_query": {
+                "calls": 3256,
+                "exclusive_s": 0.04670929769054055
+              },
+              "sphere_compute": {
+                "calls": 1629,
+                "exclusive_s": 0.223740226123482
+              },
+              "sphere_query": {
+                "calls": 1631,
+                "exclusive_s": 0.05585094401612878
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0005896976217627525
+              },
+              "validation_context_query": {
+                "calls": 4,
+                "exclusive_s": 0.0054808068089187145
+              },
+              "collision_math": {
+                "calls": 1627,
+                "exclusive_s": 0.8792145582847297
+              },
+              "validation_observed_obstacles": {
+                "calls": 1627,
+                "exclusive_s": 0.011492382735013962
+              },
+              "fk_query": {
+                "calls": 1627,
+                "exclusive_s": 0.026599356438964605
+              },
+              "validation_payload": {
+                "calls": 1627,
+                "exclusive_s": 1.0475389356724918
+              }
+            },
+            "path_stage_lower": {
+              "encoder_read": {
+                "calls": 4,
+                "exclusive_s": 7.090438157320023e-05
+              },
+              "validation_context_query": {
+                "calls": 4,
+                "exclusive_s": 0.0036050439812242985
+              },
+              "sphere_query": {
+                "calls": 666,
+                "exclusive_s": 0.02216869266703725
+              },
+              "collision_math": {
+                "calls": 666,
+                "exclusive_s": 0.35960889514535666
+              },
+              "validation_observed_obstacles": {
+                "calls": 666,
+                "exclusive_s": 0.004601207096129656
+              },
+              "chain_geometry_query": {
+                "calls": 1328,
+                "exclusive_s": 0.018786818254739046
+              },
+              "fk_query": {
+                "calls": 666,
+                "exclusive_s": 0.01066559087485075
+              },
+              "validation_payload": {
+                "calls": 666,
+                "exclusive_s": 0.42577850399538875
+              },
+              "chain_fk_compute": {
+                "calls": 662,
+                "exclusive_s": 0.06671167351305485
+              },
+              "sphere_compute": {
+                "calls": 662,
+                "exclusive_s": 0.08899339847266674
+              }
+            },
+            "path_stage_open": {
+              "encoder_read": {
+                "calls": 58,
+                "exclusive_s": 0.0005383854731917381
+              },
+              "chain_fk_compute": {
+                "calls": 4,
+                "exclusive_s": 0.0005071572959423065
+              },
+              "chain_geometry_query": {
+                "calls": 58,
+                "exclusive_s": 0.00033246446400880814
+              },
+              "sphere_compute": {
+                "calls": 54,
+                "exclusive_s": 0.007045124191790819
+              },
+              "sphere_query": {
+                "calls": 58,
+                "exclusive_s": 0.0017637461423873901
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0005796239711344242
+              },
+              "validation_context_query": {
+                "calls": 54,
+                "exclusive_s": 0.04376823315396905
+              },
+              "collision_math": {
+                "calls": 54,
+                "exclusive_s": 0.013750826474279165
+              },
+              "validation_observed_obstacles": {
+                "calls": 54,
+                "exclusive_s": 0.000372215174138546
+              },
+              "fk_query": {
+                "calls": 4,
+                "exclusive_s": 6.694532930850983e-05
+              },
+              "validation_payload": {
+                "calls": 4,
+                "exclusive_s": 0.0026958705857396126
+              }
+            },
+            "path_stage_retreat": {
+              "encoder_read": {
+                "calls": 8,
+                "exclusive_s": 6.378954276442528e-05
+              },
+              "sphere_query": {
+                "calls": 668,
+                "exclusive_s": 0.02058517374098301
+              },
+              "validation_context_prepare": {
+                "calls": 4,
+                "exclusive_s": 0.0005074711516499519
+              },
+              "validation_context_query": {
+                "calls": 4,
+                "exclusive_s": 0.004353390075266361
+              },
+              "collision_math": {
+                "calls": 664,
+                "exclusive_s": 0.33299703896045685
+              },
+              "validation_observed_obstacles": {
+                "calls": 664,
+                "exclusive_s": 0.004533142317086458
+              },
+              "validation_target_body": {
+                "calls": 664,
+                "exclusive_s": 0.02953772060573101
+              },
+              "chain_fk_compute": {
+                "calls": 660,
+                "exclusive_s": 0.06440409366041422
+              },
+              "chain_geometry_query": {
+                "calls": 660,
+                "exclusive_s": 0.014003037009388208
+              },
+              "sphere_compute": {
+                "calls": 660,
+                "exclusive_s": 0.08260061126202345
+              }
+            }
+          }
+        }
+      ]
+    },
+    "baseline_full_forecasts_started_inferred": 8,
+    "baseline_full_forecasts_passed_inferred": 8,
+    "inference_scope": "Previous two rounds completed two selected candidate destination rows each, plus two fresh full rechecks each. No prior rejected destination rows. Current second round had two extra IK_DISCONTINUITY rejections.",
+    "candidate_validation_includes_children": true,
+    "first_motion_wait_scope": "check_pair entry to first pregrasp command; includes model, observation and planning; no identical old timer",
+    "stationary_planning_scope": "move() boundary planning including previews; excludes other preparation and separate home planning",
+    "contention_scope": "Idle only verified at startup; card differs from v9 GPU7 and whole-server load was not controlled."
+  },
+  "baseline_global_timing": {
+    "sensor_read": {
+      "calls": 115,
+      "inclusive_s": 33.51523323962465
+    },
+    "scene_estimation": {
+      "calls": 63,
+      "inclusive_s": 31.608354999683797
+    },
+    "model_request": {
+      "calls": 18,
+      "inclusive_s": 4.79138530488126
+    },
+    "cartesian_ik": {
+      "calls": 159,
+      "inclusive_s": 8.455548127414659
+    },
+    "parallel_home": {
+      "calls": 1,
+      "inclusive_s": 11.928851855918765
+    }
+  },
+  "current_global_timing": {
+    "sensor_read": {
+      "calls": 99,
+      "inclusive_s": 35.044416359160095
+    },
+    "scene_estimation": {
+      "calls": 47,
+      "inclusive_s": 22.363090318161994
+    },
+    "model_request": {
+      "calls": 18,
+      "inclusive_s": 10.697708779014647
+    },
+    "cartesian_ik": {
+      "calls": 101,
+      "inclusive_s": 6.6260444349609315
+    },
+    "parallel_home": {
+      "calls": 2,
+      "inclusive_s": 15.732551441062242
+    }
+  },
+  "requested_comparison_notes": [
+    "Both current rounds used orient-first. Baseline second round used sequential-end with second-slot reobservation. A single fresh run cannot isolate total time or estimate success rate.",
+    "Full-run packet counts cover three-camera packets including targeted slot queries; whole-scene estimates count CartonEstimator.estimate.",
+    "Validated pregrasp path reuse 8; exact Cartesian IK cache hits 0; no speed benefit from that cache demonstrated."
+  ]
 }
