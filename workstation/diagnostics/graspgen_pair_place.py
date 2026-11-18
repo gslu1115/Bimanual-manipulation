@@ -848,16 +848,19 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 reason,_=check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None,margin=.008)
                 if reason:raise RuntimeError('PAIR_SEQUENTIAL_'+reason)
             carried_clearance(left,right)
+        if phase=='approach' and forecast is not None:
+            report['next_action']='REPLAN'
+            gate_start=perf_counter()
+            forecast.confirm(robot,scene,objects,slots,selected,report['deferred_destination'])
+            report['deferred_destination']['current_frame_checks_s']=perf_counter()-gate_start
+            now=max(s.sample_time_s for s in robot.read_states().values())
+            if not 0<=now-packet.observation_time_s<=priors.max_age_s:
+                raise RuntimeError('PAIR_TARGET_UNSUPPORTED:PRECLOSE_REFERENCE_EXPIRED')
+            report['next_action']='CONTINUE'
         execution_start=perf_counter()
         report['phase_checkpoint']=dict(phase=phase,event='executing',dry_run=False)
         write_phase_checkpoint(env,report)
         if phase=='approach':
-            if forecast is not None:
-                report['next_action']='REPLAN'
-                gate_start=perf_counter()
-                forecast.confirm(robot,scene,objects,slots,selected,report['deferred_destination'])
-                report['deferred_destination']['current_frame_checks_s']=perf_counter()-gate_start
-                report['next_action']='CONTINUE'
             if selection_started is not None:report['selection_to_descent_wall_s']=perf_counter()-selection_started
             report['empty_approach_started']=True
         phases[label] = drive_empty_pregrasps(robot, paths, guard if both_loaded or sequential else None,

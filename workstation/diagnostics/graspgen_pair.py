@@ -655,7 +655,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                                 abs(np.dot(c.orientation_wxyz,previous['orientation_wxyz']))>math.cos(math.radians(4)/2)):continue
                             options.append(c)
                     options.sort(key=lambda c:visual_pinch_balance(c,obj)['penalty']+upright_contact_cost(c,obj))
-                    verified=assess(view,robot.read_states(),lambda c,o,s:robot.feasibility(c,o,s,goal),robot.home,
+                    verified=assess(view,robot.read_states(),lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=not deferred),robot.home,
                         candidate_provider=lambda o,_:distinct_pinches(options,6) if o.track_id==obj.track_id else [])
                     best=next((r.candidate for r in verified if r.feasible),None)
                     if best is None:raise RuntimeError('NO_FEASIBLE_REGRASP')

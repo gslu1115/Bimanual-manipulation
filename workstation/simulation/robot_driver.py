@@ -725,9 +725,9 @@ class RobotMotion:
                 return knots
         raise RuntimeError('IK_DISCONTINUITY')
 
-    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False,rank_only=False,slot_endpoints=False):
+    def feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False,rank_only=False,slot_endpoints=False,forecast_home=True):
         if getattr(candidate,'orientation_wxyz',None) is not None:
-            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache,prefix_only=prefix_only,rank_only=rank_only,slot_endpoints=slot_endpoints)
+            return self.pose_feasibility(candidate,obj,scene,slot_xy,pregrasp_hint,release_gap_m,prefix_cache=prefix_cache,prefix_only=prefix_only,rank_only=rank_only,slot_endpoints=slot_endpoints,forecast_home=forecast_home)
         start=self.read_states()[candidate.arm].joint_positions_rad
         raised=np.asarray(candidate.position_m)+[0,0,.18]
         phase='PREGRASP'; self.last_plan_check={}
@@ -789,7 +789,7 @@ class RobotMotion:
             return dict(reasons=(str(exc),),joint_cost=0.,path_clearance_m=0.,
                         rejection_phase=phase,rejection_details=self.last_plan_check.copy())
 
-    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False,rank_only=False,slot_endpoints=False):
+    def pose_feasibility(self,candidate,obj,scene,slot_xy=None,pregrasp_hint=None,release_gap_m=UPRIGHT_RELEASE_GAP_M,*,prefix_cache=None,prefix_only=False,rank_only=False,slot_endpoints=False,forecast_home=True):
         """Forecast complete model-pose paths; no commands or holding claims."""
         from workstation.observations.camera_geometry import pose_matrix,quaternion_from_matrix
         from workstation.planning.graspgen_candidates import upright_body_rotation
@@ -903,11 +903,12 @@ class RobotMotion:
                         phases.extend(['LOWER','OPEN'])
                     else:phases.append(phase)
                     current=path[-1];position=destination;old_orientation=new_orientation
-                phase='HOME'
-                _,clearance=self.checked_joint_plan(arm,current,self.home[:7],scene,
-                    candidate.target_id,target_boxes_override=released)
-                minimum=min(minimum,clearance);phases.append(phase)
-                joint_plans['HOME']=self.last_plan_check.copy()
+                if forecast_home:
+                    phase='HOME'
+                    _,clearance=self.checked_joint_plan(arm,current,self.home[:7],scene,
+                        candidate.target_id,target_boxes_override=released)
+                    minimum=min(minimum,clearance);phases.append(phase)
+                    joint_plans['HOME']=self.last_plan_check.copy()
                 self.full_forecasts_passed=getattr(self,'full_forecasts_passed',0)+1
             return dict(reasons=(),joint_cost=float(np.linalg.norm(q-start)),path_clearance_m=minimum,
                 full_pose_checked=True,checked_phases=phases,whole_task_template_checked=complete_slot,

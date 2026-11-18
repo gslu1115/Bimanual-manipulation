@@ -37,6 +37,14 @@ class Destination:
         return AABB(self.obj.track_id,(*self.slot,self.support+self.obj.size_m[2]/2),
                     tuple(np.asarray(self.obj.size_m)+2*self.obj.uncertainty_m),'carton')
 
+    def waypoint(self,phase,fraction):
+        if fraction is not None:
+            overhead=self.center+[0,0,.18]-self.rotation@self.offset
+            return self.raised+fraction*(overhead-self.raised),self.candidate.orientation_wxyz
+        if phase=='transfer_orient':return self.oriented,self.goal_qw
+        if phase=='lower':return self.place,self.goal_qw
+        return self.above,self.goal_qw
+
     def validate(self,robot,scene,phase,path,other_q,parked=None):
         c=self.candidate
         carrying=phase!='retreat'
@@ -90,31 +98,30 @@ def plan_destination(robot,scene,specs,policy,counts):
     def build(strategy,fraction=1.,first=None):
         q={a:s.lift_q for a,s in specs.items()}
         carried=set(arms);released=set();steps=[]
-        def move(phase,goals):
+        def move(phase,active,staging=None):
             paths=[]
             for a in arms:
-                if a not in goals or phase=='open':paths.append([q[a],q[a]]);continue
-                pos,rot=robot.fk(a,q[a]);end,orient=goals[a]
+                if a not in active or phase=='open':paths.append([q[a],q[a]]);continue
+                pos,rot=robot.fk(a,q[a]);end,orient=specs[a].waypoint(phase,staging)
                 paths.append(robot.cartesian_knots(a,pos,end,0.,0.,.12,q[a],
                     orientation0=quaternion_from_matrix(rot),orientation1=orient))
-            check_stage(robot,scene,specs,paths,tuple(goals),carried,released,phase)
-            steps.append((phase,paths,tuple(goals),tuple(carried),tuple(released)))
+            check_stage(robot,scene,specs,paths,active,carried,released,phase)
+            steps.append((phase,paths,active,tuple(carried),tuple(released),staging))
             q.update({a:p[-1] for a,p in zip(arms,paths)})
         def finish(active):
-            move('lower',{a:(specs[a].place,specs[a].goal_qw) for a in active})
-            move('open',dict.fromkeys(active))
+            move('lower',active)
+            move('open',active)
             carried.difference_update(active);released.update(active)
-            move('retreat',{a:(specs[a].above,specs[a].goal_qw) for a in active})
+            move('retreat',active)
         counts['started']+=len(arms)
         if strategy=='orient-first':
-            move('transfer_orient',{a:(s.oriented,s.goal_qw) for a,s in specs.items()})
-            move('transfer',{a:(s.above,s.goal_qw) for a,s in specs.items()})
+            move('transfer_orient',arms)
+            move('transfer',arms)
             finish(arms)
         else:
-            move('transfer',{a:(s.raised+fraction*(np.r_[s.slot,s.above[2]]-s.raised),s.candidate.orientation_wxyz)
-                             for a,s in specs.items()})
+            move('transfer',arms,fraction)
             for a in (first,next(a for a in arms if a!=first)):
-                move('transfer',{a:(specs[a].above,specs[a].goal_qw)})
+                move('transfer',(a,))
                 finish((a,))
         counts['passed']+=len(arms)
         return steps
@@ -182,16 +189,35 @@ class DestinationForecast:
                 if result['reasons']:raise RuntimeError(result['reasons'][0])
                 specs[arm]=cache.destinations[(c.candidate_id,s.slot)]
             else:specs[arm]=replace(s,candidate=replace(s.candidate,target_id=objects[arm].track_id),obj=objects[arm])
-        # The terminal pose must still fit the current target. Use the existing
-        # IK solver tolerances; changed slots/orientations require a new preview.
-        changed=any(s.candidate.candidate_id!=self.specs[a].candidate.candidate_id or
-                    np.linalg.norm(s.place-self.specs[a].place)>.0003 or
-                    abs(np.dot(s.goal_qw,self.specs[a].goal_qw))<np.cos(.005/2) for a,s in specs.items())
+        # A changed grasp has a different lift boundary. With the same grasp,
+        # preserve the spatial route and connect corrected endpoints. Validate
+        # every node and connector using the fresh scene and two-arm schedule.
+        changed=any(s.candidate.candidate_id!=self.specs[a].candidate.candidate_id for a,s in specs.items())
+        corrections=0
         if changed:self.strategy,self.steps=plan_destination(robot,scene,specs,self.policy,self.counts)
         else:
-            for phase,paths,active,carried,released in self.steps:
-                check_stage(robot,scene,specs,paths,active,carried,released,phase)
-        report.update(current_frame_replanned=bool(changed),strategy=self.strategy,full_plans=dict(self.counts),
+            current={a:s.lift_q for a,s in specs.items()}
+            for phase,paths,active,carried,released,staging in self.steps:
+                updated=[]
+                for (a,s),path in zip(specs.items(),paths):
+                    q=current[a]
+                    if a not in active or phase=='open':
+                        updated.append([q,q])
+                        continue
+                    knots=list(path)
+                    if not np.array_equal(q,knots[0]):
+                        knots=robot.joint_knots(q,knots[0])[:-1]+knots
+                    goal,orientation=s.waypoint(phase,staging)
+                    pos,rot=robot.fk(a,knots[-1])
+                    if (np.linalg.norm(pos-goal)>.0003 or
+                            abs(np.dot(quaternion_from_matrix(rot),orientation))<np.cos(.005/2)):
+                        end=robot.solve_pose(a,goal,orientation,knots[-1])
+                        knots+=robot.joint_knots(knots[-1],end)[1:]
+                        corrections+=1
+                    updated.append(knots)
+                    current[a]=knots[-1]
+                check_stage(robot,scene,specs,updated,active,carried,released,phase)
+        report.update(current_frame_replanned=bool(changed),endpoint_corrections=corrections,strategy=self.strategy,full_plans=dict(self.counts),
                       checked_stages=[s[0] for s in self.steps])
         # Both solvers were constructed from the same workcell configuration.
         # Only copy IK knot proposals. The execution-side cache still requires
