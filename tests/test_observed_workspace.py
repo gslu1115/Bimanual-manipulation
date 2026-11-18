@@ -17,6 +17,14 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(len(local.frame_cache['slot_bands']),1)
             self.assertIsNone(local.occupied)
 
+    def test_slot_depth_shared_when_obstacle_geometry_changes_on_same_frame(self):
+        ws=self.workspace()
+        ws.slot((-.02,0.))
+        ws.objects=(AABB('carton',(.2,0.,.82),(.04,.04,.04)),)
+        ws.slot((.02,0.))
+        self.assertEqual(len(ws.frame_cache['slot_depth_points']),1)
+        self.assertEqual(len(ws.frame_cache['slot_bands']),2)
+
     def test_depth_only_slot_preserves_obstacle_missing_and_stale_depth_vetoes(self):
         for depth,valid in ((1.,True),(.94,True),(1.,False)):
             ws=self.workspace(depth,valid=valid)

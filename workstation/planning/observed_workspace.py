@@ -476,17 +476,29 @@ class ObservedWorkspace:
         # Conveyor slots share the belt's Y/Z cross-section. Keep all X cells
         # in that band, with the same floor-to-voxel rule as the full map.
         yz=slices[1:]
-        key=(self._mapping_key(),tuple((s.start,s.stop) for s in yz))
+        geometry=self._mapping_key()
+        section=tuple((s.start,s.stop) for s in yz)
+        key=(geometry,section)
         cache=self.frame_cache.setdefault('slot_bands',OrderedDict())
         if key not in cache:
+            # The registered depth and its voxel coordinates do not change
+            # when the left and right hands install different payload models.
+            depth_cache=self.frame_cache.setdefault('slot_depth_points',OrderedDict())
+            depth_key=(geometry[:8],section)
+            if depth_key not in depth_cache:
+                chunks=[]
+                for frame in self._frames():
+                    points=deproject(frame)[frame.valid_depth]
+                    points=points[np.all((points>=self.lower)&(points<self.upper),axis=1)]
+                    cells=np.floor((points-self.lower)/self.resolution).astype(int)
+                    selected=((cells[:,1]>=yz[0].start)&(cells[:,1]<yz[0].stop)&
+                              (cells[:,2]>=yz[1].start)&(cells[:,2]<yz[1].stop))
+                    chunks.append((points[selected],cells[selected]))
+                depth_cache[depth_key]=chunks
+                if len(depth_cache)>8:depth_cache.popitem(last=False)
             band=np.zeros((self.shape[0],*(s.stop-s.start for s in yz)),bool)
-            for frame in self._frames():
-                points=deproject(frame)[frame.valid_depth]
-                points=points[np.all((points>=self.lower)&(points<self.upper),axis=1)]
-                cells=np.floor((points-self.lower)/self.resolution).astype(int)
-                selected=((cells[:,1]>=yz[0].start)&(cells[:,1]<yz[0].stop)&
-                          (cells[:,2]>=yz[1].start)&(cells[:,2]<yz[1].stop))
-                indices=cells[selected][~self._modelled(points[selected])]
+            for points,cells in depth_cache[depth_key]:
+                indices=cells[~self._modelled(points)]
                 band[indices[:,0],indices[:,1]-yz[0].start,indices[:,2]-yz[1].start]=True
             cache[key]=band
             if len(cache)>8:cache.popitem(last=False)
