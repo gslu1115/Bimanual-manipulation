@@ -7,6 +7,18 @@ from workstation.diagnostics.graspgen_pair import paired_pregrasp
 
 
 class RankedPickParity(unittest.TestCase):
+    def test_tied_resampled_candidate_follows_previous_batch(self):
+        from workstation.planning.plan_reuse import refine_pick_pairs
+        def row(arm,identifier,group):
+            c=GraspCandidate('box',arm,(0,0,0),0,.07,0,candidate_id=identifier)
+            return CandidateAssessment(c,True,(),{'source_order':(group,0)},1.)
+        first=row('left','old',8)
+        backup=row('left','new',16)
+        right=row('right','right',4)
+        pairs=[(backup,right),(first,right)]
+        ordered=list(refine_pick_pairs(pairs,lambda p:(-sum(r.score for r in p),),lambda r:r,lambda r:r))
+        self.assertEqual(ordered,[(first,right),(backup,right)])
+
     def test_same_inputs_ties_rejections_and_crossing_paths(self):
         rng=np.random.default_rng(7731)
         arms=('panda_left','panda_right')

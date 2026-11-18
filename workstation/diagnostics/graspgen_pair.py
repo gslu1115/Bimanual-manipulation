@@ -497,17 +497,18 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 ordered=sorted((c for c in allowed if c.arm==arm),key=pinch_cost)
                 chosen=(selection_policy.diverse(ordered,obj,4) if selection_policy else distinct_pinches(ordered,4))
                 candidates.setdefault(obj.track_id,[]).extend(chosen)
+        order={c.candidate_id:i for group in candidates.values() for i,c in enumerate(group)}
         for slot in available:
             scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
-            order={c.candidate_id:i for group in candidates.values() for i,c in enumerate(group)}
             for row in scored:
-                row.terms.update(slot_xy=slot,source_order=(available.index(slot),order[row.candidate.candidate_id]))
+                # Preserve the eager sort's append order across resampling rounds.
+                row.terms.update(slot_xy=slot,source_order=(len(rows),order[row.candidate.candidate_id]))
             rows.extend(scored)
             for arm in states:
                 assigned=[r for r in scored if r.candidate.arm==arm]
                 report['slot_assessments'].append(dict(attempt=attempt,slot_xy=slot,arm=arm,
-                    scope='pick prefix only; destination pending' if selection_policy else 'whole path',
+                    scope='pregrasp ranking bound; pick and destination pending' if selection_policy else 'whole path',
                     feasible=sum(r.feasible for r in assigned),
                     feasible_by_target=dict(Counter(r.candidate.target_id for r in assigned if r.feasible)),
                     reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
@@ -520,7 +521,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                                       prefix_assessment=prefix_assessment if selection_policy else None,pick_cache=pick_prefixes)
         report['candidate_prefix_reuse']=pick_prefixes.report()
         report['destination_evaluation']=dict(mode='pregrasp upper bound; ranked pick and destination refinement' if selection_policy else 'exhaustive',
-            ranked_rows=len(rows),prefix_rows=len(rows),completed_rows=len(completed_rows),
+            ranked_rows=len(rows),prefix_rows=len(prefix_rows) if selection_policy else len(rows),completed_rows=len(completed_rows),
             feasible_completed_rows=sum(r.feasible for r in completed_rows.values()),
             skipped_destination_rows=sum(r.feasible and (r.candidate.candidate_id,tuple(r.terms['slot_xy'])) not in completed_rows for r in rows),
             failures=[dict(candidate_id=r.candidate.candidate_id,slot_xy=r.terms['slot_xy'],reasons=r.reasons)
