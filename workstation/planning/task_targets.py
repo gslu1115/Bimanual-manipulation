@@ -45,8 +45,10 @@ class ConveyorSlots:
         self.timestamps = {}
 
     def observe(self, workspace):
-        for xy in self.positions:
-            view = workspace.slot(xy)
+        self.apply_views((xy,workspace.slot(xy)) for xy in self.positions)
+
+    def apply_views(self, views):
+        for xy,view in views:
             if view['observation_time_s'] <= self.timestamps.get(xy, float('-inf')):
                 continue
             self.timestamps[xy] = view['observation_time_s']

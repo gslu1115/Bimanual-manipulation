@@ -308,7 +308,7 @@ def approach_alternatives(rows,assigned_slots,completed_rows=None,*,model_first=
     return alternatives
 
 
-def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None,selection_policy=None):
+def check_pair(env, args, packet, scene, estimator, *, robot=None, target_selector=None,selection_policy=None,round_slot_views=None):
     from workstation.diagnostics.graspgen_calibration import verify
     from workstation.models.graspgen_client import visual_clouds, infer_rotated_view
     from workstation.planning.selection import visual_pinch_balance, upright_contact_cost, distinct_pinches
@@ -351,7 +351,13 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     slots = ConveyorSlots(env.c)
     destinations=[slots.positions[i] for i in env.c.get('pair_slot_indices',range(len(slots.positions)))]
     report['eligible_destinations']=destinations
-    slots.observe(robot.observed_workspace)
+    if round_slot_views is None:
+        slots.observe(robot.observed_workspace)
+    else:
+        if not round_slot_views:
+            round_slot_views.extend(robot.observed_workspace.slot(xy) for xy in slots.positions)
+        slots.apply_views((tuple(view['xy']),view) for view in round_slot_views)
+        report['round_slot_views']=round_slot_views
     report['slots_initial'] = slots.report()
     from workstation.diagnostics.graspgen_pair_place import stationary_slot_tracks
     parked=stationary_slot_tracks(robot.observed_workspace,scene,slots.positions)
@@ -437,7 +443,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 scene=estimator.estimate(packet)
                 robot.set_observation(packet,scene,ScenePriors.from_config(env.c))
                 states=robot.read_states()
-                slots.observe(robot.observed_workspace)
+                if round_slot_views is None:slots.observe(robot.observed_workspace)
                 available=[xy for xy in destinations if slots.states[xy]=='free']
                 targets=select_targets(scene)
                 if len(targets)!=2 or len(available)<2:fail('INSPECTION_SCENE_NOT_READY')
@@ -605,7 +611,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 if renewed.target_id!=c.target_id:
                     report.setdefault('reidentified_after_view',{})[c.target_id]=renewed.target_id
                 new[renewed.target_id]=[renewed]
-            slots.observe(robot.observed_workspace)
+            if round_slot_views is None:slots.observe(robot.observed_workspace)
             if any(slots.states[xy]!='reserved' for xy in assigned_slots.values()):
                 raise RuntimeError('RESERVED_SLOT_CHANGED')
             states=robot.read_states()

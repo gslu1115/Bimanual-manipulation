@@ -244,7 +244,7 @@ class PairTests(unittest.TestCase):
         o=SimpleNamespace(track_id='t',position_m=[*xy,.785],size_m=[.11,.06,.05],failures=(),
             posture='UPRIGHT',visibility='COMPLETE_TOP',velocity_m_s=[0.,0.,0.])
         ids=['t'];scene=SimpleNamespace(objects=[o])
-        w=SimpleNamespace(slot=lambda _:dict(observed_objects=ids),priors=SimpleNamespace(support_z_m=.76))
+        w=SimpleNamespace(slot_tracks=lambda _:ids,priors=SimpleNamespace(support_z_m=.76))
         self.assertEqual(stationary_slot_tracks(w,scene,[xy]),{xy:o})
         ids.append('fragment')
         self.assertFalse(stationary_slot_tracks(w,scene,[xy]))

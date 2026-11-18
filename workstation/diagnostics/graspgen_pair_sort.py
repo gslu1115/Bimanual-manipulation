@@ -214,6 +214,9 @@ def _run(env,args,timing):
         for round_index in (1,2):
             begin=perf_counter()
             round_output=root/f'round_{round_index}';round_output.mkdir()
+            # The belt is interlocked throughout this round, including empty
+            # retries. Its settled post-index view is round two's planning view.
+            round_slot_views=report['indexing'][-1]['stopped_slot_views'] if report['indexing'] else []
             for attempt in range(1,5):
                 source_query=tuple(remaining)
                 env.output=round_output/f'attempt_{attempt}';env.output.mkdir()
@@ -242,7 +245,7 @@ def _run(env,args,timing):
                 try:
                     source_query=()
                     result=check_pair(env,pair_args,packet,scene,estimator,robot=robot,
-                                      target_selector=select,selection_policy=selection)
+                                      target_selector=select,selection_policy=selection,round_slot_views=round_slot_views)
                 except PairAttemptError as error:
                     failed=error.report
                     entry.update(failure_reason=str(error),action_wall_s=failed.get('action_wall_s'),

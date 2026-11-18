@@ -175,7 +175,7 @@ def stationary_slot_tracks(workspace, scene, positions):
     """Identify a single observed, supported, settled carton per occupied slot."""
     tracks={}
     for xy in positions:
-        ids=workspace.slot(xy)['observed_objects']
+        ids=workspace.slot_tracks(xy)
         if len(ids)!=1:continue
         obj=next((o for o in scene.objects if o.track_id==ids[0]),None)
         if (obj is not None and not obj.failures and obj.posture=='UPRIGHT' and pose_is_observed(obj,scene)
@@ -452,6 +452,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     sequential=False
     fresh_scene=scene
     before_transfer={}
+    round_reservation='round_slot_views' in report
     phases = report['phases'] = {}
 
     def observe(local=False,destinations=False):
@@ -670,7 +671,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         if env.conveyor.state=='WAITING' and not env.safe_to_index:
             protect_stationary(current,packet.observation_time_s)
             for xy in parked.keys()-current.keys():
-                ids=robot.observed_workspace.slot(xy)['observed_objects']
+                ids=robot.observed_workspace.slot_tracks(xy)
                 fragments=[o for o in scene.objects if o.track_id in ids]
                 if carried_ids.intersection(ids):continue
                 if xy in partial_keepout:
@@ -752,6 +753,15 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             if not robot.confirm_payload_observation(objects[arm].track_id,t,measurements[arm],packet):
                 raise RuntimeError('PAIR_PAYLOAD_GEOMETRY_UNCONFIRMED:'+arm)
             xy=goals[arm]
+            if round_reservation:
+                # Only the task's two hands can fill a reserved lane while
+                # the conveyor stays interlocked. A positive object sighting
+                # still contradicts the reservation; a shadow does not.
+                other=set(robot.observed_workspace.slot_tracks(xy))-carried_ids
+                if (slots.owners.get(xy)!=arm or env.conveyor.state!='WAITING'
+                        or env.safe_to_index or other):
+                    raise RuntimeError('RESERVED_SLOT_CHANGED')
+                continue
             view=robot.observed_workspace.slot(xy)
             if sequential and view['free']:before_transfer[xy]=view
             accounted=(len(carried_ids|released_ids)==2 and supported and carried_ids.isdisjoint(parked_ids) and
@@ -1126,7 +1136,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     robot.set_observation(packet,scene,priors)
     report['simultaneous_grasp_verified']=phases['lift']['overlap_ticks']>0
     robot.anchor_observation()
-    before_transfer={xy:robot.observed_workspace.slot(xy) for xy in goals.values()}
+    if not round_reservation:
+        before_transfer={xy:robot.observed_workspace.slot(xy) for xy in goals.values()}
     protect_stationary(stationary_slot_tracks(robot.observed_workspace,scene,unused),packet.observation_time_s)
     # Carry without simultaneously rotating the carton. Aim the BOX centre
     # above its lane using the measured grasp offset before changing attitude.
@@ -1194,7 +1205,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report.setdefault('held_fragment_associations',[]).append(dict(arm=a,time_s=packet.observation_time_s,fragments=items))
         robot.set_observation(packet,scene,priors)
         protect_stationary(stationary_slot_tracks(robot.observed_workspace,scene,unused),packet.observation_time_s)
-        if sequential:
+        if sequential and not round_reservation:
             for a in carried_arms:
                 view=robot.observed_workspace.slot(goals[a])
                 if view['free']:before_transfer[goals[a]]=view
@@ -1428,7 +1439,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         if not phases['sequential_shared_transfer']['overlap_ticks']:
             raise RuntimeError('NO_MEASURED_PARALLEL_TRANSFER')
         for index,a in enumerate(plan['order']):
-            if index==1:
+            if index==1 and not round_reservation:
                 reobserve_second_slot(a)  # fresh_view refreshes all payloads after the first placement
             else:
                 refresh_payloads()
@@ -1447,7 +1458,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     for _ in range(20):
         robot.hold(.1)
         observe()
-        slots.observe(robot.observed_workspace)
+        if round_reservation:
+            # Dwell verifies the identity and motion of each deposited carton.
+            # An empty or unknown slot cannot satisfy placement acceptance.
+            slots.apply_views((xy,dict(observation_time_s=scene.observation_time_s,free=False,
+                observed_objects=robot.observed_workspace.slot_tracks(xy))) for xy in goals.values())
+        else:
+            slots.observe(robot.observed_workspace)
         placements={}
         for a in arms:
             xy=goals[a]

@@ -612,13 +612,20 @@ class ObservedWorkspace:
             self._slot_cache[key]=self._query_slot(xy)
         return deepcopy(self._slot_cache[key])
 
-    def _query_slot(self,xy):
+    def _slot_volume(self,xy):
         length,width,height=self.priors.carton_size_m
         size=np.array([length+.04,width+.04,height+.02])
         centre=np.array([*xy,self.priors.support_z_m+size[2]/2])
-        objects=[o.track_id for o in self.scene.objects if
+        return centre,size
+
+    def slot_tracks(self,xy):
+        centre,size=self._slot_volume(xy)
+        return [o.track_id for o in self.scene.objects if
                  np.linalg.norm(np.asarray(o.position_m[:2])-xy)<.09
                  and o.position_m[2]-np.linalg.norm(o.size_m)/2-o.uncertainty_m <= centre[2]+size[2]/2]
+    def _query_slot(self,xy):
+        centre,size=self._slot_volume(xy)
+        objects=self.slot_tracks(xy)
         reason='OBSERVED_SLOT_OCCUPIED' if objects else self._slot_box(centre,size)
         return dict(xy=list(xy),free=reason is None,reason=reason,observed_objects=objects,
                     observation_time_s=self.packet.observation_time_s)
