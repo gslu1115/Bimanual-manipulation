@@ -1,0 +1,113 @@
+{
+  "source": "350d3a2",
+  "scope": "Fresh seed 6, 256 GraspGen proposals per request, no grasp or IK replay",
+  "source_carton_arm_threshold_m": 0.001,
+  "scene_matches_previous": {
+    "release_states.json": true,
+    "camera_rig.json": true,
+    "config_used.json": true
+  },
+  "archive": "pair-gap14.tgz",
+  "archive_sha256": "59a01b5f30b4acd29c1453e8ec2fb37ebc7942d63c695dc10ab6b87c756bcead",
+  "gpu": {
+    "index": 1,
+    "name": "NVIDIA GeForce RTX 4090",
+    "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+    "pci": "0000:1c:00.0",
+    "free_mib": 24081,
+    "used_mib": 0,
+    "utilization_pct": 0
+  },
+  "success": true,
+  "failure": null,
+  "placed": 4,
+  "visually_cleared_batches": 2,
+  "wall_s": 243.84092853870243,
+  "attempts": [
+    {
+      "attempt": "round_1/attempt_1",
+      "success": true,
+      "reason": null,
+      "last_phase": "verify",
+      "first_motion_s": 12.776655803900212,
+      "selection_to_descent_s": 27.792502007912844,
+      "source_gaps": {
+        "panda_left": {
+          "carton_axis_gap_m": 0.05101235119910061,
+          "arm_surface_gap_m": 0.014119925785310981
+        },
+        "panda_right": {
+          "carton_axis_gap_m": 0.0637276999503979,
+          "arm_surface_gap_m": 0.0333338106133384
+        }
+      },
+      "scores": [
+        0.8355579972267151,
+        0.9233590364456177
+      ],
+      "selected": [
+        "visual_0001",
+        "visual_0002"
+      ],
+      "stage_plans": {
+        "prefix_rows_checked": 0,
+        "full_slot_rows": 0,
+        "slot_endpoint_rows": 19,
+        "selected_rows_revalidated": 2,
+        "pregrasp_paths_reused": 5
+      },
+      "transfer_strategy": "orient-first",
+      "payload_state": null
+    },
+    {
+      "attempt": "round_2/attempt_1",
+      "success": true,
+      "reason": null,
+      "last_phase": "verify",
+      "first_motion_s": 14.994541293941438,
+      "selection_to_descent_s": 30.191831205040216,
+      "source_gaps": null,
+      "scores": [
+        0.7926322817802429,
+        0.8452751636505127
+      ],
+      "selected": [
+        "visual_0003",
+        "visual_0004"
+      ],
+      "stage_plans": {
+        "prefix_rows_checked": 0,
+        "full_slot_rows": 0,
+        "slot_endpoint_rows": 39,
+        "selected_rows_revalidated": 2,
+        "pregrasp_paths_reused": 11
+      },
+      "transfer_strategy": "orient-first",
+      "payload_state": null
+    }
+  ],
+  "model_request_ids": [
+    "9567a6dff33044c68b1627d5aec6bff5",
+    "3c17521d883d4aa4aa370d348bc0b9c5",
+    "f3ab04db31c243968262011778ef1f12",
+    "aff04ae5d428463bbef7da8f149baeff",
+    "854cf450168a4547b0141f5fb45c73c5",
+    "b7bbbf9a623141799c5903d63fe03652",
+    "e531f4127854456482b68c6432dab42f",
+    "6e34096cab1d47c09ec32dfa320d2065",
+    "5f4dc3ace21543a88e3c3477e3ba7287",
+    "0492411caa5d4ad182fd87bb672b2b3c",
+    "84dc0dac97be44d881d4d22d56b918e8",
+    "63ebef7529754a698d511f89a6c58962",
+    "132d835e6ad04be2ab47fb18353ffcd5",
+    "ebb2f32119bc4fb8b94ea4f11a1353a2",
+    "5b65ad8d82d44d2c8b72383db1a11f13",
+    "d867a5436706426e843a95a38d9b5eb9",
+    "254b7646ceae440ca3f9868803e0a87f",
+    "7267c8bd30b849d491221630a90ff419",
+    "45c29a46776a49d4b10ce327190ead19",
+    "578da9019f2e40d4ad1697b33a8b0962",
+    "f8ebb30151a7456dbff1b3c2c3fa31db"
+  ],
+  "source_comparison": "graspgen_score_first_four_20261118.json"
+}
