@@ -161,11 +161,18 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
             continue
         sampled = 0
         minimum = float('inf')
-        for left, right in synchronized_knots(*(paths[a.candidate.candidate_id] for a in pair)):
-            reason, clearance = check_spheres(robot.spheres(arms[0],left),robot.spheres(arms[1],right),[],None)
-            minimum = min(minimum,clearance)
-            sampled += 1
-            if reason:break
+        knots=synchronized_knots(*(paths[a.candidate.candidate_id] for a in pair))
+        geometry=((robot.spheres(arms[0],left),robot.spheres(arms[1],right)) for left,right in knots)
+        client=getattr(robot,'pair_path_client',None)
+        if client is not None:
+            from workstation.planning.curobo_pair import check_pair_path
+            reason,minimum,sampled=check_pair_path(list(geometry),client.distances)
+        else:
+            for left,right in geometry:
+                reason,clearance=check_spheres(left,right,[],None)
+                minimum=min(minimum,clearance)
+                sampled+=1
+                if reason:break
         if reason:
             rejected.append(dict(ids=[a.candidate.candidate_id for a in pair], reason=reason))
             continue

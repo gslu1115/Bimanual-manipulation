@@ -5,6 +5,7 @@ Local IDs/timestamps are echoed by this adapter, not invented official fields.
 """
 import base64
 import json
+import io
 import time
 import uuid
 import urllib.request
@@ -32,6 +33,21 @@ def serve(args):
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):
             try:
+                if self.path=='/pair-clearance' and args.pair_collision_backend=='curobo':
+                    from workstation.planning.curobo_pair import clearance_gpu
+                    size=int(self.headers.get('Content-Length',0))
+                    if not 0<size<=16*MAX_BODY:raise ValueError('Invalid sphere path size')
+                    self.connection.settimeout(35)
+                    stream=io.BytesIO(self.rfile.read(size))
+                    spheres=np.load(stream,allow_pickle=False)
+                    mask=np.load(stream,allow_pickle=False)
+                    data=clearance_gpu(spheres,mask).astype('<f8').tobytes()
+                    self.send_response(200)
+                    self.send_header('Content-Type','application/octet-stream')
+                    self.send_header('Content-Length',str(len(data)))
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
                 if self.path != '/infer': raise ValueError('Unknown route')
                 count=int(self.headers.get('Content-Length','0'))
                 if not 0<count<=MAX_BODY: raise ValueError('Request exceeds bounded payload')

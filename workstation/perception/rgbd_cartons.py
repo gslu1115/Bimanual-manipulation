@@ -155,7 +155,7 @@ class CartonEstimator:
         if self.record_association:
             self._association_event(event,objects=[asdict(o) for o in objects])
 
-    def estimate(self, packet):
+    def estimate(self, packet, *, regions=()):
         self.association_events=[]
         self._association_snapshot('history_before',self._tracks.values())
         self.last_robot_filter_counts={}
@@ -191,8 +191,11 @@ class CartonEstimator:
             started=perf_counter() if self.record_association else None
             try:
                 segmentation = self.segmenter.segment(frame).validate_for(frame) if self.segmenter else None
-                result=(self._detect(frame,segmentation,prepared[name]) if name in prepared else
-                        self._detect(frame,segmentation))
+                if regions:
+                    result=self._detect(frame,segmentation,prepared.get(name),regions=regions)
+                else:
+                    result=(self._detect(frame,segmentation,prepared[name]) if name in prepared else
+                            self._detect(frame,segmentation))
                 return result,None
             except Exception as exc:
                 if self.segmenter is None: raise
@@ -875,7 +878,7 @@ class CartonEstimator:
             used.update(members)
         return [o for i,o in enumerate(detections) if i not in used]+joined
 
-    def _detect(self, frame, segmentation=None,prepared_robot_filter=None):
+    def _detect(self, frame, segmentation=None,prepared_robot_filter=None,*,regions=()):
         import cv2  # Pure offline tests need no Isaac and no learned model.
         p = self.priors
         xyz = deproject(frame)
@@ -906,6 +909,14 @@ class CartonEstimator:
             # Same prediction supplies instance masks and boxes. No colour gate,
             # second detector, renderer instance IDs, or silent rule fallback.
             proposals=[(item.mask,item.score) for item in segmentation.instances if item.mask.sum() >= 80]
+        # Keep whole connected surfaces that intersect a requested volume. Clipping
+        # the mask itself would bias cuboid fitting and fragment association.
+        if regions:
+            inside=np.zeros(frame.depth_m.shape,bool)
+            for centre,half in regions:
+                inside |= np.all(np.abs(xyz-centre)<=half,axis=2)
+            inside &= frame.valid_depth
+            proposals=[(mask,score) for mask,score in proposals if np.any(mask & inside)]
         result, masks = [], {}
         for index,(mask,model_score) in enumerate(proposals,1):
             refined_pixels=0

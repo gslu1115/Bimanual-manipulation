@@ -84,15 +84,50 @@ def home_clock_paths(robot,paths,plans):
     return [p+[p[-1]]*(length-len(p)) for p in result],durations
 
 
-def execute_parallel_home(robot,scene):
+def overhead_home_path(robot,arm,start,scene,table_top):
+    from workstation.observations.camera_geometry import quaternion_from_matrix
+    home=robot.home[:7]
+    current,_=robot.fk(arm,start)
+    end,rotation=robot.fk(arm,home)
+    orientation=quaternion_from_matrix(rotation)
+    # Use the home lane for each arm. The entry is halfway back from the
+    # measured release side, keeping the high point in the Panda's reach.
+    entry=(current+end)/2
+    exit_point=end.copy()
+    entry[2]=exit_point[2]=table_top+.50
+    q_entry=robot.solve_pose(arm,entry,orientation,start)
+    traverse=robot.cartesian_knots(arm,entry,exit_point,0.,0.,robot.speed,q_entry,
+                                 orientation0=orientation,orientation1=orientation)
+    legs=[robot.joint_knots(start,q_entry),traverse,robot.joint_knots(traverse[-1],home)]
+    route=list(legs[0])+list(traverse[1:])+list(legs[2][1:])
+    robot.validate_path(arm,route,scene,None,validation_stage='overhead_home')
+    # Keep every Cartesian knot on the traverse. Retiming happens on the
+    # shared driver clock; never collapse the corridor to a start/end chord.
+    from workstation.diagnostics.graspgen_pair import synchronized_knots
+    knots=[q for q,_ in synchronized_knots(route,route,max_step=robot.joint_speed*robot.dt)]
+    return knots,dict(joint_planner='fixed overhead corridor',entry_m=entry.tolist(),
+                      exit_m=exit_point.tolist(),height_above_table_m=.50)
+
+
+def execute_parallel_home(robot,scene,table_top=None):
     from workstation.planning.collision import scene_obstacles
     started=perf_counter()
     arms=('panda_left','panda_right')
     states=robot.read_states();paths=[];plans=[]
     for arm in arms:
-        path,_=robot.checked_joint_plan(arm,states[arm].joint_positions_rad,robot.home[:7],scene,None)
-        paths.append(path);plans.append(robot.last_plan_check.copy())
-    paths,durations=home_clock_paths(robot,paths,plans)
+        start=states[arm].joint_positions_rad
+        if table_top is None:
+            path,_=robot.checked_joint_plan(arm,start,robot.home[:7],scene,None)
+            plan=robot.last_plan_check.copy()
+        else:
+            path,plan=overhead_home_path(robot,arm,start,scene,table_top)
+        paths.append(path);plans.append(plan)
+    if table_top is None:
+        paths,durations=home_clock_paths(robot,paths,plans)
+    else:
+        durations=[(len(path)-1)*robot.dt for path in paths]
+        length=max(map(len,paths))
+        paths=[path+[path[-1]]*(length-len(path)) for path in paths]
     obstacles=tuple(robot.static)+tuple(scene_obstacles(scene,None))
     # Keep preflight geometry until this home ends, using the same exact keys.
     # Measured deviations still generate new geometry and undergo all checks.
@@ -419,10 +454,25 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     before_transfer={}
     phases = report['phases'] = {}
 
-    def observe():
+    def observe(local=False):
         nonlocal scene,fresh_scene
         packet = env.get_observation_packet(refresh=True)
-        scene = estimator.estimate(packet)
+        if local:
+            regions=[]
+            for arm in arms:
+                obj=objects[arm]
+                centre=np.asarray(obj.position_m)
+                if arm in trackers:
+                    tcp,rotation=_image_tcp_pose(robot,arm,packet)
+                    centre=tcp+rotation@trackers[arm].offset
+                half=np.linalg.norm(obj.size_m)/2+obj.uncertainty_m+.03
+                regions.append((centre,half))
+            scene=estimator.estimate(packet,regions=regions)
+        else:
+            scene=estimator.estimate(packet)
+        counts=report.setdefault('observation_scope',{})
+        scope='selected_cartons' if local else 'workspace'
+        counts[scope]=counts.get(scope,0)+1
         fresh_scene=scene
         if released_references:refresh_released(packet)
         robot.set_observation(packet, scene, priors)
@@ -901,7 +951,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     # both original poses at the pregrasp waypoint before descending.
     references={a:PreCloseTarget(objects[a],scene,priors) for a in arms}
     report['last_phase']='pregrasp_recheck'
-    packet=observe()
+    packet=observe(local=True)
     # The same evidence contract is used at the waypoint, during approach,
     # and after closure. One bounded fresh observation precedes task replanning.
     for observation_attempt in range(2):
@@ -917,13 +967,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     robot.set_observation(packet,scene,priors)
     next_approach_check=3.
     move('approach', poses, True)
-    packet = observe()
+    packet = observe(local=True)
     for a in arms:
         proof=confirm_target(a,packet)
     report['last_phase']='close'
     report['closure_started']=True
     fingers(True)
-    packet = observe()
+    packet = observe(local=True)
     closed_states=dict(packet.robot_state)
     closed_tcp_z={}
     for a in arms:
@@ -940,7 +990,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     # Refit after initial finger loading; using the closure frame until the
     # end of an 18 cm lift loses track of cartons that rotate under load.
     move('initial_lift',{a:(p-[0.,0.,.12],r) for a,(p,r) in raised.items()},True)
-    packet=observe()
+    packet=observe(local=True)
     for a in arms:
         phases.setdefault('initial_lift_evidence',{})[a]=measure_held(a,packet)
     from workstation.planning.selection import lift_slip_evidence
@@ -1277,7 +1327,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             report['last_phase']='clear_for_verification'
             report['phase_checkpoint']=dict(phase='parallel_home',event='planning',dry_run=False)
             write_phase_checkpoint(env,report)
-            phases['parallel_home']=execute_parallel_home(robot,scene)
+            phases['parallel_home']=execute_parallel_home(robot,scene,
+                env.c['table']['top_z'] if forecast is not None else None)
         else:
             for a in active:clear_empty_arm(a)
 

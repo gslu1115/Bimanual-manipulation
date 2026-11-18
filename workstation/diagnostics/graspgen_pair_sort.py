@@ -92,6 +92,9 @@ def _run(env,args,timing):
     env.conveyor=VisualConveyorIndex(env.c)
     robot=from_environment(env,paired_armature_floor=.01)
     robot.wall_timing=timing
+    if getattr(args,'pair_collision_backend','scalar')=='curobo':
+        from workstation.planning.curobo_pair import PairPathClient
+        robot.pair_path_client=PairPathClient(args.graspgen_proxy)
     for method,label in (('command','joint_command'),('command_velocities','velocity_command'),
                          ('read_states','encoder_read')):
         timing.wrap(robot,method,label)
@@ -269,5 +272,8 @@ def _run(env,args,timing):
         raise
     finally:
         env.output=root;report['total_wall_s']=perf_counter()-started
+        if hasattr(robot,'pair_path_client'):
+            client=robot.pair_path_client
+            report['curobo_pregrasp']=dict(batches=client.batches,samples=client.samples,round_trip_s=client.wall_s)
         report['conveyor_events']=env.conveyor.events
         env._write_json('graspgen_pair_sort.json',report)

@@ -7,6 +7,16 @@ from workstation.planning.observed_workspace import ObservedWorkspace
 
 
 class WorkspaceTests(unittest.TestCase):
+    def test_same_frame_left_and_right_slot_band_matches_full_depth_map(self):
+        for depth,valid in ((1.,True),(.94,True),(1.,False)):
+            local=self.workspace(depth,valid=valid)
+            full=self.workspace(depth,valid=valid)
+            full._build_occupied()
+            for xy in ((-.02,0.),(.02,0.)):
+                self.assertEqual(local.slot(xy),full.slot(xy))
+            self.assertEqual(len(local.frame_cache['slot_bands']),1)
+            self.assertIsNone(local.occupied)
+
     def test_depth_only_slot_preserves_obstacle_missing_and_stale_depth_vetoes(self):
         for depth,valid in ((1.,True),(.94,True),(1.,False)):
             ws=self.workspace(depth,valid=valid)

@@ -443,6 +443,9 @@ class ObservedWorkspace:
 
     def _region(self, lower, upper):
         self._build_occupied()
+        return self._grid_region(lower,upper)
+
+    def _grid_region(self, lower, upper):
         lo=np.maximum(np.floor((np.asarray(lower)-self.lower)/self.resolution).astype(int),0)
         hi=np.minimum(np.ceil((np.asarray(upper)-self.lower)/self.resolution).astype(int),self.shape)
         if np.any(hi<=lo): return None
@@ -454,12 +457,41 @@ class ObservedWorkspace:
         if region is None: return None
         slices,lo=region
         if self.occupied[slices].any(): return 'OBSERVED_PATH_OBSTACLE'
+        return self._box_free_space(centre,size,slices,lo)
+
+    def _box_free_space(self,centre,size,slices,lo):
         self._evaluate_unknown(slices)
         indices=np.argwhere(self.unknown[slices])+lo
         if len(indices) and self._fine_unknown(indices,lambda p,r:
                 np.all(np.abs(p-centre)<=size/2+r,axis=1),
                 lambda p:np.clip(p,centre-size/2,centre+size/2)):return 'UNOBSERVED_PATH_SPACE'
         return None
+
+    def _slot_box(self,centre,size):
+        if self.occupied is not None:
+            return self.check_box(centre,size)
+        region=self._grid_region(centre-size/2,centre+size/2)
+        if region is None:return None
+        slices,lo=region
+        # Conveyor slots share the belt's Y/Z cross-section. Keep all X cells
+        # in that band, with the same floor-to-voxel rule as the full map.
+        yz=slices[1:]
+        key=(self._mapping_key(),tuple((s.start,s.stop) for s in yz))
+        cache=self.frame_cache.setdefault('slot_bands',OrderedDict())
+        if key not in cache:
+            band=np.zeros((self.shape[0],*(s.stop-s.start for s in yz)),bool)
+            for frame in self._frames():
+                points=deproject(frame)[frame.valid_depth]
+                points=points[np.all((points>=self.lower)&(points<self.upper),axis=1)]
+                cells=np.floor((points-self.lower)/self.resolution).astype(int)
+                selected=((cells[:,1]>=yz[0].start)&(cells[:,1]<yz[0].stop)&
+                          (cells[:,2]>=yz[1].start)&(cells[:,2]<yz[1].stop))
+                indices=cells[selected][~self._modelled(points[selected])]
+                band[indices[:,0],indices[:,1]-yz[0].start,indices[:,2]-yz[1].start]=True
+            cache[key]=band
+            if len(cache)>8:cache.popitem(last=False)
+        if cache[key][slices[0]].any():return 'OBSERVED_PATH_OBSTACLE'
+        return self._box_free_space(centre,size,slices,lo)
 
     def check_oriented_box(self, centre, size, rotation, check_unknown=True):
         """Query a known cuboid, excluding its enclosing AABB's empty corners.
@@ -575,7 +607,7 @@ class ObservedWorkspace:
         objects=[o.track_id for o in self.scene.objects if
                  np.linalg.norm(np.asarray(o.position_m[:2])-xy)<.09
                  and o.position_m[2]-np.linalg.norm(o.size_m)/2-o.uncertainty_m <= centre[2]+size[2]/2]
-        reason='OBSERVED_SLOT_OCCUPIED' if objects else self.check_box(centre,size)
+        reason='OBSERVED_SLOT_OCCUPIED' if objects else self._slot_box(centre,size)
         return dict(xy=list(xy),free=reason is None,reason=reason,observed_objects=objects,
                     observation_time_s=self.packet.observation_time_s)
 
