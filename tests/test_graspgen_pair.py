@@ -260,6 +260,16 @@ class PairTests(unittest.TestCase):
         self.assertAlmostEqual(samples[:,0,0].max(),.21)
         self.assertAlmostEqual(samples[:,1,0].max(),.16)
 
+    def test_arm_gap_to_unselected_carton_uses_one_mm_only_for_table_sources(self):
+        from workstation.diagnostics.graspgen_pair_place import check_arm_carton_gap, PairClearanceError
+        for name,limit in [('unselected_visual_0003',.001),('released_box',.008),('parked_box',.008)]:
+            with self.subTest(name=name):
+                check_arm_carton_gap(limit,name,'panda_left',4,2)
+                with self.assertRaises(PairClearanceError) as stopped:
+                    check_arm_carton_gap(np.nextafter(limit,0.),name,'panda_left',4,2)
+                self.assertEqual(stopped.exception.details['required_m'],limit)
+        check_arm_carton_gap(.007177019742742867,'unselected_visual_0003','panda_left',4,2)
+
     def test_deferred_destinations_keep_pending_approach_backups_but_not_known_rejections(self):
         from workstation.diagnostics.graspgen_pair import approach_alternatives
         from dataclasses import replace

@@ -20,6 +20,13 @@ class PairClearanceError(RuntimeError):
         self.details=dict(parts=parts,clearance_m=float(clearance),required_m=required)
 
 
+def check_arm_carton_gap(gap, obstacle_name, arm, link, sphere):
+    required = .001 if obstacle_name.startswith('unselected_') else .008
+    if gap < required:
+        raise PairClearanceError('PARKED_CARTON_CLEARANCE',
+            [dict(arm=arm,link_index=link,sphere_index=sphere),dict(obstacle=obstacle_name)],gap,required)
+
+
 def write_phase_checkpoint(env,report):
     """Atomic crash breadcrumb; full traces remain in the final attempt report."""
     env._write_json('pair_phase_checkpoint.json',{key:report[key] for key in (
@@ -467,9 +474,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 if payload_gap<=.008 and not carton_contact_allowed(box,keepout):
                     raise PairClearanceError('PARKED_CARTON_CLEARANCE', [payload,dict(obstacle=keepout.name)],
                                              payload_gap,.008)
-                if robot_gap<.008:
-                    raise PairClearanceError('PARKED_CARTON_CLEARANCE',
-                        [dict(arm=arm,link_index=link,sphere_index=sphere),dict(obstacle=keepout.name)],robot_gap,.008)
+                check_arm_carton_gap(robot_gap,keepout.name,arm,link,sphere)
             distances=sphere_box_clearances(geometry[other],box)
             blocked=np.flatnonzero(distances<.002)
             if len(blocked):
