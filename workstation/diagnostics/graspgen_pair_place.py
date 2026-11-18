@@ -733,6 +733,10 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         nonlocal next_approach_check
         report['last_phase'] = phase
         label=label or phase
+        if forecast is not None and phase=='approach' and not dry_run:
+            # No descent has been issued. IK and destination checks share the
+            # existing empty-arm replanning boundary until the command commits.
+            report['next_action']='REPLAN'
         report['phase_checkpoint']=dict(phase=phase,event='planning',dry_run=dry_run)
         write_phase_checkpoint(env,report)
         print('[pair-phase] '+phase+' planning',flush=True)
@@ -849,7 +853,6 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 if reason:raise RuntimeError('PAIR_SEQUENTIAL_'+reason)
             carried_clearance(left,right)
         if phase=='approach' and forecast is not None:
-            report['next_action']='REPLAN'
             gate_start=perf_counter()
             forecast.confirm(robot,scene,objects,slots,selected,report['deferred_destination'])
             report['deferred_destination']['current_frame_checks_s']=perf_counter()-gate_start
