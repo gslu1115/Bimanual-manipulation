@@ -1,0 +1,813 @@
+{
+  "date": "2026-11-19",
+  "versions": {
+    "single_arm_first": "c808e4e",
+    "bilateral_preference": "701c215"
+  },
+  "successful_run_round2": {
+    "close_rejection_rows": 36,
+    "distinct_close_pairs": 12,
+    "pair_selection_inclusive_s": 30.567239347379655,
+    "path_validation_inclusive_s": 23.735725530423224
+  },
+  "planning_replay": {
+    "one_arm_first": {
+      "source": "pair-local15i/round_1/attempt_1",
+      "time_s": 3.4249999999999905,
+      "frames": {
+        "scene_camera": 24,
+        "left_wrist_camera": 24,
+        "right_wrist_camera": 24
+      },
+      "inputs": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0004",
+          "score": 0.8920369148254395,
+          "slot": [
+            0.0,
+            -0.4
+          ],
+          "pregrasp": [
+            -0.6779581938197655,
+            -1.0990179729737042,
+            1.739181116426529,
+            -2.106437866156871,
+            1.2366990662442086,
+            1.9894477722812827,
+            0.3026090067544796
+          ],
+          "encoder_start_error": 0.0,
+          "original_shift_m": 9.123945538636703e-07,
+          "replay_shift_m": 9.123945538636703e-07,
+          "object_m": [
+            0.1700569987297058,
+            0.03494279179722071,
+            0.7825000415731037
+          ],
+          "goal_tcp_m": [
+            -0.00023266280488416587,
+            -0.40193577207967196,
+            0.7997955722799458
+          ],
+          "lift_q": [
+            -0.7067558651022702,
+            -1.1064965194985905,
+            1.7458309159416188,
+            -2.0790250507819628,
+            1.2392551617204848,
+            1.9841968057599488,
+            0.30004482261058163
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0002",
+          "score": 0.8733053803443909,
+          "slot": [
+            0.2,
+            -0.4
+          ],
+          "pregrasp": [
+            0.17594674930996876,
+            -0.07428459188861081,
+            -0.5275769317680135,
+            -2.667207173078504,
+            -0.05910669823145221,
+            2.6078795457566626,
+            -0.6532549879032827
+          ],
+          "encoder_start_error": 0.0,
+          "original_shift_m": 1.2733005337480853e-07,
+          "replay_shift_m": 1.2733005337480853e-07,
+          "object_m": [
+            0.21999481320381165,
+            -0.15001121163368225,
+            0.7849999302629193
+          ],
+          "goal_tcp_m": [
+            0.19997384294229348,
+            -0.3960462941576533,
+            0.8098465043302814
+          ],
+          "lift_q": [
+            0.164808544574686,
+            -0.07082107471520759,
+            -0.5125725435302995,
+            -2.6647893672135465,
+            -0.04924351599660509,
+            2.60883437256956,
+            -0.6584619892548449
+          ]
+        }
+      ],
+      "gate": {
+        "default_gap_m": 0.00434659968158127,
+        "required_m": 0.008,
+        "alternatives_checked": 1,
+        "selected_gap_m": 0.017320943749439932,
+        "outward_arms": [
+          "panda_left"
+        ],
+        "pregrasp_elbow_outward_m": [
+          0.025885837557752922,
+          0.0
+        ]
+      },
+      "pregrasp": [
+        {
+          "detail": {
+            "default_gap_m": 0.00434659968158127,
+            "required_m": 0.008,
+            "alternatives_checked": 1,
+            "selected_gap_m": 0.017320943749439932,
+            "outward_arms": [
+              "panda_left"
+            ],
+            "pregrasp_elbow_outward_m": [
+              0.025885837557752922,
+              0.0
+            ]
+          },
+          "paired_pregrasp_reason": null,
+          "paired_pregrasp_min_m": 0.017942663819108556
+        }
+      ],
+      "prediction": {
+        "pregrasp_plan_wait_s": 2.9262610021978617,
+        "background_wall_s": 2.950903214979917,
+        "full_plans": {
+          "started": 14,
+          "passed": 0
+        },
+        "result": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY"
+      },
+      "strategy": null,
+      "orient_first_veto": {
+        "sample_index": 142,
+        "parts": [
+          {
+            "arm": "panda_left",
+            "link_index": 8,
+            "sphere_index": 42
+          },
+          {
+            "arm": "panda_right",
+            "link_index": 8,
+            "sphere_index": 37
+          }
+        ],
+        "clearance_m": 0.007692970535379564,
+        "required_m": 0.008
+      },
+      "scope": "planning reconstruction; zero grasp or placing commands"
+    },
+    "bilateral": {
+      "source": "pair-local15i/round_1/attempt_1",
+      "time_s": 3.4249999999999905,
+      "frames": {
+        "scene_camera": 24,
+        "left_wrist_camera": 24,
+        "right_wrist_camera": 24
+      },
+      "inputs": [
+        {
+          "arm": "panda_left",
+          "target": "visual_0004",
+          "score": 0.8920369148254395,
+          "slot": [
+            0.0,
+            -0.4
+          ],
+          "pregrasp": [
+            -0.6779581938197655,
+            -1.0990179729737042,
+            1.739181116426529,
+            -2.106437866156871,
+            1.2366990662442086,
+            1.9894477722812827,
+            0.3026090067544796
+          ],
+          "encoder_start_error": 0.0,
+          "original_shift_m": 9.123945538636703e-07,
+          "replay_shift_m": 9.123945538636703e-07,
+          "object_m": [
+            0.1700569987297058,
+            0.03494279179722071,
+            0.7825000415731037
+          ],
+          "goal_tcp_m": [
+            -0.00023266280488416587,
+            -0.40193577207967196,
+            0.7997955722799458
+          ],
+          "lift_q": [
+            -0.7067558651022702,
+            -1.1064965194985905,
+            1.7458309159416188,
+            -2.0790250507819628,
+            1.2392551617204848,
+            1.9841968057599488,
+            0.30004482261058163
+          ]
+        },
+        {
+          "arm": "panda_right",
+          "target": "visual_0003",
+          "score": 0.8733053803443909,
+          "slot": [
+            0.2,
+            -0.4
+          ],
+          "pregrasp": [
+            0.17594674930996876,
+            -0.07428459188861081,
+            -0.5275769317680135,
+            -2.667207173078504,
+            -0.05910669823145221,
+            2.6078795457566626,
+            -0.6532549879032827
+          ],
+          "encoder_start_error": 0.0,
+          "original_shift_m": 1.2733005337480853e-07,
+          "replay_shift_m": 1.2733005337480853e-07,
+          "object_m": [
+            0.21999481320381165,
+            -0.15001121163368225,
+            0.7849999302629193
+          ],
+          "goal_tcp_m": [
+            0.19997384294229348,
+            -0.3960462941576533,
+            0.8098465043302814
+          ],
+          "lift_q": [
+            0.164808544574686,
+            -0.07082107471520759,
+            -0.5125725435302995,
+            -2.6647893672135465,
+            -0.04924351599660509,
+            2.60883437256956,
+            -0.6584619892548449
+          ]
+        }
+      ],
+      "gate": {
+        "default_gap_m": 0.00434659968158127,
+        "required_m": 0.008,
+        "alternatives_checked": 15,
+        "default_elbow_offsets_m": [
+          -0.08690835649379888,
+          -0.0024153563275955414
+        ],
+        "selected_gap_m": 0.02399546070615108,
+        "selected_elbow_offsets_m": [
+          -0.027527158540242375,
+          0.003884933173794458
+        ],
+        "outward_arms": [
+          "panda_left",
+          "panda_right"
+        ],
+        "pregrasp_elbow_outward_m": [
+          0.05970356429230786,
+          0.006801203609757056
+        ]
+      },
+      "pregrasp": [
+        {
+          "detail": {
+            "default_gap_m": 0.00434659968158127,
+            "required_m": 0.008,
+            "alternatives_checked": 15,
+            "default_elbow_offsets_m": [
+              -0.08690835649379888,
+              -0.0024153563275955414
+            ],
+            "selected_gap_m": 0.02399546070615108,
+            "selected_elbow_offsets_m": [
+              -0.027527158540242375,
+              0.003884933173794458
+            ],
+            "outward_arms": [
+              "panda_left",
+              "panda_right"
+            ],
+            "pregrasp_elbow_outward_m": [
+              0.05970356429230786,
+              0.006801203609757056
+            ]
+          },
+          "paired_pregrasp_reason": null,
+          "paired_pregrasp_min_m": 0.030691636702345204
+        }
+      ],
+      "prediction": {
+        "pregrasp_plan_wait_s": 3.354111596941948,
+        "background_wall_s": 3.3549774400889874,
+        "full_plans": {
+          "started": 4,
+          "passed": 2
+        }
+      },
+      "strategy": "sequential-end",
+      "orient_first_veto": {
+        "sample_index": 142,
+        "parts": [
+          {
+            "arm": "panda_left",
+            "link_index": 8,
+            "sphere_index": 42
+          },
+          {
+            "arm": "panda_right",
+            "link_index": 8,
+            "sphere_index": 37
+          }
+        ],
+        "clearance_m": 0.00769831154541847,
+        "required_m": 0.008
+      },
+      "scope": "planning reconstruction; zero grasp or placing commands"
+    }
+  },
+  "prewarm_s": {
+    "pair-lift16b": 1.525805648881942,
+    "pair-lift16c": 1.6096848049201071,
+    "pair-lift16d": 1.7324789576232433,
+    "pair-lift16e": 1.619822233915329
+  },
+  "runs": [
+    {
+      "tag": "pair-local15i",
+      "inputs": {
+        "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+        "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+        "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+      },
+      "rounds": [
+        {
+          "round": "round_1",
+          "first_motion_s": 11.642588074319065,
+          "first_descent_s": 58.0956193879573,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": false,
+              "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+              "phase": "pregrasp_recheck",
+              "first_motion_s": 11.642588074319065,
+              "down_s": null,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8920369148254395,
+                0.8733053803443909
+              ],
+              "common_lift": null,
+              "rejected_close_combinations": 0,
+              "strategy": null
+            },
+            {
+              "attempt": "attempt_2",
+              "success": true,
+              "failure": null,
+              "phase": "verify",
+              "first_motion_s": 11.970469951163977,
+              "down_s": 32.607588110957295,
+              "offset_estimate_s": 25.488031277,
+              "scores": [
+                0.6095855832099915,
+                0.8427262306213379
+              ],
+              "common_lift": null,
+              "rejected_close_combinations": 0,
+              "strategy": "orient-first"
+            }
+          ]
+        },
+        {
+          "round": "round_2",
+          "first_motion_s": 13.54657625919208,
+          "first_descent_s": 32.26861492311582,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": true,
+              "failure": null,
+              "phase": "verify",
+              "first_motion_s": 13.54657625919208,
+              "down_s": 32.26861492311582,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.7895839214324951,
+                0.7930660247802734
+              ],
+              "common_lift": null,
+              "rejected_close_combinations": 0,
+              "strategy": "orient-first"
+            }
+          ]
+        }
+      ],
+      "actual_retries": 1,
+      "success": true,
+      "placed": 4,
+      "total_wall_s": 246.4727808921598,
+      "failure": null,
+      "model_requests": 30,
+      "gpu": {
+        "index": 2,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+        "pci": "0000:1d:00.0",
+        "free_mib": 19227,
+        "used_mib": 4855,
+        "utilization_pct": 70
+      },
+      "curobo": {
+        "batches": 18,
+        "samples": 3183,
+        "round_trip_s": 1.905398412141949
+      }
+    },
+    {
+      "tag": "pair-lift16",
+      "inputs": {
+        "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+        "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+        "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+      },
+      "rounds": [
+        {
+          "round": "round_1",
+          "first_motion_s": null,
+          "first_descent_s": null,
+          "attempts": []
+        }
+      ],
+      "actual_retries": 0,
+      "success": false,
+      "placed": 0,
+      "total_wall_s": 18.96929569914937,
+      "failure": "HTTP Error 400: Bad Request",
+      "model_requests": 0,
+      "gpu": {
+        "index": 1,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+        "pci": "0000:1c:00.0",
+        "free_mib": 24078,
+        "used_mib": 3,
+        "utilization_pct": 0
+      },
+      "curobo": {
+        "batches": 0,
+        "samples": 0,
+        "round_trip_s": 0.0
+      }
+    },
+    {
+      "tag": "pair-lift16b",
+      "inputs": {
+        "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+        "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+        "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+      },
+      "rounds": [
+        {
+          "round": "round_1",
+          "first_motion_s": 15.186052424833179,
+          "first_descent_s": 30.04267097497359,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": true,
+              "failure": null,
+              "phase": "verify",
+              "first_motion_s": 15.186052424833179,
+              "down_s": 30.04267097497359,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8528971672058105,
+                0.9365614652633667
+              ],
+              "common_lift": {
+                "default_gap_m": 0.3099525580771849,
+                "required_m": 0.008,
+                "alternatives_checked": 0,
+                "selected_gap_m": 0.3099525580771849,
+                "outward_arms": []
+              },
+              "rejected_close_combinations": 6,
+              "strategy": "orient-first"
+            }
+          ]
+        },
+        {
+          "round": "round_2",
+          "first_motion_s": 7.042436082847416,
+          "first_descent_s": 24.75819332478568,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": true,
+              "failure": null,
+              "phase": "verify",
+              "first_motion_s": 7.042436082847416,
+              "down_s": 24.75819332478568,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8285313248634338,
+                0.8719372153282166
+              ],
+              "common_lift": {
+                "default_gap_m": 0.19798993078477595,
+                "required_m": 0.008,
+                "alternatives_checked": 0,
+                "selected_gap_m": 0.19798993078477595,
+                "outward_arms": []
+              },
+              "rejected_close_combinations": 0,
+              "strategy": "orient-first"
+            }
+          ]
+        }
+      ],
+      "actual_retries": 0,
+      "success": true,
+      "placed": 4,
+      "total_wall_s": 207.8938427013345,
+      "failure": null,
+      "model_requests": 18,
+      "gpu": {
+        "index": 1,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+        "pci": "0000:1c:00.0",
+        "free_mib": 24081,
+        "used_mib": 1,
+        "utilization_pct": 0
+      },
+      "curobo": {
+        "batches": 4,
+        "samples": 554,
+        "round_trip_s": 0.026814162731170654
+      }
+    },
+    {
+      "tag": "pair-lift16c",
+      "inputs": {
+        "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+        "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+        "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+      },
+      "rounds": [
+        {
+          "round": "round_1",
+          "first_motion_s": 10.267907087225467,
+          "first_descent_s": 24.963640603236854,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": false,
+              "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+              "phase": "initial_lift",
+              "first_motion_s": 10.267907087225467,
+              "down_s": 24.963640603236854,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8601901531219482,
+                0.9083948135375977
+              ],
+              "common_lift": {
+                "default_gap_m": 0.2828846715433297,
+                "required_m": 0.008,
+                "alternatives_checked": 0,
+                "default_elbow_offsets_m": [
+                  -0.0006869595500823,
+                  -0.001793418044515216
+                ],
+                "selected_gap_m": 0.2828846715433297,
+                "outward_arms": [],
+                "selected_elbow_offsets_m": [
+                  -0.0006869595500823,
+                  -0.001793418044515216
+                ]
+              },
+              "rejected_close_combinations": 0,
+              "strategy": null
+            }
+          ]
+        }
+      ],
+      "actual_retries": 0,
+      "success": false,
+      "placed": 0,
+      "total_wall_s": 38.30961524602026,
+      "failure": "PAIR_HELD_SURFACE_UNCONFIRMED:panda_right",
+      "model_requests": 12,
+      "gpu": {
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+        "pci": "0000:1b:00.0",
+        "free_mib": 24081,
+        "used_mib": 0,
+        "utilization_pct": 0
+      },
+      "curobo": {
+        "batches": 2,
+        "samples": 254,
+        "round_trip_s": 0.013560184743255377
+      }
+    },
+    {
+      "tag": "pair-lift16d",
+      "inputs": {
+        "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+        "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+        "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+      },
+      "rounds": [
+        {
+          "round": "round_1",
+          "first_motion_s": 9.656036495231092,
+          "first_descent_s": null,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": false,
+              "failure": "NO_CLEAR_PAIRED_PLACEMENT_STRATEGY",
+              "phase": "pregrasp_recheck",
+              "first_motion_s": 9.656036495231092,
+              "down_s": null,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8878330588340759,
+                0.9192185997962952
+              ],
+              "common_lift": {
+                "default_gap_m": 0.013882046258078928,
+                "required_m": 0.008,
+                "alternatives_checked": 0,
+                "default_elbow_offsets_m": [
+                  -0.04010993358038065,
+                  -0.0005116692355604524
+                ],
+                "selected_gap_m": 0.013882046258078928,
+                "outward_arms": [],
+                "selected_elbow_offsets_m": [
+                  -0.04010993358038065,
+                  -0.0005116692355604524
+                ]
+              },
+              "rejected_close_combinations": 0,
+              "strategy": null
+            },
+            {
+              "attempt": "attempt_2",
+              "success": false,
+              "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+              "phase": null,
+              "first_motion_s": null,
+              "down_s": null,
+              "offset_estimate_s": 37.764629385,
+              "scores": [],
+              "common_lift": null,
+              "rejected_close_combinations": 0,
+              "strategy": null
+            }
+          ]
+        }
+      ],
+      "actual_retries": 1,
+      "success": false,
+      "placed": 0,
+      "total_wall_s": 52.251089110039175,
+      "failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "model_requests": 36,
+      "gpu": {
+        "index": 2,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+        "pci": "0000:1d:00.0",
+        "free_mib": 19083,
+        "used_mib": 4999,
+        "utilization_pct": 0
+      },
+      "curobo": {
+        "batches": 2,
+        "samples": 398,
+        "round_trip_s": 0.014767150394618511
+      }
+    },
+    {
+      "tag": "pair-lift16e",
+      "inputs": {
+        "config_used": "1db567dde330873aef756723fca73af365f5b16f30ad4d038f725559af863a4e",
+        "release_states": "49fdc296e4e0803a0f9e5f53ef6ab2b0b3bd30626eca358b123dcf189e3906ee",
+        "camera_rig": "d17248ed7fab9bb7c15ab94693a3fb14d98930945064cc35f5779c248af95304"
+      },
+      "rounds": [
+        {
+          "round": "round_1",
+          "first_motion_s": 9.331982785835862,
+          "first_descent_s": 23.38486516615376,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": true,
+              "failure": null,
+              "phase": "verify",
+              "first_motion_s": 9.331982785835862,
+              "down_s": 23.38486516615376,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8713955879211426,
+                0.8994415998458862
+              ],
+              "common_lift": {
+                "default_gap_m": 0.27268735152319357,
+                "required_m": 0.008,
+                "alternatives_checked": 0,
+                "default_elbow_offsets_m": [
+                  -0.00121648141932168,
+                  0.0005214760127537632
+                ],
+                "selected_gap_m": 0.27268735152319357,
+                "outward_arms": [],
+                "selected_elbow_offsets_m": [
+                  -0.00121648141932168,
+                  0.0005214760127537632
+                ]
+              },
+              "rejected_close_combinations": 0,
+              "strategy": "orient-first"
+            }
+          ]
+        },
+        {
+          "round": "round_2",
+          "first_motion_s": 35.887727986089885,
+          "first_descent_s": 52.93341719312593,
+          "attempts": [
+            {
+              "attempt": "attempt_1",
+              "success": true,
+              "failure": null,
+              "phase": "verify",
+              "first_motion_s": 35.887727986089885,
+              "down_s": 52.93341719312593,
+              "offset_estimate_s": 0.0,
+              "scores": [
+                0.8373924493789673,
+                0.7296120524406433
+              ],
+              "common_lift": {
+                "default_gap_m": 0.1777813093293334,
+                "required_m": 0.008,
+                "alternatives_checked": 0,
+                "default_elbow_offsets_m": [
+                  -0.0508480882758226,
+                  0.23837836022444658
+                ],
+                "selected_gap_m": 0.1777813093293334,
+                "outward_arms": [],
+                "selected_elbow_offsets_m": [
+                  -0.0508480882758226,
+                  0.23837836022444658
+                ]
+              },
+              "rejected_close_combinations": 36,
+              "strategy": "orient-first"
+            }
+          ]
+        }
+      ],
+      "actual_retries": 0,
+      "success": true,
+      "placed": 4,
+      "total_wall_s": 251.00301538221538,
+      "failure": null,
+      "model_requests": 18,
+      "gpu": {
+        "index": 2,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+        "pci": "0000:1d:00.0",
+        "free_mib": 18884,
+        "used_mib": 5198,
+        "utilization_pct": 0
+      },
+      "curobo": {
+        "batches": 61,
+        "samples": 8977,
+        "round_trip_s": 0.3294486394152045
+      }
+    }
+  ],
+  "units": "seconds for wall clock, metres for geometry",
+  "timing": "Selection to first movement or actual descent; includes any earlier attempt, using elapsed time between saved RGB-D source packets for retries. Model/proxy start and queue time excluded.",
+  "startup_failure": "pair-lift16: HTTP 400 from cuRobo proxy before motion; application did not retain the response body.",
+  "comparison": "All full tasks generated fresh model requests and IK. Config, camera rig and released scene checked equal. Each task used one RTX 4090; cards, load and grasp sampling varied."
+}
