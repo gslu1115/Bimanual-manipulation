@@ -1,0 +1,263 @@
+{
+  "scope": "seed 6, identical release states/config/camera rig, fresh GraspGen requests; independent runs",
+  "first_launch": {
+    "gpu": 4,
+    "result": "GraspGen CUDA OOM during inference, 1.49 GiB requested with 383.75 MiB free",
+    "archive": "pair-score13-initial.tgz"
+  },
+  "source": "01e543d",
+  "baseline": {
+    "archive": "pair-perf-v12c-20261118-full.tgz",
+    "sha256": "8ef8ab958799527bfd6af7dcef0e597a80e9f28aa0c789c59666343f081f06f6",
+    "device": 7,
+    "success": true,
+    "failure": null,
+    "placed": 4,
+    "wall_s": 305.21214998699725,
+    "attempts": [
+      {
+        "attempt": "round_1/attempt_1",
+        "success": true,
+        "reason": null,
+        "last_phase": "verify",
+        "unselected_clearances": {
+          "panda_left": {
+            "carton_axis_gap_m": 0.05992740643415112,
+            "arm_surface_gap_m": 0.017127720219957718
+          },
+          "panda_right": {
+            "carton_axis_gap_m": 0.06244528822771142,
+            "arm_surface_gap_m": 0.040116215997488096
+          }
+        },
+        "first_motion_s": 24.604252344928682,
+        "selection_to_descent_s": 38.315163613297045,
+        "pregrasp_wait_s": 1.7634127289056778e-05,
+        "selected": [
+          [
+            "visual_0001",
+            "panda_left",
+            0.8754168748855591
+          ],
+          [
+            "visual_0003",
+            "panda_right",
+            0.6938822269439697
+          ]
+        ],
+        "selection_policy": null,
+        "model_requests": [
+          "9aec199634d84960b49180f1dc0cace8",
+          "57c63743826c40a58a9da482f2be2e71",
+          "3483faf3368349178027a0d882496313",
+          "a7abab200b6d40b79ee745f7632c7bad",
+          "5a6ed35dc5bb4c1eab5dd31aa69bac1c",
+          "3d76f9a827194f77831a912793c748c2",
+          "74ca34415cbd4401a21963464f69c04b",
+          "fb43a942854741468bdd4a696f60d27d",
+          "f38e7e52a5e8466884896fc9b2b95c73",
+          "9becce440aba473e96a7237356cfebfe",
+          "4e0afce5166b4c0489d3a2f073e5e3a6",
+          "2fda1c03ed354e80a249e884ae6e9796"
+        ],
+        "destination_evaluation": {
+          "mode": "ranked pick and slot endpoint checks",
+          "ranked_rows": 96,
+          "prefix_rows": 5,
+          "completed_rows": 2,
+          "feasible_completed_rows": 2,
+          "skipped_destination_rows": 94,
+          "failures": []
+        },
+        "pre_motion": {
+          "path_validation": {
+            "calls": 187,
+            "failed_calls": 0,
+            "inclusive_s": 7.046312864404172,
+            "exclusive_s": 0.004402044229209423
+          },
+          "pair_selection": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 13.57869243202731,
+            "exclusive_s": 10.416249701753259
+          },
+          "model_request": {
+            "calls": 12,
+            "failed_calls": 0,
+            "inclusive_s": 3.3217995199374855,
+            "exclusive_s": 3.3217995199374855
+          }
+        },
+        "forecasts": {
+          "started": 2,
+          "passed": 2
+        },
+        "transfer_strategy": "orient-first"
+      },
+      {
+        "attempt": "round_2/attempt_1",
+        "success": true,
+        "reason": null,
+        "last_phase": "verify",
+        "unselected_clearances": null,
+        "first_motion_s": 14.706119263079017,
+        "selection_to_descent_s": 27.399750302080065,
+        "pregrasp_wait_s": 1.7183808591216803,
+        "selected": [
+          [
+            "visual_0002",
+            "panda_left",
+            0.7610177397727966
+          ],
+          [
+            "visual_0004",
+            "panda_right",
+            0.575831949710846
+          ]
+        ],
+        "selection_policy": null,
+        "model_requests": [
+          "1a5c49e4f1b04b5c85775c967d2a5373",
+          "440aa3cdebfb4adb9eb4c7ca272cc451",
+          "19c918b855234523a568dde99e9d2141",
+          "5d7c332aeb6f4076bcc76ae2beea5a2c",
+          "0c536b2e902d49d5a6c65d67068897ef",
+          "9a73da3f1eb440f786e02526b58cddae"
+        ],
+        "destination_evaluation": {
+          "mode": "ranked pick and slot endpoint checks",
+          "ranked_rows": 48,
+          "prefix_rows": 14,
+          "completed_rows": 3,
+          "feasible_completed_rows": 2,
+          "skipped_destination_rows": 45,
+          "failures": [
+            {
+              "candidate_id": "0c536b2e902d49d5a6c65d67068897ef:138:panda_left",
+              "slot_xy": [
+                0.2,
+                -0.4
+              ],
+              "reasons": [
+                "ROBOT_UNREACHABLE"
+              ]
+            }
+          ]
+        },
+        "pre_motion": {
+          "path_validation": {
+            "calls": 203,
+            "failed_calls": 4,
+            "inclusive_s": 8.380656013265252,
+            "exclusive_s": 0.004771745298057795
+          },
+          "pair_selection": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 8.226024023257196,
+            "exclusive_s": 0.8847738024778664
+          },
+          "model_request": {
+            "calls": 6,
+            "failed_calls": 0,
+            "inclusive_s": 1.2907897043041885,
+            "exclusive_s": 1.2907897043041885
+          }
+        },
+        "forecasts": {
+          "started": 2,
+          "passed": 2
+        },
+        "transfer_strategy": "sequential-end"
+      }
+    ]
+  },
+  "test": {
+    "archive": "pair-score13b.tgz",
+    "sha256": "a1e9c5ad9d25aaa92b12ae76094ab82b146f90ab3ea31f4dec9df462eb9df04f",
+    "device": 1,
+    "success": false,
+    "failure": "PARKED_CARTON_CLEARANCE",
+    "placed": 0,
+    "wall_s": 34.863254461903125,
+    "attempts": [
+      {
+        "attempt": "round_1/attempt_1",
+        "success": false,
+        "reason": "PARKED_CARTON_CLEARANCE",
+        "last_phase": "initial_lift",
+        "unselected_clearances": {
+          "panda_left": {
+            "carton_axis_gap_m": 0.05929459765138412,
+            "arm_surface_gap_m": 0.007177019742742867
+          }
+        },
+        "first_motion_s": 9.323879613075405,
+        "selection_to_descent_s": 23.225731488782912,
+        "pregrasp_wait_s": 2.8633978217840195e-05,
+        "selected": [
+          [
+            "visual_0001",
+            "panda_left",
+            0.8737092018127441
+          ],
+          [
+            "visual_0002",
+            "panda_right",
+            0.9194141626358032
+          ]
+        ],
+        "selection_policy": "failure history, GraspGen score sum, weaker score, lane distance",
+        "model_requests": [
+          "fd6f2ce3684a4e8f9184362dbcd1e37b",
+          "2bc4b5f9b62943e893ce2f9075725e3e",
+          "6842c3a7ee014e72b79092bd48b0b5e7",
+          "3d037718faa940f6916822170a7d9899",
+          "7530010fffae4e56b405ba0d7c5f5c66",
+          "03b4bceb109c40d99e6afb687a69ec70",
+          "33281cdaf7934c0f8f0e87582126ca45",
+          "7846c8cf71794cf79333390c15638985",
+          "09d55320fe784edd997e51441d152873",
+          "5fc81b8d712942b68a1ce6d8102980cc",
+          "f7921797195345fcb2b11e324029ebd0",
+          "937dde5ecab148cfb2509f4e73ea341a"
+        ],
+        "destination_evaluation": {
+          "mode": "ranked pick and slot endpoint checks",
+          "ranked_rows": 96,
+          "prefix_rows": 0,
+          "completed_rows": 2,
+          "feasible_completed_rows": 2,
+          "skipped_destination_rows": 94,
+          "failures": []
+        },
+        "pre_motion": {
+          "path_validation": {
+            "calls": 78,
+            "failed_calls": 0,
+            "inclusive_s": 2.410684956703335,
+            "exclusive_s": 0.001946849748492241
+          },
+          "pair_selection": {
+            "calls": 2,
+            "failed_calls": 0,
+            "inclusive_s": 1.696670304518193,
+            "exclusive_s": 0.10269968817010522
+          },
+          "model_request": {
+            "calls": 12,
+            "failed_calls": 0,
+            "inclusive_s": 3.3583864900283515,
+            "exclusive_s": 3.3583864900283515
+          }
+        },
+        "forecasts": {
+          "started": 2,
+          "passed": 2
+        },
+        "transfer_strategy": null
+      }
+    ]
+  }
+}
