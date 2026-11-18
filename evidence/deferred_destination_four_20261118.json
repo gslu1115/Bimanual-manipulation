@@ -1,0 +1,1848 @@
+{
+  "date": "2026-11-18",
+  "scope": "Separate fresh seed-6 simulations. Same scene and release, independent GraspGen draws. Wall clock excludes startup. No saved grasp or IK seed used.",
+  "runs": {
+    "v11": {
+      "tag": "v11",
+      "source": {
+        "success": true,
+        "source_commit": "dc383c75949ddf9585df83a5bede075ba1cd8ce4",
+        "files": 347,
+        "archive_sha256": "c0ff7cb4b1258520d9ee28c7e4cffefb1a3ee3c6250c8336948f982ed7989f73"
+      },
+      "archive": {
+        "archive": "pair-perf-v11-20261118-full.tgz",
+        "bytes": 5635327,
+        "sha256": "50b064a501cfd2bbc302deddcbfe96f40fb355bf1495f0bd9a85ed8b016f3d6d"
+      },
+      "device": {
+        "selected": {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+          "pci": "0000:1b:00.0",
+          "free_mib": 8284,
+          "used_mib": 15798,
+          "utilization_pct": 16
+        },
+        "ranking": [
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8284,
+            "used_mib": 15798,
+            "utilization_pct": 16
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 8255,
+            "used_mib": 15827,
+            "utilization_pct": 8
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 7657,
+            "used_mib": 16425,
+            "utilization_pct": 20
+          },
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 7623,
+            "used_mib": 16459,
+            "utilization_pct": 20
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6371,
+            "used_mib": 17711,
+            "utilization_pct": 18
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6371,
+            "used_mib": 17711,
+            "utilization_pct": 21
+          },
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 6331,
+            "used_mib": 17751,
+            "utilization_pct": 10
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 6331,
+            "used_mib": 17751,
+            "utilization_pct": 19
+          }
+        ],
+        "time_utc": "2026-11-18T11:36:23.440176+00:00"
+      },
+      "task_success": true,
+      "task_failure": null,
+      "placements": 4,
+      "clear_batches": 2,
+      "wall_s": 246.98314322018996,
+      "action_wall_s": 165.40613564755768,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "6cc4f786f1784404ba4f7c8a482969b1",
+        "825ae0ad1b0544909202385cfff7abb9",
+        "5d3e29df793b412bab164d53e2232710",
+        "ed2649247f704d9d9aa1f1a935c4e7b7",
+        "05fb44064b514fbd833ef610a4409cc2",
+        "053bff600d7544deaf25f2fa7c814743",
+        "f354854d96cc43aab7a99c24888853e3",
+        "6fae00fda5c84fb0a1e97a911092def0",
+        "4ce80dfa745e471fb35285674926a88e",
+        "78ce502a270e45e78090ac61cb7cc1c8",
+        "f770e431a1e145a2961913cf296aa639",
+        "995519d2d5404910a8e2defc38d3fc77",
+        "c53e034da3324dd7ba70d30a24313c4d",
+        "053bd80855ba40adad3f9522a24948dd",
+        "4f38087277284c90811486d640dd3aea",
+        "9d78aa977b5c4f9595adbf34b8d5888d",
+        "7fb70cd3f3cf474ba7a62eb885f845fe",
+        "6b07dfea54d2401093c6b80ad0d10f7e"
+      ],
+      "responses": 18,
+      "process_exit": "6 0",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 28.387414819095284,
+          "descent_s": null,
+          "historical_descent_lower_bound_s": 35.56242716219276,
+          "pregrasp_execution_s": 6.526722283102572,
+          "pregrasp_future_wait_s": 0,
+          "pregrasp_to_descent_s": null,
+          "full_plan_counts": {
+            "started": 4,
+            "passed": 4
+          },
+          "future": null,
+          "pre_motion_counts": {
+            "full_forecasts_started": 4,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 4,
+            "full_slot_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "6cc4f786f1784404ba4f7c8a482969b1:134:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0002",
+              "candidate": "05fb44064b514fbd833ef610a4409cc2:96:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 21.026401177048683,
+          "descent_s": null,
+          "historical_descent_lower_bound_s": 28.265705555211753,
+          "pregrasp_execution_s": 5.604297169949859,
+          "pregrasp_future_wait_s": 0,
+          "pregrasp_to_descent_s": null,
+          "full_plan_counts": {
+            "started": 5,
+            "passed": 4
+          },
+          "future": null,
+          "pre_motion_counts": {
+            "full_forecasts_started": 5,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 2
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 11,
+            "full_slot_rows": 3,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0003",
+              "candidate": "053bd80855ba40adad3f9522a24948dd:216:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0004",
+              "candidate": "9d78aa977b5c4f9595adbf34b8d5888d:119:panda_right"
+            }
+          ]
+        }
+      ],
+      "path-rank-v11-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.8190059829503298,
+          "new_s": 1.7629455020651221
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v10 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "first_motion_s": 49.41381599614397,
+      "descent_s": null,
+      "pregrasp_future_wait_s": 0,
+      "pregrasp_to_descent_s": null,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    },
+    "v11clock": {
+      "tag": "v11clock",
+      "source": {
+        "success": true,
+        "source_commit": "dc383c75949ddf9585df83a5bede075ba1cd8ce4",
+        "timing_only": true,
+        "files": 347,
+        "archive_sha256": "0caab337f733462600871081973f8b18da825667bc465d15205081d6a2e2628a"
+      },
+      "archive": {
+        "archive": "pair-perf-v11clock-20261118-full.tgz",
+        "bytes": 5378365,
+        "sha256": "c9b24e00cbeeec4c7acff8cc26a73dabfbe4c87713e183e2073a3a97ed699e82"
+      },
+      "device": {
+        "selected": {
+          "index": 7,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+          "pci": "0000:41:00.0",
+          "free_mib": 16368,
+          "used_mib": 7714,
+          "utilization_pct": 0
+        },
+        "ranking": [
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 16368,
+            "used_mib": 7714,
+            "utilization_pct": 0
+          },
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 16019,
+            "used_mib": 8063,
+            "utilization_pct": 0
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 15939,
+            "used_mib": 8143,
+            "utilization_pct": 0
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 15605,
+            "used_mib": 8477,
+            "utilization_pct": 0
+          },
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8279,
+            "used_mib": 15803,
+            "utilization_pct": 16
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 7659,
+            "used_mib": 16423,
+            "utilization_pct": 20
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6371,
+            "used_mib": 17711,
+            "utilization_pct": 21
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6371,
+            "used_mib": 17711,
+            "utilization_pct": 22
+          }
+        ],
+        "time_utc": "2026-11-18T12:05:53.714059+00:00"
+      },
+      "task_success": false,
+      "task_failure": "PAIR_CHANGED_BEFORE_APPROACH",
+      "placements": 2,
+      "clear_batches": 1,
+      "wall_s": 137.11187536781654,
+      "action_wall_s": 71.2428994118236,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "887d0c5ef2a64c03a75b8bb22f1aec2d",
+        "32cefc38d00f4340ac631cade2fb9867",
+        "4dcf3269cffc4d4b822d930f9802ac73",
+        "f805a963b60f4b7495079a8c9f5f3c1d",
+        "abddf58bb4d4415f9ac4949e19badad9",
+        "9050c8dbad224249bdd8aedfb7637e85",
+        "2df7eb6bab9542358f6323f685d98d79",
+        "0cff590358834cc99494e6774325b8e6",
+        "3a1fdbc3d79741d58d009b34509bc149",
+        "1e78413bf43e4c86b99a9f553d80456d",
+        "7dbdd80637a544f182bacec0f2042d31",
+        "0f420e198e4f42b2bc17a6dded87b1b6",
+        "abe086c4c30a4f6396d96dd3bdaf3229",
+        "5c784ff1a6434052a7214ab0e691d53b",
+        "871f9dedbcc349cca9ef63255d81cd28",
+        "24a8327d421f41a5ab3db81051f40bb9",
+        "e106e1f5553c44588cd1488615cc2b5c",
+        "7d339e40c8eb436e91bd85cb4197c922"
+      ],
+      "responses": 18,
+      "process_exit": "6 1",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 27.631682252977043,
+          "descent_s": 37.52266901591793,
+          "historical_descent_lower_bound_s": 36.652083029504865,
+          "pregrasp_execution_s": 8.381348931696266,
+          "pregrasp_future_wait_s": 0,
+          "pregrasp_to_descent_s": 1.5096378312446177,
+          "full_plan_counts": {
+            "started": 4,
+            "passed": 4
+          },
+          "future": null,
+          "pre_motion_counts": {
+            "full_forecasts_started": 4,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 2,
+            "full_slot_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "887d0c5ef2a64c03a75b8bb22f1aec2d:123:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0002",
+              "candidate": "9050c8dbad224249bdd8aedfb7637e85:56:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": false,
+          "reason": "PAIR_CHANGED_BEFORE_APPROACH",
+          "first_motion_s": null,
+          "descent_s": null,
+          "historical_descent_lower_bound_s": null,
+          "pregrasp_execution_s": null,
+          "pregrasp_future_wait_s": null,
+          "pregrasp_to_descent_s": null,
+          "full_plan_counts": null,
+          "future": null,
+          "pre_motion_counts": null,
+          "action_forecasts": null,
+          "strategy": null,
+          "grasp_search": null,
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0003",
+              "candidate": "871f9dedbcc349cca9ef63255d81cd28:101:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0004",
+              "candidate": "24a8327d421f41a5ab3db81051f40bb9:134:panda_right"
+            }
+          ]
+        }
+      ],
+      "path-rank-v11clock-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.75656764395535,
+          "new_s": 1.702825775835663
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v11 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "first_motion_s": null,
+      "descent_s": null,
+      "pregrasp_future_wait_s": null,
+      "pregrasp_to_descent_s": null,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    },
+    "v11clockb": {
+      "tag": "v11clockb",
+      "source": {
+        "success": true,
+        "source_commit": "dc383c75949ddf9585df83a5bede075ba1cd8ce4",
+        "timing_only": true,
+        "files": 347,
+        "archive_sha256": "0caab337f733462600871081973f8b18da825667bc465d15205081d6a2e2628a"
+      },
+      "archive": {
+        "archive": "pair-perf-v11clockb-20261118-full.tgz",
+        "bytes": 5388957,
+        "sha256": "9de6938007f59d9cf26d1eb8523f69433c2c767c6467363a0d9f5dc341747632"
+      },
+      "device": {
+        "selected": {
+          "index": 7,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+          "pci": "0000:41:00.0",
+          "free_mib": 8127,
+          "used_mib": 15955,
+          "utilization_pct": 16
+        },
+        "ranking": [
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 8127,
+            "used_mib": 15955,
+            "utilization_pct": 16
+          },
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8103,
+            "used_mib": 15979,
+            "utilization_pct": 16
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 7579,
+            "used_mib": 16503,
+            "utilization_pct": 20
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 7437,
+            "used_mib": 16645,
+            "utilization_pct": 20
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 6295,
+            "used_mib": 17787,
+            "utilization_pct": 21
+          },
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 6294,
+            "used_mib": 17788,
+            "utilization_pct": 21
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6151,
+            "used_mib": 17931,
+            "utilization_pct": 18
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6151,
+            "used_mib": 17931,
+            "utilization_pct": 22
+          }
+        ],
+        "time_utc": "2026-11-18T12:18:10.298807+00:00"
+      },
+      "task_success": false,
+      "task_failure": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+      "placements": 2,
+      "clear_batches": 1,
+      "wall_s": 164.32631066907197,
+      "action_wall_s": 74.8190815076232,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "628cd893fc344351878e2d5ebefd5384",
+        "b84f8d32675c495b959bfab5c714a203",
+        "cc85531e402c4bd7b2a5fb3157db68bc",
+        "73c0dd20bdbd4612979031fd27635f10",
+        "b5fe0c60d168447384733bd3b711c74c",
+        "c326e1aea14248838316a3ed6dfaf5af",
+        "d14186d96aa946709382efcb7da8745f",
+        "96a8c00b55c449a8bd34a159cba49c8a",
+        "ca07e00b8b314aa8b363125dc164f729",
+        "eca76b1a4f0b4deba2ecbd221613a87b",
+        "549d63b8b9c449d3bbd988084843be93",
+        "e3860d6dff754e59b0b26aefbf47d232",
+        "96ec1dd9e9374bf99ffaada9d455a359",
+        "41aff100c3a845769df5123dd116fdc2",
+        "b91e8aadbff643598c47d96dcaba6146",
+        "32f86b5495bd4f51af30e7aa6f187dd9",
+        "963c04f3f57442c494eef0fa000d9020",
+        "ceb3b14da9dc46d880f891422265aa70",
+        "59f6b455a5e841dea67e769ea5aa73ec",
+        "b4c6765099de45238fe6dd753761967b",
+        "6840ef0dd9fe4009951a23015cde4b83"
+      ],
+      "responses": 21,
+      "process_exit": "6 1",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 29.245905291754752,
+          "descent_s": 38.875204235780984,
+          "historical_descent_lower_bound_s": 38.11357497982681,
+          "pregrasp_execution_s": 8.21494685811922,
+          "pregrasp_future_wait_s": 0,
+          "pregrasp_to_descent_s": 1.4143520859070122,
+          "full_plan_counts": {
+            "started": 4,
+            "passed": 4
+          },
+          "future": null,
+          "pre_motion_counts": {
+            "full_forecasts_started": 4,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 4,
+            "full_slot_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "cc85531e402c4bd7b2a5fb3157db68bc:176:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0003",
+              "candidate": "c326e1aea14248838316a3ed6dfaf5af:56:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": false,
+          "reason": "NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR",
+          "first_motion_s": null,
+          "descent_s": null,
+          "historical_descent_lower_bound_s": null,
+          "pregrasp_execution_s": null,
+          "pregrasp_future_wait_s": null,
+          "pregrasp_to_descent_s": null,
+          "full_plan_counts": null,
+          "future": null,
+          "pre_motion_counts": null,
+          "action_forecasts": null,
+          "strategy": null,
+          "grasp_search": null,
+          "selected": []
+        }
+      ],
+      "path-rank-v11clockb-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.909276724793017,
+          "new_s": 1.8511090883985162
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v11 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "first_motion_s": null,
+      "descent_s": null,
+      "pregrasp_future_wait_s": null,
+      "pregrasp_to_descent_s": null,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    },
+    "v11clockc": {
+      "tag": "v11clockc",
+      "source": {
+        "success": true,
+        "source_commit": "dc383c75949ddf9585df83a5bede075ba1cd8ce4",
+        "timing_only": true,
+        "files": 347,
+        "archive_sha256": "0caab337f733462600871081973f8b18da825667bc465d15205081d6a2e2628a"
+      },
+      "archive": {
+        "archive": "pair-perf-v11clockc-20261118-full.tgz",
+        "bytes": 5638879,
+        "sha256": "0d083f0a1129bdce330083fc9d821f254542db8c2f3bd8e9c82720546dc27086"
+      },
+      "device": {
+        "selected": {
+          "index": 7,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+          "pci": "0000:41:00.0",
+          "free_mib": 8104,
+          "used_mib": 15978,
+          "utilization_pct": 17
+        },
+        "ranking": [
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 8104,
+            "used_mib": 15978,
+            "utilization_pct": 17
+          },
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8103,
+            "used_mib": 15979,
+            "utilization_pct": 16
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 7437,
+            "used_mib": 16645,
+            "utilization_pct": 21
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 7435,
+            "used_mib": 16647,
+            "utilization_pct": 20
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 6153,
+            "used_mib": 17929,
+            "utilization_pct": 21
+          },
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 6153,
+            "used_mib": 17929,
+            "utilization_pct": 23
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6149,
+            "used_mib": 17933,
+            "utilization_pct": 20
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6149,
+            "used_mib": 17933,
+            "utilization_pct": 21
+          }
+        ],
+        "time_utc": "2026-11-18T12:27:41.444433+00:00"
+      },
+      "task_success": true,
+      "task_failure": null,
+      "placements": 4,
+      "clear_batches": 2,
+      "wall_s": 249.25904904678464,
+      "action_wall_s": 166.72743351804093,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "65c6573c5be24ee4be7d1308b8761379",
+        "65b6e40b0f894fe282d8c3cf6dd5b90d",
+        "48854714fc3949669e33efdbd59c1385",
+        "74950eaefc0e425b8334530938721541",
+        "845be2fac3b44dc0949b32a7881e59c7",
+        "e631ebb25e124a1187aa37efbed6e1ce",
+        "24a2532cfe5d4127a18349e683cc1141",
+        "0397c91945c745c6bc918be9452a5377",
+        "79ef55bdc1124a9bbfc75a06c75de9f3",
+        "c20027bd056f4065bcca124701cb4d2b",
+        "535c9de573084f6eabda159d727a520d",
+        "7d8eb5d2150341fda6b0fc4c7548cd52",
+        "73fbd6ade8d3417e90d2c7f79ef66399",
+        "95ad45fcd4144b4aa1abbee226ca1b71",
+        "75c2acbc1ced4f25817f29ae1ad461f2",
+        "48a1a93ed1964fd89cedb05c77e4d89b",
+        "218ddb3c81474a969e9eb62f7e25dd14",
+        "816f572ae88141a3bb6aafb05a34ae5c"
+      ],
+      "responses": 18,
+      "process_exit": "6 0",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 27.105466559063643,
+          "descent_s": 35.79538370622322,
+          "historical_descent_lower_bound_s": 35.028355763759464,
+          "pregrasp_execution_s": 7.289618597831577,
+          "pregrasp_future_wait_s": 0,
+          "pregrasp_to_descent_s": 1.4002985493279994,
+          "full_plan_counts": {
+            "started": 4,
+            "passed": 4
+          },
+          "future": null,
+          "pre_motion_counts": {
+            "full_forecasts_started": 4,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 4,
+            "full_slot_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "65b6e40b0f894fe282d8c3cf6dd5b90d:171:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0002",
+              "candidate": "845be2fac3b44dc0949b32a7881e59c7:94:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 19.021949057932943,
+          "descent_s": 25.936900828033686,
+          "historical_descent_lower_bound_s": 25.27223626943305,
+          "pregrasp_execution_s": 5.23083076113835,
+          "pregrasp_future_wait_s": 0,
+          "pregrasp_to_descent_s": 1.6841210089623928,
+          "full_plan_counts": {
+            "started": 5,
+            "passed": 4
+          },
+          "future": null,
+          "pre_motion_counts": {
+            "full_forecasts_started": 5,
+            "full_forecasts_passed": 4,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 8,
+            "full_slot_rows": 3,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0003",
+              "candidate": "95ad45fcd4144b4aa1abbee226ca1b71:187:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0004",
+              "candidate": "816f572ae88141a3bb6aafb05a34ae5c:174:panda_right"
+            }
+          ]
+        }
+      ],
+      "path-rank-v11clockc-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.7515820288099349,
+          "new_s": 1.6995049328543246
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v11 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "first_motion_s": 46.127415616996586,
+      "descent_s": 61.732284534256905,
+      "pregrasp_future_wait_s": 0,
+      "pregrasp_to_descent_s": 3.084419558290392,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    },
+    "v12": {
+      "tag": "v12",
+      "source": {
+        "success": true,
+        "source_commit": "02fe2f330f9907b0cf8c38b778160d4c4d1620fd",
+        "files": 349,
+        "archive_sha256": "2c1924a359b2178813fd0d1f564a5b499584b7b5e5c85ef1bd8f20faac055818"
+      },
+      "archive": {
+        "archive": "pair-perf-v12-20261118-full.tgz",
+        "bytes": 10488707,
+        "sha256": "34db2dec9b7d89bb40c66552899421323d7e37ae80d65e1ab1bb90a377743b39"
+      },
+      "device": {
+        "selected": {
+          "index": 7,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+          "pci": "0000:41:00.0",
+          "free_mib": 16369,
+          "used_mib": 7713,
+          "utilization_pct": 50
+        },
+        "ranking": [
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 16369,
+            "used_mib": 7713,
+            "utilization_pct": 50
+          },
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 16019,
+            "used_mib": 8063,
+            "utilization_pct": 49
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 15939,
+            "used_mib": 8143,
+            "utilization_pct": 100
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 15605,
+            "used_mib": 8477,
+            "utilization_pct": 0
+          },
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8279,
+            "used_mib": 15803,
+            "utilization_pct": 16
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 7659,
+            "used_mib": 16423,
+            "utilization_pct": 20
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6371,
+            "used_mib": 17711,
+            "utilization_pct": 20
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6371,
+            "used_mib": 17711,
+            "utilization_pct": 22
+          }
+        ],
+        "time_utc": "2026-11-18T12:00:10.844978+00:00"
+      },
+      "task_success": true,
+      "task_failure": null,
+      "placements": 4,
+      "clear_batches": 2,
+      "wall_s": 291.36603330122307,
+      "action_wall_s": 217.09887662995607,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "525972ae73d644b1b39b9afda233c568",
+        "7db99751e92744bfa491b47a47b08819",
+        "3dd1342af45c49ac8e9a419c79acae2b",
+        "d83cd4dbefb944e1a581c51ce969e96d",
+        "a514c28b2b1c4228a0d08e810adb746b",
+        "32a0ad601e0f45c29e4d0bda27954c78",
+        "ebe80635d461417c84d2a4080316b782",
+        "b40239d92dea45b484fbd12f38650ad9",
+        "84862ce1bc094ffdb060951f8b648be2",
+        "337c8e1e755e46e4acec0f1bb121fa4a",
+        "d0e87cb6f18b4eee8618ffcc56146854",
+        "f4b5c0f163384c6c91289f047d2b19e8",
+        "02e31e92cb4c42c0ae7be80d20c8dfc8",
+        "9ecad82a3d494ae48ee6c894adeabc87",
+        "29f9d30f90594ef1bd920920192f5dfa",
+        "4e55debb4b52439db0671363cfa41221",
+        "b51d2994268a429fb36c203f379043f0",
+        "28d9898214824371b4ed437cd465a302"
+      ],
+      "responses": 18,
+      "process_exit": "6 0",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 29.438406493049115,
+          "descent_s": 43.144327835179865,
+          "historical_descent_lower_bound_s": 40.824396517593414,
+          "pregrasp_execution_s": 10.71960321161896,
+          "pregrasp_future_wait_s": 4.837196320295334e-05,
+          "pregrasp_to_descent_s": 2.9863181305117905,
+          "full_plan_counts": {
+            "started": 4,
+            "passed": 4
+          },
+          "future": {
+            "pregrasp_plan_wait_s": 4.837196320295334e-05,
+            "background_wall_s": 10.087402197998017,
+            "full_plans": {
+              "started": 4,
+              "passed": 4
+            },
+            "current_frame_replanned": true,
+            "strategy": "orient-first",
+            "checked_stages": [
+              "transfer_orient",
+              "transfer",
+              "lower",
+              "open",
+              "retreat"
+            ],
+            "current_frame_checks_s": 1.509563046041876
+          },
+          "pre_motion_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 5,
+            "full_slot_rows": 0,
+            "slot_endpoint_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "3dd1342af45c49ac8e9a419c79acae2b:198:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0003",
+              "candidate": "a514c28b2b1c4228a0d08e810adb746b:151:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 10.865591045003384,
+          "descent_s": 23.377496169880033,
+          "historical_descent_lower_bound_s": 18.069995366036892,
+          "pregrasp_execution_s": 6.119873851072043,
+          "pregrasp_future_wait_s": 1.7861014460213482,
+          "pregrasp_to_descent_s": 6.392031273804605,
+          "full_plan_counts": {
+            "started": 8,
+            "passed": 4
+          },
+          "future": {
+            "pregrasp_plan_wait_s": 1.7861014460213482,
+            "background_wall_s": 7.943492312915623,
+            "full_plans": {
+              "started": 8,
+              "passed": 4
+            },
+            "current_frame_replanned": true,
+            "strategy": "sequential-end",
+            "checked_stages": [
+              "transfer",
+              "transfer",
+              "lower",
+              "open",
+              "retreat",
+              "transfer",
+              "lower",
+              "open",
+              "retreat"
+            ],
+            "current_frame_checks_s": 2.7699764240533113
+          },
+          "pre_motion_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "sequential-end",
+          "grasp_search": {
+            "prefix_rows_checked": 6,
+            "full_slot_rows": 0,
+            "slot_endpoint_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0002",
+              "candidate": "9ecad82a3d494ae48ee6c894adeabc87:204:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0004",
+              "candidate": "28d9898214824371b4ed437cd465a302:148:panda_right"
+            }
+          ]
+        }
+      ],
+      "path-rank-v12-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.8254384598694742,
+          "new_s": 1.7665089168585837
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v11 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "edges-v12-linux": {
+        "success": true,
+        "cases": 320,
+        "outcomes": {
+          "STATIC_PATH_BLOCKED:fixture": 75,
+          "PASS": 208,
+          "TARGET_BODY_COLLISION": 8,
+          "SELF_COLLISION": 8,
+          "HELD_CARTON_OWN_BODY_COLLISION": 18,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 3
+        }
+      },
+      "first_motion_s": 40.3039975380525,
+      "descent_s": 66.5218240050599,
+      "pregrasp_future_wait_s": 1.7861498179845512,
+      "pregrasp_to_descent_s": 9.378349404316396,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    },
+    "v12b": {
+      "tag": "v12b",
+      "source": {
+        "success": true,
+        "source_commit": "4c8d7f08bd02bf83d5b7792909ca8d58ecead87f",
+        "files": 350,
+        "archive_sha256": "891198d67c03b3d7be5a53a722bdae7c1dbcfed1ace040b8ee3362c50bbf70cc"
+      },
+      "archive": {
+        "archive": "pair-perf-v12b-20261118-full.tgz",
+        "bytes": 5402376,
+        "sha256": "21f45e1e0aaddeec0fd63313bd899f3733c22acd4a7643fbc9ec0e9fa09d24cc"
+      },
+      "device": {
+        "selected": {
+          "index": 2,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+          "pci": "0000:1d:00.0",
+          "free_mib": 18755,
+          "used_mib": 5327,
+          "utilization_pct": 0
+        },
+        "ranking": [
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 18755,
+            "used_mib": 5327,
+            "utilization_pct": 0
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 18727,
+            "used_mib": 5355,
+            "utilization_pct": 0
+          },
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 18725,
+            "used_mib": 5357,
+            "utilization_pct": 0
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 18633,
+            "used_mib": 5449,
+            "utilization_pct": 0
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 9735,
+            "used_mib": 14347,
+            "utilization_pct": 0
+          },
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8975,
+            "used_mib": 15107,
+            "utilization_pct": 18
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6945,
+            "used_mib": 17137,
+            "utilization_pct": 0
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6945,
+            "used_mib": 17137,
+            "utilization_pct": 0
+          }
+        ],
+        "time_utc": "2026-11-18T12:14:49.734076+00:00"
+      },
+      "task_success": false,
+      "task_failure": "IK_DISCONTINUITY",
+      "placements": 2,
+      "clear_batches": 1,
+      "wall_s": 147.14722668379545,
+      "action_wall_s": 77.40247890120372,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "514cb66f314744ecac35e95e1b108576",
+        "71e82a40f11c4189949d3cd78fba2bc1",
+        "d590ebdb826843279f40026cea3bf776",
+        "931fea35b2ad467fb06af3e16010f7eb",
+        "f6fe319b54a74c1ca591f3551b80c0fc",
+        "bf5709732b92428b897151e4d61e0b03",
+        "c442d11517cd47d8bab24f7d6554cafa",
+        "767793c821fd46f384ea6eddecee1424",
+        "19c23e5517194ce192e8f74cbb07ff08",
+        "fd6c43453ab84d4d98f1c25a48b917c4",
+        "33e58dacf3284338bd5bf9f93b9868e4",
+        "40e06b142c4545cb978bdc292dab5482",
+        "5d355e90918341608c099c74cde27367",
+        "ecfa5ce39a104333a6142b9574b0c6e8",
+        "4c39e50f6789438d9b8923b5f509e1a1",
+        "8e2628a7d2224d2da72e090fc6990589",
+        "0919dab357f74af7a47b85e321421a36",
+        "8f0edc22056641b1bd27a811f07b1ded"
+      ],
+      "responses": 18,
+      "process_exit": "6 1",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 22.237938702106476,
+          "descent_s": 35.43492658203468,
+          "historical_descent_lower_bound_s": 32.781842122320086,
+          "pregrasp_execution_s": 9.92786394013092,
+          "pregrasp_future_wait_s": 0.031052537262439728,
+          "pregrasp_to_descent_s": 3.269123939797282,
+          "full_plan_counts": {
+            "started": 2,
+            "passed": 2
+          },
+          "future": {
+            "pregrasp_plan_wait_s": 0.031052537262439728,
+            "background_wall_s": 9.95987043902278,
+            "full_plans": {
+              "started": 2,
+              "passed": 2
+            },
+            "current_frame_replanned": false,
+            "endpoint_corrections": 3,
+            "strategy": "orient-first",
+            "checked_stages": [
+              "transfer_orient",
+              "transfer",
+              "lower",
+              "open",
+              "retreat"
+            ],
+            "current_frame_checks_s": 1.7488221423700452
+          },
+          "pre_motion_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 3,
+            "full_slot_rows": 0,
+            "slot_endpoint_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "71e82a40f11c4189949d3cd78fba2bc1:188:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0002",
+              "candidate": "bf5709732b92428b897151e4d61e0b03:43:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": false,
+          "reason": "IK_DISCONTINUITY",
+          "first_motion_s": 15.912405375856906,
+          "descent_s": null,
+          "historical_descent_lower_bound_s": null,
+          "pregrasp_execution_s": 7.735650449059904,
+          "pregrasp_future_wait_s": 1.3276641070842743,
+          "pregrasp_to_descent_s": null,
+          "full_plan_counts": {
+            "started": 4,
+            "passed": 2
+          },
+          "future": {
+            "pregrasp_plan_wait_s": 1.3276641070842743,
+            "background_wall_s": 9.06450245110318,
+            "full_plans": {
+              "started": 4,
+              "passed": 2
+            }
+          },
+          "pre_motion_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": null,
+          "grasp_search": {
+            "prefix_rows_checked": 9,
+            "full_slot_rows": 0,
+            "slot_endpoint_rows": 3,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0003",
+              "candidate": "4c39e50f6789438d9b8923b5f509e1a1:193:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0004",
+              "candidate": "8f0edc22056641b1bd27a811f07b1ded:153:panda_right"
+            }
+          ]
+        }
+      ],
+      "path-rank-v12b-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.8270199671387672,
+          "new_s": 1.823649755679071
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v11 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "edges-v12b-linux": {
+        "success": true,
+        "cases": 320,
+        "outcomes": {
+          "STATIC_PATH_BLOCKED:fixture": 75,
+          "PASS": 208,
+          "TARGET_BODY_COLLISION": 8,
+          "SELF_COLLISION": 8,
+          "HELD_CARTON_OWN_BODY_COLLISION": 18,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 3
+        }
+      },
+      "first_motion_s": 38.15034407796338,
+      "descent_s": null,
+      "pregrasp_future_wait_s": 1.358716644346714,
+      "pregrasp_to_descent_s": null,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    },
+    "v12c": {
+      "tag": "v12c",
+      "source": {
+        "success": true,
+        "source_commit": "93ee42c0b6417e917fd90535f4526775370f3ac1",
+        "files": 350,
+        "archive_sha256": "f7804e3fb5dd4059e0d07d79d439de1b254bbfa4263bfb799791b39198731962"
+      },
+      "archive": {
+        "archive": "pair-perf-v12c-20261118-full.tgz",
+        "bytes": 10356994,
+        "sha256": "8ef8ab958799527bfd6af7dcef0e597a80e9f28aa0c789c59666343f081f06f6"
+      },
+      "device": {
+        "selected": {
+          "index": 7,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+          "pci": "0000:41:00.0",
+          "free_mib": 8182,
+          "used_mib": 15900,
+          "utilization_pct": 16
+        },
+        "ranking": [
+          {
+            "index": 7,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+            "pci": "0000:41:00.0",
+            "free_mib": 8182,
+            "used_mib": 15900,
+            "utilization_pct": 16
+          },
+          {
+            "index": 0,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+            "pci": "0000:1b:00.0",
+            "free_mib": 8103,
+            "used_mib": 15979,
+            "utilization_pct": 16
+          },
+          {
+            "index": 4,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+            "pci": "0000:3d:00.0",
+            "free_mib": 7673,
+            "used_mib": 16409,
+            "utilization_pct": 20
+          },
+          {
+            "index": 6,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+            "pci": "0000:40:00.0",
+            "free_mib": 7435,
+            "used_mib": 16647,
+            "utilization_pct": 20
+          },
+          {
+            "index": 1,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+            "pci": "0000:1c:00.0",
+            "free_mib": 6387,
+            "used_mib": 17695,
+            "utilization_pct": 21
+          },
+          {
+            "index": 2,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+            "pci": "0000:1d:00.0",
+            "free_mib": 6387,
+            "used_mib": 17695,
+            "utilization_pct": 21
+          },
+          {
+            "index": 5,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+            "pci": "0000:3f:00.0",
+            "free_mib": 6149,
+            "used_mib": 17933,
+            "utilization_pct": 17
+          },
+          {
+            "index": 3,
+            "name": "NVIDIA GeForce RTX 4090",
+            "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+            "pci": "0000:1e:00.0",
+            "free_mib": 6149,
+            "used_mib": 17933,
+            "utilization_pct": 21
+          }
+        ],
+        "time_utc": "2026-11-18T12:21:47.752784+00:00"
+      },
+      "task_success": true,
+      "task_failure": null,
+      "placements": 4,
+      "clear_batches": 2,
+      "wall_s": 305.21214998699725,
+      "action_wall_s": 229.799153347034,
+      "no_replay_file": true,
+      "model_request_ids": [
+        "9aec199634d84960b49180f1dc0cace8",
+        "57c63743826c40a58a9da482f2be2e71",
+        "3483faf3368349178027a0d882496313",
+        "a7abab200b6d40b79ee745f7632c7bad",
+        "5a6ed35dc5bb4c1eab5dd31aa69bac1c",
+        "3d76f9a827194f77831a912793c748c2",
+        "74ca34415cbd4401a21963464f69c04b",
+        "fb43a942854741468bdd4a696f60d27d",
+        "f38e7e52a5e8466884896fc9b2b95c73",
+        "9becce440aba473e96a7237356cfebfe",
+        "4e0afce5166b4c0489d3a2f073e5e3a6",
+        "2fda1c03ed354e80a249e884ae6e9796",
+        "1a5c49e4f1b04b5c85775c967d2a5373",
+        "440aa3cdebfb4adb9eb4c7ca272cc451",
+        "19c918b855234523a568dde99e9d2141",
+        "5d7c332aeb6f4076bcc76ae2beea5a2c",
+        "0c536b2e902d49d5a6c65d67068897ef",
+        "9a73da3f1eb440f786e02526b58cddae"
+      ],
+      "responses": 18,
+      "process_exit": "6 0",
+      "attempts": [
+        {
+          "attempt": "round_1/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 24.604252344928682,
+          "descent_s": 38.315163613297045,
+          "historical_descent_lower_bound_s": 35.85202918294817,
+          "pregrasp_execution_s": 10.580528650898486,
+          "pregrasp_future_wait_s": 1.7634127289056778e-05,
+          "pregrasp_to_descent_s": 3.130382617469877,
+          "full_plan_counts": {
+            "started": 2,
+            "passed": 2
+          },
+          "future": {
+            "pregrasp_plan_wait_s": 1.7634127289056778e-05,
+            "background_wall_s": 10.41518321679905,
+            "full_plans": {
+              "started": 2,
+              "passed": 2
+            },
+            "current_frame_replanned": false,
+            "endpoint_corrections": 3,
+            "strategy": "orient-first",
+            "checked_stages": [
+              "transfer_orient",
+              "transfer",
+              "lower",
+              "open",
+              "retreat"
+            ],
+            "current_frame_checks_s": 1.6133833480998874
+          },
+          "pre_motion_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "orient-first",
+          "grasp_search": {
+            "prefix_rows_checked": 5,
+            "full_slot_rows": 0,
+            "slot_endpoint_rows": 2,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0001",
+              "candidate": "9aec199634d84960b49180f1dc0cace8:90:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0003",
+              "candidate": "5a6ed35dc5bb4c1eab5dd31aa69bac1c:187:panda_right"
+            }
+          ]
+        },
+        {
+          "attempt": "round_2/attempt_1",
+          "success": true,
+          "reason": null,
+          "first_motion_s": 14.706119263079017,
+          "descent_s": 27.399750302080065,
+          "historical_descent_lower_bound_s": 22.240399105940014,
+          "pregrasp_execution_s": 6.480711980722845,
+          "pregrasp_future_wait_s": 1.7183808591216803,
+          "pregrasp_to_descent_s": 6.212919058278203,
+          "full_plan_counts": {
+            "started": 2,
+            "passed": 2
+          },
+          "future": {
+            "pregrasp_plan_wait_s": 1.7183808591216803,
+            "background_wall_s": 8.200167232193053,
+            "full_plans": {
+              "started": 2,
+              "passed": 2
+            },
+            "current_frame_replanned": false,
+            "endpoint_corrections": 6,
+            "strategy": "orient-first",
+            "checked_stages": [
+              "transfer_orient",
+              "transfer",
+              "lower",
+              "open",
+              "retreat"
+            ],
+            "current_frame_checks_s": 2.667458360083401
+          },
+          "pre_motion_counts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "action_forecasts": {
+            "full_forecasts_started": 0,
+            "full_forecasts_passed": 0,
+            "cartesian_reuses": 0
+          },
+          "strategy": "sequential-end",
+          "grasp_search": {
+            "prefix_rows_checked": 14,
+            "full_slot_rows": 0,
+            "slot_endpoint_rows": 3,
+            "selected_rows_revalidated": 2,
+            "pregrasp_paths_reused": 4
+          },
+          "selected": [
+            {
+              "arm": "panda_left",
+              "track": "visual_0002",
+              "candidate": "19c918b855234523a568dde99e9d2141:115:panda_left"
+            },
+            {
+              "arm": "panda_right",
+              "track": "visual_0004",
+              "candidate": "5d7c332aeb6f4076bcc76ae2beea5a2c:166:panda_right"
+            }
+          ]
+        }
+      ],
+      "path-rank-v12c-linux": {
+        "success": true,
+        "cases": 3240,
+        "max_clearance_difference_m": 0.0,
+        "outcomes": {
+          "PASS": 2636,
+          "STATIC_PATH_BLOCKED:fixture": 404,
+          "TARGET_BODY_COLLISION": 104,
+          "HELD_CARTON_OWN_BODY_COLLISION": 64,
+          "SELF_COLLISION": 16,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 16
+        },
+        "wall": {
+          "old_s": 1.7309899479150772,
+          "new_s": 1.6801672889851034
+        },
+        "scope": "Same synthetic robot/obstacle/target inputs; old frozen v11 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+      },
+      "edges-v12c-linux": {
+        "success": true,
+        "cases": 320,
+        "outcomes": {
+          "STATIC_PATH_BLOCKED:fixture": 75,
+          "PASS": 208,
+          "TARGET_BODY_COLLISION": 8,
+          "SELF_COLLISION": 8,
+          "HELD_CARTON_OWN_BODY_COLLISION": 18,
+          "HELD_CARTON_PATH_BLOCKED:fixture": 3
+        }
+      },
+      "first_motion_s": 39.3103716080077,
+      "descent_s": 65.71491391537711,
+      "pregrasp_future_wait_s": 1.7183984932489693,
+      "pregrasp_to_descent_s": 9.34330167574808,
+      "identical_to_baseline": {
+        "config_used.json": true,
+        "release_states.json": true,
+        "camera_rig.json": true
+      }
+    }
+  },
+  "metrics": "Seconds per round from check_pair entry. Future wait counts blocking at pregrasp only. Pregrasp-to-descent includes waypoint checks, fresh observation, approach planning and the deadline check. An absent historical timestamp is null. Full counts use arm routes per attempted strategy, through retreat in the new implementation and home in v11. Dynamic revalidation and endpoint IK corrections are separate.",
+  "validation": "python -m unittest discover -s tests; python -m workstation --mode graspgen-pair-sort --headless --seed 6 --num-grasps 256 --validate-only; comparisons against frozen dc383c7. Physics entry: python -m workstation --mode graspgen-pair-sort --pair-transfer-policy auto --headless --grasp-backend graspgen --num-grasps 256 --seed 6"
+}
