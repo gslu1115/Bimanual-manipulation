@@ -108,7 +108,22 @@ def synchronized_knots(left, right, max_step=.025):
             yield tuple(p[i-1]+(p[i]-p[i-1])*n/steps for p in aligned)
 
 
-def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None,*,prefix_assessment=None,pick_cache=None,model_first=False):
+def pregrasp_clearance(robot, paths):
+    geometry=((robot.spheres('panda_left',left),robot.spheres('panda_right',right))
+              for left,right in synchronized_knots(*paths))
+    client=getattr(robot,'pair_path_client',None)
+    if client is not None:
+        from workstation.planning.curobo_pair import check_pair_path
+        return check_pair_path(list(geometry),client.distances)
+    minimum=float('inf')
+    for sampled,(left,right) in enumerate(geometry,1):
+        reason,clearance=check_spheres(left,right,[],None)
+        minimum=min(minimum,clearance)
+        if reason:break
+    return reason,minimum,sampled
+
+
+def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None,*,prefix_assessment=None,pick_cache=None,model_first=False,check_common_lift=False):
     arms = ('panda_left', 'panda_right')
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
                  and a.candidate.arm == arm and (a.terms.get('full_pose_checked') or
@@ -139,6 +154,7 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
     else:ordered=pairs
     paths = {}
     rejected = []
+    variants = {}
     for pair in ordered:
         for arm, a in zip(arms, pair):
             c = a.candidate
@@ -159,27 +175,27 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
                 paths[c.candidate_id] = path
         if any(paths[a.candidate.candidate_id] is None for a in pair):
             continue
-        sampled = 0
-        minimum = float('inf')
-        knots=synchronized_knots(*(paths[a.candidate.candidate_id] for a in pair))
-        geometry=((robot.spheres(arms[0],left),robot.spheres(arms[1],right)) for left,right in knots)
-        client=getattr(robot,'pair_path_client',None)
-        if client is not None:
-            from workstation.planning.curobo_pair import check_pair_path
-            reason,minimum,sampled=check_pair_path(list(geometry),client.distances)
+        selected_paths=[paths[a.candidate.candidate_id] for a in pair]
+        audit={}
+        options=[((),selected_paths,None)]
+        if check_common_lift:
+            from workstation.planning.common_lift import common_lift_options
+            keys=[(a.candidate.candidate_id,tuple(a.terms['slot_xy'])) for a in pair]
+            specs=[pick_cache.destinations[key] for key in keys]
+            options=common_lift_options(robot,scene,specs,selected_paths,variants,audit)
+        reason='OTHER_ARM_COLLISION'
+        for chosen_specs,selected_paths,detail in options:
+            reason,minimum,sampled=pregrasp_clearance(robot,selected_paths)
+            if not reason:break
         else:
-            for left,right in geometry:
-                reason,clearance=check_spheres(left,right,[],None)
-                minimum=min(minimum,clearance)
-                sampled+=1
-                if reason:break
-        if reason:
-            rejected.append(dict(ids=[a.candidate.candidate_id for a in pair], reason=reason))
+            rejected.append(dict(ids=[a.candidate.candidate_id for a in pair],reason=reason,**audit))
             continue
+        if check_common_lift:pick_cache.destinations.update(zip(keys,chosen_specs))
         result=dict(selection=[asdict(a.candidate) for a in pair],
                     slots=[a.terms.get('slot_xy') for a in pair],
-                    pregrasp_knots=[np.asarray(paths[a.candidate.candidate_id]).tolist() for a in pair],
+                    pregrasp_knots=[np.asarray(path).tolist() for path in selected_paths],
                     sample_count=sampled, min_clearance_m=minimum)
+        if detail:result['common_lift']=detail
         if selection_policy:
             result['joint_choice']=dict(source_keys=[selection_policy.key(a.candidate) for a in pair],
                 history_penalty=selection_policy.priority(pair)[0],visibility=selection_policy.visibility(pair),
@@ -548,7 +564,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy,
                                       complete_assessment if selection_policy else None,
                                       prefix_assessment=prefix_assessment if selection_policy and not deferred else None,
-                                      pick_cache=pick_prefixes,model_first=deferred)
+                                      pick_cache=pick_prefixes,model_first=deferred,check_common_lift=deferred)
         report['candidate_prefix_reuse']=pick_prefixes.report()
         report['destination_evaluation']=dict(mode='ranked pick and slot endpoint checks' if deferred else 'ranked refinement' if selection_policy else 'exhaustive',
             ranked_rows=len(rows),prefix_rows=len(prefix_rows) if selection_policy else len(rows),completed_rows=len(completed_rows),
@@ -620,7 +636,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                            candidate_provider=lambda o,_:new.get(o.track_id,[]))
             for row in checked:
                 row.terms['slot_xy']=assigned_slots[row.candidate.arm]
-            current,_=paired_pregrasp(robot,checked,states,updated,pick_cache=fresh_prefixes)
+            current,_=paired_pregrasp(robot,checked,states,updated,pick_cache=fresh_prefixes,check_common_lift=deferred)
             if current is None:raise RuntimeError('PAIR_CHANGED_BEFORE_APPROACH')
             report.update(pair=current,scope='physical_empty_arm_pregrasp_only',physical_execution=True)
             if selection_policy:
