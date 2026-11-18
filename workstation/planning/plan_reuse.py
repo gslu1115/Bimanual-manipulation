@@ -61,7 +61,26 @@ class PreviewPlans:
         return [p.copy() for p in row[0]],row[1]
 
 
-def complete_ranked_pairs(pairs,rank,complete):
+def _assess_pair(pair, assess, rejected, skipped, stage):
+    # Each input row describes one candidate and slot in this snapshot.
+    # Retain the actual rejected row so its identity stays valid for this search.
+    if any(id(row) in rejected for row in pair):
+        if skipped is not None:skipped[stage]+=1
+        return None
+    left,right=pair
+    checked_left=assess(left)
+    if not checked_left.feasible:
+        rejected[id(left)]=left
+        if skipped is not None:skipped[stage]+=1
+        return None
+    checked_right=assess(right)
+    if not checked_right.feasible:
+        rejected[id(right)]=right
+        return None
+    return checked_left,checked_right
+
+
+def complete_ranked_pairs(pairs,rank,complete,skipped=None):
     """Best-first exact refinement of optimistic scores, not a new policy.
 
     Prefix clearance upper-bounds full-path clearance. The remaining rank
@@ -70,19 +89,20 @@ def complete_ranked_pairs(pairs,rank,complete):
     can displace a fully checked better pair. Failed suffixes remain rejected.
     """
     import heapq
+    rejected={}
     pending=[(rank(pair),i,pair) for i,pair in enumerate(pairs)]
     heapq.heapify(pending)
     while pending:
         optimistic,index,pair=heapq.heappop(pending)
-        checked=tuple(complete(row) for row in pair)
-        if not all(row.feasible for row in checked):continue
+        checked=_assess_pair(pair,complete,rejected,skipped,'destination')
+        if checked is None:continue
         actual=rank(checked)
         if actual!=optimistic:
             heapq.heappush(pending,(actual,index,checked))
             continue
         yield checked
 
-def refine_pick_pairs(pairs,rank,prefix,complete):
+def refine_pick_pairs(pairs,rank,prefix,complete,skipped=None):
     """Refine upper bounds in order, including the original prefix tie order."""
     import heapq
     def row_order(row):
@@ -94,12 +114,13 @@ def refine_pick_pairs(pairs,rank,prefix,complete):
 
     queue=[item(pair,pair,0,i) for i,pair in enumerate(pairs)]
     heapq.heapify(queue)
+    rejected=({}, {})
     while queue:
         _,_,_,index,stage,pair,front=heapq.heappop(queue)
         if stage==2:
             yield pair
             continue
         callback=prefix if stage==0 else complete
-        checked=tuple(callback(row) for row in pair)
-        if all(row.feasible for row in checked):
+        checked=_assess_pair(pair,callback,rejected[stage],skipped,('prefix','destination')[stage])
+        if checked is not None:
             heapq.heappush(queue,item(checked,checked if stage==0 else front,stage+1,index))

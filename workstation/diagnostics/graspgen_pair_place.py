@@ -371,6 +371,10 @@ def parked_top_occluded(packet,reference,*,allow_wrist_out_of_view=False):
     return views>=2 or (allow_wrist_out_of_view and global_covered)
 
 
+def _image_tcp_pose(robot,arm,packet):
+    return robot.fk(arm,packet.robot_state[arm].joint_positions_rad)
+
+
 def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
@@ -486,7 +490,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     def measure_held(arm,packet):
         nonlocal scene
         t=trackers[arm]
-        pos,rot=robot.fk(arm)
+        pos,rot=_image_tcp_pose(robot,arm,packet)
         observed=t.observe(packet,scene,pos,rot,reacquire_tilt=held)
         if observed is None and report['last_phase'] in ('initial_lift','regrasp_initial_lift'):
             # An already slipping carton can leave the nominal FK search band.
@@ -901,13 +905,15 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     report['closure_started']=True
     fingers(True)
     packet = observe()
-    closed_states=robot.read_states()
-    closed_tcp_z={a:robot.fk(a)[0][2] for a in arms}
+    closed_states=dict(packet.robot_state)
+    closed_tcp_z={}
     for a in arms:
         proof = confirm_target(a,packet,closed=True)
         scene=reconcile_preclose_target(estimator,scene,proof)
-        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*robot.fk(a),priors,packet=packet)
-        release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
+        image_pose=_image_tcp_pose(robot,a,packet)
+        closed_tcp_z[a]=image_pose[0][2]
+        trackers[a] = CuboidHoldingTracker.from_preclose_support(references[a].obj,proof,*image_pose,priors,packet=packet)
+        release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*image_pose,packet.observation_time_s)
         measure_held(a,packet)
     robot.set_observation(packet,scene,priors)
     held = True
@@ -920,8 +926,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         phases.setdefault('initial_lift_evidence',{})[a]=measure_held(a,packet)
     from workstation.planning.selection import lift_slip_evidence
     def slip(a):
-        return lift_slip_evidence(closed_tcp_z[a],robot.fk(a)[0][2],measurements[a],
-            robot.read_states()[a].finger_positions_m,closed_states[a].finger_positions_m)
+        return lift_slip_evidence(closed_tcp_z[a],_image_tcp_pose(robot,a,packet)[0][2],measurements[a],
+            packet.robot_state[a].finger_positions_m,closed_states[a].finger_positions_m)
     checks=report['initial_grip_checks']={a:[slip(a)] for a in arms}
     suspect=[a for a in arms if checks[a][0]['suspect']]
     if suspect:
@@ -957,7 +963,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 fingers(False,(a,))
                 tcp,rot=robot.fk(a)
                 packet=observe()
-                released=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+                released=release_trackers[a].collision_estimate(packet,scene,*_image_tcp_pose(robot,a,packet),
                     max_drop_m=max(0.,gap+m['uncertainty_m']),reference_position_m=m['position_m'],
                     reference_rotation=m['rotation'],allow_partial=True)
                 if released is None:
@@ -1011,12 +1017,13 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 proof=confirm_target(a,packet,closed=True)
                 scene=reconcile_preclose_target(estimator,scene,proof)
                 objects[a]=references[a].obj
-                trackers[a]=CuboidHoldingTracker.from_preclose_support(objects[a],proof,*robot.fk(a),priors,packet=packet)
-                release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*robot.fk(a),packet.observation_time_s)
+                image_pose=_image_tcp_pose(robot,a,packet)
+                trackers[a]=CuboidHoldingTracker.from_preclose_support(objects[a],proof,*image_pose,priors,packet=packet)
+                release_trackers[a]=HeldSurfaceTracker.from_preclose_support(proof,*image_pose,packet.observation_time_s)
                 for b in arms:measure_held(b,packet)
                 tcp,rot=robot.fk(a)
-                closed_tcp_z[a]=tcp[2]
-                closed_states[a]=robot.read_states()[a]
+                closed_tcp_z[a]=image_pose[0][2]
+                closed_states[a]=packet.robot_state[a]
                 raised[a]=(tcp+[0,0,.18],rot)
                 move('regrasp_initial_lift',{a:(tcp+[0,0,.06],rot)},True,active=(a,))
                 packet=observe()
@@ -1058,7 +1065,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         packet=current_packet
         for a,m in released_references.items():
             from workstation.planning.selection import nearest_upright_slot_rotation
-            fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+            fit=release_trackers[a].collision_estimate(packet,scene,*_image_tcp_pose(robot,a,packet),
                 max_drop_m=max(0.,report['release_check'][a]['gap_upper_m']),
                 reference_position_m=m['position_m'],reference_rotation=m['rotation'],allow_partial=True)
             if fit is None:
@@ -1067,7 +1074,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                 trial=nearest_upright_slot_rotation(np.asarray(m['rotation']))
                 hint=np.asarray(m['position_m']).copy()
                 hint[2]=robot.place_support_z+trackers[a].size[2]/2
-                fit=release_trackers[a].collision_estimate(packet,scene,*robot.fk(a),
+                fit=release_trackers[a].collision_estimate(packet,scene,*_image_tcp_pose(robot,a,packet),
                     reference_position_m=hint,reference_rotation=trial,allow_partial=True)
             if fit is None:raise RuntimeError('PAIR_RELEASED_GEOMETRY_UNCERTAIN:'+a)
             tid=objects[a].track_id

@@ -126,12 +126,13 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
         return ((selection_policy.priority(pair) if selection_policy else ())+
                 (slot_cost(pair),-(pair[0].score+pair[1].score)))
     pairs.sort(key=rank)
+    skipped=Counter()
     if prefix_assessment is not None:
         from workstation.planning.plan_reuse import refine_pick_pairs
-        ordered=refine_pick_pairs(pairs,rank,prefix_assessment,complete_assessment)
+        ordered=refine_pick_pairs(pairs,rank,prefix_assessment,complete_assessment,skipped)
     elif complete_assessment is not None:
         from workstation.planning.plan_reuse import complete_ranked_pairs
-        ordered=complete_ranked_pairs(pairs,rank,complete_assessment)
+        ordered=complete_ranked_pairs(pairs,rank,complete_assessment,skipped)
     else:ordered=pairs
     paths = {}
     rejected = []
@@ -173,6 +174,7 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
             result['joint_choice']=dict(source_keys=[selection_policy.key(a.candidate) for a in pair],
                 history_penalty=selection_policy.priority(pair)[0],visibility=selection_policy.visibility(pair),
                 feasible_pair_count=len(pairs),
+                skipped_partner_assessments=dict(skipped),
                 pair_count_scope='optimistic combinations, fully validated in rank order' if complete_assessment else 'fully assessed combinations',
                 eligible_source_count=len({r.candidate.target_id for r in rows if r.feasible}))
         return result, rejected

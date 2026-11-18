@@ -7,6 +7,26 @@ from workstation.diagnostics.graspgen_pair import paired_pregrasp
 
 
 class RankedPickParity(unittest.TestCase):
+    def test_rejected_partner_short_circuits_only_this_stage_and_pair(self):
+        from collections import Counter
+        from workstation.planning.plan_reuse import _assess_pair
+        rejected={};counts=Counter();seen=[]
+        def assess(row):
+            seen.append(row)
+            return SimpleNamespace(feasible=row!='blocked')
+        for pair in [('blocked','backup'),('usable','blocked'),('usable','backup')]:
+            result=_assess_pair(pair,assess,rejected,counts,'prefix')
+            self.assertEqual(result is not None,'blocked' not in pair)
+        self.assertEqual(seen,['blocked','usable','backup'])
+        self.assertEqual(counts['prefix'],2)
+
+    def test_holding_fk_uses_joint_sample_from_the_image(self):
+        from workstation.diagnostics.graspgen_pair_place import _image_tcp_pose
+        joints=np.arange(7,dtype=float)
+        packet=SimpleNamespace(robot_state={'left':SimpleNamespace(joint_positions_rad=joints)})
+        robot=SimpleNamespace(fk=lambda arm,q=None: q if q is not None else joints+1)
+        self.assertIs(_image_tcp_pose(robot,'left',packet),joints)
+
     def test_tied_resampled_candidate_follows_previous_batch(self):
         from workstation.planning.plan_reuse import refine_pick_pairs
         def row(arm,identifier,group):
