@@ -55,4 +55,3 @@ class RankedPickParity(unittest.TestCase):
             self.assertEqual(old_rejections,new_rejections)
             for field in ('selection','slots','pregrasp_knots','min_clearance_m','sample_count'):
                 self.assertEqual(a and a[field],b and b[field],(trial,field))
-
