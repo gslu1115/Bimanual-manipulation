@@ -1,11 +1,13 @@
 """Diagnostic wall time; does not feed the controller or simulation clock."""
 from functools import wraps
 from time import perf_counter
+from threading import get_ident
 
 
 class WallTiming:
     def __init__(self, clock=perf_counter):
         self.clock=clock
+        self.owner=get_ident()
         self.started=clock()
         self.rows={}
         self.stack=[]
@@ -17,6 +19,7 @@ class WallTiming:
         if function is None:return lambda callback:self.timed(label,callback)
         @wraps(function)
         def call(*args, **kwargs):
+            if get_ident()!=self.owner:return function(*args,**kwargs)
             stage=self.path_stage
             if label.startswith('path_stage_'):
                 self.path_stage=label

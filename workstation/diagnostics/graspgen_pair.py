@@ -325,6 +325,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     if ((len(targets)<2 if selection_policy else len(targets)!=2) or len({o.track_id for o in targets})!=len(targets)):
         fail('PAIR_REQUIRES_TWO_OBSERVED_UPRIGHT_TRACKS')
     execute=args.mode in ('graspgen-pair-pregrasp','graspgen-pair-place')
+    deferred=selection_policy is not None and args.mode=='graspgen-pair-place'
     if not execute:env.timeline.pause()
     armature_floor=.01 if execute else None
     if robot is None:robot=from_environment(env,paired_armature_floor=armature_floor)
@@ -373,7 +374,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         c=row.candidate;slot=row.terms['slot_xy'];key=(c.candidate_id,tuple(slot))
         if key not in completed_rows:
             checked=assess(scene,states,
-                lambda c,o,s:robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes),robot.home,
+                lambda c,o,s:robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,slot_endpoints=deferred),robot.home,
                 candidate_provider=lambda o,_:[c] if o.track_id==c.target_id else [])
             result=checked[0];result.terms['slot_xy']=slot
             completed_rows[key]=result
@@ -522,7 +523,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                                       complete_assessment if selection_policy else None,
                                       prefix_assessment=prefix_assessment if selection_policy else None,pick_cache=pick_prefixes)
         report['candidate_prefix_reuse']=pick_prefixes.report()
-        report['destination_evaluation']=dict(mode='pregrasp upper bound; ranked pick and destination refinement' if selection_policy else 'exhaustive',
+        report['destination_evaluation']=dict(mode='ranked pick and slot endpoint checks' if deferred else 'ranked refinement' if selection_policy else 'exhaustive',
             ranked_rows=len(rows),prefix_rows=len(prefix_rows) if selection_policy else len(rows),completed_rows=len(completed_rows),
             feasible_completed_rows=sum(r.feasible for r in completed_rows.values()),
             skipped_destination_rows=sum(r.feasible and (r.candidate.candidate_id,tuple(r.terms['slot_xy'])) not in completed_rows for r in rows),
@@ -540,6 +541,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
     report['slots_reserved']=slots.report()
     if execute:
         action_start=None
+        forecast=None
         try:
             returned=report.get('extra_view',{}).get('executed',False)
             if returned:
@@ -587,7 +589,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 raise RuntimeError('RESERVED_SLOT_CHANGED')
             states=robot.read_states()
             fresh_prefixes=CandidatePrefixCache()
-            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm],prefix_cache=fresh_prefixes),robot.home,
+            checked=assess(updated,states,lambda c,o,s:robot.feasibility(c,o,s,assigned_slots[c.arm],prefix_cache=fresh_prefixes,slot_endpoints=deferred),robot.home,
                            candidate_provider=lambda o,_:new.get(o.track_id,[]))
             for row in checked:
                 row.terms['slot_xy']=assigned_slots[row.candidate.arm]
@@ -597,12 +599,19 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if selection_policy:
                 report['joint_choice']=pair['joint_choice']
             env._write_json('graspgen_pair_check.json',report)
+            if deferred:
+                from workstation.planning.destination_forecast import DestinationForecast
+                specs={c['arm']:fresh_prefixes.destinations[c['candidate_id'],tuple(slot)]
+                       for c,slot in zip(current['selection'],current['slots'])}
+                forecast=DestinationForecast(robot,env.c,updated,specs)
+                report['deferred_destination']={}
             action_start=time.monotonic()
             if timing is not None:
                 report['preparation_timing']=timing.delta(preparation_start)
                 report['preparation_path_stage_detail']=timing.stage_delta(stage_start)
                 report['pair_entry_to_first_motion_wall_s']=time.perf_counter()-wait_start
-                report['ranked_pick_work']=dict(prefix_rows_checked=len(prefix_rows),full_slot_rows=len(completed_rows),
+                report['ranked_pick_work']=dict(prefix_rows_checked=len(prefix_rows),full_slot_rows=0 if deferred else len(completed_rows),
+                    slot_endpoint_rows=len(completed_rows) if deferred else 0,
                     selected_rows_revalidated=len(checked),pregrasp_paths_reused=pick_prefixes.path_hits+fresh_prefixes.path_hits)
                 report['preparation_planning_counts']=count_delta(planning_start)
                 action_timing_start=timing.snapshot()
@@ -612,6 +621,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             action_ticks_start=dict(getattr(robot,'tick_counts',{}))
             reader=getattr(robot,'encoder_snapshot_reader',None)
             encoder_start=(reader.reads,reader.reuses) if reader is not None else (0,0)
+            if forecast is not None:forecast.start()
             report['motion']=drive_empty_pregrasps(robot,current['pregrasp_knots'],speed_fraction=.5)
             for selected,path in zip(current['selection'],current['pregrasp_knots']):
                 arm=selected['arm']
@@ -623,6 +633,9 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 # This waypoint is in free air. The descent is replanned from
                 # measured FK and separately checked to 5 mm at actual contact.
                 if position_error>.008 or angle_error>math.radians(1.5):raise RuntimeError('PAIR_PREGRASP_GOAL_MISSED:'+arm)
+            if forecast is not None:
+                report.update(last_phase='pregrasp_recheck',next_action='REPLAN')
+                forecast.join(report['deferred_destination'])
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
@@ -649,12 +662,14 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                     return best
                 old_keepout=getattr(robot,'stationary_payload_keepout',None)
                 try:
-                    place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample)
+                    place_pair(env,robot,estimator,updated,current,slots,report,alternatives,resample,
+                               forecast=forecast,selection_started=wait_start)
                 finally:
                     robot.stationary_payload_keepout=old_keepout
         except RuntimeError as error:
             fail(str(error))
         finally:
+            if forecast is not None:forecast.close()
             if action_start is not None:
                 report['action_wall_s']=time.monotonic()-action_start
                 report['action_planning_counts']=count_delta(action_planning_start)

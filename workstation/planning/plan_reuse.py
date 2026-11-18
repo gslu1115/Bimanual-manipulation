@@ -16,6 +16,7 @@ class CandidatePrefixCache:
     """One live snapshot's slot-independent pick checks; never serialized."""
     def __init__(self):
         self.pregrasps={}
+        self.destinations={}
         self.path_hits=0
         self.context=None;self.rows={};self.hits=0;self.misses=0
 
@@ -27,7 +28,7 @@ class CandidatePrefixCache:
         # objects, preventing id reuse. A new frame/scene always invalidates.
         if (self.context is None or any(a is not b for a,b in zip(context,self.context[:3]))
                 or states!=self.context[3]):
-            self.rows.clear();self.pregrasps.clear();self.context=(*context,states)
+            self.rows.clear();self.pregrasps.clear();self.destinations.clear();self.context=(*context,states)
         return id(candidate),id(obj),None if hint is None else array_key(hint),include_lift
 
     def get(self,key):

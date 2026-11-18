@@ -375,7 +375,7 @@ def _image_tcp_pose(robot,arm,packet):
     return robot.fk(arm,packet.robot_state[arm].joint_positions_rad)
 
 
-def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None):
+def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=None,resample=None,*,forecast=None,selection_started=None):
     arms = ('panda_left', 'panda_right')
     priors = ScenePriors.from_config(env.c)
     selected = dict(zip(arms, pair['selection']))
@@ -851,7 +851,15 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         execution_start=perf_counter()
         report['phase_checkpoint']=dict(phase=phase,event='executing',dry_run=False)
         write_phase_checkpoint(env,report)
-        if phase=='approach':report['empty_approach_started']=True
+        if phase=='approach':
+            if forecast is not None:
+                report['next_action']='REPLAN'
+                gate_start=perf_counter()
+                forecast.confirm(robot,scene,objects,slots,selected,report['deferred_destination'])
+                report['deferred_destination']['current_frame_checks_s']=perf_counter()-gate_start
+                report['next_action']='CONTINUE'
+            if selection_started is not None:report['selection_to_descent_wall_s']=perf_counter()-selection_started
+            report['empty_approach_started']=True
         phases[label] = drive_empty_pregrasps(robot, paths, guard if both_loaded or sequential else None,
                                               following_band=.035 if contact else .025,require_overlap=not transfer and len(active)==2,
                                               speed_fraction=.4 if transfer else 1.,loaded_transfer=transfer,
