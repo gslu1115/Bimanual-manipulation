@@ -1,0 +1,613 @@
+{
+  "date": "2026-11-18",
+  "scope": "One newly sampled physical simulation per version; same scene, shared server, different model requests.",
+  "before": {
+    "archive": {
+      "archive": "pair-perf-v10-20261118-full.tgz",
+      "bytes": 7023901,
+      "sha256": "14751aac641dd9243d2b5b3405a52f4d156bb351fdb7b043facb5d209198c8f2"
+    },
+    "source": {
+      "success": true,
+      "source_commit": "961bcd03c0fb37027549f2f1dac6242bbb567cd2",
+      "files": 346,
+      "archive_sha256": "8ce653095307acf6009a765e1462587bf69cdec30232b45eca200d7a065bc801"
+    },
+    "device": {
+      "index": 0,
+      "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+      "pci": "0000:1b:00.0",
+      "memory_used_mib": 0,
+      "gpu_utilization_percent": 0,
+      "processes": [],
+      "time_utc": "2026-11-18T11:20:58.575412+00:00"
+    },
+    "status": {
+      "status": "passed",
+      "mode": "graspgen-pair-sort"
+    },
+    "metrics": {
+      "run": "pair-perf-v10-live-6",
+      "success": true,
+      "failure": null,
+      "placements": 4,
+      "total_wall_s": 268.1346888486296,
+      "attempts": 2,
+      "rounds": 2,
+      "action_wall_s": 165.96868983190507,
+      "completed_round_nonaction_wall_s": 61.008915626909584,
+      "candidate_feasibility_s": 29.954579059034586,
+      "candidate_path_validation_s": 24.05672259721905,
+      "approach_validation_s": 5.000417753588408,
+      "approach_validation_calls": 19,
+      "lift_validation_s": 5.389939600136131,
+      "lift_validation_calls": 18,
+      "destination_forecasts_reaching_transfer": 8,
+      "destination_forecasts_reaching_retreat": 8,
+      "saved_successful_motion_planning_labels_s": 10.684791025705636,
+      "first_motion_wait_s": 57.438875135965645,
+      "stationary_move_planning_s": 10.684856958221644,
+      "all_packets": 99,
+      "all_full_scene_estimates": 47,
+      "action_packets": 37,
+      "action_full_scene_estimates": 37,
+      "model_requests": 18
+    },
+    "attempts": [
+      {
+        "attempt": "round_1/attempt_1",
+        "success": true,
+        "failure": null,
+        "chosen_ids": [
+          "25e995e9ef5c45388886c0f1c72798fa:124:panda_left",
+          "dc77c508f651455cbce433e02f44d40b:181:panda_right"
+        ],
+        "slots": [
+          [
+            -0.2,
+            -0.4
+          ],
+          [
+            0.2,
+            -0.4
+          ]
+        ],
+        "first_motion_wait_s": 34.65060935681686,
+        "planning_counts": {
+          "full_forecasts_started": 4,
+          "full_forecasts_passed": 4,
+          "cartesian_reuses": 0
+        },
+        "action_planning_counts": {
+          "full_forecasts_started": 0,
+          "full_forecasts_passed": 0,
+          "cartesian_reuses": 0
+        },
+        "candidate_work": {
+          "prefix_rows_checked": 5,
+          "full_slot_rows": 2,
+          "selected_rows_revalidated": 2,
+          "pregrasp_paths_reused": 4
+        },
+        "skipped_partner_assessments": null,
+        "rejected_destination_rows": [],
+        "model_requests": 12,
+        "strategy": "orient-first",
+        "preparation": {
+          "model_request": {
+            "calls": 12,
+            "inclusive_s": 9.535694628488272
+          },
+          "candidate_feasibility": {
+            "calls": 105,
+            "inclusive_s": 11.428628618828952
+          },
+          "path_validation": {
+            "calls": 255,
+            "inclusive_s": 10.21703576715663
+          }
+        }
+      },
+      {
+        "attempt": "round_2/attempt_1",
+        "success": true,
+        "failure": null,
+        "chosen_ids": [
+          "11072a36f0c149a39d0764b056734193:196:panda_left",
+          "be0a70e6d6c34171800709e4df3fcd4e:142:panda_right"
+        ],
+        "slots": [
+          [
+            -0.2,
+            -0.4
+          ],
+          [
+            0.2,
+            -0.4
+          ]
+        ],
+        "first_motion_wait_s": 22.788265779148787,
+        "planning_counts": {
+          "full_forecasts_started": 6,
+          "full_forecasts_passed": 4,
+          "cartesian_reuses": 0
+        },
+        "action_planning_counts": {
+          "full_forecasts_started": 0,
+          "full_forecasts_passed": 0,
+          "cartesian_reuses": 0
+        },
+        "candidate_work": {
+          "prefix_rows_checked": 12,
+          "full_slot_rows": 4,
+          "selected_rows_revalidated": 2,
+          "pregrasp_paths_reused": 4
+        },
+        "skipped_partner_assessments": null,
+        "rejected_destination_rows": [
+          {
+            "candidate_id": "110a305170a34199a09313c115e16c4c:126:panda_left",
+            "slot_xy": [
+              0.2,
+              -0.4
+            ],
+            "reasons": [
+              "IK_DISCONTINUITY"
+            ]
+          },
+          {
+            "candidate_id": "a489bfdbcf2f4d58a910a01450cd9598:176:panda_right",
+            "slot_xy": [
+              -0.2,
+              -0.4
+            ],
+            "reasons": [
+              "IK_DISCONTINUITY"
+            ]
+          }
+        ],
+        "model_requests": 6,
+        "strategy": "orient-first",
+        "preparation": {
+          "model_request": {
+            "calls": 6,
+            "inclusive_s": 1.1620141505263746
+          },
+          "candidate_feasibility": {
+            "calls": 66,
+            "inclusive_s": 18.525950440205634
+          },
+          "path_validation": {
+            "calls": 276,
+            "inclusive_s": 13.83968683006242
+          }
+        }
+      }
+    ],
+    "completed_pairs": 2,
+    "visually_cleared_batches": 2,
+    "model_request_ids": [
+      "25e995e9ef5c45388886c0f1c72798fa",
+      "9785224e734040ed985e0d8aafd7d3fe",
+      "d3d37d4bb7614c0b83b11b3a29ac314e",
+      "dc77c508f651455cbce433e02f44d40b",
+      "6ccece17bc3b48cba6fe44016bc73d79",
+      "9a20334beb304973901d18ef7a55696b",
+      "ed176e1751d94bb2ba60bc0511c631dc",
+      "5ddc712f199d44c5be58d8127baafd96",
+      "8002ade770184723950a0d4085b40df2",
+      "90074b3ae72a47e1842553dd68807884",
+      "fea4dd382ecb4d7e90e89cf68c560dda",
+      "6f44ac26621b4f5d8545e3d5bcfcd27d",
+      "217b5152f1d1455ba41e6b0714c9b95b",
+      "11072a36f0c149a39d0764b056734193",
+      "a489bfdbcf2f4d58a910a01450cd9598",
+      "31e83f55420f4be4bfd585b8c4840e80",
+      "110a305170a34199a09313c115e16c4c",
+      "be0a70e6d6c34171800709e4df3fcd4e"
+    ],
+    "proxy_ok": 18,
+    "replay_files": [],
+    "exit": "6 0",
+    "common_timing": {
+      "model_request": 10.697708779014647,
+      "sensor_read": 35.044416359160095,
+      "scene_estimation": 22.363090318161994,
+      "camera_render": 32.45064310962334,
+      "physics_step": 63.016841280739754
+    }
+  },
+  "after": {
+    "archive": {
+      "archive": "pair-perf-v11-20261118-full.tgz",
+      "bytes": 5635327,
+      "sha256": "50b064a501cfd2bbc302deddcbfe96f40fb355bf1495f0bd9a85ed8b016f3d6d"
+    },
+    "source": {
+      "success": true,
+      "source_commit": "dc383c75949ddf9585df83a5bede075ba1cd8ce4",
+      "files": 347,
+      "archive_sha256": "c0ff7cb4b1258520d9ee28c7e4cffefb1a3ee3c6250c8336948f982ed7989f73"
+    },
+    "device": {
+      "selected": {
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 4090",
+        "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+        "pci": "0000:1b:00.0",
+        "free_mib": 8284,
+        "used_mib": 15798,
+        "utilization_pct": 16
+      },
+      "ranking": [
+        {
+          "index": 0,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-00337dfa-c8cb-ad67-af97-9751e0e8f18a",
+          "pci": "0000:1b:00.0",
+          "free_mib": 8284,
+          "used_mib": 15798,
+          "utilization_pct": 16
+        },
+        {
+          "index": 1,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-16e980ed-150b-a0ea-29a9-11d25d205501",
+          "pci": "0000:1c:00.0",
+          "free_mib": 8255,
+          "used_mib": 15827,
+          "utilization_pct": 8
+        },
+        {
+          "index": 6,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-e9c81666-649b-3f53-e420-a6546ae5dcdd",
+          "pci": "0000:40:00.0",
+          "free_mib": 7657,
+          "used_mib": 16425,
+          "utilization_pct": 20
+        },
+        {
+          "index": 7,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-7f6a6933-3ff0-abb7-c650-33cdce0744b8",
+          "pci": "0000:41:00.0",
+          "free_mib": 7623,
+          "used_mib": 16459,
+          "utilization_pct": 20
+        },
+        {
+          "index": 5,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-244671dc-46c4-c0b7-7896-727dd4b95cc3",
+          "pci": "0000:3f:00.0",
+          "free_mib": 6371,
+          "used_mib": 17711,
+          "utilization_pct": 18
+        },
+        {
+          "index": 3,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-c664a10c-81b0-f029-d994-33408594d6d7",
+          "pci": "0000:1e:00.0",
+          "free_mib": 6371,
+          "used_mib": 17711,
+          "utilization_pct": 21
+        },
+        {
+          "index": 2,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-5da59070-992d-ae57-f1bd-bd8805dadd45",
+          "pci": "0000:1d:00.0",
+          "free_mib": 6331,
+          "used_mib": 17751,
+          "utilization_pct": 10
+        },
+        {
+          "index": 4,
+          "name": "NVIDIA GeForce RTX 4090",
+          "uuid": "GPU-eb00325d-328c-ebdb-cb9d-43cbc619b66a",
+          "pci": "0000:3d:00.0",
+          "free_mib": 6331,
+          "used_mib": 17751,
+          "utilization_pct": 19
+        }
+      ],
+      "time_utc": "2026-11-18T11:36:23.440176+00:00"
+    },
+    "status": {
+      "status": "passed",
+      "mode": "graspgen-pair-sort"
+    },
+    "metrics": {
+      "run": "pair-perf-v11-live-6",
+      "success": true,
+      "failure": null,
+      "placements": 4,
+      "total_wall_s": 246.98314322018996,
+      "attempts": 2,
+      "rounds": 2,
+      "action_wall_s": 165.40613564755768,
+      "completed_round_nonaction_wall_s": 52.92990017076954,
+      "candidate_feasibility_s": 28.335360382217914,
+      "candidate_path_validation_s": 23.80251506343484,
+      "approach_validation_s": 4.799905790016055,
+      "approach_validation_calls": 17,
+      "lift_validation_s": 5.093193049542606,
+      "lift_validation_calls": 16,
+      "destination_forecasts_reaching_transfer": 8,
+      "destination_forecasts_reaching_retreat": 8,
+      "saved_successful_motion_planning_labels_s": 11.206998369656503,
+      "first_motion_wait_s": 49.41381599614397,
+      "stationary_move_planning_s": 11.207058724015951,
+      "all_packets": 100,
+      "all_full_scene_estimates": 48,
+      "action_packets": 38,
+      "action_full_scene_estimates": 38,
+      "model_requests": 18
+    },
+    "attempts": [
+      {
+        "attempt": "round_1/attempt_1",
+        "success": true,
+        "failure": null,
+        "chosen_ids": [
+          "6cc4f786f1784404ba4f7c8a482969b1:134:panda_left",
+          "05fb44064b514fbd833ef610a4409cc2:96:panda_right"
+        ],
+        "slots": [
+          [
+            -0.2,
+            -0.4
+          ],
+          [
+            0.2,
+            -0.4
+          ]
+        ],
+        "first_motion_wait_s": 28.387414819095284,
+        "planning_counts": {
+          "full_forecasts_started": 4,
+          "full_forecasts_passed": 4,
+          "cartesian_reuses": 0
+        },
+        "action_planning_counts": {
+          "full_forecasts_started": 0,
+          "full_forecasts_passed": 0,
+          "cartesian_reuses": 0
+        },
+        "candidate_work": {
+          "prefix_rows_checked": 4,
+          "full_slot_rows": 2,
+          "selected_rows_revalidated": 2,
+          "pregrasp_paths_reused": 4
+        },
+        "skipped_partner_assessments": {},
+        "rejected_destination_rows": [],
+        "model_requests": 12,
+        "strategy": "orient-first",
+        "preparation": {
+          "model_request": {
+            "calls": 12,
+            "inclusive_s": 3.3510218118317425
+          },
+          "candidate_feasibility": {
+            "calls": 104,
+            "inclusive_s": 11.542395357042551
+          },
+          "path_validation": {
+            "calls": 242,
+            "inclusive_s": 10.406917240936309
+          }
+        }
+      },
+      {
+        "attempt": "round_2/attempt_1",
+        "success": true,
+        "failure": null,
+        "chosen_ids": [
+          "053bd80855ba40adad3f9522a24948dd:216:panda_left",
+          "9d78aa977b5c4f9595adbf34b8d5888d:119:panda_right"
+        ],
+        "slots": [
+          [
+            -0.2,
+            -0.4
+          ],
+          [
+            0.2,
+            -0.4
+          ]
+        ],
+        "first_motion_wait_s": 21.026401177048683,
+        "planning_counts": {
+          "full_forecasts_started": 5,
+          "full_forecasts_passed": 4,
+          "cartesian_reuses": 2
+        },
+        "action_planning_counts": {
+          "full_forecasts_started": 0,
+          "full_forecasts_passed": 0,
+          "cartesian_reuses": 0
+        },
+        "candidate_work": {
+          "prefix_rows_checked": 11,
+          "full_slot_rows": 3,
+          "selected_rows_revalidated": 2,
+          "pregrasp_paths_reused": 4
+        },
+        "skipped_partner_assessments": {
+          "prefix": 3,
+          "destination": 1
+        },
+        "rejected_destination_rows": [
+          {
+            "candidate_id": "9d78aa977b5c4f9595adbf34b8d5888d:130:panda_left",
+            "slot_xy": [
+              0.2,
+              -0.4
+            ],
+            "reasons": [
+              "IK_DISCONTINUITY"
+            ]
+          }
+        ],
+        "model_requests": 6,
+        "strategy": "orient-first",
+        "preparation": {
+          "model_request": {
+            "calls": 6,
+            "inclusive_s": 1.349188584368676
+          },
+          "candidate_feasibility": {
+            "calls": 64,
+            "inclusive_s": 16.792965025175363
+          },
+          "path_validation": {
+            "calls": 248,
+            "inclusive_s": 13.39559782249853
+          }
+        }
+      }
+    ],
+    "completed_pairs": 2,
+    "visually_cleared_batches": 2,
+    "model_request_ids": [
+      "6cc4f786f1784404ba4f7c8a482969b1",
+      "825ae0ad1b0544909202385cfff7abb9",
+      "5d3e29df793b412bab164d53e2232710",
+      "ed2649247f704d9d9aa1f1a935c4e7b7",
+      "05fb44064b514fbd833ef610a4409cc2",
+      "053bff600d7544deaf25f2fa7c814743",
+      "f354854d96cc43aab7a99c24888853e3",
+      "6fae00fda5c84fb0a1e97a911092def0",
+      "4ce80dfa745e471fb35285674926a88e",
+      "78ce502a270e45e78090ac61cb7cc1c8",
+      "f770e431a1e145a2961913cf296aa639",
+      "995519d2d5404910a8e2defc38d3fc77",
+      "c53e034da3324dd7ba70d30a24313c4d",
+      "053bd80855ba40adad3f9522a24948dd",
+      "4f38087277284c90811486d640dd3aea",
+      "9d78aa977b5c4f9595adbf34b8d5888d",
+      "7fb70cd3f3cf474ba7a62eb885f845fe",
+      "6b07dfea54d2401093c6b80ad0d10f7e"
+    ],
+    "proxy_ok": 18,
+    "replay_files": [],
+    "exit": "6 0",
+    "common_timing": {
+      "model_request": 4.7002103962004185,
+      "sensor_read": 25.674426686018705,
+      "scene_estimation": 21.270867896731943,
+      "camera_render": 23.197567757219076,
+      "physics_step": 62.58697673724964
+    },
+    "selection_parity": {
+      "success": true,
+      "same_input_cases": 70,
+      "selected": 69,
+      "pair_collision_rejections": 41,
+      "matching": [
+        "selected candidates and slots",
+        "joint trajectory",
+        "sample count",
+        "minimum clearance",
+        "ordered rejection records"
+      ]
+    },
+    "collision_parity": {
+      "success": true,
+      "cases": 3240,
+      "max_clearance_difference_m": 0.0,
+      "outcomes": {
+        "PASS": 2636,
+        "STATIC_PATH_BLOCKED:fixture": 404,
+        "TARGET_BODY_COLLISION": 104,
+        "HELD_CARTON_OWN_BODY_COLLISION": 64,
+        "SELF_COLLISION": 16,
+        "HELD_CARTON_PATH_BLOCKED:fixture": 16
+      },
+      "wall": {
+        "old_s": 1.8190059829503298,
+        "new_s": 1.7629455020651221
+      },
+      "scope": "Same synthetic robot/obstacle/target inputs; old frozen v10 validator vs current validator. Changed finger widths, fixed obstacle, other arm, held/contact rules; exact failure code and collision witness. Offline only."
+    }
+  },
+  "identical_inputs": {
+    "config_used.json": true,
+    "release_states.json": true,
+    "camera_rig.json": true
+  },
+  "overlapping_model_request_ids": [],
+  "controlled_callback_work": {
+    "work_before_after": [
+      {
+        "prefix_calls": 2218,
+        "prefix_unique": 930,
+        "destination_calls": 776,
+        "destination_unique": 465,
+        "stages": 70
+      },
+      {
+        "prefix_calls": 1775,
+        "prefix_unique": 906,
+        "destination_calls": 624,
+        "destination_unique": 436,
+        "stages": 70
+      }
+    ],
+    "success": true,
+    "same_input_cases": 70,
+    "selected": 69,
+    "pair_collision_rejections": 41,
+    "matching": [
+      "selected candidates and slots",
+      "joint trajectory",
+      "sample count",
+      "minimum clearance",
+      "ordered rejection records"
+    ]
+  },
+  "recorded_pregrasp_offline": [
+    {
+      "round": 1,
+      "samples": 123,
+      "clearance_m": 0.032486769795715895,
+      "recorded_clearance_m": 0.03248676979571591,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ]
+    },
+    {
+      "round": 2,
+      "samples": 119,
+      "clearance_m": 0.03248623131300707,
+      "recorded_clearance_m": 0.03248623131300707,
+      "slots": [
+        [
+          -0.2,
+          -0.4
+        ],
+        [
+          0.2,
+          -0.4
+        ]
+      ]
+    }
+  ],
+  "unit_tests": {
+    "windows": 709,
+    "linux": 709,
+    "command": "python -m unittest discover -s tests"
+  },
+  "test_runtime": "python -m workstation --mode graspgen-pair-sort --headless --pair-transfer-policy auto --grasp-backend graspgen --num-grasps 256 --seed 6",
+  "metrics_scope": "First-motion wait measured from check_pair entry to first pregrasp motion, including sensing, inference and planning. Full forecast starts count single-candidate slot suffix entries, including rejected attempts and rechecks on a fresh frame. Partner skip events include cacheable callbacks, not necessarily full forecasts."
+}
