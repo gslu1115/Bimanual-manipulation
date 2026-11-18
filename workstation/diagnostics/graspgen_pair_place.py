@@ -454,7 +454,7 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
     before_transfer={}
     phases = report['phases'] = {}
 
-    def observe(local=False):
+    def observe(local=False,destinations=False):
         nonlocal scene,fresh_scene
         packet = env.get_observation_packet(refresh=True)
         if local:
@@ -467,11 +467,19 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
                     centre=tcp+rotation@trackers[arm].offset
                 half=np.linalg.norm(obj.size_m)/2+obj.uncertainty_m+.03
                 regions.append((centre,half))
+            # An adjacent box can project into a wrist ROI from one camera.
+            # Include its observed reference volume in ALL cameras so that
+            # the estimator does not split its other faces into a new obstacle.
+            for ref in (*source_references.values(),*parked.values()):
+                regions.append((np.asarray(ref['position_m']),np.linalg.norm(ref['size_m'])/2+.03))
+            if destinations:
+                for xy in slots.positions:
+                    regions.append((np.array([*xy,robot.place_support_z+.06]),np.array([.12,.12,.12])))
             scene=estimator.estimate(packet,regions=regions)
         else:
             scene=estimator.estimate(packet)
         counts=report.setdefault('observation_scope',{})
-        scope='selected_cartons' if local else 'workspace'
+        scope='held_and_slots' if destinations else 'pick_neighborhoods' if local else 'workspace'
         counts[scope]=counts.get(scope,0)+1
         fresh_scene=scene
         if released_references:refresh_released(packet)
@@ -620,11 +628,11 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
         return observed
 
     def observe_destinations():
-        packet=observe()
+        packet=observe(local=True,destinations=True)
         if initially_occupied and stationary_slot_tracks(robot.observed_workspace,scene,unused).keys()!=initially_occupied:
             first=packet.observation_time_s
             robot.hold(.1)
-            packet=observe()
+            packet=observe(local=True,destinations=True)
             report.setdefault('parked_rechecks',[]).append(dict(phase=report['last_phase'],
                 first_s=first,second_s=packet.observation_time_s))
         return packet

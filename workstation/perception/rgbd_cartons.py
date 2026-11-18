@@ -912,10 +912,14 @@ class CartonEstimator:
         # Keep whole connected surfaces that intersect a requested volume. Clipping
         # the mask itself would bias cuboid fitting and fragment association.
         if regions:
-            inside=np.zeros(frame.depth_m.shape,bool)
+            active=roi & frame.valid_depth
+            if segmentation is None:active &= colour
+            points=xyz[active]
+            keep=np.zeros(len(points),bool)
             for centre,half in regions:
-                inside |= np.all(np.abs(xyz-centre)<=half,axis=2)
-            inside &= frame.valid_depth
+                keep |= np.all(np.abs(points-centre)<=half,axis=1)
+            inside=np.zeros(frame.depth_m.shape,bool)
+            inside[active]=keep
             proposals=[(mask,score) for mask,score in proposals if np.any(mask & inside)]
         result, masks = [], {}
         for index,(mask,model_score) in enumerate(proposals,1):
