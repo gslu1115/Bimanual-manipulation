@@ -108,7 +108,7 @@ def synchronized_knots(left, right, max_step=.025):
             yield tuple(p[i-1]+(p[i]-p[i-1])*n/steps for p in aligned)
 
 
-def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None,*,prefix_assessment=None,pick_cache=None):
+def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_assessment=None,*,prefix_assessment=None,pick_cache=None,model_first=False):
     arms = ('panda_left', 'panda_right')
     feasible = [[a for a in rows if a.feasible and a.candidate.source == 'graspgen'
                  and a.candidate.arm == arm and (a.terms.get('full_pose_checked') or
@@ -123,6 +123,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
                        'position_m',row.candidate.position_m)[0]-row.terms['slot_xy'][0])
                    for row in pair if row.terms.get('slot_xy') is not None)
     def rank(pair):
+        if model_first:
+            scores=[row.candidate.model_score for row in pair]
+            return selection_policy.history_penalty(pair),-sum(scores),-min(scores),slot_cost(pair)
         return ((selection_policy.priority(pair) if selection_policy else ())+
                 (slot_cost(pair),-(pair[0].score+pair[1].score)))
     pairs.sort(key=rank)
@@ -177,6 +180,9 @@ def paired_pregrasp(robot, rows, states, scene,selection_policy=None,complete_as
                 skipped_partner_assessments=dict(skipped),
                 pair_count_scope='optimistic combinations, fully validated in rank order' if complete_assessment else 'fully assessed combinations',
                 eligible_source_count=len({r.candidate.target_id for r in rows if r.feasible}))
+            if model_first:
+                result['joint_choice'].update(order='failure history, GraspGen score sum, weaker score, lane distance',
+                    model_scores=[a.candidate.model_score for a in pair])
         return result, rejected
     return None, rejected
 
@@ -283,12 +289,12 @@ class PairAttemptError(RuntimeError):
         super().__init__(reason);self.report=report
 
 
-def approach_alternatives(rows,assigned_slots,completed_rows=None):
+def approach_alternatives(rows,assigned_slots,completed_rows=None,*,model_first=False):
     """Retain pending backups for on-demand validation by the substitution loop."""
     completed_rows=completed_rows or {}
     rows=[completed_rows.get((r.candidate.candidate_id,tuple(r.terms['slot_xy'])),r) for r in rows]
     alternatives={arm:[] for arm in assigned_slots};seen=set()
-    for row in sorted(rows,key=lambda item:-item.score):
+    for row in sorted(rows,key=lambda item:-(item.candidate.model_score if model_first else item.score)):
         c=row.candidate
         if row.feasible and row.terms['slot_xy']==assigned_slots[c.arm] and c.candidate_id not in seen:
             alternatives[c.arm].append(c);seen.add(c.candidate_id)
@@ -374,23 +380,30 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         c=row.candidate;slot=row.terms['slot_xy'];key=(c.candidate_id,tuple(slot))
         if key not in completed_rows:
             checked=assess(scene,states,
-                lambda c,o,s:robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,slot_endpoints=deferred),robot.home,
+                lambda c,o,s:check_destination(c,o,s,slot,complete=True),robot.home,
                 candidate_provider=lambda o,_:[c] if o.track_id==c.target_id else [])
             result=checked[0];result.terms['slot_xy']=slot
             completed_rows[key]=result
         return completed_rows[key]
-    def check_destination(c,o,s,slot,rank_only=True):
+    def check_destination(c,o,s,slot,rank_only=True,*,complete=False):
         # Pick IK, empty approach and finger closure do not depend on the
         # downstream slot. Reuse their failure only for this frozen snapshot.
         if c.candidate_id in pick_failures:return pick_failures[c.candidate_id]
-        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,prefix_only=selection_policy is not None,rank_only=selection_policy is not None and rank_only)
-        if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE'):
+        prefix=selection_policy is not None and not complete
+        result=robot.feasibility(c,o,s,slot,prefix_cache=pick_prefixes,prefix_only=prefix,
+                                 rank_only=prefix and rank_only,slot_endpoints=complete and deferred)
+        if result.get('reasons') and result.get('rejection_phase') in ('PREGRASP','APPROACH','CLOSE','LIFT'):
             pick_failures[c.candidate_id]=result
         return result
+    def visual_proposal(c,o,s):
+        # assess() still checks observation age, association and gripper fit.
+        # Geometry is evaluated by complete_assessment when this pair reaches the front.
+        return dict(reasons=(),joint_cost=0.,path_clearance_m=0.,ranking_bound=True)
     for attempt in range(1,3 if selection_policy else 8):
         retained={}
         preferred=preferred_assignments(targets,robot.base_config)
-        feasible={(r.candidate.target_id,r.candidate.arm) for r in rows if r.feasible}
+        attempted=completed_rows.values() if deferred else rows
+        feasible={(r.candidate.target_id,r.candidate.arm) for r in attempted if r.feasible}
         missing=[o for o in targets if (o.track_id,preferred[o.track_id]) not in feasible]
         if execute and attempt==5 and len(missing)==1:
             target=missing[0]
@@ -483,9 +496,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                     if balance['offset_m']>.5*balance['half_extent_m']:
                         reasons+=('ECCENTRIC_PAIRED_LIFT',)
                 checked.append(replace(c,rejection_reasons=reasons))
-            # Each full-pose check forecasts approach, lift and placement.
-            # Try balanced pinches first on the nearer arm. Keep the other
-            # arm eligible in later rounds when the local lane has failed.
+            # Rank before diversity filtering so each group retains its best proposal.
             allowed=[c for c in checked if not c.rejection_reasons]
             report.setdefault('proposal_filters',[]).append(dict(attempt=attempt,target_id=obj.track_id,
                 candidate_count=len(checked),eligible=len(allowed),
@@ -497,12 +508,13 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                 return offset+abs(depth-.45)+abs(opening['centre_offset_m'])/.02+upright_contact_cost(c,obj)
             for arm in states:
                 if selection_policy is None and attempt<=4 and arm!=preferred.get(obj.track_id):continue
-                ordered=sorted((c for c in allowed if c.arm==arm),key=pinch_cost)
+                ordered=sorted((c for c in allowed if c.arm==arm),
+                               key=(lambda c:-c.model_score) if deferred else pinch_cost)
                 chosen=(selection_policy.diverse(ordered,obj,4) if selection_policy else distinct_pinches(ordered,4))
                 candidates.setdefault(obj.track_id,[]).extend(chosen)
         order={c.candidate_id:i for group in candidates.values() for i,c in enumerate(group)}
         for slot in available:
-            scored=assess(scene,states,lambda c,o,s:check_destination(c,o,s,slot),robot.home,
+            scored=assess(scene,states,visual_proposal if deferred else lambda c,o,s:check_destination(c,o,s,slot),robot.home,
                           candidate_provider=lambda o,_:candidates.get(o.track_id,[]))
             for row in scored:
                 # Preserve the eager sort's append order across resampling rounds.
@@ -511,17 +523,19 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             for arm in states:
                 assigned=[r for r in scored if r.candidate.arm==arm]
                 report['slot_assessments'].append(dict(attempt=attempt,slot_xy=slot,arm=arm,
-                    scope='pregrasp ranking bound; pick and destination pending' if selection_policy else 'whole path',
+                    scope='visual proposals; paths pending' if deferred else 'pregrasp ranking bound; pick and destination pending' if selection_policy else 'whole path',
                     feasible=sum(r.feasible for r in assigned),
                     feasible_by_target=dict(Counter(r.candidate.target_id for r in assigned if r.feasible)),
                     reasons=dict(Counter(reason for r in assigned for reason in r.reasons)),
                     phases=dict(Counter(r.terms['rejection_phase'] for r in assigned if r.terms.get('rejection_phase')))))
         report['candidate_prefix_reuse']=pick_prefixes.report()
         report['feasible_per_arm']={a:len({row.candidate.candidate_id for row in rows if row.feasible and row.candidate.arm==a}) for a in states}
-        report['feasible_per_arm_scope']='pregrasp passed; remaining stages pending ranked validation' if selection_policy else 'whole path'
+        report['feasible_per_arm_scope']=('visual filters passed; paths pending' if deferred else
+            'pregrasp passed; remaining stages pending ranked validation' if selection_policy else 'whole path')
         pair,rejections=paired_pregrasp(robot,rows,states,scene,selection_policy,
                                       complete_assessment if selection_policy else None,
-                                      prefix_assessment=prefix_assessment if selection_policy else None,pick_cache=pick_prefixes)
+                                      prefix_assessment=prefix_assessment if selection_policy and not deferred else None,
+                                      pick_cache=pick_prefixes,model_first=deferred)
         report['candidate_prefix_reuse']=pick_prefixes.report()
         report['destination_evaluation']=dict(mode='ranked pick and slot endpoint checks' if deferred else 'ranked refinement' if selection_policy else 'exhaustive',
             ranked_rows=len(rows),prefix_rows=len(prefix_rows) if selection_policy else len(rows),completed_rows=len(completed_rows),
@@ -532,7 +546,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
         report.update(pair=pair, rejected_pairs=rejections)
         if selection_policy:report['grasp_diversity']=selection_policy.diversity[diversity_start:]
         if pair is not None:break
-        if selection_policy and attempt==1:
+        if selection_policy and not deferred and attempt==1:
             # Retry requests depend on actual prefix feasibility on each arm.
             rows=[prefix_assessment(row) if row.terms.get('ranking_bound') else row for row in rows]
     if pair is None:fail('NO_FEASIBLE_DISTINCT_GRASPGEN_PAIR')
@@ -639,7 +653,7 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
             if args.mode=='graspgen-pair-place':
                 from workstation.diagnostics.graspgen_pair_place import place_pair
                 report['scope']='two_cartons_same_physics_scene'
-                alternatives=approach_alternatives(rows,assigned_slots,{**prefix_rows,**completed_rows})
+                alternatives=approach_alternatives(rows,assigned_slots,{**prefix_rows,**completed_rows},model_first=deferred)
                 def resample(arm,obj,view,image,previous,goal):
                     seq={n:f.sequence_id for n,f in image.cameras.items() if f}
                     observed=visual_clouds(image,view,obj.track_id)
@@ -654,6 +668,14 @@ def check_pair(env, args, packet, scene, estimator, *, robot=None, target_select
                             if (np.linalg.norm(np.subtract(c.position_m,previous['position_m']))<.004 and
                                 abs(np.dot(c.orientation_wxyz,previous['orientation_wxyz']))>math.cos(math.radians(4)/2)):continue
                             options.append(c)
+                    if deferred:
+                        options.sort(key=lambda c:-c.model_score)
+                        states=robot.read_states()
+                        for candidate in distinct_pinches(options,6):
+                            checked=assess(view,states,lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=False),
+                                robot.home,candidate_provider=lambda o,_:[candidate] if o.track_id==obj.track_id else [])
+                            if checked and checked[0].feasible:return candidate
+                        raise RuntimeError('NO_FEASIBLE_REGRASP')
                     options.sort(key=lambda c:visual_pinch_balance(c,obj)['penalty']+upright_contact_cost(c,obj))
                     verified=assess(view,robot.read_states(),lambda c,o,s:robot.feasibility(c,o,s,goal,forecast_home=not deferred),robot.home,
                         candidate_provider=lambda o,_:distinct_pinches(options,6) if o.track_id==obj.track_id else [])

@@ -106,12 +106,14 @@ class JointPairSelection:
         self.visibility_cache[ids]=result
         return result
 
-    def priority(self,pair):
+    def history_penalty(self,pair):
         keys=tuple(sorted(self.key(row.candidate) for row in pair))
         # Prefer another source combination after failure. Different grasps of
         # the same sources remain eligible when no better combination exists.
-        history=self.failed_pairs[keys]+sum(self.failed_sources[k] for k in keys)
-        return history,self.visibility(pair)['risk']
+        return self.failed_pairs[keys]+sum(self.failed_sources[k] for k in keys)
+
+    def priority(self,pair):
+        return self.history_penalty(pair),self.visibility(pair)['risk']
 
     def record_failure(self,report):
         selected=report.get('pair',{}).get('selection',[])

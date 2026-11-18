@@ -7,6 +7,27 @@ from workstation.diagnostics.graspgen_pair import paired_pregrasp
 
 
 class RankedPickParity(unittest.TestCase):
+    def test_model_first_only_plans_best_pair_or_next_after_rejection(self):
+        arms=('panda_left','panda_right')
+        states={arm:SimpleNamespace(joint_positions_rad=np.zeros(7)) for arm in arms}
+        policy=SimpleNamespace(history_penalty=lambda pair:0,priority=lambda pair:(0,0),
+                               key=lambda c:c.target_id,visibility=lambda pair:{})
+        robot=SimpleNamespace(checked_joint_plan=lambda arm,start,end,*_:([start,end],1.),
+            spheres=lambda arm,q:[(0,np.array([float(arm==arms[0]),0.,0.]),.02)])
+        def row(arm,name,score):
+            c=GraspCandidate(arm,arm,(0,0,0),0,.07,0,source='graspgen',candidate_id=name,model_score=score)
+            return CandidateAssessment(c,True,(),dict(ranking_bound=True,slot_xy=(arms.index(arm),0)),-score)
+        rows=[row(arms[0],'backup',.75),row(arms[1],'right',.95),row(arms[0],'top',.99)]
+        for blocked,expected in [(False,['top','right']),(True,['top','backup','right'])]:
+            calls=[]
+            def complete(r):
+                calls.append(r.candidate.candidate_id)
+                return replace(r,feasible=not (blocked and calls[-1]=='top'),
+                    terms=dict(r.terms,full_pose_checked=True,pregrasp_joint_positions_rad=[.1]*7))
+            pair,_=paired_pregrasp(robot,rows,states,None,policy,complete,model_first=True)
+            self.assertEqual(calls,expected)
+            self.assertEqual([c['candidate_id'] for c in pair['selection']],expected[-2:])
+
     def test_rejected_partner_short_circuits_only_this_stage_and_pair(self):
         from collections import Counter
         from workstation.planning.plan_reuse import _assess_pair
