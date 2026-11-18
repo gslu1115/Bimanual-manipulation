@@ -23,7 +23,7 @@ class Spec:
 
 
 class ForecastGateTests(unittest.TestCase):
-    def gate(self,blocked):
+    def gate(self,blocked,round_reserved=False):
         q=np.zeros(7);c=Candidate()
         forecast=DestinationForecast.__new__(DestinationForecast)
         forecast.specs={'a':Spec(Box(x=0.,track_id='box'),c,q)}
@@ -40,7 +40,8 @@ class ForecastGateTests(unittest.TestCase):
         current={'a':Box(x=.001,track_id='box')}
         with patch('workstation.planning.destination_forecast.check_stage') as validate:
             if blocked:validate.side_effect=RuntimeError('OTHER_ARM_COLLISION')
-            forecast.confirm(robot,'fresh_scene',current,slots,{'a':vars(c)},report)
+            forecast.confirm(robot,'fresh_scene',current,slots,{'a':vars(c)},report,round_reserved=round_reserved)
+            self.assertEqual(slots.observe.call_count,int(not round_reserved))
             self.assertEqual(validate.call_count,2)
             for call in validate.call_args_list:
                 self.assertEqual(call.args[1],'fresh_scene')
@@ -50,6 +51,9 @@ class ForecastGateTests(unittest.TestCase):
 
     def test_endpoint_connector_and_open_use_fresh_geometry(self):
         self.gate(False)
+
+    def test_round_reservation_reuses_slot_but_checks_fresh_trajectory(self):
+        self.gate(False,round_reserved=True)
 
     def test_blocked_corrected_path_propagates_original_collision(self):
         with self.assertRaisesRegex(RuntimeError,'OTHER_ARM_COLLISION'):

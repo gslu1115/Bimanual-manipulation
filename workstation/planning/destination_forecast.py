@@ -173,8 +173,8 @@ class DestinationForecast:
             report.update(pregrasp_plan_wait_s=perf_counter()-start,background_wall_s=self.worker_wall_s,
                           full_plans=dict(self.counts))
 
-    def confirm(self,robot,scene,objects,slots,selected,report):
-        slots.observe(robot.observed_workspace)
+    def confirm(self,robot,scene,objects,slots,selected,report,*,round_reserved=False):
+        if not round_reserved:slots.observe(robot.observed_workspace)
         if any(slots.states[s.slot]!='reserved' for s in self.specs.values()):
             raise RuntimeError('RESERVED_SLOT_CHANGED')
         specs={}

@@ -927,7 +927,8 @@ def place_pair(env, robot, estimator, scene, pair, slots, report,alternatives=No
             carried_clearance(left,right)
         if phase=='approach' and forecast is not None:
             gate_start=perf_counter()
-            forecast.confirm(robot,scene,objects,slots,selected,report['deferred_destination'])
+            forecast.confirm(robot,scene,objects,slots,selected,report['deferred_destination'],
+                             round_reserved=round_reservation)
             report['deferred_destination']['current_frame_checks_s']=perf_counter()-gate_start
             now=max(s.sample_time_s for s in robot.read_states().values())
             if not 0<=now-packet.observation_time_s<=priors.max_age_s:
