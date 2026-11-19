@@ -1,0 +1,322 @@
+{
+  "date": "2026-11-19",
+  "scope": "Isolated Isaac Sim 6.1 diagnostics. Separate from the upright-nine sorter regression.",
+  "observation_inputs": [
+    "scene RGB-D",
+    "left wrist RGB-D",
+    "right wrist RGB-D",
+    "image-time joint states"
+  ],
+  "planning_scope": "GraspGen scores for the selected proposals, MoveIt 2 paired pregrasp and sampled descent verification. No physical execution in planning-only runs. Scores are not success probabilities. Box names are offline correspondences.",
+  "required_interarm_gap_mm": 8,
+  "planning_only": [
+    {
+      "server_run": "stackdef19f-live-6",
+      "layout": "regular",
+      "accepted": {
+        "upper": {
+          "selected": [
+            {
+              "target": "top_left",
+              "score": 0.5262469053268433,
+              "raw_file": "model_panda_left_0.npz",
+              "end_error_mm": 0.17433810850984635,
+              "offline_nearest_box": "box_00",
+              "visual_centre_error_mm": 0.057549820998115696
+            },
+            {
+              "target": "top_right",
+              "score": 0.6506928205490112,
+              "raw_file": "model_panda_right_0.npz",
+              "end_error_mm": 0.17577221205306326,
+              "offline_nearest_box": "box_01",
+              "visual_centre_error_mm": 0.19457553051528456
+            }
+          ],
+          "min_interarm_gap_mm": 190.01326107076966,
+          "pregrasp_waypoints": 35,
+          "descent_samples": 86,
+          "frames": {
+            "scene_camera": 12,
+            "left_wrist_camera": 12,
+            "right_wrist_camera": 12
+          },
+          "route": "direct"
+        },
+        "middle_left_upper_right": {
+          "selected": [
+            {
+              "target": "exposed_middle_left",
+              "score": 0.8387986421585083,
+              "raw_file": "model_panda_left_0.npz",
+              "end_error_mm": 0.17549016563781267,
+              "offline_nearest_box": "box_02",
+              "visual_centre_error_mm": 0.019738924334026863
+            },
+            {
+              "target": "top_right",
+              "score": 0.6533860564231873,
+              "raw_file": "model_panda_right_0.npz",
+              "end_error_mm": 0.17451660771775024,
+              "offline_nearest_box": "box_01",
+              "visual_centre_error_mm": 0.19457553051528456
+            }
+          ],
+          "min_interarm_gap_mm": 114.1446321837721,
+          "pregrasp_waypoints": 59,
+          "descent_samples": 86,
+          "frames": {
+            "scene_camera": 12,
+            "left_wrist_camera": 12,
+            "right_wrist_camera": 12
+          },
+          "route": "direct"
+        },
+        "upper_left_middle_right": {
+          "selected": [
+            {
+              "target": "top_left",
+              "score": 0.4153614342212677,
+              "raw_file": "model_panda_left_0.npz",
+              "end_error_mm": 0.17611403442688414,
+              "offline_nearest_box": "box_00",
+              "visual_centre_error_mm": 0.057549820998115696
+            },
+            {
+              "target": "exposed_middle_right",
+              "score": 0.8972698450088501,
+              "raw_file": "model_panda_right_0.npz",
+              "end_error_mm": 0.17556419932615547,
+              "offline_nearest_box": "box_03",
+              "visual_centre_error_mm": 0.03256041640776537
+            }
+          ],
+          "min_interarm_gap_mm": 125.99553632436059,
+          "pregrasp_waypoints": 77,
+          "descent_samples": 95,
+          "frames": {
+            "scene_camera": 12,
+            "left_wrist_camera": 12,
+            "right_wrist_camera": 12
+          },
+          "route": "direct"
+        }
+      },
+      "middle_pair_rejections": {
+        "MOVEIT_PAIR: goal below 8 mm robot clearance": 16
+      }
+    },
+    {
+      "server_run": "irregular19a-live-6",
+      "layout": "irregular three-layer six-small three-large",
+      "accepted": {
+        "upper": {
+          "selected": [
+            {
+              "target": "top_left",
+              "score": 0.8874832391738892,
+              "raw_file": "model_panda_left_0.npz",
+              "end_error_mm": 0.17523638863047467,
+              "offline_nearest_box": "box_00",
+              "visual_centre_error_mm": 0.06462668967129981
+            },
+            {
+              "target": "top_right",
+              "score": 0.9160338044166565,
+              "raw_file": "model_panda_right_0.npz",
+              "end_error_mm": 0.17576202472338276,
+              "offline_nearest_box": "box_01",
+              "visual_centre_error_mm": 0.005894663058299525
+            }
+          ],
+          "min_interarm_gap_mm": 118.1098412296281,
+          "pregrasp_waypoints": 73,
+          "descent_samples": 86,
+          "frames": {
+            "scene_camera": 12,
+            "left_wrist_camera": 12,
+            "right_wrist_camera": 12
+          },
+          "route": "direct"
+        },
+        "middle": {
+          "selected": [
+            {
+              "target": "exposed_middle_left",
+              "score": 0.914202094078064,
+              "raw_file": "model_panda_left_0.npz",
+              "end_error_mm": 0.1746913998863323,
+              "offline_nearest_box": "box_03",
+              "visual_centre_error_mm": 0.04673576657644016
+            },
+            {
+              "target": "exposed_middle_right",
+              "score": 0.41118308901786804,
+              "raw_file": "model_panda_right_0.npz",
+              "end_error_mm": 0.17753174682921855,
+              "offline_nearest_box": "box_02",
+              "visual_centre_error_mm": 0.05728115865431179
+            }
+          ],
+          "min_interarm_gap_mm": 115.28463913930445,
+          "pregrasp_waypoints": 35,
+          "descent_samples": 109,
+          "frames": {
+            "scene_camera": 12,
+            "left_wrist_camera": 12,
+            "right_wrist_camera": 12
+          },
+          "route": "direct"
+        }
+      }
+    }
+  ],
+  "physical_attempt": {
+    "server_run": "irregularpick19b-live-6",
+    "source": "irregular19a-live-6/upper",
+    "prior_take": {
+      "server_run": "irregularpick19a-live-6",
+      "stop": "Diagnostic KeyError 'target_id' before lift; corrected in take b."
+    },
+    "completed_stages": [
+      "approach",
+      "descent",
+      "gripper closure"
+    ],
+    "attempted_stop_stage": "before issuing the lift command",
+    "rejection": "OBSERVED_PATH_OBSTACLE",
+    "rejected_payload": "left top carton",
+    "checked_held_centre_m": [
+      -0.12660030863599775,
+      0.021153551316366044,
+      0.9276544158188075
+    ],
+    "checked_held_local_size_m": [
+      0.10600000000000001,
+      0.061,
+      0.051
+    ],
+    "occupied_voxel_size_m": 0.01,
+    "motion_complete": false,
+    "cartons_lifted": 0,
+    "cartons_placed": 0,
+    "fresh_pregrasp_plan": {
+      "search_s": 0,
+      "sampler_calls": 0,
+      "waypoints": 73,
+      "depth_voxels": 2478,
+      "frame_ids": {
+        "scene_camera": 107,
+        "left_wrist_camera": 107,
+        "right_wrist_camera": 107
+      },
+      "route": "direct",
+      "direct_check_s": 0.267650996,
+      "direct_project_rejection": null,
+      "request_and_map_wall_s": 2.541916632093489,
+      "project_check_wall_s": 1.964674973860383
+    },
+    "targets": [
+      {
+        "box": "box_00",
+        "id": "5bf29c40394342348648cbab55ff6a73:76:panda_left",
+        "score": 0.8874832391738892,
+        "position": [
+          -0.11583969433088877,
+          0.01313202442352024,
+          0.9452660815019815
+        ],
+        "visual_centre": [
+          -0.1260325014591217,
+          0.021945927292108536,
+          0.927488855929039
+        ],
+        "post_close_surface_supported": true,
+        "post_close_geometric_pose_measured": true,
+        "offline_start_m": [
+          -0.1260313242673874,
+          0.02200946770608425,
+          0.927488386631012
+        ],
+        "offline_after_close_m": [
+          -0.12660379707813263,
+          0.02114885114133358,
+          0.9274942278862
+        ],
+        "offline_end_m": [
+          -0.12660379707813263,
+          0.02114885114133358,
+          0.9274942278862
+        ]
+      },
+      {
+        "box": "box_01",
+        "id": "67be15bda44540c79194db8e7112e163:39:panda_right",
+        "score": 0.9160338044166565,
+        "position": [
+          0.08057588272163278,
+          -0.17564230403139322,
+          0.9429391707896907
+        ],
+        "visual_centre": [
+          0.07802282273769379,
+          -0.17399919033050537,
+          0.9375066491089796
+        ],
+        "post_close_surface_supported": true,
+        "post_close_geometric_pose_measured": true,
+        "offline_start_m": [
+          0.07801542431116104,
+          -0.1739957481622696,
+          0.937504768371582
+        ],
+        "offline_after_close_m": [
+          0.08066344261169434,
+          -0.1748502403497696,
+          0.9376404285430908
+        ],
+        "offline_end_m": [
+          0.08066344261169434,
+          -0.1748502403497696,
+          0.9376404285430908
+        ]
+      }
+    ]
+  },
+  "media": {
+    "scope": "Retained with local diagnostic outputs. Playback follows simulation time; wall-clock computation waits are excluded.",
+    "source_frame_count": 242,
+    "source_simulation_span_s": 10.025000000000071,
+    "figures": [
+      {
+        "name": "grasp_scores_upper.png",
+        "bytes": 1043567,
+        "sha256": "6be6a200d6ab37c170a812f7e55d84ee3714d8896948a7d5f986797e162e4f03"
+      },
+      {
+        "name": "grasp_scores_middle.png",
+        "bytes": 1069394,
+        "sha256": "1a333556104a8a4500ee704f01efb0279a93d3f1d74bd85d47d8b7eaccc340bf"
+      }
+    ],
+    "videos": [
+      {
+        "name": "irregular_stack_pick_1x.mp4",
+        "bytes": 1554343,
+        "sha256": "17ff4d76a3609a7b4842ccf40543571d945be29ee2c09cb2d55178790ae5fdc4",
+        "fps": 30,
+        "decoded_frames": 301,
+        "duration_s": 10.033333333333333
+      },
+      {
+        "name": "irregular_stack_pick_3x.mp4",
+        "bytes": 675372,
+        "sha256": "9f9b7cd2640cc8ed8ef4798f96b5989443772bce1c2855ae55f6d13a6a60cc64",
+        "fps": 30,
+        "decoded_frames": 100,
+        "duration_s": 3.3333333333333335
+      }
+    ]
+  },
+  "next_check": "Use contemporary optical evidence to identify supporting surfaces and distinguish initial support contact from obstacles in the lift path. Recheck short lift and stable hold before extending to sorting."
+}
